@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ANONYMOUS = "anonymous";
     private static final int RC_SIGN_IN = 1;
 

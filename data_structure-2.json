@@ -1,0 +1,257 @@
+{
+  	"users": {
+	    "user1": {
+	    	"name": "user name",
+	    	"email": "user1@gmail.com",
+	    	"game_list": {
+	      		"game1": true,
+	      		"game2": true
+	      	},
+	      	"todo_list": {
+	      		"todo1": true,
+	      		"todo2": true,
+	      		"todo3": true,
+	      		"todo4": true
+	      	},
+	      	"shopping_list": {
+	      		"part1": true,
+	      		"part2": true,
+	      		"part3": true,
+	      		"part4": true
+	      	},
+	      	"inventory_list": {
+	      		"inventory_part1": true,
+	      		"inventory_part2": true,
+	      		"inventory_part3": true,
+	      		"inventory_part4": true
+	      	}
+	    },
+	    "user2": {
+	    	"name": "user name",
+	    	"email": "user2@gmail.com",
+	    	"game_list": {
+	      		"game3": true,
+	      		"game4": true
+	    	},
+	    	"todo_list": {
+	      		"todo5": true,
+	      		"todo6": true,
+	      		"todo7": true,
+	      		"todo8": true
+	      	},
+	      	"shopping_list": {
+	      		"part5": true,
+	      		"part6": true,
+	      		"part7": true,
+	      		"part8": true
+	      	},
+	      	"inventory_list": {
+	      		"inventory_part5": true,
+	      		"inventory_part6": true,
+	      		"inventory_part7": true,
+	      		"inventory_part8": true
+	      	}
+	    }
+	},
+  	"games": {
+    	"game1": {
+    		"user": "user1",
+        	"name": "game name",
+        	"manufacturer": "game manufacturer",
+        	"year": 1984,
+        	"todo_list": {
+          		"todo1": true,
+          		"todo2": true
+        	},
+        	"part_list": {
+        		"part1": true,
+        		"part2": true
+        	}
+     	},
+     	"game2": {
+     		"user": "user1",
+        	"name": "game name",
+        	"manufacturer": "game manufacturer",
+        	"year": 1984,
+        	"todo_list": {
+          		"todo3": true,
+          		"todo4": true
+          	},
+          	"part_list": {
+        		"part3": true,
+        		"part4": true
+        	}
+      	},
+    	"game3": {
+    		"user": "user2",
+    		"name": "game name",
+        	"manufacturer": "game manufacturer",
+        	"year": 1984,
+        	"todo_list": {
+        		"todo5": true,
+        		"todo6": true
+        	},
+        	"part_list": {
+        		"part5": true,
+        		"part6": true
+       		}
+    	},
+      	"game4": {
+      		"user": "user2",
+        	"name": "game name",
+        	"manufacturer": "game manufacturer",
+        	"year": 1984,
+        	"todo_list": {
+          		"todo7": true,
+         		"todo8": true
+        	},
+        	"part_list": {
+        		"part7": true,
+        		"part8": true
+        	}
+      	}
+  	},
+ 	"todo": {
+ 		"todo1": {
+ 			//"user_game": "user1_game1",
+ 			"user": "user1",
+ 			"game": "game1",
+			"name": "todo name",
+			"description": "todo description"
+		},
+		"todo2": {
+			"user": "user1",
+			"game": "game1",
+			"name": "todo name",
+			"description": "todo description"
+		},
+		"todo3": {
+			"user": "user1",
+			"game": "game2",
+			"name": "todo name",
+			"description": "todo description"
+		},
+		"todo4": {
+			"user": "user1",
+			"game": "game2",
+			"name": "todo name",
+			"description": "todo description"
+		},
+		"todo5": {
+			"user": "user2",
+			"game": "game3",
+			"name": "todo name",
+			"description": "todo description"
+		},
+		"todo6": {
+			"user": "user2",
+			"game": "game3",
+			"name": "todo name",
+			"description": "todo description"
+		},
+		"todo7": {
+			"user": "user2",
+			"game": "game4",
+			"name": "todo name",
+			"description": "todo description"
+		},
+		"todo8": {
+			"user": "user2",
+			"game": "game4",
+			"name": "todo name",
+			"description": "todo description"
+		}
+  	},
+  	"shopping": {
+		"part1": {
+			"user": "user1",
+			"game": "game1",
+			"name": "part name",
+			"description": "part description"
+		},
+		"part2": {
+			"user": "user1",
+			"game": "game1",
+			"name": "part name",
+			"description": "part description"
+		},
+		"part3": {
+			"user": "user1",
+			"game": "game2",
+			"name": "part name",
+			"description": "part description"
+		},
+		"part4": {
+			"user": "user1",
+			"game": "game2",
+			"name": "part name",
+			"description": "part description"
+		},
+		"part5": {
+			"user": "user2",
+			"game": "game3",
+			"name": "part name",
+			"description": "part description"
+		},
+		"part6": {
+			"user": "user2",
+			"game": "game3",
+			"name": "part name",
+			"description": "part description"
+		},
+		"part7": {
+			"user": "user2",
+			"game": "game4",
+			"name": "part name",
+			"description": "part description"
+		},
+		"part8": {
+			"user": "user2",
+			"game": "game4",
+			"name": "part name",
+			"description": "part description"
+		}
+  	},
+  	"inventory": {
+		"inv_part1": {
+			"user": "user1",
+			"name": "part name",
+			"description": "part description"
+		},
+		"inv_part2": {
+			"user": "user1",
+			"name": "part name",
+			"description": "part description"
+		},
+		"inv_part3": {
+			"user": "user1",
+			"name": "part name",
+			"description": "part description"
+		},
+		"inv_part4": {
+			"user": "user1",
+			"name": "part name",
+			"description": "part description"
+		},
+		"inv_part5": {
+			"user": "user2",
+			"name": "part name",
+			"description": "part description"
+		},
+		"inv_part6": {
+			"user": "user2",
+			"name": "part name",
+			"description": "part description"
+		},
+		"inv_part7": {
+			"user": "user2",
+			"name": "part name",
+			"description": "part description"
+		},
+		"inv_part8": {
+			"user": "user2",
+			"name": "part name",
+			"description": "part description"
+		}
+  	}
+}
