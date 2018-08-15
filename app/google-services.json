@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "936945587652",
+    "firebase_url": "https://coinops-9d04c.firebaseio.com",
+    "project_id": "coinops-9d04c",
+    "storage_bucket": "coinops-9d04c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936945587652:android:ccf3cc2508226b89",
+        "android_client_info": {
+          "package_name": "com.gameaholix.coinops"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936945587652-rh6pqnkcb9adsp4kc3dlnq7kmpb6u0id.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gameaholix.coinops",
+            "certificate_hash": "5e31089065355b148b358cb8ee16a83c5c01188d"
+          }
+        },
+        {
+          "client_id": "936945587652-koolqil3eh3etdmb902peuiplmkmms91.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY2H0knqFF18B7oKjd_5UyE-Oc9ybZibo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936945587652-koolqil3eh3etdmb902peuiplmkmms91.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
