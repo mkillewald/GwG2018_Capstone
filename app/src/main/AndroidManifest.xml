@@ -8,14 +8,49 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        android:name="com.gameaholix.coinops.CoinOpsApp">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".game.GameListActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".game.GameDetailActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".game.GameListActivity" />
+        <activity
+            android:name=".inventory.InventoryListActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".inventory.InventoryDetailActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".inventory.InventoryListActivity" />
+        <activity
+            android:name=".todo.ToDoListActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".todo.ToDoDetailActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".todo.ToDoListActivity" />
+        <activity
+            android:name=".shopping.ShoppingListActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".shopping.ShoppingDetailActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".shopping.ShoppingListActivity" />
     </application>
 
 </manifest>

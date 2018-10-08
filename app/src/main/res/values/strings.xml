@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">CoinOps</string>
     <string name="sign_out">Sign Out</string>
+    <string name="anonymous_username">Anonymous Gamer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="game_list_title">Game Collection</string>
+    <string name="inventory_list_title">Parts Inventory</string>
+    <string name="to_do_list_title">To Do List</string>
+    <string name="shopping_list_title">Shopping List</string>
+
+
 </resources>
