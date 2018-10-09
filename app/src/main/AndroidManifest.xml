@@ -3,13 +3,13 @@
     package="com.gameaholix.coinops">
 
     <application
+        android:name=".CoinOpsApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name="com.gameaholix.coinops.CoinOpsApp">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">
@@ -51,6 +51,7 @@
             android:name=".shopping.ShoppingDetailActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".shopping.ShoppingListActivity" />
+        <activity android:name=".repair.RepairListActivity"></activity>
     </application>
 
 </manifest>
