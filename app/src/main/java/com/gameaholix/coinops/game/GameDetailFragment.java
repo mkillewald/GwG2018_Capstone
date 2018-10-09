@@ -1,64 +1,55 @@
 package com.gameaholix.coinops.game;
 
 import android.content.Context;
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link GameDetailFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link GameDetailFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class GameDetailFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = GameDetailFragment.class.getSimpleName();
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
+
+    private Game mGame;
 
     private OnFragmentInteractionListener mListener;
+
+    private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference mDatabaseReference;
 
     public GameDetailFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GameDetailFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GameDetailFragment newInstance(String param1, String param2) {
-        GameDetailFragment fragment = new GameDetailFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
+        if (savedInstanceState == null) {
+            Intent intent = getActivity().getIntent();
+            if (intent != null) {
+                mGame = intent.getParcelableExtra(EXTRA_GAME);
+            }
+        } else {
+            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
         }
     }
 
@@ -66,7 +57,64 @@ public class GameDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game_detail, container, false);
+        final FragmentGameDetailBinding binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_game_detail, container, false);
+
+        final View rootView = binding.getRoot();
+
+        // Initialize Firebase components
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (user != null) {
+            // user is signed in
+//            mUsername = user.getDisplayName();
+            final String uid = user.getUid();
+
+            // Setup database references
+            final DatabaseReference gameRef = mDatabaseReference.child("game").child(uid).child(mGame.getGameId());
+//            final DatabaseReference userRef = mDatabaseReference.child("user").child(uid);
+//            final DatabaseReference userGameListRef = userRef.child("game_list");
+
+            // read game details
+            ValueEventListener gameListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String gameId = dataSnapshot.getKey();
+
+                    mGame = dataSnapshot.getValue(Game.class);
+                    if (null == mGame) {
+                        Log.d(TAG, "Error: Game details not found in database");
+                    } else {
+                        mGame.setGameId(gameId);
+                        binding.tvGameManufacturer.setText(mGame.getManufacturer());
+                        binding.tvGameYear.setText(mGame.getYear());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
+                }
+            };
+
+            gameRef.addValueEventListener(gameListener);
+
+        } else {
+            // user is not signed in
+//            mUsername = getString(R.string.anonymous_username);
+        }
+
+        return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(EXTRA_GAME, mGame);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

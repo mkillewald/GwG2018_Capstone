@@ -7,10 +7,12 @@ import android.os.Bundle;
 
 import com.gameaholix.coinops.R;
 
-public class GameListActivity extends AppCompatActivity implements GameListFragment.OnFragmentInteractionListener {
+public class GameListActivity extends AppCompatActivity implements
+        GameListFragment.OnFragmentInteractionListener {
 
     private static final String TAG = GameListActivity.class.getSimpleName();
-    private static final String EXTRA_GAME = "CoinOps gameId";
+//    private static final String EXTRA_GAME_ID = "CoinOps gameId";
+    private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,14 +24,13 @@ public class GameListActivity extends AppCompatActivity implements GameListFragm
         }
 
         setTitle(R.string.game_list_title);
-
-
     }
 
     @Override
-    public void onGameSelected(String gameId) {
+    public void onGameSelected(Game game) {
         Intent intent = new Intent(this, GameDetailActivity.class);
-        intent.putExtra(EXTRA_GAME, gameId);
+//        intent.putExtra(EXTRA_GAME_ID, gameId);
+        intent.putExtra(EXTRA_GAME, game);
         startActivity(intent);
     }
 }
