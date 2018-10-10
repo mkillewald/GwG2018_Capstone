@@ -6,4 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".todo.ToDoListActivity">
 
+    <fragment
+        android:id="@+id/todo_list_fragment"
+        android:name="com.gameaholix.coinops.todo.ToDoListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </android.support.constraint.ConstraintLayout>

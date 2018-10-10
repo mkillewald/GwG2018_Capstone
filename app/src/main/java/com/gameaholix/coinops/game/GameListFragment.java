@@ -49,6 +49,10 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         } else {
             mGames = savedInstanceState.getParcelableArrayList(EXTRA_GAME_LIST);
         }
+
+        // Initialize Firebase components
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -57,10 +61,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_game_list, container,
                 false);
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_game_list);
         mGameAdapter = new GameAdapter(getContext(), this);
@@ -76,9 +76,12 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             final String uid = user.getUid();
 
             // Setup database references
-            final DatabaseReference gameRef = mDatabaseReference.child("game").child(uid);
-            final DatabaseReference userRef = mDatabaseReference.child("user").child(uid);
-            final DatabaseReference userGameListRef = userRef.child("game_list");
+            final DatabaseReference gameRef =
+                    mDatabaseReference.child(getString(R.string.db_game)).child(uid);
+            final DatabaseReference userRef =
+                    mDatabaseReference.child(getString(R.string.db_user)).child(uid);
+            final DatabaseReference userGameListRef =
+                    userRef.child(getString(R.string.db_game_list));
 
             // add a game
 //                DatabaseReference gameIdRef = gameRef.push();

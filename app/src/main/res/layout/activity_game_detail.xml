@@ -7,7 +7,7 @@
     tools:context=".game.GameDetailActivity">
 
     <fragment
-        android:id="@+id/recipe_detail_fragment"
+        android:id="@+id/game_detail_fragment"
         android:name="com.gameaholix.coinops.game.GameDetailFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

@@ -6,4 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".repair.RepairListActivity">
 
+    <fragment
+        android:id="@+id/repair_list_fragment"
+        android:name="com.gameaholix.coinops.repair.RepairListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </android.support.constraint.ConstraintLayout>

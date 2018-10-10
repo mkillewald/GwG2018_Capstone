@@ -24,8 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
-
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
 
     private Game mGame;
@@ -51,6 +49,10 @@ public class GameDetailFragment extends Fragment {
         } else {
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
         }
+
+        // Initialize Firebase components
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -62,10 +64,6 @@ public class GameDetailFragment extends Fragment {
 
         final View rootView = binding.getRoot();
 
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
@@ -73,7 +71,10 @@ public class GameDetailFragment extends Fragment {
             final String uid = user.getUid();
 
             // Setup database references
-            final DatabaseReference gameRef = mDatabaseReference.child("game").child(uid).child(mGame.getGameId());
+            final DatabaseReference gameRef = mDatabaseReference
+                    .child(getString(R.string.db_game))
+                    .child(uid)
+                    .child(mGame.getGameId());
 //            final DatabaseReference userRef = mDatabaseReference.child("user").child(uid);
 //            final DatabaseReference userGameListRef = userRef.child("game_list");
 
@@ -115,13 +116,6 @@ public class GameDetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(EXTRA_GAME, mGame);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override

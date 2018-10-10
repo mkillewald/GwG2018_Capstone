@@ -1,15 +1,46 @@
 package com.gameaholix.coinops.shopping;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.gameaholix.coinops.R;
 
-public class ShoppingDetailActivity extends AppCompatActivity {
+public class ShoppingDetailActivity extends AppCompatActivity implements
+        ShoppingDetailFragment.OnFragmentInteractionListener {
+
+    private static final String TAG = ShoppingDetailActivity.class.getSimpleName();
+    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.shopping.ShoppingItem";
+
+    private ShoppingItem mShoppingItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_detail);
+
+        if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        if (savedInstanceState == null) {
+            mShoppingItem = getIntent().getParcelableExtra(EXTRA_SHOPPING);
+        } else {
+            mShoppingItem = savedInstanceState.getParcelable(EXTRA_SHOPPING);
+        }
+
+        setTitle(mShoppingItem.getName());
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(EXTRA_SHOPPING, mShoppingItem);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

@@ -118,36 +118,6 @@ public class MainActivity extends AppCompatActivity {
 //                    DatabaseReference repairRef = mDatabaseReference.child("todo").child(uid);
 //                    DatabaseReference inventoryRef = mDatabaseReference.child("inventory").child(uid);
 
-                    // add a to-do list item
-//                    DatabaseReference todoIdRef = todoRef.push();
-//                    Map<String, Object> todoDetails = new HashMap<>();
-//                    todoDetails.put("name", "todo list item name");
-//                    todoDetails.put("description", "todo list item description");
-//                    todoDetails.put( "game", gameId);
-//                    todoIdRef.setValue(todoDetails, new DatabaseReference.CompletionListener() {
-//                        @Override
-//                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-//                            String todoId = databaseReference.getKey();
-//                            gameTodoListRef.child(todoId).setValue(true);
-//                            userTodoListRef.child(todoId).setValue(true);
-//                        }
-//                    });
-
-                    // add a shopping list item
-//                    DatabaseReference shopIdRef = shopRef.push();
-//                    Map<String, Object> shopDetails = new HashMap<>();
-//                    shopDetails.put("name", "shopping list item name");
-//                    shopDetails.put("description", "shopping list item description");
-//                    shopDetails.put( "game", gameId);
-//                    shopIdRef.setValue(shopDetails, new DatabaseReference.CompletionListener() {
-//                        @Override
-//                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-//                            String shopId = databaseReference.getKey();
-//                            gameShopListRef.child(shopId).setValue(true);
-//                            userShopListRef.child(shopId).setValue(true);
-//                        }
-//                    });
-
 
 //                    gameRef.push().setValue(true);
 //

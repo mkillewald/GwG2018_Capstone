@@ -1,77 +1,127 @@
 package com.gameaholix.coinops.inventory;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link InventoryListFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link InventoryListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class InventoryListFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.ArrayList;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class InventoryListFragment extends Fragment implements InventoryAdapter.InventoryAdapterOnClickHandler {
+    private static final String TAG = InventoryListFragment.class.getSimpleName();
+    private static final String EXTRA_INVENTORY_LIST = "CoinOpsInventoryList";
 
     private OnFragmentInteractionListener mListener;
+
+    private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference mDatabaseReference;
+
+    private InventoryAdapter mInventoryAdapter;
+    private ArrayList<InventoryItem> mInventoryItems;
 
     public InventoryListFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment InventoryListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static InventoryListFragment newInstance(String param1, String param2) {
-        InventoryListFragment fragment = new InventoryListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
+        if (savedInstanceState == null) {
+            mInventoryItems = new ArrayList<InventoryItem>();
+        } else {
+            mInventoryItems = savedInstanceState.getParcelableArrayList(EXTRA_INVENTORY_LIST);
         }
+
+        // Initialize Firebase components
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_inventory_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_inventory_list, container,
+                false);
+
+        RecyclerView recyclerView = rootView.findViewById(R.id.rv_inventory_list);
+        mInventoryAdapter = new InventoryAdapter(getContext(), this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(mInventoryAdapter);
+        mInventoryAdapter.setInventoryItems(mInventoryItems);
+
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (user != null) {
+            // user is signed in
+            final String uid = user.getUid();
+
+            // Setup database references
+            final DatabaseReference inventoryRef =
+                    mDatabaseReference.child(getString(R.string.db_inventory)).child(uid);
+            final DatabaseReference userRef =
+                    mDatabaseReference.child(getString(R.string.db_user)).child(uid);
+            final DatabaseReference userInventoryListRef =
+                    userRef.child(getString(R.string.db_inventory_list));
+
+            // read list of inventory items
+            ValueEventListener inventoryListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    mInventoryItems.clear();
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        String id = dataSnapshot1.getKey();
+                        InventoryItem item =  dataSnapshot1.getValue(InventoryItem.class);
+                        item.setId(id);
+                        mInventoryItems.add(item);
+                    }
+                    mInventoryAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
+                }
+            };
+
+            userInventoryListRef.addValueEventListener(inventoryListener);
+
+        } else {
+            // user is not signed in
+        }
+
+
+        return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList(EXTRA_INVENTORY_LIST, mInventoryItems);
+    }
+
+    @Override
+    public void onClick(InventoryItem inventoryItem) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onInventoryItemSelected(inventoryItem);
         }
     }
 
@@ -103,7 +153,6 @@ public class InventoryListFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onInventoryItemSelected(InventoryItem inventoryItem);
     }
 }

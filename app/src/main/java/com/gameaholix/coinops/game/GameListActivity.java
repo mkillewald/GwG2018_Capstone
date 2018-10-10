@@ -11,7 +11,6 @@ public class GameListActivity extends AppCompatActivity implements
         GameListFragment.OnFragmentInteractionListener {
 
     private static final String TAG = GameListActivity.class.getSimpleName();
-//    private static final String EXTRA_GAME_ID = "CoinOps gameId";
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
 
     @Override
@@ -29,7 +28,6 @@ public class GameListActivity extends AppCompatActivity implements
     @Override
     public void onGameSelected(Game game) {
         Intent intent = new Intent(this, GameDetailActivity.class);
-//        intent.putExtra(EXTRA_GAME_ID, gameId);
         intent.putExtra(EXTRA_GAME, game);
         startActivity(intent);
     }

@@ -11,5 +11,17 @@
     <string name="to_do_list_title">To Do List</string>
     <string name="shopping_list_title">Shopping List</string>
 
+    <!-- Database references -->
+    <string name="db_user">user</string>
+    <string name="db_game">game</string>
+    <string name="db_game_list">game_list</string>
+    <string name="db_shop">shop</string>
+    <string name="db_shop_list">shop_list</string>
+    <string name="db_todo">todo</string>
+    <string name="db_todo_list">todo_list</string>
+    <string name="db_inventory">inventory</string>
+    <string name="db_inventory_list">inventory_list</string>
+    <string name="db_repair">repair</string>
+    <string name="db_repair_list">repair_list</string>
 
 </resources>
