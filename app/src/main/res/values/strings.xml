@@ -1,12 +1,9 @@
 <resources>
     <string name="app_name">CoinOps</string>
-    <string name="sign_out">Sign Out</string>
-    <string name="anonymous_username">Anonymous Gamer</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+        <string name="anonymous_username">Anonymous Gamer</string>
 
     <string name="game_list_title">Game Collection</string>
+    <string name="add_game_title">Add New Game</string>
     <string name="inventory_list_title">Parts Inventory</string>
     <string name="to_do_list_title">To Do List</string>
     <string name="shopping_list_title">Shopping List</string>
@@ -23,5 +20,24 @@
     <string name="db_inventory_list">inventory_list</string>
     <string name="db_repair">repair</string>
     <string name="db_repair_list">repair_list</string>
+
+    <!-- Menu Items -->
+    <string name="sign_out">Sign Out</string>
+    <string name="add_game">Add Game</string>
+
+    <!-- Form Input -->
+    <string name="enter_name">Enter Name</string>
+
+    <string name="select_game_type">Game Type</string>
+    <string name="game_type1">Videogame</string>
+    <string name="game_type2">Pinball</string>
+    <string name="game_type3">Slot Machine</string>
+    <string name="game_type4">Pachinko</string>
+    <string name="game_type5">Other</string>
+
+    <string name="select_game_cabinet">Cabinet Option</string>
+    <string name="game_cabinet1">Original/Dedicated</string>
+    <string name="game_cabinet2">Conversion</string>
+    <string name="game_cabinet3">Board Only</string>
 
 </resources>

@@ -5,10 +5,56 @@ import android.os.Parcelable;
 
 public class Game implements Parcelable {
 
+//    public enum Type {
+//        PINBALL("Pinball", 0),
+//        VIDEOGAME("Videogame", 1);
+//
+//        private String stringValue;
+//        private int intValue;
+//
+//        Type(String toString, int value) {
+//            stringValue = toString;
+//            intValue = value;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return stringValue;
+//        }
+//    }
+
+
+//    public enum Type { pinball, videogame }
+//    public enum Cabinet { original, conversion, board_only }
+//    public enum Condition { AP, A, AM, BP, B, BM, CP, C, CM, D, F, Unknown }
+//    public enum Working { yes, no, partial, unknown }
+//    public enum MonitorSize { s13in, s19in, s23in, s25in, s27in }
+//    public enum MonitorType { bw_raster, color_raster, bw_vector, color_vector }
+//    public enum Status { own, sold, want }
+
     private String gameId;
     private String name;
     private String manufacturer;
-    private String year;
+    private int year;
+
+    private String type;
+    private String cabinet;
+    private String condition;
+    private String working;
+
+    private String monitorSize;
+    private String monitorType;
+    private String monitorChassis;
+    private String tubeModel;
+
+    private String serialNumber;
+    private String highScore;
+    private String comment;
+    private String status;
+
+    private Boolean forSale;
+    private Double boughtPrice;
+    private Double forSalePrice;
 
     public Game() {
         // Default constructor required for calls to DataSnapshot.getValue()
@@ -22,7 +68,7 @@ public class Game implements Parcelable {
         this.gameId = in.readString();
         this.name = in.readString();
         this.manufacturer = in.readString();
-        this.year = in.readString();
+        this.year = in.readInt();
     }
 
     @Override
@@ -35,7 +81,7 @@ public class Game implements Parcelable {
         dest.writeString(gameId);
         dest.writeString(name);
         dest.writeString(manufacturer);
-        dest.writeString(year);
+        dest.writeInt(year);
     }
 
     public final static Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {
@@ -78,11 +124,11 @@ public class Game implements Parcelable {
         this.manufacturer = manufacturer;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(int year) {
         this.year = year;
     }
 }

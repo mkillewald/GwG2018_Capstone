@@ -41,15 +41,6 @@ public class GameDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
-                mGame = intent.getParcelableExtra(EXTRA_GAME);
-            }
-        } else {
-            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
-        }
-
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -63,6 +54,15 @@ public class GameDetailFragment extends Fragment {
                 inflater, R.layout.fragment_game_detail, container, false);
 
         final View rootView = binding.getRoot();
+
+        if (savedInstanceState == null) {
+            Intent intent = getActivity().getIntent();
+            if (intent != null) {
+                mGame = intent.getParcelableExtra(EXTRA_GAME);
+            }
+        } else {
+            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
+        }
 
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
@@ -90,7 +90,9 @@ public class GameDetailFragment extends Fragment {
                     } else {
                         mGame.setGameId(gameId);
                         binding.tvGameManufacturer.setText(mGame.getManufacturer());
-                        binding.tvGameYear.setText(mGame.getYear());
+                        if (mGame.getYear() > 0) {
+                            binding.tvGameYear.setText(String.valueOf(mGame.getYear()));
+                        }
                     }
                 }
 

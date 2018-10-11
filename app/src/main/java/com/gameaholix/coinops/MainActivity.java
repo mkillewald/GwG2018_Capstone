@@ -45,39 +45,6 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        final Button gameButton = findViewById(R.id.btn_game_list);
-        gameButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, GameListActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        final Button inventoryButton = findViewById(R.id.btn_inventory_list);
-        inventoryButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, InventoryListActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        final Button toDoButton = findViewById(R.id.btn_to_do_list);
-        toDoButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ToDoListActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        final Button shoppingButton = findViewById(R.id.btn_shopping_list);
-        shoppingButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ShoppingListActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -105,6 +72,38 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "emailVerified: " + emailVerified);
                     Log.d(TAG, "photoUrl: " + photoUrl);
 
+                    final Button gameButton = findViewById(R.id.btn_game_list);
+                    gameButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MainActivity.this, GameListActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    final Button inventoryButton = findViewById(R.id.btn_inventory_list);
+                    inventoryButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MainActivity.this, InventoryListActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    final Button toDoButton = findViewById(R.id.btn_to_do_list);
+                    toDoButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MainActivity.this, ToDoListActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    final Button shoppingButton = findViewById(R.id.btn_shopping_list);
+                    shoppingButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MainActivity.this, ShoppingListActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
                     // Database references
 //                    DatabaseReference userRef = mDatabaseReference.child("user").child(uid);
 //                    final DatabaseReference userGameListRef = userRef.child("game_list");
@@ -128,8 +127,6 @@ public class MainActivity extends AppCompatActivity {
 //                    invListRef.push().setValue(true);
 //
 //                    todoRef.push().setValue("todo item");
-
-
 
 
                 } else {
