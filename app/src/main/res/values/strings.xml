@@ -26,7 +26,9 @@
     <string name="add_game">Add Game</string>
 
     <!-- Form Input -->
-    <string name="enter_name">Enter Name</string>
+    <string name="game_name">Game Name</string>
+    <string name="not_available">N/A</string>
+    <string name="off">Off</string>
 
     <string name="select_game_type">Game Type</string>
     <string name="game_type1">Videogame</string>
@@ -35,9 +37,49 @@
     <string name="game_type4">Pachinko</string>
     <string name="game_type5">Other</string>
 
-    <string name="select_game_cabinet">Cabinet Option</string>
+    <string name="select_game_cabinet">Cabinet Type</string>
     <string name="game_cabinet1">Original/Dedicated</string>
     <string name="game_cabinet2">Conversion</string>
     <string name="game_cabinet3">Board Only</string>
+
+    <string name="select_game_condition">Condition</string>
+    <string name="game_condition1">A+</string>
+    <string name="game_condition2">A</string>
+    <string name="game_condition3">A-</string>
+    <string name="game_condition4">B+</string>
+    <string name="game_condition5">B</string>
+    <string name="game_condition6">B-</string>
+    <string name="game_condition7">C+</string>
+    <string name="game_condition8">C</string>
+    <string name="game_condition9">C-</string>
+    <string name="game_condition10">D</string>
+    <string name="game_condition11">F</string>
+
+    <string name="select_game_working">Game Working</string>
+    <string name="game_working1">Yes</string>
+    <string name="game_working2">No</string>
+    <string name="game_working3">Partial</string>
+
+    <string name="select_game_monitor_size">Monitor Size</string>
+    <string name="game_monitor_size1">13\"</string>
+    <string name="game_monitor_size2">19\"</string>
+    <string name="game_monitor_size3">23\"</string>
+    <string name="game_monitor_size4">25\"</string>
+    <string name="game_monitor_size5">27\"</string>
+
+    <string name="select_game_monitor_type">Monitor Type</string>
+    <string name="game_monitor_crt">CRT</string>
+    <string name="game_monitor_lcd">LCD</string>
+    <string name="game_monitor_bw">B/W</string>
+    <string name="game_monitor_color">Color</string>
+    <string name="game_monitor_vector">Vector</string>
+    <string name="game_monitor_raster">Raster</string>
+
+    <string name="select_game_ownership">Ownership Status</string>
+    <string name="game_ownership1">Have</string>
+    <string name="game_ownership2">Sold</string>
+    <string name="game_ownership3">Want</string>
+
+
 
 </resources>

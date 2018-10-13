@@ -16,14 +16,14 @@
                 android:id="@+id/et_add_game_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/enter_name"
+                android:hint="@string/game_name"
                 android:inputType="text" />
 
             <Spinner
                 android:id="@+id/spinner_game_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/game_type_array"
+                android:entries="@array/game_type"
                 android:prompt="@string/select_game_type"
                 android:spinnerMode="dropdown" />
 
@@ -31,9 +31,93 @@
                 android:id="@+id/spinner_game_cabinet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/game_cabinet_array"
+                android:entries="@array/game_cabinet"
                 android:prompt="@string/select_game_cabinet"
                 android:spinnerMode="dropdown" />
+
+            <Spinner
+                android:id="@+id/spinner_game_working"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/game_working"
+                android:prompt="@string/select_game_working"
+                android:spinnerMode="dropdown" />
+
+            <Spinner
+                android:id="@+id/spinner_game_ownership"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/game_ownership"
+                android:prompt="@string/select_game_ownership"
+                android:spinnerMode="dropdown" />
+
+            <include
+                android:id="@+id/game_condition"
+                layout="@layout/game_condition_labels" />
+
+            <SeekBar
+                android:id="@+id/sb_game_condition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <NumberPicker
+                    android:id="@+id/np_game_monitor_phospher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants"/>
+
+                <NumberPicker
+                    android:id="@+id/np_game_monitor_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants"/>
+
+                <NumberPicker
+                    android:id="@+id/np_game_monitor_tech"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants"/>
+
+            </LinearLayout>
+
+            <RadioGroup
+                android:id="@+id/rg_game_monitor_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/rb_game_monitor_size1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_monitor_size1"/>
+                <RadioButton
+                    android:id="@+id/rb_game_monitor_size2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_monitor_size2"/>
+                <RadioButton
+                    android:id="@+id/rb_game_monitor_size3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_monitor_size3"/>
+                <RadioButton
+                    android:id="@+id/rb_game_monitor_size4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_monitor_size4"/>
+                <RadioButton
+                    android:id="@+id/rb_game_monitor_size5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_monitor_size5"/>
+            </RadioGroup>
+
+
         </LinearLayout>
 
     </ScrollView>

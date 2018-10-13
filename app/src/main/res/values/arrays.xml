@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="game_type_array">
+    <string-array name="game_type">
         <item>@string/select_game_type</item>
         <item>@string/game_type1</item>
         <item>@string/game_type2</item>
@@ -9,10 +9,68 @@
         <item>@string/game_type5</item>
     </string-array>
 
-    <string-array name="game_cabinet_array">
+    <string-array name="game_cabinet">
         <item>@string/select_game_cabinet</item>
         <item>@string/game_cabinet1</item>
         <item>@string/game_cabinet2</item>
         <item>@string/game_cabinet3</item>
     </string-array>
+
+    <string-array name="game_condition">
+        <item>@string/select_game_condition</item>
+        <item>@string/game_condition1</item>
+        <item>@string/game_condition2</item>
+        <item>@string/game_condition3</item>
+        <item>@string/game_condition4</item>
+        <item>@string/game_condition5</item>
+        <item>@string/game_condition6</item>
+        <item>@string/game_condition7</item>
+        <item>@string/game_condition8</item>
+        <item>@string/game_condition9</item>
+        <item>@string/game_condition10</item>
+        <item>@string/game_condition11</item>
+    </string-array>
+
+    <string-array name="game_working">
+        <item>@string/select_game_working</item>
+        <item>@string/game_working1</item>
+        <item>@string/game_working2</item>
+        <item>@string/game_working3</item>
+    </string-array>
+
+    <string-array name="game_monitor_phospher">
+        <item>@string/not_available</item>
+        <item>@string/game_monitor_color</item>
+        <item>@string/game_monitor_bw</item>
+    </string-array>
+
+    <string-array name="game_monitor_tech">
+        <item>@string/not_available</item>
+        <item>@string/game_monitor_crt</item>
+        <item>@string/game_monitor_lcd</item>
+    </string-array>
+
+    <string-array name="game_monitor_type">
+        <item>@string/not_available</item>
+        <item>@string/game_monitor_raster</item>
+        <item>@string/game_monitor_vector</item>
+    </string-array>
+
+    <string-array name="game_monitor_size">
+        <item>@string/game_monitor_size1</item>
+        <item>@string/game_monitor_size2</item>
+        <item>@string/game_monitor_size3</item>
+        <item>@string/game_monitor_size4</item>
+        <item>@string/game_monitor_size5</item>
+    </string-array>
+
+
+
+    <string-array name="game_ownership">
+        <item>@string/select_game_ownership</item>
+        <item>@string/game_ownership1</item>
+        <item>@string/game_ownership2</item>
+        <item>@string/game_ownership3</item>
+    </string-array>
+
 </resources>

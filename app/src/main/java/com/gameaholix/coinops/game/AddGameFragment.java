@@ -2,14 +2,21 @@ package com.gameaholix.coinops.game;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gameaholix.coinops.R;
@@ -27,6 +34,8 @@ public class AddGameFragment extends Fragment {
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
+    private Game mNewGame;
+
     public AddGameFragment() {
         // Required empty public constructor
     }
@@ -34,6 +43,8 @@ public class AddGameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mNewGame = new Game();
 
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -50,7 +61,7 @@ public class AddGameFragment extends Fragment {
 
         final Spinner gameType = binding.spinnerGameType;
         final HintSpinnerAdapter typeAdapter = new HintSpinnerAdapter(
-                getContext(), getResources().getStringArray(R.array.game_type_array));
+                getContext(), getResources().getStringArray(R.array.game_type));
         gameType.setAdapter(typeAdapter);
         gameType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -59,10 +70,7 @@ public class AddGameFragment extends Fragment {
                 // If user change the default selection
                 // First item is disable and it is used for hint
                 if(position > 0){
-                    // Notify the selected item text
-                    Toast.makeText
-                            (getContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT)
-                            .show();
+                    mNewGame.setType(selectedItemText);
                 }
             }
 
@@ -72,7 +80,7 @@ public class AddGameFragment extends Fragment {
 
         final Spinner gameCabinet = binding.spinnerGameCabinet;
         final HintSpinnerAdapter cabinetAdapter = new HintSpinnerAdapter(
-                getContext(), getResources().getStringArray(R.array.game_cabinet_array));
+                getContext(), getResources().getStringArray(R.array.game_cabinet));
         gameCabinet.setAdapter(cabinetAdapter);
         gameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -81,10 +89,7 @@ public class AddGameFragment extends Fragment {
                 // If user change the default selection
                 // First item is disable and it is used for hint
                 if(position > 0){
-                    // Notify the selected item text
-                    Toast.makeText
-                            (getContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT)
-                            .show();
+                    mNewGame.setCabinet(selectedItemText);
                 }
             }
 
@@ -92,9 +97,144 @@ public class AddGameFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
+        final TextView gameConditionOff = binding.gameCondition.tvGameConditionOff;
+        final TextView gameCondition1 = binding.gameCondition.tvGameCondition1;
+        final TextView gameCondition2 = binding.gameCondition.tvGameCondition2;
+        final TextView gameCondition3 = binding.gameCondition.tvGameCondition3;
+        final TextView gameCondition4 = binding.gameCondition.tvGameCondition4;
+        final TextView gameCondition5 = binding.gameCondition.tvGameCondition5;
+        final TextView gameCondition6 = binding.gameCondition.tvGameCondition6;
+        final TextView gameCondition7 = binding.gameCondition.tvGameCondition7;
+        final TextView gameCondition8 = binding.gameCondition.tvGameCondition8;
+        final TextView gameCondition9 = binding.gameCondition.tvGameCondition9;
+        final TextView gameCondition10 = binding.gameCondition.tvGameCondition10;
+        final TextView gameCondition11 = binding.gameCondition.tvGameCondition11;
+
+        final TextView[] gameConditionLabels = { gameConditionOff, gameCondition1, gameCondition2,
+                gameCondition3, gameCondition4, gameCondition5, gameCondition6, gameCondition7,
+                gameCondition8, gameCondition9, gameCondition10, gameCondition11 };
+
+        final SeekBar gameCondition = binding.sbGameCondition;
+        gameCondition.setMax(11);
+
+        gameCondition.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    if (progress >= 0 && progress <= seekBar.getMax()) {
+
+                        for (TextView textView : gameConditionLabels) {
+                            textView.setTextColor(Color.GRAY);
+                        }
+
+                        TextView textViewAtPosition = gameConditionLabels[progress];
+                        textViewAtPosition.setTextColor(Color.BLACK);
+
+                        mNewGame.setCondition(textViewAtPosition.getText().toString());
+
+                        seekBar.setSecondaryProgress(progress);
+                    }
+                }
+
+            }
+        });
+
+        final Spinner gameWorking = binding.spinnerGameWorking;
+        final HintSpinnerAdapter workingAdapter = new HintSpinnerAdapter(
+                getContext(), getResources().getStringArray(R.array.game_working));
+        gameWorking.setAdapter(workingAdapter);
+        gameWorking.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                String selectedItemText = (String) adapterView.getItemAtPosition(position);
+                // If user change the default selection
+                // First item is disable and it is used for hint
+                if(position > 0){
+                    mNewGame.setWorking(selectedItemText);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
+        final Spinner gameOwnership = binding.spinnerGameOwnership;
+        final HintSpinnerAdapter ownershipAdapter = new HintSpinnerAdapter(
+                getContext(), getResources().getStringArray(R.array.game_ownership));
+        gameOwnership.setAdapter(ownershipAdapter);
+        gameOwnership.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                String selectedItemText = (String) adapterView.getItemAtPosition(position);
+                // If user change the default selection
+                // First item is disable and it is used for hint
+                if(position > 0){
+                    mNewGame.setStatus(selectedItemText);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
+        final NumberPicker gameMonitorPhospher = binding.npGameMonitorPhospher;
+        gameMonitorPhospher.setMinValue(0);
+        gameMonitorPhospher.setMaxValue(2);
+        gameMonitorPhospher.setDisplayedValues(getResources().getStringArray(R.array.game_monitor_phospher));
+        gameMonitorPhospher.setValue(1);
+        gameMonitorPhospher.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+//                mNewGame.setMonitorPhospher(gameMonitorPhospher.getDisplayedValues()[i];
+            }
+        });
+
+        final NumberPicker gameMonitorTech = binding.npGameMonitorTech;
+        gameMonitorTech.setMinValue(0);
+        gameMonitorTech.setMaxValue(2);
+        gameMonitorTech.setDisplayedValues(getResources().getStringArray(R.array.game_monitor_tech));
+        gameMonitorTech.setValue(1);
+        gameMonitorTech.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+//                mNewGanme.setMonitorTech(gameMonitorTech.getDisplayedValues()[i];
+            }
+        });
+
+        final NumberPicker gameMonitorType = binding.npGameMonitorType;
+        gameMonitorType.setMinValue(0);
+        gameMonitorType.setMaxValue(2);
+        gameMonitorType.setDisplayedValues(getResources().getStringArray(R.array.game_monitor_type));
+        gameMonitorType.setValue(1);
+        gameMonitorType.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                mNewGame.setMonitorType(gameMonitorType.getDisplayedValues()[i]);
+            }
+        });
+
+        final RadioGroup gameMonitorSize = binding.rgGameMonitorSize;
+        gameMonitorSize.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                RadioButton radioButton = rootView.findViewById(i);
+                mNewGame.setMonitorSize(radioButton.getText().toString());
+            }
+        });
+
+
         return rootView;
     }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

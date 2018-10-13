@@ -5,33 +5,6 @@ import android.os.Parcelable;
 
 public class Game implements Parcelable {
 
-//    public enum Type {
-//        PINBALL("Pinball", 0),
-//        VIDEOGAME("Videogame", 1);
-//
-//        private String stringValue;
-//        private int intValue;
-//
-//        Type(String toString, int value) {
-//            stringValue = toString;
-//            intValue = value;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return stringValue;
-//        }
-//    }
-
-
-//    public enum Type { pinball, videogame }
-//    public enum Cabinet { original, conversion, board_only }
-//    public enum Condition { AP, A, AM, BP, B, BM, CP, C, CM, D, F, Unknown }
-//    public enum Working { yes, no, partial, unknown }
-//    public enum MonitorSize { s13in, s19in, s23in, s25in, s27in }
-//    public enum MonitorType { bw_raster, color_raster, bw_vector, color_vector }
-//    public enum Status { own, sold, want }
-
     private String gameId;
     private String name;
     private String manufacturer;
@@ -55,6 +28,7 @@ public class Game implements Parcelable {
     private Boolean forSale;
     private Double boughtPrice;
     private Double forSalePrice;
+    private Double soldPrice;
 
     public Game() {
         // Default constructor required for calls to DataSnapshot.getValue()
@@ -69,6 +43,22 @@ public class Game implements Parcelable {
         this.name = in.readString();
         this.manufacturer = in.readString();
         this.year = in.readInt();
+        this.type = in.readString();
+        this.cabinet = in.readString();
+        this.condition = in.readString();
+        this.working = in.readString();
+        this.monitorSize = in.readString();
+        this.monitorType = in.readString();
+        this.monitorChassis = in.readString();
+        this.tubeModel = in.readString();
+        this.serialNumber = in.readString();
+        this.highScore = in.readString();
+        this.comment = in.readString();
+        this.status = in.readString();
+//        this.forSale = (Boolean) in.readValue(null);
+//        this.boughtPrice = in.readDouble();
+//        this.forSalePrice = in.readDouble();
+//        this.soldPrice = in.readDouble();
     }
 
     @Override
@@ -82,6 +72,22 @@ public class Game implements Parcelable {
         dest.writeString(name);
         dest.writeString(manufacturer);
         dest.writeInt(year);
+        dest.writeString(type);
+        dest.writeString(cabinet);
+        dest.writeString(condition);
+        dest.writeString(working);
+        dest.writeString(monitorSize);
+        dest.writeString(monitorType);
+        dest.writeString(monitorChassis);
+        dest.writeString(tubeModel);
+        dest.writeString(serialNumber);
+        dest.writeString(highScore);
+        dest.writeString(comment);
+        dest.writeString(status);
+//        dest.writeValue(forSale);
+//        dest.writeDouble(boughtPrice);
+//        dest.writeDouble(forSalePrice);
+//        dest.writeDouble(soldPrice);
     }
 
     public final static Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {
@@ -130,5 +136,133 @@ public class Game implements Parcelable {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCabinet() {
+        return cabinet;
+    }
+
+    public void setCabinet(String cabinet) {
+        this.cabinet = cabinet;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    public String getWorking() {
+        return working;
+    }
+
+    public void setWorking(String working) {
+        this.working = working;
+    }
+
+    public String getMonitorSize() {
+        return monitorSize;
+    }
+
+    public void setMonitorSize(String monitorSize) {
+        this.monitorSize = monitorSize;
+    }
+
+    public String getMonitorType() {
+        return monitorType;
+    }
+
+    public void setMonitorType(String monitorType) {
+        this.monitorType = monitorType;
+    }
+
+    public String getMonitorChassis() {
+        return monitorChassis;
+    }
+
+    public void setMonitorChassis(String monitorChassis) {
+        this.monitorChassis = monitorChassis;
+    }
+
+    public String getTubeModel() {
+        return tubeModel;
+    }
+
+    public void setTubeModel(String tubeModel) {
+        this.tubeModel = tubeModel;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public String getHighScore() {
+        return highScore;
+    }
+
+    public void setHighScore(String highScore) {
+        this.highScore = highScore;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Boolean getForSale() {
+        return forSale;
+    }
+
+    public void setForSale(Boolean forSale) {
+        this.forSale = forSale;
+    }
+
+    public Double getBoughtPrice() {
+        return boughtPrice;
+    }
+
+    public void setBoughtPrice(Double boughtPrice) {
+        this.boughtPrice = boughtPrice;
+    }
+
+    public Double getForSalePrice() {
+        return forSalePrice;
+    }
+
+    public void setForSalePrice(Double forSalePrice) {
+        this.forSalePrice = forSalePrice;
+    }
+
+    public Double getSoldPrice() {
+        return soldPrice;
+    }
+
+    public void setSoldPrice(Double soldPrice) {
+        this.soldPrice = soldPrice;
     }
 }
