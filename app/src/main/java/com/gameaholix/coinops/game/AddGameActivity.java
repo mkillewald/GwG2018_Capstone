@@ -39,6 +39,7 @@ public class AddGameActivity extends AppCompatActivity implements
 
     @Override
     public void onAddGameButtonPressed(final Game game) {
+        // Add Game objext to firebase
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         final String uid = user.getUid();
 

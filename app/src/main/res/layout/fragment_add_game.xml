@@ -52,7 +52,7 @@
                 android:spinnerMode="dropdown" />
 
             <include
-                android:id="@+id/game_condition"
+                android:id="@+id/game_condition_labels"
                 layout="@layout/game_condition_labels" />
 
             <SeekBar
