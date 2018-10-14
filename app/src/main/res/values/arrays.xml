@@ -57,14 +57,13 @@
     </string-array>
 
     <string-array name="game_monitor_size">
+        <item>@string/not_available</item>
         <item>@string/game_monitor_size1</item>
         <item>@string/game_monitor_size2</item>
         <item>@string/game_monitor_size3</item>
         <item>@string/game_monitor_size4</item>
         <item>@string/game_monitor_size5</item>
     </string-array>
-
-
 
     <string-array name="game_ownership">
         <item>@string/select_game_ownership</item>

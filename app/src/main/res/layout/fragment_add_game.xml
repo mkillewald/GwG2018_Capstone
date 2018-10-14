@@ -12,12 +12,14 @@
             android:orientation="vertical"
             tools:context=".game.AddGameFragment">
 
-             <EditText
+            <EditText
                 android:id="@+id/et_add_game_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/game_name"
-                android:inputType="text" />
+                android:inputType="textAutoComplete"
+                android:maxLines="1"
+                android:imeOptions="actionDone"/>
 
             <Spinner
                 android:id="@+id/spinner_game_type"
@@ -66,6 +68,12 @@
                 android:orientation="horizontal">
 
                 <NumberPicker
+                    android:id="@+id/np_game_monitor_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants"/>
+
+                <NumberPicker
                     android:id="@+id/np_game_monitor_phospher"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -84,38 +92,6 @@
                     android:descendantFocusability="blocksDescendants"/>
 
             </LinearLayout>
-
-            <RadioGroup
-                android:id="@+id/rg_game_monitor_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/rb_game_monitor_size1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/game_monitor_size1"/>
-                <RadioButton
-                    android:id="@+id/rb_game_monitor_size2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/game_monitor_size2"/>
-                <RadioButton
-                    android:id="@+id/rb_game_monitor_size3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/game_monitor_size3"/>
-                <RadioButton
-                    android:id="@+id/rb_game_monitor_size4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/game_monitor_size4"/>
-                <RadioButton
-                    android:id="@+id/rb_game_monitor_size5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/game_monitor_size5"/>
-            </RadioGroup>
 
             <Button
                 android:id="@+id/btn_add_game"

@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.utility;
+package com.gameaholix.coinops.adapter;
 
 import android.content.Context;
 import android.graphics.Color;

@@ -1,12 +1,19 @@
 package com.gameaholix.coinops.game;
 
-import android.net.Uri;
+import android.content.Context;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.utility.WarnUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -39,7 +46,14 @@ public class AddGameActivity extends AppCompatActivity implements
 
     @Override
     public void onAddGameButtonPressed(final Game game) {
-        // Add Game objext to firebase
+        if (game.getName() == null || TextUtils.isEmpty(game.getName())) {
+            WarnUser.displayAlert(this, R.string.error_add_game_failed, R.string.error_game_name_empty);
+            return;
+        }
+
+        // TODO: add checks for if game name already exists.
+
+        // Add Game object to Firebase
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         final String uid = user.getUid();
 
@@ -70,4 +84,24 @@ public class AddGameActivity extends AppCompatActivity implements
 
         finish();
     }
+
+    // Hide keyboard after touch event occurs outside of EditText
+    // Solution used from https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if ( view instanceof EditText) {
+                Rect outRect = new Rect();
+                view.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    view.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
 }

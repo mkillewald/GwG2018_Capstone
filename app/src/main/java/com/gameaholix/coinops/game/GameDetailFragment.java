@@ -50,10 +50,10 @@ public class GameDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentGameDetailBinding binding = DataBindingUtil.inflate(
+        final FragmentGameDetailBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_game_detail, container, false);
 
-        final View rootView = binding.getRoot();
+        final View rootView = bind.getRoot();
 
         if (savedInstanceState == null) {
             Intent intent = getActivity().getIntent();
@@ -89,10 +89,19 @@ public class GameDetailFragment extends Fragment {
                         Log.d(TAG, "Error: Game details not found in database");
                     } else {
                         mGame.setGameId(gameId);
-                        binding.tvGameManufacturer.setText(mGame.getManufacturer());
-                        if (mGame.getYear() > 0) {
-                            binding.tvGameYear.setText(String.valueOf(mGame.getYear()));
-                        }
+                        bind.tvGameType.setText(mGame.getType());
+                        bind.tvGameCabinet.setText(mGame.getCabinet());
+                        bind.tvGameWorking.setText(mGame.getWorking());
+                        bind.tvGameOwnership.setText(mGame.getOwnership());
+                        bind.tvGameCondition.setText(mGame.getCondition());
+                        bind.tvGameMonitorPhospher.setText(mGame.getMonitorPhospher());
+                        bind.tvGameMonitorType.setText(mGame.getMonitorType());
+                        bind.tvGameMonitorTech.setText(mGame.getMonitorTech());
+                        bind.tvGameMonitorSize.setText(mGame.getMonitorSize());
+//                        bind.tvGameManufacturer.setText(mGame.getManufacturer());
+//                        if (mGame.getYear() > 0) {
+//                            bind.tvGameYear.setText(String.valueOf(mGame.getYear()));
+//                        }
                     }
                 }
 

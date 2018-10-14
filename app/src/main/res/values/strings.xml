@@ -77,10 +77,11 @@
     <string name="game_monitor_raster">Raster</string>
 
     <string name="select_game_ownership">Ownership Status</string>
-    <string name="game_ownership1">Have</string>
+    <string name="game_ownership1">Own</string>
     <string name="game_ownership2">Sold</string>
     <string name="game_ownership3">Want</string>
 
-
+    <string name="error_add_game_failed">Error: Add Game Failed!</string>
+    <string name="error_game_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
 
 </resources>

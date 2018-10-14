@@ -8,7 +8,7 @@ public class Game implements Parcelable {
     private String gameId;
     private String name;
     private String manufacturer;
-    private int year;
+//    private int year;
 
     private String type;
     private String cabinet;
@@ -16,6 +16,8 @@ public class Game implements Parcelable {
     private String working;
 
     private String monitorSize;
+    private String monitorPhospher;
+    private String monitorTech;
     private String monitorType;
     private String monitorChassis;
     private String tubeModel;
@@ -23,7 +25,7 @@ public class Game implements Parcelable {
     private String serialNumber;
     private String highScore;
     private String comment;
-    private String status;
+    private String ownership;
 
     private Boolean forSale;
     private Double boughtPrice;
@@ -42,19 +44,21 @@ public class Game implements Parcelable {
         this.gameId = in.readString();
         this.name = in.readString();
         this.manufacturer = in.readString();
-        this.year = in.readInt();
+//        this.year = in.readInt();
         this.type = in.readString();
         this.cabinet = in.readString();
         this.condition = in.readString();
         this.working = in.readString();
         this.monitorSize = in.readString();
+        this.monitorPhospher = in.readString();
+        this.monitorTech = in.readString();
         this.monitorType = in.readString();
         this.monitorChassis = in.readString();
         this.tubeModel = in.readString();
         this.serialNumber = in.readString();
         this.highScore = in.readString();
         this.comment = in.readString();
-        this.status = in.readString();
+        this.ownership = in.readString();
 //        this.forSale = (Boolean) in.readValue(null);
 //        this.boughtPrice = in.readDouble();
 //        this.forSalePrice = in.readDouble();
@@ -71,19 +75,21 @@ public class Game implements Parcelable {
         dest.writeString(gameId);
         dest.writeString(name);
         dest.writeString(manufacturer);
-        dest.writeInt(year);
+//        dest.writeInt(year);
         dest.writeString(type);
         dest.writeString(cabinet);
         dest.writeString(condition);
         dest.writeString(working);
         dest.writeString(monitorSize);
+        dest.writeString(monitorPhospher);
+        dest.writeString(monitorTech);
         dest.writeString(monitorType);
         dest.writeString(monitorChassis);
         dest.writeString(tubeModel);
         dest.writeString(serialNumber);
         dest.writeString(highScore);
         dest.writeString(comment);
-        dest.writeString(status);
+        dest.writeString(ownership);
 //        dest.writeValue(forSale);
 //        dest.writeDouble(boughtPrice);
 //        dest.writeDouble(forSalePrice);
@@ -129,14 +135,14 @@ public class Game implements Parcelable {
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
     }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
+//
+//    public int getYear() {
+//        return year;
+//    }
+//
+//    public void setYear(int year) {
+//        this.year = year;
+//    }
 
     public String getType() {
         return type;
@@ -176,6 +182,22 @@ public class Game implements Parcelable {
 
     public void setMonitorSize(String monitorSize) {
         this.monitorSize = monitorSize;
+    }
+
+    public String getMonitorPhospher() {
+        return monitorPhospher;
+    }
+
+    public void setMonitorPhospher(String monitorPhospher) {
+        this.monitorPhospher = monitorPhospher;
+    }
+
+    public String getMonitorTech() {
+        return monitorTech;
+    }
+
+    public void setMonitorTech(String monitorTech) {
+        this.monitorTech = monitorTech;
     }
 
     public String getMonitorType() {
@@ -226,12 +248,12 @@ public class Game implements Parcelable {
         this.comment = comment;
     }
 
-    public String getStatus() {
-        return status;
+    public String getOwnership() {
+        return ownership;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOwnership(String ownership) {
+        this.ownership = ownership;
     }
 
     public Boolean getForSale() {
