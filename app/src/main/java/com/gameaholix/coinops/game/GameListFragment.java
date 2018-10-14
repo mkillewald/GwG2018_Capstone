@@ -83,22 +83,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             final DatabaseReference userGameListRef =
                     userRef.child(getString(R.string.db_game_list));
 
-            // add a game
-//                DatabaseReference gameIdRef = gameRef.push();
-//                final String gameId = gameIdRef.getKey();
-//                final DatabaseReference gameTodoListRef = gameIdRef.child("todo_list");
-//                final DatabaseReference gameShopListRef = gameIdRef.child("shop_list");
-//                final DatabaseReference gameRepairListRef = gameIdRef.child("repair_list");
-//
-//                    final Game newGame = new Game("Pole Position");
-//                    gameIdRef.setValue(newGame, new DatabaseReference.CompletionListener() {
-//                        @Override
-//                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-//                            String gameId = databaseReference.getKey();
-//                            userGameListRef.child(gameId).child("name").setValue(newGame.getName());
-//                       }
-//                    });
-
             // read list of games
             ValueEventListener gameListener = new ValueEventListener() {
                 @Override

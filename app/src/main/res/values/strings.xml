@@ -20,6 +20,7 @@
     <string name="db_inventory_list">inventory_list</string>
     <string name="db_repair">repair</string>
     <string name="db_repair_list">repair_list</string>
+    <string name="db_name_key">name</string>
 
     <!-- Menu Items -->
     <string name="sign_out">Sign Out</string>

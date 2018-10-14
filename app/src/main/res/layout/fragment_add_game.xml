@@ -117,6 +117,11 @@
                     android:text="@string/game_monitor_size5"/>
             </RadioGroup>
 
+            <Button
+                android:id="@+id/btn_add_game"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_game"/>
 
         </LinearLayout>
 

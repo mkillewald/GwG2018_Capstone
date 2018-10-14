@@ -3,21 +3,20 @@ package com.gameaholix.coinops.game;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
@@ -35,7 +34,7 @@ public class AddGameFragment extends Fragment {
     private DatabaseReference mDatabaseReference;
 
     private Game mNewGame;
-
+    private FragmentAddGameBinding mBinding;
     public AddGameFragment() {
         // Required empty public constructor
     }
@@ -55,11 +54,11 @@ public class AddGameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this
-        final FragmentAddGameBinding binding = DataBindingUtil.inflate(
+        mBinding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_add_game, container, false);
-        final View rootView = binding.getRoot();
+        final View rootView = mBinding.getRoot();
 
-        final Spinner gameType = binding.spinnerGameType;
+        final Spinner gameType = mBinding.spinnerGameType;
         final HintSpinnerAdapter typeAdapter = new HintSpinnerAdapter(
                 getContext(), getResources().getStringArray(R.array.game_type));
         gameType.setAdapter(typeAdapter);
@@ -78,7 +77,7 @@ public class AddGameFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-        final Spinner gameCabinet = binding.spinnerGameCabinet;
+        final Spinner gameCabinet = mBinding.spinnerGameCabinet;
         final HintSpinnerAdapter cabinetAdapter = new HintSpinnerAdapter(
                 getContext(), getResources().getStringArray(R.array.game_cabinet));
         gameCabinet.setAdapter(cabinetAdapter);
@@ -97,24 +96,24 @@ public class AddGameFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-        final TextView gameConditionOff = binding.gameCondition.tvGameConditionOff;
-        final TextView gameCondition1 = binding.gameCondition.tvGameCondition1;
-        final TextView gameCondition2 = binding.gameCondition.tvGameCondition2;
-        final TextView gameCondition3 = binding.gameCondition.tvGameCondition3;
-        final TextView gameCondition4 = binding.gameCondition.tvGameCondition4;
-        final TextView gameCondition5 = binding.gameCondition.tvGameCondition5;
-        final TextView gameCondition6 = binding.gameCondition.tvGameCondition6;
-        final TextView gameCondition7 = binding.gameCondition.tvGameCondition7;
-        final TextView gameCondition8 = binding.gameCondition.tvGameCondition8;
-        final TextView gameCondition9 = binding.gameCondition.tvGameCondition9;
-        final TextView gameCondition10 = binding.gameCondition.tvGameCondition10;
-        final TextView gameCondition11 = binding.gameCondition.tvGameCondition11;
+        final TextView gameConditionOff = mBinding.gameCondition.tvGameConditionOff;
+        final TextView gameCondition1 = mBinding.gameCondition.tvGameCondition1;
+        final TextView gameCondition2 = mBinding.gameCondition.tvGameCondition2;
+        final TextView gameCondition3 = mBinding.gameCondition.tvGameCondition3;
+        final TextView gameCondition4 = mBinding.gameCondition.tvGameCondition4;
+        final TextView gameCondition5 = mBinding.gameCondition.tvGameCondition5;
+        final TextView gameCondition6 = mBinding.gameCondition.tvGameCondition6;
+        final TextView gameCondition7 = mBinding.gameCondition.tvGameCondition7;
+        final TextView gameCondition8 = mBinding.gameCondition.tvGameCondition8;
+        final TextView gameCondition9 = mBinding.gameCondition.tvGameCondition9;
+        final TextView gameCondition10 = mBinding.gameCondition.tvGameCondition10;
+        final TextView gameCondition11 = mBinding.gameCondition.tvGameCondition11;
 
         final TextView[] gameConditionLabels = { gameConditionOff, gameCondition1, gameCondition2,
                 gameCondition3, gameCondition4, gameCondition5, gameCondition6, gameCondition7,
                 gameCondition8, gameCondition9, gameCondition10, gameCondition11 };
 
-        final SeekBar gameCondition = binding.sbGameCondition;
+        final SeekBar gameCondition = mBinding.sbGameCondition;
         gameCondition.setMax(11);
 
         gameCondition.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -149,7 +148,7 @@ public class AddGameFragment extends Fragment {
             }
         });
 
-        final Spinner gameWorking = binding.spinnerGameWorking;
+        final Spinner gameWorking = mBinding.spinnerGameWorking;
         final HintSpinnerAdapter workingAdapter = new HintSpinnerAdapter(
                 getContext(), getResources().getStringArray(R.array.game_working));
         gameWorking.setAdapter(workingAdapter);
@@ -168,7 +167,7 @@ public class AddGameFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-        final Spinner gameOwnership = binding.spinnerGameOwnership;
+        final Spinner gameOwnership = mBinding.spinnerGameOwnership;
         final HintSpinnerAdapter ownershipAdapter = new HintSpinnerAdapter(
                 getContext(), getResources().getStringArray(R.array.game_ownership));
         gameOwnership.setAdapter(ownershipAdapter);
@@ -187,7 +186,7 @@ public class AddGameFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-        final NumberPicker gameMonitorPhospher = binding.npGameMonitorPhospher;
+        final NumberPicker gameMonitorPhospher = mBinding.npGameMonitorPhospher;
         gameMonitorPhospher.setMinValue(0);
         gameMonitorPhospher.setMaxValue(2);
         gameMonitorPhospher.setDisplayedValues(getResources().getStringArray(R.array.game_monitor_phospher));
@@ -199,7 +198,7 @@ public class AddGameFragment extends Fragment {
             }
         });
 
-        final NumberPicker gameMonitorTech = binding.npGameMonitorTech;
+        final NumberPicker gameMonitorTech = mBinding.npGameMonitorTech;
         gameMonitorTech.setMinValue(0);
         gameMonitorTech.setMaxValue(2);
         gameMonitorTech.setDisplayedValues(getResources().getStringArray(R.array.game_monitor_tech));
@@ -211,7 +210,7 @@ public class AddGameFragment extends Fragment {
             }
         });
 
-        final NumberPicker gameMonitorType = binding.npGameMonitorType;
+        final NumberPicker gameMonitorType = mBinding.npGameMonitorType;
         gameMonitorType.setMinValue(0);
         gameMonitorType.setMaxValue(2);
         gameMonitorType.setDisplayedValues(getResources().getStringArray(R.array.game_monitor_type));
@@ -223,7 +222,7 @@ public class AddGameFragment extends Fragment {
             }
         });
 
-        final RadioGroup gameMonitorSize = binding.rgGameMonitorSize;
+        final RadioGroup gameMonitorSize = mBinding.rgGameMonitorSize;
         gameMonitorSize.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -232,15 +231,21 @@ public class AddGameFragment extends Fragment {
             }
         });
 
+        Button addGame = mBinding.btnAddGame;
+        addGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    final EditText gameName = mBinding.etAddGameName;
+                    mNewGame.setName(gameName.getText().toString());
+                    mListener.onAddGameButtonPressed(mNewGame);
+                }
+            }
+        });
 
         return rootView;
     }
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -270,7 +275,6 @@ public class AddGameFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onAddGameButtonPressed(Game game);
     }
 }
