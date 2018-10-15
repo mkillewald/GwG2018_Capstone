@@ -270,7 +270,8 @@ public class AddGameFragment extends Fragment {
         });
 
         // Setup Buttons
-        Button addGameButton = bind.btnAddGame;
+        Button addGameButton = bind.btnSave;
+        addGameButton.setText(R.string.add_game);
         addGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

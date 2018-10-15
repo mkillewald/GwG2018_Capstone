@@ -3,6 +3,8 @@ package com.gameaholix.coinops.game;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
+
 public class Game implements Parcelable {
 
     private String gameId;
@@ -113,6 +115,7 @@ public class Game implements Parcelable {
         }
     }
 
+    @Exclude
     public String getGameId() {
         return gameId;
     }

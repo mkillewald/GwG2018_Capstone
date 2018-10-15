@@ -77,7 +77,6 @@ public class AddGameActivity extends AppCompatActivity implements
         gameIdRef.setValue(game, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                String gameId = databaseReference.getKey();
                 userGameListRef.child(gameId).child(getString(R.string.db_name_key)).setValue(game.getName());
             }
         });

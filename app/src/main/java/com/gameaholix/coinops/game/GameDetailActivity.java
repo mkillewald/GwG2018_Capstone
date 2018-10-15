@@ -1,7 +1,10 @@
 package com.gameaholix.coinops.game;
 
-import android.content.Intent;
-import android.net.Uri;
+import android.content.DialogInterface;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +13,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener {
@@ -18,6 +26,9 @@ public class GameDetailActivity extends AppCompatActivity implements
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
 
     private Game mGame;
+
+    private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference mDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +44,9 @@ public class GameDetailActivity extends AppCompatActivity implements
         } else {
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
         }
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         setTitle(mGame.getName());
     }
@@ -61,7 +75,66 @@ public class GameDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onGameUpdated(Game game) {
+        mGame = game;
+        setTitle(mGame.getName());
+    }
 
+    @Override
+    public void onDeleteButtonPressed(String gameId) {
+        deleteGameAlert(gameId);
+    }
+
+    private void deleteGameAlert(final String gameId) {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle(getString(R.string.really_delete_game))
+                .setMessage(getString(R.string.game_will_be_deleted))
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteGame(gameId);
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void deleteGame(final String gameId) {
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (user != null) {
+            // user is signed in
+//            mUsername = user.getDisplayName();
+            final String uid = user.getUid();
+
+            // Setup database references
+            final DatabaseReference gameRef = mDatabaseReference
+                    .child(getString(R.string.db_game))
+                    .child(uid)
+                    .child(gameId);
+            final DatabaseReference userRef = mDatabaseReference.child("user").child(uid);
+            final DatabaseReference userGameListRef = userRef.child("game_list");
+
+            // delete records with gameId from database
+            gameRef.removeValue(new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    userGameListRef.child(gameId).removeValue();
+                }
+            });
+
+            finish();
+        } else {
+            // user is not signed in
+        }
     }
 }

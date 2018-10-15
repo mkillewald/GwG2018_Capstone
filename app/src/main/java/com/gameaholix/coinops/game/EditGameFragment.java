@@ -308,9 +308,8 @@ public class EditGameFragment extends Fragment {
         });
 
         // Setup Buttons
-        Button editGameButton = bind.btnAddGame;
-        editGameButton.setText(R.string.edit);
-        editGameButton.setOnClickListener(new View.OnClickListener() {
+        bind.btnSave.setText(R.string.save_changes);
+        bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {

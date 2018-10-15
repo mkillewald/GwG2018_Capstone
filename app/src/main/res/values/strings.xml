@@ -4,6 +4,7 @@
 
     <string name="game_list_title">Game Collection</string>
     <string name="add_game_title">Add New Game</string>
+    <string name="edit_game_title">Edit Game</string>
     <string name="inventory_list_title">Parts Inventory</string>
     <string name="to_do_list_title">To Do List</string>
     <string name="shopping_list_title">Shopping List</string>
@@ -22,14 +23,16 @@
     <string name="db_repair_list">repair_list</string>
     <string name="db_name_key">name</string>
 
-    <!-- Menu Items -->
+    <!-- Actions -->
     <string name="sign_out">Sign Out</string>
     <string name="add">Add</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="add_game">Add Game</string>
+    <string name="delete_game">Delete Game</string>
 
     <!-- Form Input -->
+    <string name="save_changes">Save Changes</string>
     <string name="game_name">Game Name</string>
     <string name="not_available">N/A</string>
     <string name="off">Off</string>
@@ -84,7 +87,13 @@
     <string name="game_ownership2">Sold</string>
     <string name="game_ownership3">Want</string>
 
+    <!-- User Prompts -->
+    <string name="really_delete_game">Warning: Deleting Game!</string>
+    <string name="game_will_be_deleted">Are you sure you want to delete this game and all of its related data?\n\nThis is a permanent action and cannot be undone.</string>
+
+    <!-- Error Messages -->
     <string name="error_add_game_failed">Error: Add Game Failed!</string>
+    <string name="error_edit_game_failed">Error: Failed to save changes!</string>
     <string name="error_game_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
 
     <!-- TODO: Remove or change this placeholder text -->

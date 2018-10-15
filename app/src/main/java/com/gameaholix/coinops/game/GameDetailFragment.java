@@ -3,7 +3,6 @@ package com.gameaholix.coinops.game;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -129,12 +128,32 @@ public class GameDetailFragment extends Fragment {
 
             gameRef.addValueEventListener(gameListener);
 
+            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onDeleteButtonPressed(mGame.getGameId());
+                    }
+                }
+            });
+
         } else {
             // user is not signed in
 //            mUsername = getString(R.string.anonymous_username);
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Needed so that we can update ActionBar title of GameDetailActivity after
+        // coming back from EditGameActivity (in the event that the game name was changed.)
+        if (mListener != null) {
+            mListener.onGameUpdated(mGame);
+        }
     }
 
     @Override
@@ -185,7 +204,9 @@ public class GameDetailFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onGameUpdated(Game game);
+        void onDeleteButtonPressed(String gameId);
     }
+
+
 }
