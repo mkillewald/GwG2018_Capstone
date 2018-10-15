@@ -38,7 +38,7 @@ public class GameListActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.add_game_menu:
+            case R.id.menu_add_game:
                 Intent intent = new Intent(this, AddGameActivity.class);
                 startActivity(intent);
                 return true;

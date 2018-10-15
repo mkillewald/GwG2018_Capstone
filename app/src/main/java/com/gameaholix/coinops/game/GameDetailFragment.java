@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -40,6 +41,7 @@ public class GameDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -89,19 +91,32 @@ public class GameDetailFragment extends Fragment {
                         Log.d(TAG, "Error: Game details not found in database");
                     } else {
                         mGame.setGameId(gameId);
-                        bind.tvGameType.setText(mGame.getType());
-                        bind.tvGameCabinet.setText(mGame.getCabinet());
-                        bind.tvGameWorking.setText(mGame.getWorking());
-                        bind.tvGameOwnership.setText(mGame.getOwnership());
-                        bind.tvGameCondition.setText(mGame.getCondition());
-                        bind.tvGameMonitorPhospher.setText(mGame.getMonitorPhospher());
-                        bind.tvGameMonitorType.setText(mGame.getMonitorType());
-                        bind.tvGameMonitorTech.setText(mGame.getMonitorTech());
-                        bind.tvGameMonitorSize.setText(mGame.getMonitorSize());
-//                        bind.tvGameManufacturer.setText(mGame.getManufacturer());
-//                        if (mGame.getYear() > 0) {
-//                            bind.tvGameYear.setText(String.valueOf(mGame.getYear()));
-//                        }
+                        String[] typeArr = getResources().getStringArray(R.array.game_type);
+                        String[] cabinetArr = getResources().getStringArray(R.array.game_cabinet);
+                        String[] workingArr = getResources().getStringArray(R.array.game_working);
+                        String[] ownershipArr =
+                                getResources().getStringArray(R.array.game_ownership);
+                        String[] conditionArr =
+                                getResources().getStringArray(R.array.game_condition);
+                        String[] monitorPhospherArr =
+                                getResources().getStringArray(R.array.game_monitor_phospher);
+                        String[] monitorTypeArr =
+                                getResources().getStringArray(R.array.game_monitor_type);
+                        String[] monitorTechArr =
+                                getResources().getStringArray(R.array.game_monitor_tech);
+                        String[] monitorSizeArr =
+                                getResources().getStringArray(R.array.game_monitor_size);
+
+                        bind.tvGameType.setText(typeArr[mGame.getType()]);
+                        bind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
+                        bind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
+                        bind.tvGameOwnership.setText(ownershipArr[mGame.getOwnership()]);
+                        bind.tvGameCondition.setText(conditionArr[mGame.getCondition()]);
+                        bind.tvGameMonitorPhospher
+                                .setText(monitorPhospherArr[mGame.getMonitorPhospher()]);
+                        bind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorType()]);
+                        bind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
+                        bind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
                     }
                 }
 
@@ -144,6 +159,19 @@ public class GameDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_edit_game:
+                Intent intent = new Intent(getContext(), EditGameActivity.class);
+                intent.putExtra(EXTRA_GAME, mGame);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**

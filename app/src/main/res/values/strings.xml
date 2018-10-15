@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">CoinOps</string>
-        <string name="anonymous_username">Anonymous Gamer</string>
+    <string name="anonymous_username">Anonymous Gamer</string>
 
     <string name="game_list_title">Game Collection</string>
     <string name="add_game_title">Add New Game</string>
@@ -24,6 +24,9 @@
 
     <!-- Menu Items -->
     <string name="sign_out">Sign Out</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
     <string name="add_game">Add Game</string>
 
     <!-- Form Input -->
@@ -83,5 +86,8 @@
 
     <string name="error_add_game_failed">Error: Add Game Failed!</string>
     <string name="error_game_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

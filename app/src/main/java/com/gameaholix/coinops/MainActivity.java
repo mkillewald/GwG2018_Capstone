@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.sign_out_menu:
+            case R.id.menu_sign_out:
                 // sign out
                 AuthUI.getInstance().signOut(this);
                 return true;

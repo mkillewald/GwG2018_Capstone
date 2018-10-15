@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.repair;
+package com.gameaholix.coinops.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.RepairListItemBinding;
+import com.gameaholix.coinops.repair.RepairLog;
 
 import java.util.List;
 

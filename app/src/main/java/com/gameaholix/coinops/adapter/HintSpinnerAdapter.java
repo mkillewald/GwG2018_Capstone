@@ -12,10 +12,16 @@ import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 
+/**
+ * Custom ArrayAdapter for use with Spinner.
+ *
+ * It takes the first item in a String[] of values to display as a hint to the user.
+ * The hint is greyed out and not selectable.
+ */
 public class HintSpinnerAdapter extends ArrayAdapter<String> {
 
-    public HintSpinnerAdapter(@NonNull Context context, String[] list) {
-        super(context, R.layout.support_simple_spinner_dropdown_item, list);
+    public HintSpinnerAdapter(@NonNull Context context, String[] array) {
+        super(context, R.layout.support_simple_spinner_dropdown_item, array);
     }
 
     @NonNull

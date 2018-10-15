@@ -30,7 +30,11 @@
         <activity
             android:name=".game.AddGameActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".game.GameListActivity"/>
+            android:parentActivityName=".game.GameListActivity" />
+        <activity
+            android:name=".game.EditGameActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".game.GameDetailActivity"/>
         <activity
             android:name=".inventory.InventoryListActivity"
             android:launchMode="singleTop"

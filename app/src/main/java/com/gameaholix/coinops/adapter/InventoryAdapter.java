@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.inventory;
+package com.gameaholix.coinops.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.InventoryListItemBinding;
+import com.gameaholix.coinops.inventory.InventoryItem;
 
 import java.util.List;
 
