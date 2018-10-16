@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.WarnUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -114,9 +115,8 @@ public class GameDetailActivity extends AppCompatActivity implements
 //            mUsername = user.getDisplayName();
             final String uid = user.getUid();
 
-            String gamePath = "/" + Db.GAME + "/" + uid + "/" + gameId;
-            String userGamePath = "/" + Db.USER + "/" + uid + "/" + Db.GAME_LIST + "/" + gameId + "/" +
-                    Db.NAME_KEY;
+            String gamePath = Db.GAME_PATH + uid + "/" + gameId;
+            String userGamePath = Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + Db.NAME_PATH;
 
             Map<String, Object> valuesToDelete= new HashMap<>();
             valuesToDelete.put(gamePath, null);
@@ -128,7 +128,9 @@ public class GameDetailActivity extends AppCompatActivity implements
                     if (databaseError == null) {
                         finish();
                     } else {
-
+                        WarnUser.displayAlert(GameDetailActivity.this,
+                                R.string.error_delete_game_failed, databaseError.getMessage());
+                        Log.e(TAG, "Database Error: " + databaseError.getDetails());
                     }
                 }
             });

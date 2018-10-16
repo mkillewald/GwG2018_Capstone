@@ -115,8 +115,7 @@ public class AddGameFragment extends Fragment {
         bind.spinnerGameType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                // If user change the default selection
-                // First item is disable and it is used for hint
+                // First item is disabled and used for hint
                 if(position > 0){
                     mNewGame.setType(position);
                 }
@@ -132,8 +131,7 @@ public class AddGameFragment extends Fragment {
         bind.spinnerGameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                // If user change the default selection
-                // First item is disable and it is used for hint
+                // First item is disabled and used for hint
                 if(position > 0){
                     mNewGame.setCabinet(position);
                 }
@@ -149,7 +147,6 @@ public class AddGameFragment extends Fragment {
         bind.spinnerGameWorking.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                // If user change the default selection
                 // First item is disable and it is used for hint
                 if(position > 0){
                     mNewGame.setWorking(position);
@@ -166,8 +163,7 @@ public class AddGameFragment extends Fragment {
         bind.spinnerGameOwnership.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                // If user change the default selection
-                // First item is disable and it is used for hint
+                // First item is disabled and used for hint
                 if(position > 0){
                     mNewGame.setOwnership(position);
                 }

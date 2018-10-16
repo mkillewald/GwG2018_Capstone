@@ -69,14 +69,11 @@ public class GameDetailFragment extends Fragment {
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
-//            mUsername = user.getDisplayName();
             final String uid = user.getUid();
 
             // Setup database references
             final DatabaseReference gameRef = mDatabaseReference
                     .child(Db.GAME).child(uid).child(mGame.getGameId());
-//            final DatabaseReference userRef = mDatabaseReference.child("user").child(uid);
-//            final DatabaseReference userGameListRef = userRef.child("game_list");
 
             // read game details
             ValueEventListener gameListener = new ValueEventListener() {
@@ -85,7 +82,7 @@ public class GameDetailFragment extends Fragment {
                     String gameId = dataSnapshot.getKey();
 
                     mGame = dataSnapshot.getValue(Game.class);
-                    if (null == mGame) {
+                    if (mGame == null) {
                         Log.d(TAG, "Error: Game details not found in database");
                     } else {
                         mGame.setGameId(gameId);
@@ -139,7 +136,6 @@ public class GameDetailFragment extends Fragment {
 
         } else {
             // user is not signed in
-//            mUsername = getString(R.string.anonymous_username);
         }
 
         return rootView;

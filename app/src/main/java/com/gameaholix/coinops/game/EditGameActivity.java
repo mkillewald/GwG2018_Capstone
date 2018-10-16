@@ -93,7 +93,7 @@ public class EditGameActivity extends AppCompatActivity implements
         return super.dispatchTouchEvent(event);
     }
 
-    private void updateGame(Game game) {
+    private void updateGame(final Game game) {
         // TODO: add checks for if game name already exists.
 
         // Update Firebase
@@ -101,15 +101,12 @@ public class EditGameActivity extends AppCompatActivity implements
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();
-
             final String gameId = game.getGameId();
-
-            String gamePath = "/" + Db.GAME + "/" + uid + "/" + gameId;
-            String userGamePath = "/" + Db.USER + "/" + uid + "/" + Db.GAME_LIST + "/" + gameId + "/" +
-                    Db.NAME_KEY;
+            final String gamePath = Db.GAME_PATH + uid + "/" + gameId;
+            final String userGamePath = Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + Db.NAME_PATH;
 
             Map<String, Object> valuesToUpdate = new HashMap<>();
-            valuesToUpdate.put(gamePath, game);
+            valuesToUpdate.put(gamePath, game.toMap());
             valuesToUpdate.put(userGamePath, game.getName());
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
@@ -119,10 +116,25 @@ public class EditGameActivity extends AppCompatActivity implements
                         finish();
                     } else {
                         WarnUser.displayAlert(EditGameActivity.this,
-                                R.string.error_edit_game_failed, R.string.error_edit_game_failed);
+                                R.string.error_edit_game_failed, databaseError.getMessage());
+                        Log.e(TAG, "Database Error: " + databaseError.getDetails());
                     }
                 }
             });
+
+//            final DatabaseReference userRef = mDatabaseReference.child(Db.USER).child(uid);
+//            final DatabaseReference userGameListRef = userRef.child(Db.GAME_LIST);
+//            final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
+//            final DatabaseReference gameIdRef = gameRef.child(gameId);
+//
+//            gameIdRef.setValue(game, new DatabaseReference.CompletionListener() {
+//                @Override
+//                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+//                    userGameListRef.child(gameId).child(Db.NAME).setValue(game.getName());
+//                }
+//            });
+
+
         } else {
             // user is not signed in
         }

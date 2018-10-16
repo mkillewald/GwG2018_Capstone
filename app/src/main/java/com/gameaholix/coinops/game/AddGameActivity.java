@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -100,10 +101,8 @@ public class AddGameActivity extends AppCompatActivity implements
 //        final DatabaseReference gameShopListRef = gameIdRef.child("shop_list");
 //        final DatabaseReference gameRepairListRef = gameIdRef.child("repair_list");
 
-
-        String gamePath = "/" + Db.GAME + "/" + uid + "/" + gameId;
-        String userGamePath = "/" + Db.USER + "/" + uid + "/" + Db.GAME_LIST + "/" + gameId + "/" +
-                Db.NAME_KEY;
+        String gamePath = Db.GAME_PATH + uid + "/" + gameId;
+        String userGamePath = Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + Db.NAME_PATH;
 
         Map<String, Object> valuesToAdd = new HashMap<>();
         valuesToAdd.put(gamePath, game);
@@ -116,7 +115,8 @@ public class AddGameActivity extends AppCompatActivity implements
                     finish();
                 } else {
                     WarnUser.displayAlert(AddGameActivity.this,
-                            R.string.error_add_game_failed, R.string.error_please_try_again);
+                            R.string.error_add_game_failed, databaseError.getMessage());
+                    Log.e(TAG, "Database Error: " + databaseError.getDetails());
                 }
             }
         });
