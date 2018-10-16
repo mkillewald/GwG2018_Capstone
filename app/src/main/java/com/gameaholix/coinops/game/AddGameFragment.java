@@ -27,9 +27,9 @@ public class AddGameFragment extends Fragment {
     private static final String TAG = AddGameFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
 
-    private OnFragmentInteractionListener mListener;
-
+    private Context mContext;
     private Game mNewGame;
+    private OnFragmentInteractionListener mListener;
 
     public AddGameFragment() {
         // Required empty public constructor
@@ -41,7 +41,7 @@ public class AddGameFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this
         final FragmentAddGameBinding bind = DataBindingUtil.inflate(
@@ -110,7 +110,7 @@ public class AddGameFragment extends Fragment {
 
         // Setup Spinners
         final HintSpinnerAdapter typeAdapter = new HintSpinnerAdapter(
-                getContext(), getResources().getStringArray(R.array.game_type));
+                mContext, getResources().getStringArray(R.array.game_type));
         bind.spinnerGameType.setAdapter(typeAdapter);
         bind.spinnerGameType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -126,7 +126,7 @@ public class AddGameFragment extends Fragment {
         });
 
         final HintSpinnerAdapter cabinetAdapter = new HintSpinnerAdapter(
-                getContext(), getResources().getStringArray(R.array.game_cabinet));
+                mContext, getResources().getStringArray(R.array.game_cabinet));
         bind.spinnerGameCabinet.setAdapter(cabinetAdapter);
         bind.spinnerGameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -142,7 +142,7 @@ public class AddGameFragment extends Fragment {
         });
 
         final HintSpinnerAdapter workingAdapter = new HintSpinnerAdapter(
-                getContext(), getResources().getStringArray(R.array.game_working));
+                mContext, getResources().getStringArray(R.array.game_working));
         bind.spinnerGameWorking.setAdapter(workingAdapter);
         bind.spinnerGameWorking.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -158,7 +158,7 @@ public class AddGameFragment extends Fragment {
         });
 
         final HintSpinnerAdapter ownershipAdapter = new HintSpinnerAdapter(
-                getContext(), getResources().getStringArray(R.array.game_ownership));
+                mContext, getResources().getStringArray(R.array.game_ownership));
         bind.spinnerGameOwnership.setAdapter(ownershipAdapter);
         bind.spinnerGameOwnership.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -280,6 +280,7 @@ public class AddGameFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {

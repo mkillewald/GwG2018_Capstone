@@ -28,15 +28,11 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     private static final String TAG = GameListFragment.class.getSimpleName();
     private static final String EXTRA_GAME_LIST = "CoinOpsGameList";
 
-    private OnFragmentInteractionListener mListener;
-
+    private ArrayList<Game> mGames;
+    private GameAdapter mGameAdapter;
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
-
-//    private String mUsername;
-
-    private GameAdapter mGameAdapter;
-    private ArrayList<Game> mGames;
+    private OnFragmentInteractionListener mListener;
 
     public GameListFragment() {
         // Required empty public constructor
@@ -47,7 +43,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            mGames = new ArrayList<Game>();
+            mGames = new ArrayList<>();
         } else {
             mGames = savedInstanceState.getParcelableArrayList(EXTRA_GAME_LIST);
         }
@@ -58,7 +54,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_game_list, container,
@@ -74,11 +70,9 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
-//            mUsername = user.getDisplayName();
             final String uid = user.getUid();
 
             // Setup database references
-            final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
             final DatabaseReference userRef = mDatabaseReference.child(Db.USER).child(uid);
             final DatabaseReference userGameListRef = userRef.child(Db.GAME_LIST);
 
@@ -89,8 +83,8 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
                     mGames.clear();
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         String gameId = dataSnapshot1.getKey();
-                        Game game =  dataSnapshot1.getValue(Game.class);
-                        game.setGameId(gameId);
+                        Game game = dataSnapshot1.getValue(Game.class);
+                        if (game != null) { game.setGameId(gameId); }
                         mGames.add(game);
                     }
                     mGameAdapter.notifyDataSetChanged();
@@ -108,7 +102,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
 
         } else {
             // user is not signed in
-//            mUsername = getString(R.string.anonymous_username);
         }
 
         return rootView;

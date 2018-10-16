@@ -28,11 +28,9 @@ public class GameDetailFragment extends Fragment {
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
 
     private Game mGame;
-
-    private OnFragmentInteractionListener mListener;
-
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
+    private OnFragmentInteractionListener mListener;
 
     public GameDetailFragment() {
         // Required empty public constructor
@@ -49,7 +47,7 @@ public class GameDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final FragmentGameDetailBinding bind = DataBindingUtil.inflate(

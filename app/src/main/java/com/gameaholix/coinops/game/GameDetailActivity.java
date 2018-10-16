@@ -31,7 +31,6 @@ public class GameDetailActivity extends AppCompatActivity implements
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
 
     private Game mGame;
-
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
@@ -116,7 +115,7 @@ public class GameDetailActivity extends AppCompatActivity implements
             final String uid = user.getUid();
 
             String gamePath = Db.GAME_PATH + uid + "/" + gameId;
-            String userGamePath = Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + Db.NAME_PATH;
+            String userGamePath = Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + "/" + Db.NAME;
 
             Map<String, Object> valuesToDelete= new HashMap<>();
             valuesToDelete.put(gamePath, null);

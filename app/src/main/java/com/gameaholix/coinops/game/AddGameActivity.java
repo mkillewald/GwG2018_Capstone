@@ -68,7 +68,9 @@ public class AddGameActivity extends AppCompatActivity implements
                     view.clearFocus();
                     InputMethodManager imm =
                             (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                 }
             }
         }
@@ -91,18 +93,10 @@ public class AddGameActivity extends AppCompatActivity implements
 
         final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
 
-        final DatabaseReference gameIdRef = gameRef.push();
-        final String gameId = gameIdRef.getKey();
-
-//        final DatabaseReference userTodoListRef = userRef.child("todo_list");
-//        final DatabaseReference userShopListRef = userRef.child("shop_list");
-//        final DatabaseReference userInvListRef = userRef.child("inventory_list");
-//        final DatabaseReference gameTodoListRef = gameIdRef.child("todo_list");
-//        final DatabaseReference gameShopListRef = gameIdRef.child("shop_list");
-//        final DatabaseReference gameRepairListRef = gameIdRef.child("repair_list");
+        final String gameId = gameRef.push().getKey();
 
         String gamePath = Db.GAME_PATH + uid + "/" + gameId;
-        String userGamePath = Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + Db.NAME_PATH;
+        String userGamePath = Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + "/" + Db.NAME;
 
         Map<String, Object> valuesToAdd = new HashMap<>();
         valuesToAdd.put(gamePath, game);

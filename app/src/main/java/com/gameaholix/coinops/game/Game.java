@@ -118,25 +118,27 @@ public class Game implements Parcelable {
         return getGameId().equals(game.getGameId());
     }
 
-    /**
-     * Returns a Map<String, Object> of property names and values for updating firebase.
-     * @return the Map<String, Object> object
-     */
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("name", getName());
-        result.put("type", getType());
-        result.put("cabinet", getCabinet());
-        result.put("condition", getCondition());
-        result.put("working", getWorking());
-        result.put("ownership", getOwnership());
-        result.put("monitorSize", getMonitorSize());
-        result.put("monitorPhospher", getMonitorPhospher());
-        result.put("monitorTech", getMonitorTech());
-        result.put("monitorType", getMonitorType());
-        return result;
-    }
+//    /**
+//     * Returns a Map<String, Object> of property names and values for updating firebase.
+//     *
+//     * @param path the parent path (e.g. "/game/{uid}/{gameId}" )
+//     * @return the Map<String, Object> object
+//     */
+//    @Exclude
+//    public HashMap<String, Object> toMap(String path) {
+//        HashMap<String, Object> result = new HashMap<>();
+//        result.put(path + "/name", getName());
+//        result.put(path + "/type", getType());
+//        result.put(path + "/cabinet", getCabinet());
+//        result.put(path + "/condition", getCondition());
+//        result.put(path + "/working", getWorking());
+//        result.put(path + "/ownership", getOwnership());
+//        result.put(path + "/monitorSize", getMonitorSize());
+//        result.put(path + "/monitorPhospher", getMonitorPhospher());
+//        result.put(path + "/monitorTech", getMonitorTech());
+//        result.put(path + "/monitorType", getMonitorType());
+//        return result;
+//    }
 
     // Exclude gameId from being written to database as a field (gameId is already the parent node)
     @Exclude
