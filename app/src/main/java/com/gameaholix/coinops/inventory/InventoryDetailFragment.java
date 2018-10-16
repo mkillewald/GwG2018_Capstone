@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryDetailBinding;
+import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -71,10 +72,8 @@ public class InventoryDetailFragment extends Fragment {
             final String uid = user.getUid();
 
             // Setup database references
-            final DatabaseReference inventoryRef = mDatabaseReference
-                    .child(getString(R.string.db_inventory))
-                    .child(uid)
-                    .child(mInventoryItem.getId());
+            final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY)
+                    .child(uid).child(mInventoryItem.getId());
 
             // read inventory item details
             ValueEventListener inventoryListener = new ValueEventListener() {

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.InventoryAdapter;
+import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -74,12 +75,9 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
             final String uid = user.getUid();
 
             // Setup database references
-            final DatabaseReference inventoryRef =
-                    mDatabaseReference.child(getString(R.string.db_inventory)).child(uid);
-            final DatabaseReference userRef =
-                    mDatabaseReference.child(getString(R.string.db_user)).child(uid);
-            final DatabaseReference userInventoryListRef =
-                    userRef.child(getString(R.string.db_inventory_list));
+            final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
+            final DatabaseReference userRef = mDatabaseReference.child(Db.USER).child(uid);
+            final DatabaseReference userInventoryListRef = userRef.child(Db.INVENTORY_LIST);
 
             // read list of inventory items
             ValueEventListener inventoryListener = new ValueEventListener() {

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameAdapter;
+import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -77,12 +78,9 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             final String uid = user.getUid();
 
             // Setup database references
-            final DatabaseReference gameRef =
-                    mDatabaseReference.child(getString(R.string.db_game)).child(uid);
-            final DatabaseReference userRef =
-                    mDatabaseReference.child(getString(R.string.db_user)).child(uid);
-            final DatabaseReference userGameListRef =
-                    userRef.child(getString(R.string.db_game_list));
+            final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
+            final DatabaseReference userRef = mDatabaseReference.child(Db.USER).child(uid);
+            final DatabaseReference userGameListRef = userRef.child(Db.GAME_LIST);
 
             // read list of games
             ValueEventListener gameListener = new ValueEventListener() {

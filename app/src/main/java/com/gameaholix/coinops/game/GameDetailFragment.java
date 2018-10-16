@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
+import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -73,9 +74,7 @@ public class GameDetailFragment extends Fragment {
 
             // Setup database references
             final DatabaseReference gameRef = mDatabaseReference
-                    .child(getString(R.string.db_game))
-                    .child(uid)
-                    .child(mGame.getGameId());
+                    .child(Db.GAME).child(uid).child(mGame.getGameId());
 //            final DatabaseReference userRef = mDatabaseReference.child("user").child(uid);
 //            final DatabaseReference userGameListRef = userRef.child("game_list");
 
@@ -106,6 +105,7 @@ public class GameDetailFragment extends Fragment {
                         String[] monitorSizeArr =
                                 getResources().getStringArray(R.array.game_monitor_size);
 
+                        bind.tvGameName.setText(mGame.getName());
                         bind.tvGameType.setText(typeArr[mGame.getType()]);
                         bind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
                         bind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
@@ -143,17 +143,6 @@ public class GameDetailFragment extends Fragment {
         }
 
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Needed so that we can update ActionBar title of GameDetailActivity after
-        // coming back from EditGameActivity (in the event that the game name was changed.)
-        if (mListener != null) {
-            mListener.onGameUpdated(mGame);
-        }
     }
 
     @Override
@@ -204,7 +193,6 @@ public class GameDetailFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onGameUpdated(Game game);
         void onDeleteButtonPressed(String gameId);
     }
 

@@ -2,26 +2,14 @@
     <string name="app_name">CoinOps</string>
     <string name="anonymous_username">Anonymous Gamer</string>
 
+    <!-- Activity Titles -->
     <string name="game_list_title">Game Collection</string>
     <string name="add_game_title">Add New Game</string>
+    <string name="game_details_title">Game Details</string>
     <string name="edit_game_title">Edit Game</string>
     <string name="inventory_list_title">Parts Inventory</string>
     <string name="to_do_list_title">To Do List</string>
     <string name="shopping_list_title">Shopping List</string>
-
-    <!-- Database references -->
-    <string name="db_user">user</string>
-    <string name="db_game">game</string>
-    <string name="db_game_list">game_list</string>
-    <string name="db_shop">shop</string>
-    <string name="db_shop_list">shop_list</string>
-    <string name="db_todo">todo</string>
-    <string name="db_todo_list">todo_list</string>
-    <string name="db_inventory">inventory</string>
-    <string name="db_inventory_list">inventory_list</string>
-    <string name="db_repair">repair</string>
-    <string name="db_repair_list">repair_list</string>
-    <string name="db_name_key">name</string>
 
     <!-- Actions -->
     <string name="sign_out">Sign Out</string>
@@ -92,11 +80,10 @@
     <string name="game_will_be_deleted">Are you sure you want to delete this game and all of its related data?\n\nThis is a permanent action and cannot be undone.</string>
 
     <!-- Error Messages -->
-    <string name="error_add_game_failed">Error: Add Game Failed!</string>
+    <string name="error_add_game_failed">Error: Failed to add game!</string>
     <string name="error_edit_game_failed">Error: Failed to save changes!</string>
+    <string name="error_delete_game_failed">Error: Failed to delete game!</string>
+    <string name="error_please_try_again">Please try again.</string>
     <string name="error_game_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

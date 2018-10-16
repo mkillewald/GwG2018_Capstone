@@ -13,11 +13,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener {
@@ -48,7 +52,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        setTitle(mGame.getName());
+        setTitle(R.string.game_details_title);
     }
 
     @Override
@@ -72,12 +76,6 @@ public class GameDetailActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_GAME, mGame);
-    }
-
-    @Override
-    public void onGameUpdated(Game game) {
-        mGame = game;
-        setTitle(mGame.getName());
     }
 
     @Override
@@ -116,23 +114,24 @@ public class GameDetailActivity extends AppCompatActivity implements
 //            mUsername = user.getDisplayName();
             final String uid = user.getUid();
 
-            // Setup database references
-            final DatabaseReference gameRef = mDatabaseReference
-                    .child(getString(R.string.db_game))
-                    .child(uid)
-                    .child(gameId);
-            final DatabaseReference userRef = mDatabaseReference.child("user").child(uid);
-            final DatabaseReference userGameListRef = userRef.child("game_list");
+            String gamePath = "/" + Db.GAME + "/" + uid + "/" + gameId;
+            String userGamePath = "/" + Db.USER + "/" + uid + "/" + Db.GAME_LIST + "/" + gameId + "/" +
+                    Db.NAME_KEY;
 
-            // delete records with gameId from database
-            gameRef.removeValue(new DatabaseReference.CompletionListener() {
+            Map<String, Object> valuesToDelete= new HashMap<>();
+            valuesToDelete.put(gamePath, null);
+            valuesToDelete.put(userGamePath, null);
+
+            mDatabaseReference.updateChildren(valuesToDelete, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    userGameListRef.child(gameId).removeValue();
+                    if (databaseError == null) {
+                        finish();
+                    } else {
+
+                    }
                 }
             });
-
-            finish();
         } else {
             // user is not signed in
         }

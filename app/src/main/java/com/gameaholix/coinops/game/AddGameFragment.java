@@ -22,18 +22,12 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
 import com.gameaholix.coinops.adapter.HintSpinnerAdapter;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class AddGameFragment extends Fragment {
     private static final String TAG = AddGameFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
 
     private OnFragmentInteractionListener mListener;
-
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
 
     private Game mNewGame;
 
@@ -44,10 +38,6 @@ public class AddGameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
