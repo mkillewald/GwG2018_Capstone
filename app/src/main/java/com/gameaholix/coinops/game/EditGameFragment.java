@@ -337,60 +337,26 @@ public class EditGameFragment extends Fragment {
                 public void onClick(View view) {
                     if (mListener != null) {
 
-                        // Setup database paths
-                        final String gamePath = Db.GAME_PATH + uid + "/" + gameId + "/";
-                        final String userGamePath =
-                                Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + "/" + Db.NAME;
+                        // Get database paths from helper class
+                        String gamePath = Db.getGamePath(uid, gameId);
+                        String userGamePath = Db.getUserGamePath(uid, gameId);
 
+                        // Convert values Bundle to HashMap for Firebase call to updateChildren()
                         Map<String, Object> valuesMap = new HashMap<>();
 
-                        if (mValuesBundle.containsKey(Db.NAME)) {
-                            valuesMap.put(gamePath + Db.NAME, mValuesBundle.getString(Db.NAME));
-                            valuesMap.put(userGamePath, mValuesBundle.getString(Db.NAME));
+                        for (String key : Db.STRING_FIELDS) {
+                            if (mValuesBundle.containsKey(key)) {
+                                valuesMap.put(gamePath + key, mValuesBundle.getString(key));
+                                if (key.equals(Db.NAME)) {
+                                    valuesMap.put(userGamePath + key, mValuesBundle.getString(key));
+                                }
+                            }
                         }
 
-                        if (mValuesBundle.containsKey(Db.TYPE)) {
-                            valuesMap.put(gamePath + Db.TYPE, mValuesBundle.getInt(Db.TYPE));
-                        }
-
-                        if (mValuesBundle.containsKey(Db.CABINET)) {
-                            valuesMap.put(gamePath + Db.CABINET,
-                                    mValuesBundle.getInt(Db.CABINET));
-                        }
-
-                        if (mValuesBundle.containsKey(Db.WORKING)) {
-                            valuesMap.put(gamePath + Db.WORKING,
-                                    mValuesBundle.getInt(Db.WORKING));
-                        }
-
-                        if (mValuesBundle.containsKey(Db.OWNERSHIP)) {
-                            valuesMap.put(gamePath + Db.OWNERSHIP,
-                                    mValuesBundle.getInt(Db.OWNERSHIP));
-                        }
-
-                        if (mValuesBundle.containsKey(Db.CONDITION)) {
-                            valuesMap.put(gamePath + Db.CONDITION,
-                                    mValuesBundle.getInt(Db.CONDITION));
-                        }
-
-                        if (mValuesBundle.containsKey(Db.MONITOR_SIZE)) {
-                            valuesMap.put(gamePath + Db.MONITOR_SIZE,
-                                    mValuesBundle.getInt(Db.MONITOR_SIZE));
-                        }
-
-                        if (mValuesBundle.containsKey(Db.MONITOR_PHOSPHER)) {
-                            valuesMap.put(gamePath + Db.MONITOR_PHOSPHER,
-                                    mValuesBundle.getInt(Db.MONITOR_PHOSPHER));
-                        }
-
-                        if (mValuesBundle.containsKey(Db.MONITOR_TYPE)) {
-                            valuesMap.put(gamePath + Db.MONITOR_TYPE,
-                                    mValuesBundle.getInt(Db.MONITOR_TYPE));
-                        }
-
-                        if (mValuesBundle.containsKey(Db.MONITOR_TECH)) {
-                            valuesMap.put(gamePath + Db.MONITOR_TECH,
-                                    mValuesBundle.getInt(Db.MONITOR_TECH));
+                        for (String key : Db.INT_FIELDS) {
+                            if (mValuesBundle.containsKey(key)) {
+                                valuesMap.put(gamePath + key, mValuesBundle.getInt(key));
+                            }
                         }
 
                         mListener.onEditGameButtonPressed(valuesMap);

@@ -98,7 +98,7 @@ public class GameDetailActivity extends AppCompatActivity implements
                         dialogInterface.dismiss();
                     }
                 })
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         deleteGame(gameId);
                     }
@@ -114,12 +114,13 @@ public class GameDetailActivity extends AppCompatActivity implements
 //            mUsername = user.getDisplayName();
             final String uid = user.getUid();
 
-            String gamePath = Db.GAME_PATH + uid + "/" + gameId;
-            String userGamePath = Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + "/" + Db.NAME;
+            // Get database paths from helper class
+            String gamePath = Db.getGamePath(uid, gameId);
+            String userGamePath = Db.getUserGamePath(uid, gameId);
 
             Map<String, Object> valuesToDelete= new HashMap<>();
             valuesToDelete.put(gamePath, null);
-            valuesToDelete.put(userGamePath, null);
+            valuesToDelete.put(userGamePath + Db.NAME, null);
 
             mDatabaseReference.updateChildren(valuesToDelete, new DatabaseReference.CompletionListener() {
                 @Override
@@ -129,12 +130,29 @@ public class GameDetailActivity extends AppCompatActivity implements
                     } else {
                         WarnUser.displayAlert(GameDetailActivity.this,
                                 R.string.error_delete_game_failed, databaseError.getMessage());
-                        Log.e(TAG, "Database Error: " + databaseError.getDetails());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
                     }
                 }
             });
         } else {
             // user is not signed in
         }
+    }
+
+    @Override
+    public void onViewTodoButtonPressed(String gameId) {
+
+    }
+
+    @Override
+    public void onViewShoppingButtonPressed(String gameId) {
+
+    }
+
+    @Override
+    public void onViewRepairButtonPressed(String gameId) {
+
     }
 }

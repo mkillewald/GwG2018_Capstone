@@ -95,12 +95,13 @@ public class AddGameActivity extends AppCompatActivity implements
 
         final String gameId = gameRef.push().getKey();
 
-        String gamePath = Db.GAME_PATH + uid + "/" + gameId;
-        String userGamePath = Db.USER_PATH + uid + Db.GAME_LIST_PATH + gameId + "/" + Db.NAME;
+        // Get database paths from helper class
+        String gamePath = Db.getGamePath(uid, gameId);
+        String userGamePath = Db.getUserGamePath(uid, gameId);
 
         Map<String, Object> valuesToAdd = new HashMap<>();
         valuesToAdd.put(gamePath, game);
-        valuesToAdd.put(userGamePath, game.getName());
+        valuesToAdd.put(userGamePath + Db.NAME, game.getName());
 
         mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
             @Override
@@ -110,7 +111,9 @@ public class AddGameActivity extends AppCompatActivity implements
                 } else {
                     WarnUser.displayAlert(AddGameActivity.this,
                             R.string.error_add_game_failed, databaseError.getMessage());
-                    Log.e(TAG, "Database Error: " + databaseError.getDetails());
+                    Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                            " Code: " + databaseError.getCode() +
+                            " Details: " + databaseError.getDetails());
                 }
             }
         });

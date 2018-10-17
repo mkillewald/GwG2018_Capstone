@@ -132,6 +132,35 @@ public class GameDetailFragment extends Fragment {
                 }
             });
 
+            bind.btnViewTodo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onViewTodoButtonPressed(mGame.getGameId());
+                    }
+                }
+            });
+
+            bind.btnViewShopping.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onViewShoppingButtonPressed(mGame.getGameId());
+                    }
+                }
+            });
+
+            bind.btnViewRepair.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onViewRepairButtonPressed(mGame.getGameId());
+                    }
+                }
+            });
+
+
+
         } else {
             // user is not signed in
         }
@@ -188,6 +217,9 @@ public class GameDetailFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onDeleteButtonPressed(String gameId);
+        void onViewTodoButtonPressed(String gameId);
+        void onViewShoppingButtonPressed(String gameId);
+        void onViewRepairButtonPressed(String gameId);
     }
 
 

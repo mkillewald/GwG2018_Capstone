@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -104,7 +105,9 @@ public class EditGameActivity extends AppCompatActivity implements
                     } else {
                         WarnUser.displayAlert(EditGameActivity.this,
                                 R.string.error_edit_game_failed, databaseError.getMessage());
-                        Log.e(TAG, "Database Error: " + databaseError.getDetails());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
                     }
                 }
             });
