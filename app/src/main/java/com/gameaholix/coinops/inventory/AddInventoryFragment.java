@@ -3,6 +3,7 @@ package com.gameaholix.coinops.inventory;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,7 +19,6 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.HintSpinnerAdapter;
 import com.gameaholix.coinops.databinding.FragmentAddInventoryBinding;
-import com.gameaholix.coinops.game.Game;
 
 public class AddInventoryFragment extends Fragment {
     private static final String TAG = AddInventoryFragment.class.getSimpleName();
@@ -170,6 +170,13 @@ public class AddInventoryFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(EXTRA_INVENTORY_ITEM, mNewItem);
     }
 
     @Override

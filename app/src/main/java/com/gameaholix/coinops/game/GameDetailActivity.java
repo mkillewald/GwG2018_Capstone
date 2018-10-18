@@ -111,7 +111,6 @@ public class GameDetailActivity extends AppCompatActivity implements
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
-//            mUsername = user.getDisplayName();
             final String uid = user.getUid();
 
             // Get database paths from helper class
