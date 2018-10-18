@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".inventory.AddInventoryFragment">
+
+            <EditText
+                android:id="@+id/et_add_inventory_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/inventory_name"
+                android:inputType="textAutoComplete"
+                android:maxLines="1"
+                android:lines="1"
+                android:imeOptions="actionDone"/>
+
+            <Spinner
+                android:id="@+id/spinner_inventory_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/inventory_type"
+                android:prompt="@string/select_inventory_type"
+                android:spinnerMode="dropdown" />
+
+            <Spinner
+                android:id="@+id/spinner_inventory_condition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/inventory_condition"
+                android:prompt="@string/select_inventory_condition"
+                android:spinnerMode="dropdown"/>
+
+            <EditText
+                android:id="@+id/et_add_inventory_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/inventory_description"
+                android:inputType="textMultiLine"
+                android:minLines="5"
+                android:maxLines="10"
+                android:gravity="top|left"
+                android:imeOptions="actionDone"/>
+
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

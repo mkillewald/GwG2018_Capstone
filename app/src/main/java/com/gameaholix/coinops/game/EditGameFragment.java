@@ -344,7 +344,7 @@ public class EditGameFragment extends Fragment {
                         // Convert values Bundle to HashMap for Firebase call to updateChildren()
                         Map<String, Object> valuesMap = new HashMap<>();
 
-                        for (String key : Db.STRING_FIELDS) {
+                        for (String key : Db.GAME_STRINGS) {
                             if (mValuesBundle.containsKey(key)) {
                                 valuesMap.put(gamePath + key, mValuesBundle.getString(key));
                                 if (key.equals(Db.NAME)) {
@@ -353,7 +353,7 @@ public class EditGameFragment extends Fragment {
                             }
                         }
 
-                        for (String key : Db.INT_FIELDS) {
+                        for (String key : Db.GAME_INTS) {
                             if (mValuesBundle.containsKey(key)) {
                                 valuesMap.put(gamePath + key, mValuesBundle.getInt(key));
                             }

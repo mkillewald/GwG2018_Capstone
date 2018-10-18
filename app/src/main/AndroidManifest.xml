@@ -34,7 +34,8 @@
         <activity
             android:name=".game.EditGameActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity"/>
+            android:parentActivityName=".game.GameDetailActivity" />
+
         <activity
             android:name=".inventory.InventoryListActivity"
             android:launchMode="singleTop"
@@ -43,6 +44,11 @@
             android:name=".inventory.InventoryDetailActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".inventory.InventoryListActivity" />
+        <activity
+            android:name=".inventory.AddInventoryActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".inventory.InventoryListActivity" />
+
         <activity
             android:name=".todo.ToDoListActivity"
             android:launchMode="singleTop"

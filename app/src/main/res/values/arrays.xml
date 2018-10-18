@@ -72,4 +72,26 @@
         <item>@string/game_ownership3</item>
     </string-array>
 
+    <string-array name="inventory_type">
+        <item>@string/select_inventory_type</item>
+        <item>@string/inventory_type1</item>
+        <item>@string/inventory_type2</item>
+        <item>@string/inventory_type3</item>
+        <item>@string/inventory_type4</item>
+        <item>@string/inventory_type5</item>
+        <item>@string/inventory_type6</item>
+        <item>@string/inventory_type7</item>
+        <item>@string/inventory_type8</item>
+        <item>@string/inventory_type9</item>
+        <item>@string/inventory_type10</item>
+        <item>@string/inventory_type11</item>
+    </string-array>
+
+    <string-array name="inventory_condition">
+        <item>@string/select_inventory_condition</item>
+        <item>@string/inventory_condition1</item>
+        <item>@string/inventory_condition2</item>
+        <item>@string/inventory_condition3</item>
+    </string-array>
+
 </resources>

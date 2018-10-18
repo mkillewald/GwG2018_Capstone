@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_add_inventory_item"
+        android:title="@string/add_inventory_item"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_playlist_add_white_24dp"/>
+</menu>

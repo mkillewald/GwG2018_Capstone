@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.game;
+package com.gameaholix.coinops.inventory;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -25,18 +25,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddGameActivity extends AppCompatActivity implements
-        AddGameFragment.OnFragmentInteractionListener{
-
-    private static final String TAG = AddGameActivity.class.getSimpleName();
+public class AddInventoryActivity extends AppCompatActivity implements
+        AddInventoryFragment.OnFragmentInteractionListener {
+    private static final String TAG = AddInventoryActivity.class.getSimpleName();
 
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_game);
+        setContentView(R.layout.activity_add_inventory);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -46,13 +46,11 @@ public class AddGameActivity extends AppCompatActivity implements
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        setTitle(R.string.add_game_title);
+        setTitle(R.string.add_inventory_title);
     }
 
     @Override
-    public void onAddGameButtonPressed(final Game game) {
-        addGame(game);
-    }
+    public void onAddItemButtonPressed(final InventoryItem item) { addItem(item); }
 
     // Hide keyboard after touch event occurs outside of EditText
     // Solution used from:
@@ -77,31 +75,31 @@ public class AddGameActivity extends AppCompatActivity implements
         return super.dispatchTouchEvent(event);
     }
 
-    private void addGame(Game game) {
-        if (game.getName() == null || TextUtils.isEmpty(game.getName())) {
+    private void addItem(InventoryItem item) {
+        if (item.getName() == null || TextUtils.isEmpty(item.getName())) {
             WarnUser.displayAlert(this,
-                    R.string.error_add_game_failed,
+                    R.string.error_add_inventory_failed,
                     R.string.error_name_empty);
             return;
         }
 
-        // TODO: add checks for if game name already exists.
+        // TODO: add checks for if item name already exists.
 
-        // Add Game object to Firebase
+        // Add InventoryItem object to Firebase
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         final String uid = user.getUid();
 
-        final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
+        final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
 
-        final String gameId = gameRef.push().getKey();
+        final String id = inventoryRef.push().getKey();
 
         // Get database paths from helper class
-        String gamePath = Db.getGamePath(uid, gameId);
-        String userGamePath = Db.getUserGamePath(uid, gameId);
+        String inventoryPath = Db.getInventoryPath(uid, id);
+        String userInventoryPath = Db.getUserInventoryPath(uid, id);
 
         Map<String, Object> valuesToAdd = new HashMap<>();
-        valuesToAdd.put(gamePath, game);
-        valuesToAdd.put(userGamePath + Db.NAME, game.getName());
+        valuesToAdd.put(inventoryPath, item);
+        valuesToAdd.put(userInventoryPath + Db.NAME, item.getName());
 
         // TODO: add progress spinner
 
@@ -111,8 +109,8 @@ public class AddGameActivity extends AppCompatActivity implements
                 if (databaseError == null) {
                     finish();
                 } else {
-                    WarnUser.displayAlert(AddGameActivity.this,
-                            R.string.error_add_game_failed, databaseError.getMessage());
+                    WarnUser.displayAlert(AddInventoryActivity.this,
+                            R.string.error_add_inventory_failed, databaseError.getMessage());
                     Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                             " Code: " + databaseError.getCode() +
                             " Details: " + databaseError.getDetails());
@@ -120,5 +118,4 @@ public class AddGameActivity extends AppCompatActivity implements
             }
         });
     }
-
 }
