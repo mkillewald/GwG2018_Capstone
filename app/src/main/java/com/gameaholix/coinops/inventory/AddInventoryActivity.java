@@ -76,7 +76,7 @@ public class AddInventoryActivity extends AppCompatActivity implements
     }
 
     private void addItem(InventoryItem item) {
-        if (item.getName() == null || TextUtils.isEmpty(item.getName())) {
+        if (TextUtils.isEmpty(item.getName())) {
             WarnUser.displayAlert(this,
                     R.string.error_add_inventory_failed,
                     R.string.error_name_empty);

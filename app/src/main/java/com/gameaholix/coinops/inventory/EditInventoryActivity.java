@@ -63,7 +63,7 @@ public class EditInventoryActivity extends AppCompatActivity implements
 
     @Override
     public void onEditButtonPressed(Map<String, Object> valuesToUpdate) {
-        updateGame(valuesToUpdate);
+        updateItem(valuesToUpdate);
     }
 
     // Hide keyboard after touch event occurs outside of EditText
@@ -88,7 +88,7 @@ public class EditInventoryActivity extends AppCompatActivity implements
         return super.dispatchTouchEvent(event);
     }
 
-    private void updateGame(Map<String, Object> valuesToUpdate) {
+    private void updateItem(Map<String, Object> valuesToUpdate) {
         // TODO: add checks for if game name already exists.
 
         // Update Firebase

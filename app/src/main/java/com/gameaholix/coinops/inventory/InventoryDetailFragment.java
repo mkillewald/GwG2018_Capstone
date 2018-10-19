@@ -42,6 +42,7 @@ public class InventoryDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         if (savedInstanceState == null) {
             Intent intent = getActivity().getIntent();
@@ -149,10 +150,10 @@ public class InventoryDetailFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_edit_game:
-//                Intent intent = new Intent(getContext(), EditInventoryActivity.class);
-//                intent.putExtra(EXTRA_INVENTORY_ITEM, mItem);
-//                startActivity(intent);
+            case R.id.menu_edit_inventory:
+                Intent intent = new Intent(getContext(), EditInventoryActivity.class);
+                intent.putExtra(EXTRA_INVENTORY_ITEM, mItem);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

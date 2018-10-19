@@ -78,7 +78,7 @@ public class AddGameActivity extends AppCompatActivity implements
     }
 
     private void addGame(Game game) {
-        if (game.getName() == null || TextUtils.isEmpty(game.getName())) {
+        if (TextUtils.isEmpty(game.getName())) {
             WarnUser.displayAlert(this,
                     R.string.error_add_game_failed,
                     R.string.error_name_empty);

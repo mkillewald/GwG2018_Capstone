@@ -5,6 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".game.EditGameFragment">
 
-
+    <!-- NOT USED -->
 
 </FrameLayout>

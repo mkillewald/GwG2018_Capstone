@@ -6,15 +6,25 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
+import com.gameaholix.coinops.adapter.HintSpinnerAdapter;
+import com.gameaholix.coinops.databinding.FragmentAddInventoryBinding;
+import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class EditInventoryFragment extends Fragment {
@@ -45,7 +55,7 @@ public class EditInventoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentAddGameBinding bind = DataBindingUtil.inflate(
+        final FragmentAddInventoryBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_add_inventory, container, false);
         final View rootView = bind.getRoot();
 
@@ -67,12 +77,173 @@ public class EditInventoryFragment extends Fragment {
             // user is signed in
             final String uid = user.getUid();
             final String id = mItem.getId();
-            // TODO: pick up here in the morning
+
+            // Setup EditText
+            bind.etAddInventoryName.setText(mItem.getName());
+            bind.etAddInventoryName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                    if (i == EditorInfo.IME_ACTION_DONE) {
+                        String input = textView.getText().toString().trim();
+                        if (textInputIsValid(input)) {
+                            mValuesBundle.putString(Db.NAME, input);
+                        } else {
+                            textView.setText(mItem.getName());
+                        }
+                        hideKeyboard(textView);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            bind.etAddInventoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
+                        if (view instanceof EditText) {
+                            EditText editText = (EditText) view;
+                            String input = editText.getText().toString().trim();
+                            if (textInputIsValid(input)) {
+                                mValuesBundle.putString(Db.NAME, input);
+                            } else {
+                                editText.setText(mItem.getName());
+                            }
+                            hideKeyboard(editText);
+                        }
+                    }
+                }
+            });
+
+            bind.etAddInventoryDescription.setText(mItem.getDescription());
+            bind.etAddInventoryDescription.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                    if (i == EditorInfo.IME_ACTION_DONE) {
+                        String input = textView.getText().toString().trim();
+                        if (textInputIsValid(input)) {
+                            mValuesBundle.putString(Db.DESCRIPTION, input);
+                        } else {
+                            textView.setText(mItem.getDescription());
+                        }
+                        hideKeyboard(textView);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            bind.etAddInventoryDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
+                        if (view instanceof EditText) {
+                            EditText editText = (EditText) view;
+                            String input = editText.getText().toString().trim();
+                            if (textInputIsValid(input)) {
+                                mValuesBundle.putString(Db.DESCRIPTION, input);
+                            } else {
+                                editText.setText(mItem.getDescription());
+                            }
+                            hideKeyboard(editText);
+                        }
+                    }
+                }
+            });
+
+            // Setup Spinners
+            final HintSpinnerAdapter typeAdapter = new HintSpinnerAdapter(
+                    mContext, getResources().getStringArray(R.array.inventory_type));
+            bind.spinnerInventoryType.setAdapter(typeAdapter);
+            if (mItem.getType() > 0) {
+                bind.spinnerInventoryType.setSelection(mItem.getType());
+            }
+            bind.spinnerInventoryType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                    // First item is disabled and used for hint
+                    if(position > 0){
+                        mValuesBundle.putInt(Db.TYPE, position);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {}
+            });
+
+            final HintSpinnerAdapter conditionAdapter = new HintSpinnerAdapter(
+                    mContext, getResources().getStringArray(R.array.inventory_condition));
+            bind.spinnerInventoryCondition.setAdapter(conditionAdapter);
+            if (mItem.getCondition() > 0) {
+                bind.spinnerInventoryCondition.setSelection(mItem.getCondition());
+            }
+            bind.spinnerInventoryCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                    // First item is disabled and used for hint
+                    if(position > 0){
+                        mValuesBundle.putInt(Db.CONDITION, position);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {}
+            });
+
+            // Setup Button
+            bind.btnSave.setText(R.string.save_changes);
+            bind.btnSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+
+                        // Get database paths from helper class
+                        String inventoryPath = Db.getInventoryPath(uid, id);
+                        String userInventoryPath = Db.getUserInventoryPath(uid, id);
+
+                        // Convert values Bundle to HashMap for Firebase call to updateChildren()
+                        Map<String, Object> valuesMap = new HashMap<>();
+
+                        for (String key : Db.INVENTORY_STRINGS) {
+                            if (mValuesBundle.containsKey(key)) {
+                                valuesMap.put(inventoryPath + key, mValuesBundle.getString(key));
+                                if (key.equals(Db.NAME)) {
+                                    valuesMap.put(userInventoryPath + key, mValuesBundle.getString(key));
+                                }
+                            }
+                        }
+
+                        for (String key : Db.INVENTORY_INTS) {
+                            if (mValuesBundle.containsKey(key)) {
+                                valuesMap.put(inventoryPath + key, mValuesBundle.getInt(key));
+                            }
+                        }
+
+                        mListener.onEditButtonPressed(valuesMap);
+                    }
+                }
+            });
+
         } else {
             // user is not signed in
         }
 
         return rootView;
+    }
+
+    private boolean textInputIsValid(String inputText) {
+        boolean result = true;
+
+        // TODO: possibly add more validation checks, and return false if any one of them fails.
+        if (TextUtils.isEmpty(inputText)) {
+            result = false;
+        }
+
+        return result;
+    }
+
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) view
+                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override

@@ -37,7 +37,6 @@ public class EditGameFragment extends Fragment {
 
     private Context mContext;
     private Game mGame;
-    private String mNewName;
     private Bundle mValuesBundle;
     private FirebaseAuth mFirebaseAuth;
     private OnFragmentInteractionListener mListener;
@@ -100,25 +99,17 @@ public class EditGameFragment extends Fragment {
 
             // Setup EditText
             bind.etAddGameName.setText(mGame.getName());
-            // TODO are both Listeners needed??
             bind.etAddGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                     if (i == EditorInfo.IME_ACTION_DONE) {
-
-                        // save text input
-                        mNewName = textView.getText().toString().trim();
-
-                        if (TextUtils.isEmpty(mNewName)) {
-                            textView.setText(mGame.getName());
+                        String input = textView.getText().toString().trim();
+                        if (textInputIsValid(input)) {
+                            mValuesBundle.putString(Db.NAME, input);
                         } else {
-                            mValuesBundle.putString(Db.NAME, mNewName);
+                            textView.setText(mGame.getName());
                         }
-
-                        // hide keyboard
-                        InputMethodManager imm = (InputMethodManager) textView
-                                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+                        hideKeyboard(textView);
                         return true;
                     }
                     return false;
@@ -128,23 +119,16 @@ public class EditGameFragment extends Fragment {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
                     if (view.getId() == R.id.et_add_game_name && !hasFocus) {
-
-                        // save text input
                         if (view instanceof EditText) {
                             EditText editText = (EditText) view;
-                            mNewName = editText.getText().toString().trim();
-
-                            if (TextUtils.isEmpty(mNewName)) {
-                                editText.setText(mGame.getName());
+                            String input = editText.getText().toString().trim();
+                            if (textInputIsValid(input)) {
+                                mValuesBundle.putString(Db.NAME, input);
                             } else {
-                                mValuesBundle.putString(Db.NAME, mNewName);
+                                editText.setText(mGame.getName());
                             }
+                            hideKeyboard(editText);
                         }
-
-                        // hide keyboard
-                        InputMethodManager imm = (InputMethodManager) view
-                                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                 }
             });
@@ -369,6 +353,23 @@ public class EditGameFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    private boolean textInputIsValid(String inputText) {
+        boolean result = true;
+
+        // TODO: possibly add more validation checks, and return false if any one of them fails.
+        if (TextUtils.isEmpty(inputText)) {
+            result = false;
+        }
+
+        return result;
+    }
+
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) view
+                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override

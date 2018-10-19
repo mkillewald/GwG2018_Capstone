@@ -76,15 +76,8 @@ public class AddGameFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-
-                    // save text input
                     mNewGame.setName(textView.getText().toString().trim());
-
-                    // hide keyboard
-                    InputMethodManager imm = (InputMethodManager) textView
-                            .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
-                    return true;
+                    hideKeyboard(textView);
                 }
                 return false;
             }
@@ -93,17 +86,11 @@ public class AddGameFragment extends Fragment {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_add_game_name && !hasFocus) {
-
-                    // save text input
                     if (view instanceof EditText) {
                         EditText editText = (EditText) view;
                         mNewGame.setName(editText.getText().toString().trim());
+                        hideKeyboard(editText);
                     }
-
-                    // hide keyboard
-                    InputMethodManager imm = (InputMethodManager) view
-                            .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
         });
@@ -268,6 +255,12 @@ public class AddGameFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) view
+                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
