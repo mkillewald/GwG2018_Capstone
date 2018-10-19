@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,9 @@ public class InventoryDetailActivity extends AppCompatActivity implements
         } else {
             mInventoryItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
         }
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         setTitle(R.string.inventory_details_title);
     }

@@ -1,4 +1,5 @@
-package com.gameaholix.coinops.game;
+package com.gameaholix.coinops.inventory;
+
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -22,32 +23,32 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Map;
 
-public class EditGameActivity extends AppCompatActivity implements
-        EditGameFragment.OnFragmentInteractionListener {
+public class EditInventoryActivity extends AppCompatActivity implements
+        EditInventoryFragment.OnFragmentInteractionListener{
 
-    private static final String TAG = EditGameActivity.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
+    private static final String TAG = EditInventoryActivity.class.getSimpleName();
+    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.inventory.InventoryItem";
 
-    private Game mGame;
+    private InventoryItem mItem;
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_game);
+        setContentView(R.layout.activity_edit_inventory);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         if (savedInstanceState == null) {
-            mGame = getIntent().getParcelableExtra(EXTRA_GAME);
+            mItem = getIntent().getParcelableExtra(EXTRA_INVENTORY_ITEM);
         } else {
-            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
+            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
         }
 
-        setTitle(R.string.edit_game_title);
+        setTitle(R.string.edit_inventory_title);
 
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -57,11 +58,11 @@ public class EditGameActivity extends AppCompatActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_GAME, mGame);
+        outState.putParcelable(EXTRA_INVENTORY_ITEM, mItem);
     }
 
     @Override
-    public void onEditGameButtonPressed(Map<String, Object> valuesToUpdate) {
+    public void onEditButtonPressed(Map<String, Object> valuesToUpdate) {
         updateGame(valuesToUpdate);
     }
 
@@ -102,8 +103,8 @@ public class EditGameActivity extends AppCompatActivity implements
                     if (databaseError == null) {
                         finish();
                     } else {
-                        WarnUser.displayAlert(EditGameActivity.this,
-                                R.string.error_edit_game_failed, databaseError.getMessage());
+                        WarnUser.displayAlert(EditInventoryActivity.this,
+                                R.string.error_edit_inventory_failed, databaseError.getMessage());
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
                                 " Details: " + databaseError.getDetails());
@@ -115,4 +116,3 @@ public class EditGameActivity extends AppCompatActivity implements
         }
     }
 }
-

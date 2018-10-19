@@ -33,7 +33,7 @@ import java.util.Map;
 public class EditGameFragment extends Fragment {
     private static final String TAG = EditGameFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
-    private static final String EXTRA_VALUES = "CoinOpsValuesToUpdate";
+    private static final String EXTRA_VALUES = "CoinOpsGameValuesToUpdate";
 
     private Context mContext;
     private Game mGame;

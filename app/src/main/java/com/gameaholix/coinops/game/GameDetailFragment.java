@@ -81,7 +81,7 @@ public class GameDetailFragment extends Fragment {
 
                     mGame = dataSnapshot.getValue(Game.class);
                     if (mGame == null) {
-                        Log.d(TAG, "Error: Game details not found in database");
+                        Log.d(TAG, "Error: Game details not found");
                     } else {
                         mGame.setGameId(gameId);
                         String[] typeArr = getResources().getStringArray(R.array.game_type);

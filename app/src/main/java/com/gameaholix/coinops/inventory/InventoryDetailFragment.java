@@ -3,12 +3,12 @@ package com.gameaholix.coinops.inventory;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,9 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 public class InventoryDetailFragment extends Fragment {
 
     private static final String TAG = InventoryDetailFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY = "com.gameaholix.coinops.inventory.InventoryItem";
+    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.inventory.InventoryItem";
 
-    private InventoryItem mInventoryItem;
+    private InventoryItem mItem;
 
     private OnFragmentInteractionListener mListener;
 
@@ -46,10 +46,10 @@ public class InventoryDetailFragment extends Fragment {
         if (savedInstanceState == null) {
             Intent intent = getActivity().getIntent();
             if (intent != null) {
-                mInventoryItem = intent.getParcelableExtra(EXTRA_INVENTORY);
+                mItem = intent.getParcelableExtra(EXTRA_INVENTORY_ITEM);
             }
         } else {
-            mInventoryItem = savedInstanceState.getParcelable(EXTRA_INVENTORY);
+            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
         }
 
         // Initialize Firebase components
@@ -73,7 +73,7 @@ public class InventoryDetailFragment extends Fragment {
 
             // Setup database references
             final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY)
-                    .child(uid).child(mInventoryItem.getId());
+                    .child(uid).child(mItem.getId());
 
             // read inventory item details
             ValueEventListener inventoryListener = new ValueEventListener() {
@@ -81,12 +81,18 @@ public class InventoryDetailFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String id = dataSnapshot.getKey();
 
-                    mInventoryItem = dataSnapshot.getValue(InventoryItem.class);
-                    if (null == mInventoryItem) {
-                        Log.d(TAG, "Error: Item details not found in database");
+                    mItem = dataSnapshot.getValue(InventoryItem.class);
+                    if (mItem == null) {
+                        Log.d(TAG, "Error: Item details not found");
                     } else {
-                        mInventoryItem.setId(id);
-                        binding.tvInventoryName.setText(mInventoryItem.getName());
+                        mItem.setId(id);
+                        String[] typeArr = getResources().getStringArray(R.array.inventory_type);
+                        String[] conditionArr =
+                                getResources().getStringArray(R.array.inventory_condition);
+                        binding.tvInventoryName.setText(mItem.getName());
+                        binding.tvInventoryType.setText(typeArr[mItem.getType()]);
+                        binding.tvInventoryCondition.setText(conditionArr[mItem.getCondition()]);
+                        binding.tvInventoryDescription.setText(mItem.getDescription());
                     }
                 }
 
@@ -98,6 +104,17 @@ public class InventoryDetailFragment extends Fragment {
             };
 
             inventoryRef.addValueEventListener(inventoryListener);
+
+            binding.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onDeleteButtonPressed(mItem.getId());
+                    }
+                }
+            });
+
+
         } else {
             // user is not signed in
         }
@@ -109,7 +126,7 @@ public class InventoryDetailFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_INVENTORY, mInventoryItem);
+        outState.putParcelable(EXTRA_INVENTORY_ITEM, mItem);
     }
 
     @Override
@@ -127,6 +144,19 @@ public class InventoryDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_edit_game:
+//                Intent intent = new Intent(getContext(), EditInventoryActivity.class);
+//                intent.putExtra(EXTRA_INVENTORY_ITEM, mItem);
+//                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
