@@ -48,6 +48,26 @@
             android:launchMode="singleTop"
             android:parentActivityName=".inventory.InventoryListActivity" />
         <activity
+            android:name=".inventory.EditInventoryActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".inventory.InventoryDetailActivity"/>
+        <activity
+            android:name=".repair.RepairListActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".repair.RepairDetailActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".repair.RepairListActivity" />
+        <activity
+            android:name=".repair.AddRepairActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".repair.RepairListActivity" />
+        <activity
+            android:name=".repair.EditRepairActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".repair.RepairDetailActivity" />
+        <activity
             android:name=".todo.ToDoListActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
@@ -63,8 +83,6 @@
             android:name=".shopping.ShoppingDetailActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".shopping.ShoppingListActivity" />
-        <activity android:name=".repair.RepairListActivity" />
-        <activity android:name=".inventory.EditInventoryActivity"></activity>
     </application>
 
 </manifest>

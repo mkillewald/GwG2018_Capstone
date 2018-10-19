@@ -47,6 +47,15 @@ public class Db {
     public static final String[] INVENTORY_STRINGS = { Db.NAME, Db.DESCRIPTION };
     public static final String[] INVENTORY_INTS = { Db.TYPE, Db.CONDITION };
 
+    public static final String[] REPAIR_STRINGS = {};
+    public static final String[] REPAIR_INTS = {};
+
+    public static final String[] TO_DO_STRINGS = {};
+    public static final String[] TO_DO_INTS = {};
+
+    public static final String[] SHOP_STRINGS = {};
+    public static final String[] SHOP_INTS = {};
+
     // Get Database paths
     public static String getGamePath(String uid, String gameId) {
         return "/" + Db.GAME + "/" + uid + "/" + gameId + "/";
@@ -62,5 +71,29 @@ public class Db {
 
     public static String getUserInventoryPath(String uid, String id) {
         return  "/" + Db.USER + "/" + uid + "/" + Db.INVENTORY_LIST + "/" + id + "/";
+    }
+
+    public static String getRepairPath(String uid, String id) {
+        return "/" + Db.REPAIR + "/" + uid + "/" + id + "/";
+    }
+
+    public static String getUserRepairPath(String uid, String id) {
+        return  "/" + Db.USER + "/" + uid + "/" + Db.REPAIR_LIST + "/" + id + "/";
+    }
+
+    public static String getToDoPath(String uid, String id) {
+        return "/" + Db.TO_DO + "/" + uid + "/" + id + "/";
+    }
+
+    public static String getUserToDoPath(String uid, String id) {
+        return  "/" + Db.USER + "/" + uid + "/" + Db.TO_DO_LIST + "/" + id + "/";
+    }
+
+    public static String getShoppingPath(String uid, String id) {
+        return "/" + Db.SHOP + "/" + uid + "/" + id + "/";
+    }
+
+    public static String getUserShoppingPath(String uid, String id) {
+        return  "/" + Db.USER + "/" + uid + "/" + Db.SHOP_LIST + "/" + id + "/";
     }
 }

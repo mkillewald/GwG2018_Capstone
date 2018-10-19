@@ -1,21 +1,32 @@
 <resources>
     <string name="app_name">CoinOps</string>
-    <string name="anonymous_username">Anonymous Gamer</string>
+    <string name="anonymous_username">Player 1</string>
 
     <!-- Activity Titles -->
     <string name="game_list_title">Game Collection</string>
-    <string name="add_game_title">Add New Game</string>
     <string name="game_details_title">Game Details</string>
+    <string name="add_game_title">Add New Game</string>
     <string name="edit_game_title">Edit Game</string>
 
     <string name="inventory_list_title">Inventory</string>
-    <string name="add_inventory_title">Add New Part</string>
     <string name="inventory_details_title">Part Details</string>
+    <string name="add_inventory_title">Add New Part</string>
     <string name="edit_inventory_title">Edit Part</string>
 
-    <string name="to_do_list_title">To Do List</string>
-    <string name="shopping_list_title">Shopping List</string>
     <string name="repair_list_title">Repair Log</string>
+    <string name="repair_details_title">Log Details</string>
+    <string name="add_repair_title">Add New Log Entry</string>
+    <string name="edit_repair_title">Edit Log Entry</string>
+
+    <string name="to_do_list_title">To Do List</string>
+    <string name="to_do_details_title">Entry Details</string>
+    <string name="add_to_do_title">Add New To Do Item</string>
+    <string name="edit_to_do_title">Edit To Do Item</string>
+
+    <string name="shopping_list_title">Shopping List</string>
+    <string name="shopping_details_title">Item Details</string>
+    <string name="add_shopping_title">Add New Item</string>
+    <string name="edit_shopping_title">Edit Item</string>
 
     <!-- Actions -->
     <string name="sign_out">Sign Out</string>
@@ -128,10 +139,19 @@
     <string name="error_edit_inventory_failed">Failed to save changes!</string>
     <string name="error_delete_inventory_failed">Failed to delete part!</string>
 
+    <string name="error_add_repair_failed">Failed to add entry!</string>
+    <string name="error_edit_repair_failed">Failed to save changes!</string>
+    <string name="error_delete_repair_failed">Failed to delete entry!</string>
+
+    <string name="error_add_todo_failed">Failed to add entry!</string>
+    <string name="error_edit_todo_failed">Failed to save changes!</string>
+    <string name="error_delete_todo_failed">Failed to delete entry!</string>
+
+    <string name="error_add_shopping_failed">Failed to add item!</string>
+    <string name="error_edit_shopping_failed">Failed to save changes!</string>
+    <string name="error_delete_shopping_failed">Failed to delete item!</string>
+
     <string name="error_please_try_again">Please try again.</string>
     <string name="error_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
