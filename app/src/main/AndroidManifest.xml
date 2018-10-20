@@ -50,7 +50,7 @@
         <activity
             android:name=".inventory.EditInventoryActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".inventory.InventoryDetailActivity"/>
+            android:parentActivityName=".inventory.InventoryDetailActivity" />
         <activity
             android:name=".repair.RepairListActivity"
             android:launchMode="singleTop"
@@ -58,11 +58,11 @@
         <activity
             android:name=".repair.RepairDetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".repair.RepairListActivity" />
+            android:parentActivityName=".game.GameDetailActivity" />
         <activity
             android:name=".repair.AddRepairActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".repair.RepairListActivity" />
+            android:parentActivityName=".game.GameDetailActivity" />
         <activity
             android:name=".repair.EditRepairActivity"
             android:launchMode="singleTop"
@@ -74,7 +74,15 @@
         <activity
             android:name=".todo.ToDoDetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".todo.ToDoListActivity" />
+            android:parentActivityName=".game.GameDetailActivity" />
+        <activity
+            android:name=".todo.AddToDoActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".game.GameDetailActivity"/>
+        <activity
+            android:name=".todo.EditToDoActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".todo.ToDoDetailActivity"/>
         <activity
             android:name=".shopping.ShoppingListActivity"
             android:launchMode="singleTop"
@@ -83,6 +91,14 @@
             android:name=".shopping.ShoppingDetailActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".shopping.ShoppingListActivity" />
+        <activity
+            android:name=".shopping.AddShoppingActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".game.GameDetailActivity"/>
+        <activity
+            android:name=".shopping.EditShoppingActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".shopping.ShoppingDetailActivity"/>
     </application>
 
 </manifest>

@@ -61,7 +61,7 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
         RepairLog repairLog = mRepairLogs.get(position);
 
         holder.mBinding.setRepairLog(repairLog);
-        holder.mBinding.tvRepairName.setText(repairLog.getName());
+//        holder.mBinding.tvRepairName.setText();
     }
 
     @Override

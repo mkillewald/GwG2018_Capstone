@@ -97,7 +97,7 @@ public class AddGameActivity extends AppCompatActivity implements
 
         // Get database paths from helper class
         String gamePath = Db.getGamePath(uid, gameId);
-        String userGamePath = Db.getUserGamePath(uid, gameId);
+        String userGamePath = Db.getGameListPath(uid, gameId);
 
         Map<String, Object> valuesToAdd = new HashMap<>();
         valuesToAdd.put(gamePath, game);

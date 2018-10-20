@@ -61,7 +61,7 @@ public class Db {
         return "/" + Db.GAME + "/" + uid + "/" + gameId + "/";
     }
 
-    public static String getUserGamePath(String uid, String gameId) {
+    public static String getGameListPath(String uid, String gameId) {
         return  "/" + Db.USER + "/" + uid + "/" + Db.GAME_LIST + "/" + gameId + "/";
     }
 
@@ -69,23 +69,23 @@ public class Db {
         return "/" + Db.INVENTORY +  "/" + uid + "/" + id + "/";
     }
 
-    public static String getUserInventoryPath(String uid, String id) {
+    public static String getInventoryListPath(String uid, String id) {
         return  "/" + Db.USER + "/" + uid + "/" + Db.INVENTORY_LIST + "/" + id + "/";
     }
 
-    public static String getRepairPath(String uid, String id) {
-        return "/" + Db.REPAIR + "/" + uid + "/" + id + "/";
+    public static String getRepairPath(String uid, String gameId, String logId) {
+        return "/" + Db.REPAIR + "/" + uid + "/" + gameId + "/" + logId + "/";
     }
 
-    public static String getUserRepairPath(String uid, String id) {
-        return  "/" + Db.USER + "/" + uid + "/" + Db.REPAIR_LIST + "/" + id + "/";
+    public static String getRepairListPath(String uid, String gameId, String logId) {
+        return  "/" + Db.GAME + "/" + uid + "/" + gameId + "/" + Db.REPAIR_LIST + "/" + logId + "/";
     }
 
     public static String getToDoPath(String uid, String id) {
         return "/" + Db.TO_DO + "/" + uid + "/" + id + "/";
     }
 
-    public static String getUserToDoPath(String uid, String id) {
+    public static String getToDoListPath(String uid, String id) {
         return  "/" + Db.USER + "/" + uid + "/" + Db.TO_DO_LIST + "/" + id + "/";
     }
 
@@ -93,7 +93,7 @@ public class Db {
         return "/" + Db.SHOP + "/" + uid + "/" + id + "/";
     }
 
-    public static String getUserShoppingPath(String uid, String id) {
+    public static String getShoppingListPath(String uid, String id) {
         return  "/" + Db.USER + "/" + uid + "/" + Db.SHOP_LIST + "/" + id + "/";
     }
 }

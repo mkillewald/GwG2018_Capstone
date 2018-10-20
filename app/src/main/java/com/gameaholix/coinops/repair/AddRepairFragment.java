@@ -5,10 +5,15 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
@@ -18,7 +23,6 @@ public class AddRepairFragment extends Fragment {
     private static final String TAG = AddRepairFragment.class.getSimpleName();
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
 
-    private Context mContext;
     private RepairLog mNewLog;
     private OnFragmentInteractionListener mListener;
 
@@ -45,7 +49,42 @@ public class AddRepairFragment extends Fragment {
             mNewLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
         }
 
-        //Set up UI
+        //Setup EditText
+//        bind.etRepairLogDescription.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+//                if (i == EditorInfo.IME_ACTION_DONE) {
+//                    mNewLog.setDescription(textView.getText().toString().trim());
+//                    hideKeyboard(textView);
+//                }
+//                return false;
+//            }
+//        });
+//        bind.etRepairLogDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean hasFocus) {
+//                if (view.getId() == R.id.et_add_game_name && !hasFocus) {
+//                    if (view instanceof EditText) {
+//                        EditText editText = (EditText) view;
+//                        mNewLog.setDescription(editText.getText().toString().trim());
+//                        hideKeyboard(editText);
+//                    }
+//                }
+//            }
+//        });
+
+        // Setup Button
+        Button addLogButton = bind.btnSave;
+        addLogButton.setText(R.string.add_repair);
+        addLogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mNewLog.setDescription(bind.etRepairLogDescription.getText().toString().trim());
+                    mListener.onAddButtonPressed(mNewLog);
+                }
+            }
+        });
 
         return rootView;
     }
@@ -66,7 +105,6 @@ public class AddRepairFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -92,7 +130,6 @@ public class AddRepairFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onAddButtonPressed(RepairLog log);
     }
 }

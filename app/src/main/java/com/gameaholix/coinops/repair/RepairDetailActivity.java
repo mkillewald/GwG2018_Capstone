@@ -29,7 +29,7 @@ public class RepairDetailActivity extends AppCompatActivity implements
             mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
         }
 
-        setTitle(mRepairLog.getName());
+        setTitle(R.string.repair_details_title);
     }
 
     @Override

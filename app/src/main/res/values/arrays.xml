@@ -83,8 +83,6 @@
         <item>@string/inventory_type7</item>
         <item>@string/inventory_type8</item>
         <item>@string/inventory_type9</item>
-        <item>@string/inventory_type10</item>
-        <item>@string/inventory_type11</item>
     </string-array>
 
     <string-array name="inventory_condition">

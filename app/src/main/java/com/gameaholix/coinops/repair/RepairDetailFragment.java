@@ -7,16 +7,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentRepairDetailBinding;
+import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class RepairDetailFragment extends Fragment {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
@@ -37,15 +42,6 @@ public class RepairDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
-                mRepairLog = intent.getParcelableExtra(EXTRA_REPAIR);
-            }
-        } else {
-            mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
-        }
-
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -60,14 +56,46 @@ public class RepairDetailFragment extends Fragment {
 
         final View rootView = binding.getRoot();
 
+        if (savedInstanceState == null) {
+            Intent intent = getActivity().getIntent();
+            if (intent != null) {
+                mRepairLog = intent.getParcelableExtra(EXTRA_REPAIR);
+            }
+        } else {
+            mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
+        }
+
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();
 
             // Setup database references
+            final DatabaseReference repairRef = mDatabaseReference
+                    .child(Db.REPAIR).child(uid).child(mRepairLog.getId());
 
             // Read repair log details
+            ValueEventListener repairListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String id = dataSnapshot.getKey();
+
+                    mRepairLog = dataSnapshot.getValue(RepairLog.class);
+                    if (mRepairLog == null) {
+                        Log.d(TAG, "Error: Repair log details not found");
+                    } else {
+                        mRepairLog.setId(id);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
+                }
+            };
+
+            repairRef.addValueEventListener(repairListener);
 
         } else {
             // user is not signed in

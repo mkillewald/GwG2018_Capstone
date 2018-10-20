@@ -61,22 +61,22 @@
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/btn_view_todo"
+            android:id="@+id/btn_add_repair"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/repair_list_title"/>
+
+        <Button
+            android:id="@+id/btn_add_todo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/to_do_list_title"/>
 
         <Button
-            android:id="@+id/btn_view_shopping"
+            android:id="@+id/btn_add_shopping"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/shopping_list_title"/>
-
-        <Button
-            android:id="@+id/btn_view_repair"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/repair_list_title"/>
 
         <Button
             android:id="@+id/btn_delete"

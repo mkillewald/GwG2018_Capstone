@@ -8,20 +8,21 @@ import com.google.firebase.database.Exclude;
 public class RepairLog implements Parcelable{
     private String id;
     private String gameId;
-    private String name;
+    private String description;
+    private String repairSteps;
+    private Long timestamp;
+
 
     public RepairLog() {
         // Default constructor required for calls to DataSnapshot.getValue()
     }
 
-    public RepairLog(String name) {
-        this.name = name;
-    }
-
     private RepairLog(Parcel in) {
         this.id = in.readString();
         this.gameId = in.readString();
-        this.name = in.readString();
+        this.description = in.readString();
+        this.repairSteps = in.readString();
+        this.timestamp = in.readLong();
     }
 
     @Override
@@ -33,7 +34,9 @@ public class RepairLog implements Parcelable{
     public void writeToParcel(Parcel dest, int i) {
         dest.writeString(id);
         dest.writeString(gameId);
-        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(repairSteps);
+        dest.writeLong(timestamp);
     }
 
     public final static Parcelable.Creator<RepairLog> CREATOR = new Parcelable.Creator<RepairLog>() {
@@ -68,11 +71,27 @@ public class RepairLog implements Parcelable{
         this.gameId = gameId;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getRepairSteps() {
+        return repairSteps;
+    }
+
+    public void setRepairSteps(String repairSteps) {
+        this.repairSteps = repairSteps;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 }

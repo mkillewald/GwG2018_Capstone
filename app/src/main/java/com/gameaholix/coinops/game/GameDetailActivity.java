@@ -1,6 +1,7 @@
 package com.gameaholix.coinops.game;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +14,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.repair.AddRepairActivity;
+import com.gameaholix.coinops.shopping.AddShoppingActivity;
+import com.gameaholix.coinops.todo.AddToDoActivity;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.WarnUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +33,7 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
+    private static final String EXTRA_GAME_ID = "CoinOpsGameID";
 
     private Game mGame;
     private FirebaseAuth mFirebaseAuth;
@@ -83,6 +88,26 @@ public class GameDetailActivity extends AppCompatActivity implements
         deleteGameAlert(gameId);
     }
 
+    @Override
+    public void onAddRepairButtonPressed(String gameId) {
+        Intent intent = new Intent(GameDetailActivity.this, AddRepairActivity.class);
+        intent.putExtra(EXTRA_GAME_ID, gameId);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onAddTodoButtonPressed(String gameId) {
+        Intent intent = new Intent(GameDetailActivity.this, AddToDoActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onAddShoppingButtonPressed(String gameId) {
+        Intent intent = new Intent(GameDetailActivity.this, AddShoppingActivity.class);
+        startActivity(intent);
+
+    }
+
     private void deleteGameAlert(final String gameId) {
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -115,7 +140,7 @@ public class GameDetailActivity extends AppCompatActivity implements
 
             // Get database paths from helper class
             String gamePath = Db.getGamePath(uid, gameId);
-            String userGamePath = Db.getUserGamePath(uid, gameId);
+            String userGamePath = Db.getGameListPath(uid, gameId);
 
             Map<String, Object> valuesToDelete= new HashMap<>();
             valuesToDelete.put(gamePath, null);
@@ -138,20 +163,5 @@ public class GameDetailActivity extends AppCompatActivity implements
         } else {
             // user is not signed in
         }
-    }
-
-    @Override
-    public void onViewTodoButtonPressed(String gameId) {
-
-    }
-
-    @Override
-    public void onViewShoppingButtonPressed(String gameId) {
-
-    }
-
-    @Override
-    public void onViewRepairButtonPressed(String gameId) {
-
     }
 }

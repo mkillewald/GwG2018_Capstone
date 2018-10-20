@@ -29,7 +29,9 @@ public class AddRepairActivity extends AppCompatActivity implements
         AddRepairFragment.OnFragmentInteractionListener {
 
     private static final String TAG = AddRepairActivity.class.getSimpleName();
+    private static final String EXTRA_GAME_ID = "CoinOpsGameID";
 
+    private String mGameId;
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
@@ -41,11 +43,24 @@ public class AddRepairActivity extends AppCompatActivity implements
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        if (savedInstanceState == null) {
+            mGameId = getIntent().getStringExtra(EXTRA_GAME_ID);
+        } else {
+            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
+        }
+
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         setTitle(R.string.add_repair_title);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(EXTRA_GAME_ID, mGameId);
     }
 
     @Override
@@ -77,10 +92,10 @@ public class AddRepairActivity extends AppCompatActivity implements
     }
 
     private void addLog(RepairLog log) {
-        if (TextUtils.isEmpty(log.getName())) {
+        if (TextUtils.isEmpty(log.getDescription())) {
             WarnUser.displayAlert(this,
                     R.string.error_add_repair_failed,
-                    R.string.error_name_empty);
+                    R.string.error_repair_description_empty);
             return;
         }
 
@@ -92,15 +107,15 @@ public class AddRepairActivity extends AppCompatActivity implements
 
         final DatabaseReference repairRef = mDatabaseReference.child(Db.REPAIR).child(uid);
 
-        final String id = repairRef.push().getKey();
+        final String logId = repairRef.push().getKey();
 
         // Get database paths from helper class
-        String repairPath = Db.getRepairPath(uid, id);
-        String userRepairPath = Db.getUserRepairPath(uid, id);
+        String repairPath = Db.getRepairPath(uid, mGameId, logId);
+        String userRepairPath = Db.getRepairListPath(uid, mGameId, logId);
 
         Map<String, Object> valuesToAdd = new HashMap<>();
         valuesToAdd.put(repairPath, log);
-        valuesToAdd.put(userRepairPath + Db.NAME, log.getName());
+        valuesToAdd.put(userRepairPath, true);
 
         // TODO: add progress spinner
 

@@ -323,7 +323,7 @@ public class EditGameFragment extends Fragment {
 
                         // Get database paths from helper class
                         String gamePath = Db.getGamePath(uid, gameId);
-                        String userGamePath = Db.getUserGamePath(uid, gameId);
+                        String userGamePath = Db.getGameListPath(uid, gameId);
 
                         // Convert values Bundle to HashMap for Firebase call to updateChildren()
                         Map<String, Object> valuesMap = new HashMap<>();

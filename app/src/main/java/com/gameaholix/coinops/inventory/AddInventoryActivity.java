@@ -32,7 +32,6 @@ public class AddInventoryActivity extends AppCompatActivity implements
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +94,7 @@ public class AddInventoryActivity extends AppCompatActivity implements
 
         // Get database paths from helper class
         String inventoryPath = Db.getInventoryPath(uid, id);
-        String userInventoryPath = Db.getUserInventoryPath(uid, id);
+        String userInventoryPath = Db.getInventoryListPath(uid, id);
 
         Map<String, Object> valuesToAdd = new HashMap<>();
         valuesToAdd.put(inventoryPath, item);

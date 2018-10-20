@@ -1,7 +1,6 @@
 package com.gameaholix.coinops.inventory;
 
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -116,7 +115,7 @@ public class InventoryDetailActivity extends AppCompatActivity implements
 
             // Get database paths from helper class
             String inventoryPath = Db.getInventoryPath(uid, id);
-            String userInventoryPath = Db.getUserInventoryPath(uid, id);
+            String userInventoryPath = Db.getInventoryListPath(uid, id);
 
             Map<String, Object> valuesToDelete= new HashMap<>();
             valuesToDelete.put(inventoryPath, null);

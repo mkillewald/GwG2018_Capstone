@@ -132,35 +132,33 @@ public class GameDetailFragment extends Fragment {
                 }
             });
 
-            bind.btnViewTodo.setOnClickListener(new View.OnClickListener() {
+
+            bind.btnAddRepair.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mListener != null) {
-                        mListener.onViewTodoButtonPressed(mGame.getGameId());
+                        mListener.onAddRepairButtonPressed(mGame.getGameId());
                     }
                 }
             });
 
-            bind.btnViewShopping.setOnClickListener(new View.OnClickListener() {
+            bind.btnAddTodo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mListener != null) {
-                        mListener.onViewShoppingButtonPressed(mGame.getGameId());
+                        mListener.onAddTodoButtonPressed(mGame.getGameId());
                     }
                 }
             });
 
-            bind.btnViewRepair.setOnClickListener(new View.OnClickListener() {
+            bind.btnAddShopping.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mListener != null) {
-                        mListener.onViewRepairButtonPressed(mGame.getGameId());
+                        mListener.onAddShoppingButtonPressed(mGame.getGameId());
                     }
                 }
             });
-
-
-
         } else {
             // user is not signed in
         }
@@ -217,9 +215,9 @@ public class GameDetailFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onDeleteButtonPressed(String gameId);
-        void onViewTodoButtonPressed(String gameId);
-        void onViewShoppingButtonPressed(String gameId);
-        void onViewRepairButtonPressed(String gameId);
+        void onAddTodoButtonPressed(String gameId);
+        void onAddShoppingButtonPressed(String gameId);
+        void onAddRepairButtonPressed(String gameId);
     }
 
 
