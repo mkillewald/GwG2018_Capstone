@@ -108,7 +108,6 @@ public class AddRepairActivity extends AppCompatActivity implements
             final String uid = user.getUid();
 
             final DatabaseReference repairRef = mDatabaseReference.child(Db.REPAIR).child(uid);
-
             final String logId = repairRef.push().getKey();
 
             // Get database paths from helper class

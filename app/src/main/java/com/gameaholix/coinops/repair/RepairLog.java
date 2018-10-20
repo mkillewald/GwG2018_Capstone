@@ -4,14 +4,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ServerValue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RepairLog implements Parcelable{
     private String id;
     private String gameId;
     private String description;
-    private String repairSteps;
-    private Long timestamp;
-
+    private Long createdAt;
 
     public RepairLog() {
         // Default constructor required for calls to DataSnapshot.getValue()
@@ -21,8 +23,7 @@ public class RepairLog implements Parcelable{
         this.id = in.readString();
         this.gameId = in.readString();
         this.description = in.readString();
-        this.repairSteps = in.readString();
-        this.timestamp = in.readLong();
+        this.createdAt = in.readLong();
     }
 
     @Override
@@ -35,8 +36,7 @@ public class RepairLog implements Parcelable{
         dest.writeString(id);
         dest.writeString(gameId);
         dest.writeString(description);
-        dest.writeString(repairSteps);
-        dest.writeLong(timestamp);
+        dest.writeLong(createdAt);
     }
 
     public final static Parcelable.Creator<RepairLog> CREATOR = new Parcelable.Creator<RepairLog>() {
@@ -79,19 +79,16 @@ public class RepairLog implements Parcelable{
         this.description = description;
     }
 
-    public String getRepairSteps() {
-        return repairSteps;
+    public Map<String, String> getCreatedAt() {
+        return ServerValue.TIMESTAMP;
     }
 
-    public void setRepairSteps(String repairSteps) {
-        this.repairSteps = repairSteps;
+    @Exclude
+    public Long getCreatedAtLong() {
+        return createdAt;
     }
 
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
+    public void setCreatedAt(Long createdAt) {
+        this.createdAt = createdAt;
     }
 }
