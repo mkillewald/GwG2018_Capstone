@@ -103,35 +103,41 @@ public class AddRepairActivity extends AppCompatActivity implements
 
         // Add RepairLog object to Firebase
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        final String uid = user.getUid();
+        if (user != null) {
+            // user is signed in
+            final String uid = user.getUid();
 
-        final DatabaseReference repairRef = mDatabaseReference.child(Db.REPAIR).child(uid);
+            final DatabaseReference repairRef = mDatabaseReference.child(Db.REPAIR).child(uid);
 
-        final String logId = repairRef.push().getKey();
+            final String logId = repairRef.push().getKey();
 
-        // Get database paths from helper class
-        String repairPath = Db.getRepairPath(uid, mGameId, logId);
-        String userRepairPath = Db.getRepairListPath(uid, mGameId, logId);
+            // Get database paths from helper class
+            String repairPath = Db.getRepairPath(uid, mGameId, logId);
+            String userRepairPath = Db.getRepairListPath(uid, mGameId, logId);
 
-        Map<String, Object> valuesToAdd = new HashMap<>();
-        valuesToAdd.put(repairPath, log);
-        valuesToAdd.put(userRepairPath, true);
+            Map<String, Object> valuesToAdd = new HashMap<>();
+            valuesToAdd.put(repairPath, log);
+            valuesToAdd.put(userRepairPath, true);
 
-        // TODO: add progress spinner
+            // TODO: add progress spinner
 
-        mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    finish();
-                } else {
-                    WarnUser.displayAlert(AddRepairActivity.this,
-                            R.string.error_add_repair_failed, databaseError.getMessage());
-                    Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                            " Code: " + databaseError.getCode() +
-                            " Details: " + databaseError.getDetails());
+            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError,
+                                       @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        finish();
+                    } else {
+                        WarnUser.displayAlert(AddRepairActivity.this,
+                                R.string.error_add_repair_failed, databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            // user is not signed in
+        }
     }
 }

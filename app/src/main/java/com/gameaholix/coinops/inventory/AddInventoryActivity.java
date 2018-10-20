@@ -86,35 +86,40 @@ public class AddInventoryActivity extends AppCompatActivity implements
 
         // Add InventoryItem object to Firebase
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        final String uid = user.getUid();
+        if (user != null) {
+            // user is signed in
+            final String uid = user.getUid();
 
-        final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
+            final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
 
-        final String id = inventoryRef.push().getKey();
+            final String id = inventoryRef.push().getKey();
 
-        // Get database paths from helper class
-        String inventoryPath = Db.getInventoryPath(uid, id);
-        String userInventoryPath = Db.getInventoryListPath(uid, id);
+            // Get database paths from helper class
+            String inventoryPath = Db.getInventoryPath(uid, id);
+            String userInventoryPath = Db.getInventoryListPath(uid, id);
 
-        Map<String, Object> valuesToAdd = new HashMap<>();
-        valuesToAdd.put(inventoryPath, item);
-        valuesToAdd.put(userInventoryPath + Db.NAME, item.getName());
+            Map<String, Object> valuesToAdd = new HashMap<>();
+            valuesToAdd.put(inventoryPath, item);
+            valuesToAdd.put(userInventoryPath + Db.NAME, item.getName());
 
-        // TODO: add progress spinner
+            // TODO: add progress spinner
 
-        mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    finish();
-                } else {
-                    WarnUser.displayAlert(AddInventoryActivity.this,
-                            R.string.error_add_inventory_failed, databaseError.getMessage());
-                    Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                            " Code: " + databaseError.getCode() +
-                            " Details: " + databaseError.getDetails());
+            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        finish();
+                    } else {
+                        WarnUser.displayAlert(AddInventoryActivity.this,
+                                R.string.error_add_inventory_failed, databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            // user is not signed in
+        }
     }
 }

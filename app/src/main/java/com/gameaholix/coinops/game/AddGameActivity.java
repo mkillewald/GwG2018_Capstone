@@ -89,36 +89,41 @@ public class AddGameActivity extends AppCompatActivity implements
 
         // Add Game object to Firebase
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        final String uid = user.getUid();
+        if (user != null) {
+            // user is signed in
+            final String uid = user.getUid();
 
-        final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
+            final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
 
-        final String gameId = gameRef.push().getKey();
+            final String gameId = gameRef.push().getKey();
 
-        // Get database paths from helper class
-        String gamePath = Db.getGamePath(uid, gameId);
-        String userGamePath = Db.getGameListPath(uid, gameId);
+            // Get database paths from helper class
+            String gamePath = Db.getGamePath(uid, gameId);
+            String userGamePath = Db.getGameListPath(uid, gameId);
 
-        Map<String, Object> valuesToAdd = new HashMap<>();
-        valuesToAdd.put(gamePath, game);
-        valuesToAdd.put(userGamePath + Db.NAME, game.getName());
+            Map<String, Object> valuesToAdd = new HashMap<>();
+            valuesToAdd.put(gamePath, game);
+            valuesToAdd.put(userGamePath + Db.NAME, game.getName());
 
-        // TODO: add progress spinner
+            // TODO: add progress spinner
 
-        mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    finish();
-                } else {
-                    WarnUser.displayAlert(AddGameActivity.this,
-                            R.string.error_add_game_failed, databaseError.getMessage());
-                    Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                            " Code: " + databaseError.getCode() +
-                            " Details: " + databaseError.getDetails());
+            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        finish();
+                    } else {
+                        WarnUser.displayAlert(AddGameActivity.this,
+                                R.string.error_add_game_failed, databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            // user is not signed in
+        }
     }
 
 }
