@@ -10,5 +10,15 @@
         android:orientation="vertical"
         tools:context=".repair.RepairDetailFragment">
 
+        <TextView
+            android:id="@+id/tv_repair_created_at"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_repair_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 </layout>

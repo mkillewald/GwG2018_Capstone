@@ -23,6 +23,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class RepairDetailFragment extends Fragment {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
@@ -51,10 +54,10 @@ public class RepairDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentRepairDetailBinding binding = DataBindingUtil.inflate(
+        final FragmentRepairDetailBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_repair_detail, container, false);
 
-        final View rootView = binding.getRoot();
+        final View rootView = bind.getRoot();
 
         if (savedInstanceState == null) {
             Intent intent = getActivity().getIntent();
@@ -85,6 +88,9 @@ public class RepairDetailFragment extends Fragment {
                         Log.d(TAG, "Error: Repair log details not found");
                     } else {
                         mRepairLog.setId(id);
+                        
+                        bind.tvRepairCreatedAt.setText(getDate(mRepairLog.getCreatedAtLong()));
+                        bind.tvRepairDescription.setText(mRepairLog.getDescription());
                     }
                 }
 
@@ -141,5 +147,17 @@ public class RepairDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private String getDate(long timeStamp){
+
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+            Date date = (new Date(timeStamp));
+            return sdf.format(date);
+        }
+        catch(Exception ex){
+            return getString(R.string.not_available);
+        }
     }
 }

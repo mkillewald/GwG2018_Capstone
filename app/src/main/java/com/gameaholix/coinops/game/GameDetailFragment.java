@@ -28,7 +28,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class GameDetailFragment extends Fragment implements
         RepairAdapter.RepairAdapterOnClickHandler{
@@ -40,8 +39,11 @@ public class GameDetailFragment extends Fragment implements
     private Game mGame;
     private ArrayList<RepairLog> mRepairLogs;
     private RepairAdapter mRepairAdapter;
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
+    private DatabaseReference mGameRef;
+    private DatabaseReference mRrepairListRef;
+    private FirebaseUser mUser;
+    private ValueEventListener mGameListener;
+    private ValueEventListener mRepairListener;
     private OnFragmentInteractionListener mListener;
 
     public GameDetailFragment() {
@@ -53,9 +55,6 @@ public class GameDetailFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -79,6 +78,18 @@ public class GameDetailFragment extends Fragment implements
             mRepairLogs = savedInstanceState.getParcelableArrayList(EXTRA_REPAIR_LIST);
         }
 
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        // get current user
+        mUser = firebaseAuth.getCurrentUser();
+
+        // Setup database references
+        mGameRef = databaseReference
+                .child(Db.GAME).child(mUser.getUid()).child(mGame.getGameId());
+        mRrepairListRef = mGameRef.child(Db.REPAIR_LIST);
+
         // Setup Repair Log RecyclerView
         final RecyclerView recyclerView = rootView.findViewById(R.id.rv_repair_list);
         mRepairAdapter = new RepairAdapter( this);
@@ -87,89 +98,84 @@ public class GameDetailFragment extends Fragment implements
         recyclerView.setAdapter(mRepairAdapter);
         mRepairAdapter.setRepairLogs(mRepairLogs);
 
-        // Set up event listeners
-        ValueEventListener gameListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String gameId = dataSnapshot.getKey();
-
-                mGame = dataSnapshot.getValue(Game.class);
-                if (mGame == null) {
-                    Log.d(TAG, "Error: Game details not found");
-                } else {
-                    mGame.setGameId(gameId);
-                    String[] typeArr = getResources().getStringArray(R.array.game_type);
-                    String[] cabinetArr = getResources().getStringArray(R.array.game_cabinet);
-                    String[] workingArr = getResources().getStringArray(R.array.game_working);
-                    String[] ownershipArr =
-                            getResources().getStringArray(R.array.game_ownership);
-                    String[] conditionArr =
-                            getResources().getStringArray(R.array.game_condition);
-                    String[] monitorPhospherArr =
-                            getResources().getStringArray(R.array.game_monitor_phospher);
-                    String[] monitorTypeArr =
-                            getResources().getStringArray(R.array.game_monitor_type);
-                    String[] monitorTechArr =
-                            getResources().getStringArray(R.array.game_monitor_tech);
-                    String[] monitorSizeArr =
-                            getResources().getStringArray(R.array.game_monitor_size);
-
-                    bind.tvGameName.setText(mGame.getName());
-                    bind.tvGameType.setText(typeArr[mGame.getType()]);
-                    bind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
-                    bind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
-                    bind.tvGameOwnership.setText(ownershipArr[mGame.getOwnership()]);
-                    bind.tvGameCondition.setText(conditionArr[mGame.getCondition()]);
-                    bind.tvGameMonitorPhospher
-                            .setText(monitorPhospherArr[mGame.getMonitorPhospher()]);
-                    bind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorType()]);
-                    bind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
-                    bind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Failed to read value
-                Log.d(TAG, "Failed to read from database.", databaseError.toException());
-            }
-        };
-
-        ValueEventListener repairListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mRepairLogs.clear();
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    String logId = dataSnapshot1.getKey();
-                    String description = (String) dataSnapshot1.getValue();
-                    RepairLog repairLog = new RepairLog(logId, mGame.getGameId(), description);
-                    mRepairLogs.add(repairLog);
-                }
-                mRepairAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Failed to read value
-                Log.d(TAG, "Failed to read from database.", databaseError.toException());
-            }
-        };
-
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
+            final String uid = mUser.getUid();
 
-            // Setup database references
-            final DatabaseReference gameRef = mDatabaseReference
-                    .child(Db.GAME).child(uid).child(mGame.getGameId());
-            final DatabaseReference repairListRef = gameRef.child(Db.REPAIR_LIST);
+
+            // Set up event listeners
+            mGameListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String gameId = dataSnapshot.getKey();
+
+                    mGame = dataSnapshot.getValue(Game.class);
+                    if (mGame == null) {
+                        Log.d(TAG, "Error: Game details not found");
+                    } else {
+                        mGame.setGameId(gameId);
+                        String[] typeArr = getResources().getStringArray(R.array.game_type);
+                        String[] cabinetArr = getResources().getStringArray(R.array.game_cabinet);
+                        String[] workingArr = getResources().getStringArray(R.array.game_working);
+                        String[] ownershipArr =
+                                getResources().getStringArray(R.array.game_ownership);
+                        String[] conditionArr =
+                                getResources().getStringArray(R.array.game_condition);
+                        String[] monitorPhospherArr =
+                                getResources().getStringArray(R.array.game_monitor_phospher);
+                        String[] monitorTypeArr =
+                                getResources().getStringArray(R.array.game_monitor_type);
+                        String[] monitorTechArr =
+                                getResources().getStringArray(R.array.game_monitor_tech);
+                        String[] monitorSizeArr =
+                                getResources().getStringArray(R.array.game_monitor_size);
+
+                        bind.tvGameName.setText(mGame.getName());
+                        bind.tvGameType.setText(typeArr[mGame.getType()]);
+                        bind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
+                        bind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
+                        bind.tvGameOwnership.setText(ownershipArr[mGame.getOwnership()]);
+                        bind.tvGameCondition.setText(conditionArr[mGame.getCondition()]);
+                        bind.tvGameMonitorPhospher
+                                .setText(monitorPhospherArr[mGame.getMonitorPhospher()]);
+                        bind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorType()]);
+                        bind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
+                        bind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
+                }
+            };
 
             // read list of games
-            gameRef.addValueEventListener(gameListener);
+            mGameRef.addValueEventListener(mGameListener);
+
+            mRepairListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    mRepairLogs.clear();
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        String logId = dataSnapshot1.getKey();
+                        String description = (String) dataSnapshot1.getValue();
+                        RepairLog repairLog = new RepairLog(logId, mGame.getGameId(), description);
+                        mRepairLogs.add(repairLog);
+                    }
+                    mRepairAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
+                }
+            };
 
             // read list of repair logs
-            repairListRef.addValueEventListener(repairListener);
+            mRrepairListRef.addValueEventListener(mRepairListener);
 
             bind.btnAddRepair.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -214,8 +220,20 @@ public class GameDetailFragment extends Fragment implements
     }
 
     @Override
-    public void onClick(RepairLog repairLog) {
+    public void onDestroyView() {
+        super.onDestroyView();
 
+        if (mUser != null) {
+            mGameRef.removeEventListener(mGameListener);
+            mRrepairListRef.removeEventListener(mRepairListener);
+        }
+    }
+
+    @Override
+    public void onClick(RepairLog repairLog) {
+        if (mListener != null) {
+            mListener.onLogSelected(repairLog);
+        }
     }
 
     @Override
@@ -224,6 +242,11 @@ public class GameDetailFragment extends Fragment implements
 
         outState.putParcelable(EXTRA_GAME, mGame);
         outState.putParcelableArrayList(EXTRA_REPAIR_LIST, mRepairLogs);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -272,6 +295,7 @@ public class GameDetailFragment extends Fragment implements
         void onAddTodoButtonPressed(String gameId);
         void onAddShoppingButtonPressed(String gameId);
         void onAddRepairButtonPressed(String gameId);
+        void onLogSelected(RepairLog repairLog);
     }
 
 

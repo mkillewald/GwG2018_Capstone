@@ -15,6 +15,8 @@ import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.repair.AddRepairActivity;
+import com.gameaholix.coinops.repair.RepairDetailActivity;
+import com.gameaholix.coinops.repair.RepairLog;
 import com.gameaholix.coinops.shopping.AddShoppingActivity;
 import com.gameaholix.coinops.todo.AddToDoActivity;
 import com.gameaholix.coinops.utility.Db;
@@ -34,6 +36,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
     private static final String EXTRA_GAME_ID = "CoinOpsGameID";
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
 
     private Game mGame;
     private FirebaseUser mUser;
@@ -83,6 +86,13 @@ public class GameDetailActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_GAME, mGame);
+    }
+
+    @Override
+    public void onLogSelected(RepairLog repairLog) {
+        Intent intent = new Intent(this, RepairDetailActivity.class);
+        intent.putExtra(EXTRA_REPAIR, repairLog);
+        startActivity(intent);
     }
 
     @Override
