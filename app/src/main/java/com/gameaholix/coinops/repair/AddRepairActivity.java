@@ -116,7 +116,7 @@ public class AddRepairActivity extends AppCompatActivity implements
 
             Map<String, Object> valuesToAdd = new HashMap<>();
             valuesToAdd.put(repairPath, log);
-            valuesToAdd.put(userRepairPath, true);
+            valuesToAdd.put(userRepairPath, log.getDescription());
 
             // TODO: add progress spinner
 

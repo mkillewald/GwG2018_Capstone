@@ -1,6 +1,5 @@
 package com.gameaholix.coinops.adapter;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,20 +9,19 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.RepairListItemBinding;
 import com.gameaholix.coinops.repair.RepairLog;
-
 import java.util.List;
 
 public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdapterViewHolder> {
     private List<RepairLog> mRepairLogs;
-    private final Context mContext;
+//    private final Context mContext;
     private final RepairAdapterOnClickHandler mClickHandler;
 
     public interface RepairAdapterOnClickHandler {
         void onClick(RepairLog repairLog);
     }
 
-    public RepairAdapter (Context context, RepairAdapterOnClickHandler clickHandler) {
-        mContext = context;
+    public RepairAdapter (RepairAdapterOnClickHandler clickHandler) {
+//        mContext = context;
         mClickHandler = clickHandler;
     }
 
@@ -34,7 +32,7 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
         RepairAdapterViewHolder(RepairListItemBinding repairListItemBinding) {
             super(repairListItemBinding.getRoot());
             mBinding = repairListItemBinding;
-            mBinding.tvRepairName.setOnClickListener(this);
+            mBinding.tvRepairDescription.setOnClickListener(this);
         }
 
         @Override
@@ -61,7 +59,7 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
         RepairLog repairLog = mRepairLogs.get(position);
 
         holder.mBinding.setRepairLog(repairLog);
-//        holder.mBinding.tvRepairName.setText();
+        holder.mBinding.tvRepairDescription.setText(repairLog.getDescription());
     }
 
     @Override

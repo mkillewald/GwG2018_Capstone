@@ -28,6 +28,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     private static final String TAG = GameListFragment.class.getSimpleName();
     private static final String EXTRA_GAME_LIST = "CoinOpsGameList";
 
+    private Context mContext;
     private ArrayList<Game> mGames;
     private GameAdapter mGameAdapter;
     private FirebaseAuth mFirebaseAuth;
@@ -62,7 +63,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_game_list);
         mGameAdapter = new GameAdapter(getContext(), this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mGameAdapter);
         mGameAdapter.setGames(mGames);
@@ -124,6 +125,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {

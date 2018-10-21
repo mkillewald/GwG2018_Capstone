@@ -58,7 +58,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
                 false);
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_repair_list);
-        mRepairAdapter = new RepairAdapter(getContext(), this);
+        mRepairAdapter = new RepairAdapter( this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mRepairAdapter);

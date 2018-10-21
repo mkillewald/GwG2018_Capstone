@@ -6,17 +6,22 @@ import android.os.Parcelable;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class RepairLog implements Parcelable{
     private String id;
     private String gameId;
     private String description;
-    private Long createdAt;
+    private long createdAt;
 
     public RepairLog() {
         // Default constructor required for calls to DataSnapshot.getValue()
+    }
+
+    public RepairLog(String id, String gameId, String description) {
+        this.id = id;
+        this.gameId = gameId;
+        this.description = description;
     }
 
     private RepairLog(Parcel in) {
@@ -82,6 +87,10 @@ public class RepairLog implements Parcelable{
     public Map<String, String> getCreatedAt() {
         return ServerValue.TIMESTAMP;
     }
+
+//    public Long getCreatedAt() {
+//        return createdAt;
+//    }
 
     @Exclude
     public Long getCreatedAtLong() {

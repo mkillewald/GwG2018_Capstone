@@ -36,6 +36,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     private static final String EXTRA_GAME_ID = "CoinOpsGameID";
 
     private Game mGame;
+    private FirebaseUser mUser;
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
@@ -55,6 +56,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mUser = mFirebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         setTitle(R.string.game_details_title);
@@ -84,11 +86,6 @@ public class GameDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onDeleteButtonPressed(String gameId) {
-        deleteGameAlert(gameId);
-    }
-
-    @Override
     public void onAddRepairButtonPressed(String gameId) {
         Intent intent = new Intent(GameDetailActivity.this, AddRepairActivity.class);
         intent.putExtra(EXTRA_GAME_ID, gameId);
@@ -107,6 +104,9 @@ public class GameDetailActivity extends AppCompatActivity implements
         startActivity(intent);
 
     }
+
+    @Override
+    public void onDeleteButtonPressed(String gameId) { deleteGameAlert(gameId); }
 
     private void deleteGameAlert(final String gameId) {
         AlertDialog.Builder builder;
@@ -133,10 +133,9 @@ public class GameDetailActivity extends AppCompatActivity implements
     }
 
     private void deleteGame(final String gameId) {
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
+            String uid = mUser.getUid();
 
             // Get database paths from helper class
             String gamePath = Db.getGamePath(uid, gameId);
