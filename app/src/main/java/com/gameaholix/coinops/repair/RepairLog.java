@@ -88,10 +88,6 @@ public class RepairLog implements Parcelable{
         return ServerValue.TIMESTAMP;
     }
 
-//    public Long getCreatedAt() {
-//        return createdAt;
-//    }
-
     @Exclude
     public Long getCreatedAtLong() {
         return createdAt;

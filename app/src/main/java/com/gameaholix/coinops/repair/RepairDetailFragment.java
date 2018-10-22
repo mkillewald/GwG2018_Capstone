@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentRepairDetailBinding;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.DateHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,16 +24,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class RepairDetailFragment extends Fragment {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
 
     private RepairLog mRepairLog;
+    private Context mContext;
     private DatabaseReference mRepairRef;
     private ValueEventListener mRepairListener;
     private OnFragmentInteractionListener mListener;
@@ -90,7 +88,9 @@ public class RepairDetailFragment extends Fragment {
                     } else {
                         mRepairLog.setId(id);
 
-                        bind.tvRepairCreatedAt.setText(getDate(mRepairLog.getCreatedAtLong()));
+                        String createdAtString =
+                                DateHelper.getDateTime(mContext, mRepairLog.getCreatedAtLong());
+                        bind.tvRepairCreatedAt.setText(createdAtString);
                         bind.tvRepairDescription.setText(mRepairLog.getDescription());
                         Log.d(TAG,"mRepairLog: " + mRepairLog.getId() + " " +
                                 mRepairLog.getDescription() + " " + mRepairLog.getCreatedAtLong());
@@ -130,6 +130,7 @@ public class RepairDetailFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -157,14 +158,5 @@ public class RepairDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    private String getDate(long timeStamp){
-        try{
-            return DateFormat.getDateTimeInstance().format(new Date(timeStamp));
-        }
-        catch(Exception e){
-            return getString(R.string.not_available);
-        }
     }
 }

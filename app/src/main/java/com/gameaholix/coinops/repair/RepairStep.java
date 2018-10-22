@@ -3,6 +3,11 @@ package com.gameaholix.coinops.repair;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ServerValue;
+
+import java.util.Map;
+
 public class RepairStep implements Parcelable {
 
     private String id;
@@ -70,7 +75,12 @@ public class RepairStep implements Parcelable {
         this.entry = entry;
     }
 
-    public long getCreatedAt() {
+    public Map<String, String> getCreatedAt() {
+        return ServerValue.TIMESTAMP;
+    }
+
+    @Exclude
+    public Long getCreatedAtLong() {
         return createdAt;
     }
 
