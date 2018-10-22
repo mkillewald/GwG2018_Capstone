@@ -38,7 +38,7 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_to_do_list, container, false);
