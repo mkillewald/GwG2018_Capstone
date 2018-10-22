@@ -24,15 +24,9 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     private static final String TAG = ToDoListFragment.class.getSimpleName();
     private static final String EXTRA_TODO_LIST = "CoinOpsToDoList";
 
-    private OnFragmentInteractionListener mListener;
-
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
-
-//    private String mUsername;
-
-    private ToDoAdapter mToDoAdapter;
     private ArrayList<ToDoItem> mToDoList;
+    private ToDoAdapter mToDoAdapter;
+    private OnFragmentInteractionListener mListener;
 
     public ToDoListFragment() {
         // Required empty public constructor
@@ -41,16 +35,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            mToDoList = new ArrayList<ToDoItem>();
-        } else {
-            mToDoList = savedInstanceState.getParcelableArrayList(EXTRA_TODO_LIST);
-        }
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -59,6 +43,12 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_to_do_list, container, false);
 
+        if (savedInstanceState == null) {
+            mToDoList = new ArrayList<ToDoItem>();
+        } else {
+            mToDoList = savedInstanceState.getParcelableArrayList(EXTRA_TODO_LIST);
+        }
+
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_todo_list);
         mToDoAdapter = new ToDoAdapter(getContext(), this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -66,7 +56,11 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         recyclerView.setAdapter(mToDoAdapter);
         mToDoAdapter.setToDoItems(mToDoList);
 
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();

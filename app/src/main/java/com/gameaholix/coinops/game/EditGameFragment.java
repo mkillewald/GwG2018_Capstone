@@ -38,7 +38,6 @@ public class EditGameFragment extends Fragment {
     private Context mContext;
     private Game mGame;
     private Bundle mValuesBundle;
-    private FirebaseAuth mFirebaseAuth;
     private OnFragmentInteractionListener mListener;
 
     public EditGameFragment() {
@@ -48,9 +47,6 @@ public class EditGameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -74,7 +70,11 @@ public class EditGameFragment extends Fragment {
             mValuesBundle = savedInstanceState.getBundle(EXTRA_VALUES);
         }
 
-        final FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+
+        final FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();

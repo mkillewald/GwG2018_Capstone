@@ -29,11 +29,9 @@ public class InventoryDetailFragment extends Fragment {
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.inventory.InventoryItem";
 
     private InventoryItem mItem;
-
+    private DatabaseReference mInventoryRef;
+    private ValueEventListener mInventoryListener;
     private OnFragmentInteractionListener mListener;
-
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
 
     public InventoryDetailFragment() {
         // Required empty public constructor
@@ -43,19 +41,6 @@ public class InventoryDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        if (savedInstanceState == null) {
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
-                mItem = intent.getParcelableExtra(EXTRA_INVENTORY_ITEM);
-            }
-        } else {
-            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
-        }
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -67,17 +52,29 @@ public class InventoryDetailFragment extends Fragment {
 
         final View rootView = binding.getRoot();
 
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (savedInstanceState == null) {
+            Intent intent = getActivity().getIntent();
+            if (intent != null) {
+                mItem = intent.getParcelableExtra(EXTRA_INVENTORY_ITEM);
+            }
+        } else {
+            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
+        }
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();
 
             // Setup database references
-            final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY)
-                    .child(uid).child(mItem.getId());
+            mInventoryRef = databaseReference.child(Db.INVENTORY).child(uid).child(mItem.getId());
 
             // read inventory item details
-            ValueEventListener inventoryListener = new ValueEventListener() {
+            mInventoryListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String id = dataSnapshot.getKey();
@@ -104,7 +101,7 @@ public class InventoryDetailFragment extends Fragment {
                 }
             };
 
-            inventoryRef.addValueEventListener(inventoryListener);
+            mInventoryRef.addValueEventListener(mInventoryListener);
 
             binding.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -121,6 +118,13 @@ public class InventoryDetailFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mInventoryRef.removeEventListener(mInventoryListener);
     }
 
     @Override

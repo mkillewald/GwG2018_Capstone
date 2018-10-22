@@ -28,13 +28,11 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
     private static final String TAG = InventoryListFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_LIST = "CoinOpsInventoryList";
 
-    private OnFragmentInteractionListener mListener;
-
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
-
     private InventoryAdapter mInventoryAdapter;
     private ArrayList<InventoryItem> mInventoryItems;
+    private DatabaseReference mUserInventoryListRef;
+    private ValueEventListener mInventoryListener;
+    private OnFragmentInteractionListener mListener;
 
     public InventoryListFragment() {
         // Required empty public constructor
@@ -43,16 +41,6 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            mInventoryItems = new ArrayList<InventoryItem>();
-        } else {
-            mInventoryItems = savedInstanceState.getParcelableArrayList(EXTRA_INVENTORY_LIST);
-        }
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -62,6 +50,12 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
         View rootView = inflater.inflate(R.layout.fragment_inventory_list, container,
                 false);
 
+        if (savedInstanceState == null) {
+            mInventoryItems = new ArrayList<InventoryItem>();
+        } else {
+            mInventoryItems = savedInstanceState.getParcelableArrayList(EXTRA_INVENTORY_LIST);
+        }
+
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_inventory_list);
         mInventoryAdapter = new InventoryAdapter(getContext(), this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -69,18 +63,20 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
         recyclerView.setAdapter(mInventoryAdapter);
         mInventoryAdapter.setInventoryItems(mInventoryItems);
 
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();
 
             // Setup database references
-            final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
-            final DatabaseReference userRef = mDatabaseReference.child(Db.USER).child(uid);
-            final DatabaseReference userInventoryListRef = userRef.child(Db.INVENTORY_LIST);
+            mUserInventoryListRef = databaseReference.child(Db.USER).child(uid).child(Db.INVENTORY_LIST);
 
             // read list of inventory items
-            ValueEventListener inventoryListener = new ValueEventListener() {
+            mInventoryListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     mInventoryItems.clear();
@@ -100,14 +96,20 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
                 }
             };
 
-            userInventoryListRef.addValueEventListener(inventoryListener);
+            mUserInventoryListRef.addValueEventListener(mInventoryListener);
 
         } else {
             // user is not signed in
         }
 
-
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mUserInventoryListRef.removeEventListener(mInventoryListener);
     }
 
     @Override

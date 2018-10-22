@@ -31,8 +31,8 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     private Context mContext;
     private ArrayList<Game> mGames;
     private GameAdapter mGameAdapter;
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
+    private DatabaseReference mUserGameListRef;
+    private ValueEventListener mGameListener;
     private OnFragmentInteractionListener mListener;
 
     public GameListFragment() {
@@ -42,16 +42,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            mGames = new ArrayList<>();
-        } else {
-            mGames = savedInstanceState.getParcelableArrayList(EXTRA_GAME_LIST);
-        }
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -61,6 +51,12 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         final View rootView = inflater.inflate(R.layout.fragment_game_list, container,
                 false);
 
+        if (savedInstanceState == null) {
+            mGames = new ArrayList<>();
+        } else {
+            mGames = savedInstanceState.getParcelableArrayList(EXTRA_GAME_LIST);
+        }
+
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_game_list);
         mGameAdapter = new GameAdapter(getContext(), this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
@@ -68,17 +64,20 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         recyclerView.setAdapter(mGameAdapter);
         mGameAdapter.setGames(mGames);
 
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();
 
             // Setup database references
-            final DatabaseReference userRef = mDatabaseReference.child(Db.USER).child(uid);
-            final DatabaseReference userGameListRef = userRef.child(Db.GAME_LIST);
+            mUserGameListRef = databaseReference.child(Db.USER).child(uid).child(Db.GAME_LIST);
 
             // read list of games
-            ValueEventListener gameListener = new ValueEventListener() {
+            mGameListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     mGames.clear();
@@ -98,7 +97,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
                 }
             };
 
-            userGameListRef.addValueEventListener(gameListener);
+            mUserGameListRef.addValueEventListener(mGameListener);
 
 
         } else {
@@ -106,6 +105,13 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mUserGameListRef.removeEventListener(mGameListener);
     }
 
     @Override

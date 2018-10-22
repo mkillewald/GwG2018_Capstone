@@ -102,7 +102,6 @@ public class GameDetailFragment extends Fragment implements
             // user is signed in
             final String uid = mUser.getUid();
 
-
             // Set up event listeners
             mGameListener = new ValueEventListener() {
                 @Override

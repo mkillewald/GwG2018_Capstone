@@ -38,16 +38,6 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            mRepairLogs = new ArrayList<RepairLog>();
-        } else {
-            mRepairLogs = savedInstanceState.getParcelableArrayList(EXTRA_REPAIR_LIST);
-        }
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -57,12 +47,22 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
         final View rootView = inflater.inflate(R.layout.fragment_repair_list, container,
                 false);
 
+        if (savedInstanceState == null) {
+            mRepairLogs = new ArrayList<RepairLog>();
+        } else {
+            mRepairLogs = savedInstanceState.getParcelableArrayList(EXTRA_REPAIR_LIST);
+        }
+
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_repair_list);
         mRepairAdapter = new RepairAdapter( this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mRepairAdapter);
         mRepairAdapter.setRepairLogs(mRepairLogs);
+
+        // Initialize Firebase components
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {

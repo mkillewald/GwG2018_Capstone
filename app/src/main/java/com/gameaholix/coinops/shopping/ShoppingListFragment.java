@@ -27,9 +27,6 @@ public class ShoppingListFragment extends Fragment implements
 
     private OnFragmentInteractionListener mListener;
 
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
-
     private ShoppingAdapter mShoppingAdapter;
     private ArrayList<ShoppingItem> mShoppingList;
 
@@ -40,16 +37,6 @@ public class ShoppingListFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            mShoppingList = new ArrayList<ShoppingItem>();
-        } else {
-            mShoppingList = savedInstanceState.getParcelableArrayList(EXTRA_SHOPPING_LIST);
-        }
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -59,6 +46,12 @@ public class ShoppingListFragment extends Fragment implements
         final View rootView = inflater.inflate(R.layout.fragment_shopping_list, container,
                 false);
 
+        if (savedInstanceState == null) {
+            mShoppingList = new ArrayList<ShoppingItem>();
+        } else {
+            mShoppingList = savedInstanceState.getParcelableArrayList(EXTRA_SHOPPING_LIST);
+        }
+
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_shopping_list);
         mShoppingAdapter = new ShoppingAdapter(getContext(), this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -66,7 +59,11 @@ public class ShoppingListFragment extends Fragment implements
         recyclerView.setAdapter(mShoppingAdapter);
         mShoppingAdapter.setShoppingItems(mShoppingList);
 
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();

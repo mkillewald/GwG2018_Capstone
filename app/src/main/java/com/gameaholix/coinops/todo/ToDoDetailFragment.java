@@ -24,11 +24,7 @@ public class ToDoDetailFragment extends Fragment {
     private static final String EXTRA_TODO = "com.gameaholix.coinops.todo.ToDoItem";
 
     private ToDoItem mToDoItem;
-
     private OnFragmentInteractionListener mListener;
-
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
 
     public ToDoDetailFragment() {
         // Required empty public constructor
@@ -37,19 +33,6 @@ public class ToDoDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
-                mToDoItem = intent.getParcelableExtra(EXTRA_TODO);
-            }
-        } else {
-            mToDoItem = savedInstanceState.getParcelable(EXTRA_TODO);
-        }
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -61,7 +44,20 @@ public class ToDoDetailFragment extends Fragment {
 
         final View rootView = binding.getRoot();
 
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (savedInstanceState == null) {
+            Intent intent = getActivity().getIntent();
+            if (intent != null) {
+                mToDoItem = intent.getParcelableExtra(EXTRA_TODO);
+            }
+        } else {
+            mToDoItem = savedInstanceState.getParcelable(EXTRA_TODO);
+        }
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
 //            mUsername = user.getDisplayName();

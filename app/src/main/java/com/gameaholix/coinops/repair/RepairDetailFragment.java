@@ -23,18 +23,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class RepairDetailFragment extends Fragment {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
 
     private RepairLog mRepairLog;
-
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
-
+    private DatabaseReference mRepairRef;
+    private ValueEventListener mRepairListener;
     private OnFragmentInteractionListener mListener;
 
     public RepairDetailFragment() {
@@ -44,10 +44,6 @@ public class RepairDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -68,17 +64,22 @@ public class RepairDetailFragment extends Fragment {
             mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
         }
 
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();
+            String gameId = mRepairLog.getGameId();
+            String logId = mRepairLog.getId();
 
             // Setup database references
-            final DatabaseReference repairRef = mDatabaseReference
-                    .child(Db.REPAIR).child(uid).child(mRepairLog.getId());
+            mRepairRef = databaseReference.child(Db.REPAIR).child(uid).child(gameId).child(logId);
 
             // Read repair log details
-            ValueEventListener repairListener = new ValueEventListener() {
+            mRepairListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String id = dataSnapshot.getKey();
@@ -88,9 +89,11 @@ public class RepairDetailFragment extends Fragment {
                         Log.d(TAG, "Error: Repair log details not found");
                     } else {
                         mRepairLog.setId(id);
-                        
+
                         bind.tvRepairCreatedAt.setText(getDate(mRepairLog.getCreatedAtLong()));
                         bind.tvRepairDescription.setText(mRepairLog.getDescription());
+                        Log.d(TAG,"mRepairLog: " + mRepairLog.getId() + " " +
+                                mRepairLog.getDescription() + " " + mRepairLog.getCreatedAtLong());
                     }
                 }
 
@@ -101,13 +104,20 @@ public class RepairDetailFragment extends Fragment {
                 }
             };
 
-            repairRef.addValueEventListener(repairListener);
+            mRepairRef.addValueEventListener(mRepairListener);
 
         } else {
             // user is not signed in
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mRepairRef.removeEventListener(mRepairListener);
     }
 
     @Override
@@ -150,13 +160,10 @@ public class RepairDetailFragment extends Fragment {
     }
 
     private String getDate(long timeStamp){
-
         try{
-            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-            Date date = (new Date(timeStamp));
-            return sdf.format(date);
+            return DateFormat.getDateTimeInstance().format(new Date(timeStamp));
         }
-        catch(Exception ex){
+        catch(Exception e){
             return getString(R.string.not_available);
         }
     }
