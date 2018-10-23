@@ -20,5 +20,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_repair_steps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btn_add_step"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_repair_step"/>
+
     </LinearLayout>
 </layout>

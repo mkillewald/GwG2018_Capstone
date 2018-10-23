@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.repair;
+package com.gameaholix.coinops.step;
 
 import android.os.Parcel;
 import android.os.Parcelable;

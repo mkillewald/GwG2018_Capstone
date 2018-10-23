@@ -176,6 +176,7 @@ public class GameDetailFragment extends Fragment implements
             // read list of repair logs
             mRrepairListRef.addValueEventListener(mRepairListener);
 
+            // Setup Buttons
             bind.btnAddRepair.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

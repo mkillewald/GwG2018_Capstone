@@ -1,29 +1,31 @@
-package com.gameaholix.coinops.repair;
+package com.gameaholix.coinops.step;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentAddRepairBinding;
+import com.gameaholix.coinops.databinding.FragmentAddStepBinding;
 
-public class AddRepairFragment extends Fragment {
-    private static final String TAG = AddRepairFragment.class.getSimpleName();
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
+public class AddStepFragment extends Fragment {
+    private static final String TAG = AddStepFragment.class.getSimpleName();
+    private static final String EXTRA_STEP = "com.gameaholix.coinops.step.RepairStep";
 
-    private RepairLog mNewLog;
+    private RepairStep mNewStep;
     private OnFragmentInteractionListener mListener;
 
-    public AddRepairFragment() {
+    public AddStepFragment() {
         // Required empty public constructor
     }
 
@@ -33,37 +35,37 @@ public class AddRepairFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentAddRepairBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_add_repair, container, false);
+        final FragmentAddStepBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_add_step, container, false);
         final View rootView = bind.getRoot();
 
         if (savedInstanceState == null) {
-            mNewLog = new RepairLog();
+            mNewStep = new RepairStep();
         } else {
-            mNewLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
+            mNewStep = savedInstanceState.getParcelable(EXTRA_STEP);
         }
 
         //Setup EditText
-//        bind.etRepairLogDescription.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//        bind.etAddStepEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //            @Override
 //            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
 //                if (i == EditorInfo.IME_ACTION_DONE) {
-//                    mNewLog.setDescription(textView.getText().toString().trim());
+//                    mNewStep.setEntry(textView.getText().toString().trim());
 //                    hideKeyboard(textView);
 //                }
 //                return false;
 //            }
 //        });
-//        bind.etRepairLogDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//        bind.etAddStepEntry.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 //            @Override
 //            public void onFocusChange(View view, boolean hasFocus) {
 //                if (view.getId() == R.id.et_add_game_name && !hasFocus) {
 //                    if (view instanceof EditText) {
 //                        EditText editText = (EditText) view;
-//                        mNewLog.setDescription(editText.getText().toString().trim());
+//                        mNewStep.setEntry(editText.getText().toString().trim());
 //                        hideKeyboard(editText);
 //                    }
 //                }
@@ -71,14 +73,14 @@ public class AddRepairFragment extends Fragment {
 //        });
 
         // Setup Button
-        Button addLogButton = bind.btnSave;
-        addLogButton.setText(R.string.add_repair_entry);
-        addLogButton.setOnClickListener(new View.OnClickListener() {
+        Button addStepButton = bind.btnSave;
+        addStepButton.setText(R.string.add_repair_entry);
+        addStepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    mNewLog.setDescription(bind.etRepairLogDescription.getText().toString().trim());
-                    mListener.onAddButtonPressed(mNewLog);
+                    mNewStep.setEntry(bind.etAddStepEntry.getText().toString().trim());
+                    mListener.onAddButtonPressed(mNewStep);
                 }
             }
         });
@@ -96,7 +98,7 @@ public class AddRepairFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_REPAIR, mNewLog);
+        outState.putParcelable(EXTRA_STEP, mNewStep);
     }
 
     @Override
@@ -127,6 +129,7 @@ public class AddRepairFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onAddButtonPressed(RepairLog log);
+        // TODO: Update argument type and name
+        void onAddButtonPressed(RepairStep step);
     }
 }

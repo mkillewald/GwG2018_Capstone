@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.repair;
+package com.gameaholix.coinops.step;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -25,20 +25,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddRepairActivity extends AppCompatActivity implements
-        AddRepairFragment.OnFragmentInteractionListener {
+public class AddStepActivity extends AppCompatActivity implements
+        AddStepFragment.OnFragmentInteractionListener {
 
-    private static final String TAG = AddRepairActivity.class.getSimpleName();
-    private static final String EXTRA_GAME_ID = "CoinOpsGameID";
+    private static final String TAG = AddStepActivity.class.getSimpleName();
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
+    private static final String EXTRA_REPAIR_ID = "CoinOpsRepairLogId";
 
     private String mGameId;
+    private String mLogId;
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_repair);
+        setContentView(R.layout.activity_add_step);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -46,15 +48,17 @@ public class AddRepairActivity extends AppCompatActivity implements
 
         if (savedInstanceState == null) {
             mGameId = getIntent().getStringExtra(EXTRA_GAME_ID);
+            mLogId = getIntent().getStringExtra(EXTRA_REPAIR_ID);
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
+            mLogId = savedInstanceState.getString(EXTRA_REPAIR_ID);
         }
 
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        setTitle(R.string.add_repair_title);
+        setTitle(R.string.add_repair_step_title);
     }
 
     @Override
@@ -62,11 +66,12 @@ public class AddRepairActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_GAME_ID, mGameId);
+        outState.putString(EXTRA_REPAIR_ID, mLogId);
     }
 
     @Override
-    public void onAddButtonPressed(final RepairLog log) {
-        addLog(log);
+    public void onAddButtonPressed(final RepairStep step) {
+        addStep(step);
     }
 
     // Hide keyboard after touch event occurs outside of EditText
@@ -92,11 +97,11 @@ public class AddRepairActivity extends AppCompatActivity implements
         return super.dispatchTouchEvent(event);
     }
 
-    private void addLog(RepairLog log) {
-        if (TextUtils.isEmpty(log.getDescription())) {
+    private void addStep(RepairStep step) {
+        if (TextUtils.isEmpty(step.getEntry())) {
             WarnUser.displayAlert(this,
                     R.string.error_add_repair_log_failed,
-                    R.string.error_repair_log_description_empty);
+                    R.string.error_repair_step_entry_empty);
             return;
         }
 
@@ -108,16 +113,21 @@ public class AddRepairActivity extends AppCompatActivity implements
             // user is signed in
             final String uid = user.getUid();
 
-            final DatabaseReference repairRef = mDatabaseReference.child(Db.REPAIR).child(uid);
-            final String logId = repairRef.push().getKey();
+            final DatabaseReference stepRef = mDatabaseReference
+                    .child(Db.REPAIR)
+                    .child(uid)
+                    .child(mGameId)
+                    .child(mLogId)
+                    .child(Db.STEPS);
+            final String stepId = stepRef.push().getKey();
 
             // Get database paths from helper class
-            String repairPath = Db.getRepairPath(uid, mGameId, logId);
-            String userRepairPath = Db.getRepairListPath(uid, mGameId, logId);
+            String stepPath = Db.getStepsPath(uid, mGameId, mLogId, stepId);
+//            String stepListPath = Db.getStepListPath(uid, mGameId, mLogId, stepId);
 
             Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(repairPath, log);
-            valuesToAdd.put(userRepairPath, log.getDescription());
+            valuesToAdd.put(stepPath, step);
+//            valuesToAdd.put(stepListPath, true);
 
             // TODO: add progress spinner
 
@@ -128,8 +138,8 @@ public class AddRepairActivity extends AppCompatActivity implements
                     if (databaseError == null) {
                         finish();
                     } else {
-                        WarnUser.displayAlert(AddRepairActivity.this,
-                                R.string.error_add_repair_log_failed, databaseError.getMessage());
+                        WarnUser.displayAlert(AddStepActivity.this,
+                                R.string.error_add_repair_step_failed, databaseError.getMessage());
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
                                 " Details: " + databaseError.getDetails());

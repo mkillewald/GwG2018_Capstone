@@ -68,6 +68,10 @@
             android:launchMode="singleTop"
             android:parentActivityName=".repair.RepairDetailActivity" />
         <activity
+            android:name=".step.AddStepActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".repair.RepairDetailActivity"/>
+        <activity
             android:name=".todo.ToDoListActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
@@ -78,11 +82,11 @@
         <activity
             android:name=".todo.AddToDoActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity"/>
+            android:parentActivityName=".game.GameDetailActivity" />
         <activity
             android:name=".todo.EditToDoActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".todo.ToDoDetailActivity"/>
+            android:parentActivityName=".todo.ToDoDetailActivity" />
         <activity
             android:name=".shopping.ShoppingListActivity"
             android:launchMode="singleTop"
@@ -94,11 +98,11 @@
         <activity
             android:name=".shopping.AddShoppingActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity"/>
+            android:parentActivityName=".game.GameDetailActivity" />
         <activity
             android:name=".shopping.EditShoppingActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".shopping.ShoppingDetailActivity"/>
+            android:parentActivityName=".shopping.ShoppingDetailActivity" />
     </application>
 
 </manifest>
