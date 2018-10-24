@@ -56,6 +56,10 @@
     <string name="save_changes">Save Changes</string>
     <string name="not_available">N/A</string>
     <string name="off">Off</string>
+    <string name="not_set">Not Set</string>
+    <string name="none">None</string>
+    <string name="blank"/>
+    <string name="select">Select...</string>
 
     <string name="game_name">Game Name</string>
 
@@ -84,11 +88,12 @@
     <string name="game_condition10">D</string>
     <string name="game_condition11">F</string>
 
-    <string name="select_game_working">Game Working</string>
+    <string name="select_game_working">Game Status</string>
     <string name="game_working1">Working 100%</string>
     <string name="game_working2">Partially Working</string>
     <string name="game_working3">Non-working</string>
 
+    <string name="select_game_monitor">Select Monitor Details</string>
     <string name="select_game_monitor_size">Monitor Size</string>
     <string name="game_monitor_size1">13\"</string>
     <string name="game_monitor_size2">19\"</string>

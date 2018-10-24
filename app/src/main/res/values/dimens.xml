@@ -19,6 +19,11 @@
 
     <!-- margin -->
     <dimen name="margin">16dp</dimen>
+    <dimen name="form_margin">10dp</dimen>
     <dimen name="text_margin">8dp</dimen>
+    <dimen name="edit_text_margin">2dp</dimen>
+
+    <!-- padding -->
+    <dimen name="spinner_label_padding">7dp</dimen>
 
 </resources>

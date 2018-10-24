@@ -12,12 +12,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.adapter.HintSpinnerAdapter;
 import com.gameaholix.coinops.databinding.FragmentAddInventoryBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 
@@ -126,32 +126,28 @@ public class AddInventoryFragment extends Fragment {
         });
         
         // Setup Spinners
-        final HintSpinnerAdapter typeAdapter = new HintSpinnerAdapter(
-                mContext, getResources().getStringArray(R.array.inventory_type));
+        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
+                mContext, R.array.inventory_type, android.R.layout.simple_spinner_item);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerInventoryType.setAdapter(typeAdapter);
         bind.spinnerInventoryType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                // First item is disabled and used for hint
-                if(position > 0){
-                    mNewItem.setType(position);
-                }
+                mNewItem.setType(position);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-        final HintSpinnerAdapter conditionAdapter = new HintSpinnerAdapter(
-                mContext, getResources().getStringArray(R.array.inventory_condition));
+        ArrayAdapter<CharSequence> conditionAdapter = ArrayAdapter.createFromResource(
+                mContext, R.array.inventory_condition, android.R.layout.simple_spinner_item);
+        conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerInventoryCondition.setAdapter(conditionAdapter);
         bind.spinnerInventoryCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                // First item is disabled and used for hint
-                if(position > 0){
-                    mNewItem.setCondition(position);
-                }
+                mNewItem.setCondition(position);
             }
 
             @Override

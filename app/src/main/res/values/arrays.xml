@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="game_type">
-        <item>@string/select_game_type</item>
+        <item>@string/none</item>
         <item>@string/game_type1</item>
         <item>@string/game_type2</item>
         <item>@string/game_type3</item>
@@ -10,14 +10,14 @@
     </string-array>
 
     <string-array name="game_cabinet">
-        <item>@string/select_game_cabinet</item>
+        <item>@string/none</item>
         <item>@string/game_cabinet1</item>
         <item>@string/game_cabinet2</item>
         <item>@string/game_cabinet3</item>
     </string-array>
 
     <string-array name="game_condition">
-        <item>@string/select_game_condition</item>
+        <item>@string/none</item>
         <item>@string/game_condition1</item>
         <item>@string/game_condition2</item>
         <item>@string/game_condition3</item>
@@ -32,7 +32,7 @@
     </string-array>
 
     <string-array name="game_working">
-        <item>@string/select_game_working</item>
+        <item>@string/none</item>
         <item>@string/game_working1</item>
         <item>@string/game_working2</item>
         <item>@string/game_working3</item>
@@ -66,7 +66,7 @@
     </string-array>
 
     <string-array name="game_ownership">
-        <item>@string/select_game_ownership</item>
+        <item>@string/none</item>
         <item>@string/game_ownership1</item>
         <item>@string/game_ownership2</item>
         <item>@string/game_ownership3</item>

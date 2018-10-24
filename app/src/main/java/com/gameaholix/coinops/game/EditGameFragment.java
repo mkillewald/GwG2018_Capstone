@@ -3,7 +3,6 @@ package com.gameaholix.coinops.game;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -15,13 +14,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.NumberPicker;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.adapter.HintSpinnerAdapter;
 import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
@@ -79,26 +77,9 @@ public class EditGameFragment extends Fragment {
             final String uid = user.getUid();
             final String gameId = mGame.getGameId();
 
-            // Setup TextView array for game condition labels
-            final TextView gameConditionOff = bind.gameConditionLabels.tvGameConditionOff;
-            final TextView gameCondition1 = bind.gameConditionLabels.tvGameCondition1;
-            final TextView gameCondition2 = bind.gameConditionLabels.tvGameCondition2;
-            final TextView gameCondition3 = bind.gameConditionLabels.tvGameCondition3;
-            final TextView gameCondition4 = bind.gameConditionLabels.tvGameCondition4;
-            final TextView gameCondition5 = bind.gameConditionLabels.tvGameCondition5;
-            final TextView gameCondition6 = bind.gameConditionLabels.tvGameCondition6;
-            final TextView gameCondition7 = bind.gameConditionLabels.tvGameCondition7;
-            final TextView gameCondition8 = bind.gameConditionLabels.tvGameCondition8;
-            final TextView gameCondition9 = bind.gameConditionLabels.tvGameCondition9;
-            final TextView gameCondition10 = bind.gameConditionLabels.tvGameCondition10;
-            final TextView gameCondition11 = bind.gameConditionLabels.tvGameCondition11;
-            final TextView[] gameConditionLabels = {gameConditionOff, gameCondition1, gameCondition2,
-                    gameCondition3, gameCondition4, gameCondition5, gameCondition6, gameCondition7,
-                    gameCondition8, gameCondition9, gameCondition10, gameCondition11};
-
             // Setup EditText
-            bind.etAddGameName.setText(mGame.getName());
-            bind.etAddGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            bind.etGameName.setText(mGame.getName());
+            bind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                     if (i == EditorInfo.IME_ACTION_DONE) {
@@ -114,10 +95,10 @@ public class EditGameFragment extends Fragment {
                     return false;
                 }
             });
-            bind.etAddGameName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            bind.etGameName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_add_game_name && !hasFocus) {
+                    if (view.getId() == R.id.et_game_name && !hasFocus) {
                         if (view instanceof EditText) {
                             EditText editText = (EditText) view;
                             String input = editText.getText().toString().trim();
@@ -133,19 +114,15 @@ public class EditGameFragment extends Fragment {
             });
 
             // Setup Spinners
-            final HintSpinnerAdapter typeAdapter = new HintSpinnerAdapter(mContext,
-                    getResources().getStringArray(R.array.game_type));
+            ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
+                    mContext, R.array.game_type, android.R.layout.simple_spinner_item);
+            typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             bind.spinnerGameType.setAdapter(typeAdapter);
-            if (mGame.getType() > 0) {
-                bind.spinnerGameType.setSelection(mGame.getType());
-            }
+            bind.spinnerGameType.setSelection(mGame.getType());
             bind.spinnerGameType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                    // First item is disabled and used for hint
-                    if (position > 0) {
-                        mValuesBundle.putInt(Db.TYPE, position);
-                    }
+                    mValuesBundle.putInt(Db.TYPE, position);
                 }
 
                 @Override
@@ -153,165 +130,131 @@ public class EditGameFragment extends Fragment {
                 }
             });
 
-            final HintSpinnerAdapter cabinetAdapter = new HintSpinnerAdapter(mContext,
-                    getResources().getStringArray(R.array.game_cabinet));
+            ArrayAdapter<CharSequence> cabinetAdapter = ArrayAdapter.createFromResource(
+                    mContext, R.array.game_cabinet, android.R.layout.simple_spinner_item);
+            cabinetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             bind.spinnerGameCabinet.setAdapter(cabinetAdapter);
-            if (mGame.getCabinet() > 0) {
-                bind.spinnerGameCabinet.setSelection(mGame.getCabinet());
+            bind.spinnerGameCabinet.setSelection(mGame.getCabinet());
+            bind.spinnerGameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                    mValuesBundle.putInt(Db.CABINET, position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                }
+            });
+
+            ArrayAdapter<CharSequence> workingAdapter = ArrayAdapter.createFromResource(
+                    mContext, R.array.game_working, android.R.layout.simple_spinner_item);
+            workingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            bind.spinnerGameWorking.setAdapter(workingAdapter);
+            bind.spinnerGameWorking.setSelection(mGame.getWorking());
+            bind.spinnerGameWorking.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                    mValuesBundle.putInt(Db.WORKING, position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                }
+            });
+
+            ArrayAdapter<CharSequence> ownershipAdapter = ArrayAdapter.createFromResource(
+                    mContext, R.array.game_ownership, android.R.layout.simple_spinner_item);
+            ownershipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            bind.spinnerGameOwnership.setAdapter(ownershipAdapter);
+            bind.spinnerGameOwnership.setSelection(mGame.getOwnership());
+            bind.spinnerGameOwnership.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                    mValuesBundle.putInt(Db.OWNERSHIP, position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                }
+            });
+
+            ArrayAdapter<CharSequence> conditionAdapter = ArrayAdapter.createFromResource(
+                    mContext, R.array.game_condition, android.R.layout.simple_spinner_item);
+            conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            bind.spinnerGameCondition.setAdapter(conditionAdapter);
+            if (mGame.getCondition() > 0) {
+                bind.spinnerGameCondition.setSelection(mGame.getCondition());
             }
             bind.spinnerGameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                    // First item is disabled and used for hint
-                    if (position > 0) {
-                        mValuesBundle.putInt(Db.CABINET, position);
-                    }
+                    mValuesBundle.putInt(Db.CONDITION, position);
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                }
-            });
-
-            final HintSpinnerAdapter workingAdapter = new HintSpinnerAdapter(
-                    mContext, getResources().getStringArray(R.array.game_working));
-            bind.spinnerGameWorking.setAdapter(workingAdapter);
-            if (mGame.getWorking() > 0) {
-                bind.spinnerGameWorking.setSelection(mGame.getWorking());
-            }
-            bind.spinnerGameWorking.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                    // First item is disabled and used for hint
-                    if (position > 0) {
-                        mValuesBundle.putInt(Db.WORKING, position);
-                    }
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                }
-            });
-
-            final HintSpinnerAdapter ownershipAdapter = new HintSpinnerAdapter(
-                    mContext, getResources().getStringArray(R.array.game_ownership));
-            bind.spinnerGameOwnership.setAdapter(ownershipAdapter);
-            if (mGame.getOwnership() > 0) {
-                bind.spinnerGameOwnership.setSelection(mGame.getOwnership());
-            }
-            bind.spinnerGameOwnership.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                    // First item is disabled and used for hint
-                    if (position > 0) {
-                        mValuesBundle.putInt(Db.OWNERSHIP, position);
-                    }
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                }
-            });
-
-            // Setup SeekBar
-            bind.sbGameCondition.setMax(11);
-            if (mGame.getCondition() > 0) {
-                bind.sbGameCondition.setProgress(mGame.getCondition());
-                gameConditionLabels[mGame.getCondition()].setTextColor(Color.BLACK);
-            }
-            bind.sbGameCondition.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if (fromUser) {
-                        if (progress >= 0 && progress <= seekBar.getMax()) {
-
-                            for (TextView textView : gameConditionLabels) {
-                                textView.setTextColor(Color.GRAY);
-                            }
-
-                            TextView textViewAtPosition = gameConditionLabels[progress];
-                            textViewAtPosition.setTextColor(Color.BLACK);
-
-                            mValuesBundle.putInt(Db.CONDITION, progress);
-                            seekBar.setSecondaryProgress(progress);
-                        }
-                    }
-
-                }
+                public void onNothingSelected(AdapterView<?> adapterView) {}
             });
 
             // Setup NumberPickers
-            bind.npGameMonitorSize.setMinValue(0);
-            bind.npGameMonitorSize.setMaxValue(5);
-            bind.npGameMonitorSize.setDisplayedValues(
-                    getResources().getStringArray(R.array.game_monitor_size));
-            bind.npGameMonitorSize.setWrapSelectorWheel(false);
-            if (mGame.getMonitorSize() > 0) {
-                bind.npGameMonitorSize.setValue(mGame.getMonitorSize());
-            }
-            bind.npGameMonitorSize.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                @Override
-                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                    mValuesBundle.putInt(Db.MONITOR_SIZE, numberPicker.getValue());
-                }
-            });
-
-            bind.npGameMonitorPhospher.setMinValue(0);
-            bind.npGameMonitorPhospher.setMaxValue(2);
-            bind.npGameMonitorPhospher.setDisplayedValues(
-                    getResources().getStringArray(R.array.game_monitor_phospher));
-            bind.npGameMonitorPhospher.setWrapSelectorWheel(false);
-            if (mGame.getMonitorPhospher() > 0) {
-                bind.npGameMonitorPhospher.setValue(mGame.getMonitorPhospher());
-            }
-            bind.npGameMonitorPhospher.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                @Override
-                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                    mValuesBundle.putInt(Db.MONITOR_PHOSPHER, numberPicker.getValue());
-                }
-            });
-
-            bind.npGameMonitorTech.setMinValue(0);
-            bind.npGameMonitorTech.setMaxValue(2);
-            bind.npGameMonitorTech.setDisplayedValues(
-                    getResources().getStringArray(R.array.game_monitor_tech));
-            bind.npGameMonitorTech.setWrapSelectorWheel(false);
-            if (mGame.getMonitorTech() > 0) {
-                bind.npGameMonitorTech.setValue(mGame.getMonitorTech());
-            }
-            bind.npGameMonitorTech.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                @Override
-                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                    mValuesBundle.putInt(Db.MONITOR_TECH, numberPicker.getValue());
-                }
-            });
-
-            bind.npGameMonitorType.setMinValue(0);
-            bind.npGameMonitorType.setMaxValue(2);
-            bind.npGameMonitorType.setDisplayedValues(
-                    getResources().getStringArray(R.array.game_monitor_type));
-            bind.npGameMonitorType.setWrapSelectorWheel(false);
-            if (mGame.getMonitorType() > 0) {
-                bind.npGameMonitorType.setValue(mGame.getMonitorType());
-            }
-            bind.npGameMonitorType.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                @Override
-                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                    mValuesBundle.putInt(Db.MONITOR_TYPE, numberPicker.getValue());
-                }
-            });
+//            bind.npGameMonitorSize.setMinValue(0);
+//            bind.npGameMonitorSize.setMaxValue(5);
+//            bind.npGameMonitorSize.setDisplayedValues(
+//                    getResources().getStringArray(R.array.game_monitor_size));
+//            bind.npGameMonitorSize.setWrapSelectorWheel(false);
+//            if (mGame.getMonitorSize() > 0) {
+//                bind.npGameMonitorSize.setValue(mGame.getMonitorSize());
+//            }
+//            bind.npGameMonitorSize.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+//                @Override
+//                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+//                    mValuesBundle.putInt(Db.MONITOR_SIZE, numberPicker.getValue());
+//                }
+//            });
+//
+//            bind.npGameMonitorPhospher.setMinValue(0);
+//            bind.npGameMonitorPhospher.setMaxValue(2);
+//            bind.npGameMonitorPhospher.setDisplayedValues(
+//                    getResources().getStringArray(R.array.game_monitor_phospher));
+//            bind.npGameMonitorPhospher.setWrapSelectorWheel(false);
+//            if (mGame.getMonitorPhospher() > 0) {
+//                bind.npGameMonitorPhospher.setValue(mGame.getMonitorPhospher());
+//            }
+//            bind.npGameMonitorPhospher.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+//                @Override
+//                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+//                    mValuesBundle.putInt(Db.MONITOR_PHOSPHER, numberPicker.getValue());
+//                }
+//            });
+//
+//            bind.npGameMonitorTech.setMinValue(0);
+//            bind.npGameMonitorTech.setMaxValue(2);
+//            bind.npGameMonitorTech.setDisplayedValues(
+//                    getResources().getStringArray(R.array.game_monitor_tech));
+//            bind.npGameMonitorTech.setWrapSelectorWheel(false);
+//            if (mGame.getMonitorTech() > 0) {
+//                bind.npGameMonitorTech.setValue(mGame.getMonitorTech());
+//            }
+//            bind.npGameMonitorTech.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+//                @Override
+//                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+//                    mValuesBundle.putInt(Db.MONITOR_TECH, numberPicker.getValue());
+//                }
+//            });
+//
+//            bind.npGameMonitorType.setMinValue(0);
+//            bind.npGameMonitorType.setMaxValue(2);
+//            bind.npGameMonitorType.setDisplayedValues(
+//                    getResources().getStringArray(R.array.game_monitor_type));
+//            bind.npGameMonitorType.setWrapSelectorWheel(false);
+//            if (mGame.getMonitorType() > 0) {
+//                bind.npGameMonitorType.setValue(mGame.getMonitorType());
+//            }
+//            bind.npGameMonitorType.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+//                @Override
+//                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+//                    mValuesBundle.putInt(Db.MONITOR_TYPE, numberPicker.getValue());
+//                }
+//            });
 
             // Setup Button
             bind.btnSave.setText(R.string.save_changes);
