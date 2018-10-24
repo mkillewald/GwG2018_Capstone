@@ -44,6 +44,14 @@
     <string name="add_repair_step">Add Step</string>
     <string name="delete_repair_step">Delete Step</string>
 
+    <!-- Labels -->
+    <string name="type_label">Type:</string>
+    <string name="cabinet_label">Cabinet:</string>
+    <string name="status_label">Status:</string>
+    <string name="ownership_label">Ownership:</string>
+    <string name="condition_label">Condition:</string>
+    <string name="monitor_label">Monitor:</string>
+
     <!-- Form Input -->
     <string name="save_changes">Save Changes</string>
     <string name="not_available">N/A</string>
@@ -77,9 +85,9 @@
     <string name="game_condition11">F</string>
 
     <string name="select_game_working">Game Working</string>
-    <string name="game_working1">Yes</string>
-    <string name="game_working2">No</string>
-    <string name="game_working3">Partial</string>
+    <string name="game_working1">Working 100%</string>
+    <string name="game_working2">Partially Working</string>
+    <string name="game_working3">Non-working</string>
 
     <string name="select_game_monitor_size">Monitor Size</string>
     <string name="game_monitor_size1">13\"</string>
@@ -97,9 +105,9 @@
     <string name="game_monitor_raster">Raster</string>
 
     <string name="select_game_ownership">Ownership Status</string>
-    <string name="game_ownership1">Own</string>
-    <string name="game_ownership2">Sold</string>
-    <string name="game_ownership3">Want</string>
+    <string name="game_ownership1">Have</string>
+    <string name="game_ownership2">Want</string>
+    <string name="game_ownership3">Sold</string>
 
     <string name="inventory_name">Part Name</string>
     <string name="inventory_description">Part Description</string>
@@ -168,6 +176,9 @@
         describe the problem that is occurring and try again.</string>
     <string name="error_repair_step_entry_empty">Entry cannot be blank. Please
         enter the repair action performed and try again.</string>
+
+    <!-- Content Descriptions -->
+    <string name="next_arrow">more information</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

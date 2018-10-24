@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="@dimen/margin"
     tools:context=".game.GameDetailActivity">
 
     <fragment
         android:id="@+id/game_detail_fragment"
         android:name="com.gameaholix.coinops.game.GameDetailFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </android.support.constraint.ConstraintLayout>

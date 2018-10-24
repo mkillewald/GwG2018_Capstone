@@ -1,5 +1,24 @@
 <resources>
+    <dimen name="app_bar_elevation">4dp</dimen>
 
+    <!-- detail -->
+    <dimen name="detail_title_text_size">32sp</dimen>
+    <dimen name="detail_body_text_size">18sp</dimen>
+    <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
 
+    <!-- fab  -->
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_press_translation_z">6dp</dimen>
+
+    <!-- card -->
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+    <dimen name="card_text_padding">16dp</dimen>
+    <dimen name="card_text_padding_bottom">4dp</dimen>
+
+    <!-- margin -->
+    <dimen name="margin">16dp</dimen>
+    <dimen name="text_margin">8dp</dimen>
+
 </resources>
