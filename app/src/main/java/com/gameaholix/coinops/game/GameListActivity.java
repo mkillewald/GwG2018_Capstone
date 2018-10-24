@@ -8,12 +8,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.Game;
 
 public class GameListActivity extends AppCompatActivity implements
         GameListFragment.OnFragmentInteractionListener {
 
-    private static final String TAG = GameListActivity.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
+//    private static final String TAG = GameListActivity.class.getSimpleName();
+    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

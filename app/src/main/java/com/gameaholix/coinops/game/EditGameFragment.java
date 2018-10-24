@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.HintSpinnerAdapter;
 import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
+import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,8 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EditGameFragment extends Fragment {
-    private static final String TAG = EditGameFragment.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
+//    private static final String TAG = EditGameFragment.class.getSimpleName();
+    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_VALUES = "CoinOpsGameValuesToUpdate";
 
     private Context mContext;
@@ -58,12 +59,10 @@ public class EditGameFragment extends Fragment {
         final View rootView = bind.getRoot();
 
         if (savedInstanceState == null) {
-            Intent intent = getActivity().getIntent();
-
-            if (intent != null) {
+            if (getActivity() != null && getActivity().getIntent() != null) {
+                Intent intent = getActivity().getIntent();
                 mGame = intent.getParcelableExtra(EXTRA_GAME);
             }
-
             mValuesBundle = new Bundle();
         } else {
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
@@ -348,8 +347,8 @@ public class EditGameFragment extends Fragment {
                 }
             });
 
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
 
         return rootView;

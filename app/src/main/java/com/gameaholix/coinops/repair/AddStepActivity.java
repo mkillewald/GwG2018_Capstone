@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.step;
+package com.gameaholix.coinops.repair;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.RepairStep;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.WarnUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -146,8 +147,9 @@ public class AddStepActivity extends AppCompatActivity implements
                     }
                 }
             });
-        } else {
-            // user is not signed in
+
+//        } else {
+//            // user is not signed in
         }
     }
 }

@@ -5,20 +5,18 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddRepairBinding;
+import com.gameaholix.coinops.model.RepairLog;
 
 public class AddRepairFragment extends Fragment {
-    private static final String TAG = AddRepairFragment.class.getSimpleName();
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
+//    private static final String TAG = AddRepairFragment.class.getSimpleName();
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
 
     private RepairLog mNewLog;
     private OnFragmentInteractionListener mListener;
@@ -86,11 +84,11 @@ public class AddRepairFragment extends Fragment {
         return rootView;
     }
 
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
+//    private void hideKeyboard(TextView view) {
+//        InputMethodManager imm = (InputMethodManager) view
+//                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {

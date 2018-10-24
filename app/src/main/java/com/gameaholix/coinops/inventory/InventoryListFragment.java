@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.InventoryAdapter;
+import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -51,13 +52,13 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
                 false);
 
         if (savedInstanceState == null) {
-            mInventoryItems = new ArrayList<InventoryItem>();
+            mInventoryItems = new ArrayList<>();
         } else {
             mInventoryItems = savedInstanceState.getParcelableArrayList(EXTRA_INVENTORY_LIST);
         }
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_inventory_list);
-        mInventoryAdapter = new InventoryAdapter(getContext(), this);
+        mInventoryAdapter = new InventoryAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mInventoryAdapter);
@@ -83,7 +84,9 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         String id = dataSnapshot1.getKey();
                         InventoryItem item =  dataSnapshot1.getValue(InventoryItem.class);
-                        item.setId(id);
+                        if (item != null) {
+                            item.setId(id);
+                        }
                         mInventoryItems.add(item);
                     }
                     mInventoryAdapter.notifyDataSetChanged();
@@ -98,8 +101,8 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
 
             mUserInventoryListRef.addValueEventListener(mInventoryListener);
 
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
 
         return rootView;

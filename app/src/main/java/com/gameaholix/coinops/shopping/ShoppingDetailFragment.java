@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentShoppingDetailBinding;
+import com.gameaholix.coinops.model.ShoppingItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -21,7 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class ShoppingDetailFragment extends Fragment {
 
     private static final String TAG = ShoppingDetailFragment.class.getSimpleName();
-    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.shopping.ShoppingItem";
+    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.model.ShoppingItem";
 
     private ShoppingItem mShoppingItem;
 
@@ -66,6 +67,7 @@ public class ShoppingDetailFragment extends Fragment {
             // user is signed in
             final String uid = user.getUid();
 
+            // TODO: finish this
             // Setup database references
 
             // read shoppingItem details

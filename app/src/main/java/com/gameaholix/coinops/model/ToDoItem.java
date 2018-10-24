@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.todo;
+package com.gameaholix.coinops.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

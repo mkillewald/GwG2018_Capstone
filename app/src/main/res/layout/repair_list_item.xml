@@ -5,7 +5,7 @@
     <data>
         <variable
             name="repairLog"
-            type="com.gameaholix.coinops.repair.RepairLog" />
+            type="com.gameaholix.coinops.model.RepairLog" />
     </data>
 
     <LinearLayout

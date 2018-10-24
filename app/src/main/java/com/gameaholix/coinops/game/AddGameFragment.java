@@ -22,10 +22,11 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
 import com.gameaholix.coinops.adapter.HintSpinnerAdapter;
+import com.gameaholix.coinops.model.Game;
 
 public class AddGameFragment extends Fragment {
-    private static final String TAG = AddGameFragment.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
+//    private static final String TAG = AddGameFragment.class.getSimpleName();
+    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
     private Context mContext;
     private Game mNewGame;

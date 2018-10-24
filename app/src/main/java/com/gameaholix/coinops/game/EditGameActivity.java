@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.WarnUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,7 +27,7 @@ public class EditGameActivity extends AppCompatActivity implements
         EditGameFragment.OnFragmentInteractionListener {
 
     private static final String TAG = EditGameActivity.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
+    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
     private Game mGame;
     private FirebaseAuth mFirebaseAuth;
@@ -110,8 +111,8 @@ public class EditGameActivity extends AppCompatActivity implements
                     }
                 }
             });
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
     }
 }

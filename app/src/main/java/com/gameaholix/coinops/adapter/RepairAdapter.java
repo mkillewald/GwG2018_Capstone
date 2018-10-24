@@ -1,6 +1,7 @@
 package com.gameaholix.coinops.adapter;
 
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,11 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.RepairListItemBinding;
-import com.gameaholix.coinops.repair.RepairLog;
+import com.gameaholix.coinops.model.RepairLog;
 import java.util.List;
 
 public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdapterViewHolder> {
     private List<RepairLog> mRepairLogs;
-//    private final Context mContext;
     private final RepairAdapterOnClickHandler mClickHandler;
 
     public interface RepairAdapterOnClickHandler {
@@ -21,7 +21,6 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
     }
 
     public RepairAdapter (RepairAdapterOnClickHandler clickHandler) {
-//        mContext = context;
         mClickHandler = clickHandler;
     }
 
@@ -43,19 +42,18 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
         }
     }
 
+    @NonNull
     @Override
-    public RepairAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RepairAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         RepairListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.repair_list_item, parent, false);
 
-        RepairAdapterViewHolder viewHolder = new RepairAdapterViewHolder(binding);
-
-        return viewHolder;
+        return new RepairAdapterViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(RepairAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RepairAdapterViewHolder holder, int position) {
         RepairLog repairLog = mRepairLogs.get(position);
 
         holder.mBinding.setRepairLog(repairLog);

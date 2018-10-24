@@ -1,7 +1,7 @@
 package com.gameaholix.coinops.adapter;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +9,19 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.GameListItemBinding;
-import com.gameaholix.coinops.game.Game;
+import com.gameaholix.coinops.model.Game;
 
 import java.util.List;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterViewHolder> {
     private List<Game> mGames;
-    private final Context mContext;
     private final GameAdapterOnClickHandler mClickHandler;
 
     public interface GameAdapterOnClickHandler {
         void onClick(Game game);
     }
 
-    public GameAdapter (Context context, GameAdapterOnClickHandler clickHandler) {
-        mContext = context;
+    public GameAdapter (GameAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
@@ -45,19 +43,18 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
         }
     }
 
+    @NonNull
     @Override
-    public GameAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public GameAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         GameListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.game_list_item, parent, false);
 
-        GameAdapterViewHolder viewHolder = new GameAdapterViewHolder(binding);
-
-        return viewHolder;
+        return new GameAdapterViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(GameAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull GameAdapterViewHolder holder, int position) {
         Game game = mGames.get(position);
 
         holder.mBinding.setGame(game);

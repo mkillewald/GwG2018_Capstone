@@ -19,10 +19,11 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.HintSpinnerAdapter;
 import com.gameaholix.coinops.databinding.FragmentAddInventoryBinding;
+import com.gameaholix.coinops.model.InventoryItem;
 
 public class AddInventoryFragment extends Fragment {
-    private static final String TAG = AddInventoryFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.inventory.InventoryItem";
+//    private static final String TAG = AddInventoryFragment.class.getSimpleName();
+    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
     private Context mContext;
     private InventoryItem mNewItem;

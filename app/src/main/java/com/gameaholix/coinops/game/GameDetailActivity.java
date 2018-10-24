@@ -14,9 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.repair.AddRepairActivity;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
-import com.gameaholix.coinops.repair.RepairLog;
+import com.gameaholix.coinops.model.RepairLog;
 import com.gameaholix.coinops.shopping.AddShoppingActivity;
 import com.gameaholix.coinops.todo.AddToDoActivity;
 import com.gameaholix.coinops.utility.Db;
@@ -34,13 +35,12 @@ public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener {
 
     private static final String TAG = GameDetailActivity.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
+    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_ID = "CoinOpsGameID";
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
 
     private Game mGame;
     private FirebaseUser mUser;
-    private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
     @Override
@@ -58,8 +58,8 @@ public class GameDetailActivity extends AppCompatActivity implements
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
         }
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mUser = mFirebaseAuth.getCurrentUser();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         setTitle(R.string.game_details_title);
@@ -169,8 +169,8 @@ public class GameDetailActivity extends AppCompatActivity implements
                     }
                 }
             });
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
     }
 }

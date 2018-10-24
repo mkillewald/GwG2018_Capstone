@@ -8,12 +8,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.InventoryItem;
 
 public class InventoryListActivity extends AppCompatActivity implements
         InventoryListFragment.OnFragmentInteractionListener {
 
-    private static final String TAG = InventoryListActivity.class.getSimpleName();
-    private static final String EXTRA_INVENTORY = "com.gameaholix.coinops.inventory.InventoryItem";
+//    private static final String TAG = InventoryListActivity.class.getSimpleName();
+    private static final String EXTRA_INVENTORY = "com.gameaholix.coinops.model.InventoryItem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

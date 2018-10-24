@@ -16,7 +16,8 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.StepAdapter;
 import com.gameaholix.coinops.databinding.FragmentRepairDetailBinding;
-import com.gameaholix.coinops.step.RepairStep;
+import com.gameaholix.coinops.model.RepairLog;
+import com.gameaholix.coinops.model.RepairStep;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.DateHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 
 public class RepairDetailFragment extends Fragment implements StepAdapter.StepAdapterOnClickHandler {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
     private static final String EXTRA_STEP_LIST = "CoinOpsRepairStepList";
 
     private Context mContext;
@@ -64,8 +65,8 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
         final View rootView = bind.getRoot();
 
         if (savedInstanceState == null) {
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
+            if (getActivity() != null && getActivity().getIntent() != null) {
+                Intent intent = getActivity().getIntent();
                 mRepairLog = intent.getParcelableExtra(EXTRA_REPAIR);
             }
             mRepairSteps = new ArrayList<>();
@@ -130,11 +131,10 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     mRepairSteps.clear();
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        String stepId = dataSnapshot1.getKey();
+//                        String stepId = dataSnapshot1.getKey();
 
                         // TODO: finish this
                         RepairStep repairStep = dataSnapshot1.getValue(RepairStep.class);
-                        Log.d(TAG, "RepairStep Entry: " + repairStep.getEntry());
                         mRepairSteps.add(repairStep);
                     }
                     mStepAdapter.notifyDataSetChanged();
@@ -158,8 +158,8 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
                     }
                 }
             });
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
 
         return rootView;

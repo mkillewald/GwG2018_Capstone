@@ -21,8 +21,6 @@ import com.gameaholix.coinops.shopping.ShoppingListActivity;
 import com.gameaholix.coinops.todo.ToDoListActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 
@@ -33,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private DatabaseReference mDatabaseReference;
 
     private String mUsername;
 
@@ -43,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -103,31 +99,6 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-
-                    // Database references
-//                    DatabaseReference userRef = mDatabaseReference.child("user").child(uid);
-//                    final DatabaseReference userGameListRef = userRef.child("game_list");
-//                    final DatabaseReference userTodoListRef = userRef.child("todo_list");
-//                    final DatabaseReference userShopListRef = userRef.child("shop_list");
-//                    final DatabaseReference userInvListRef = userRef.child("inventory_list");
-
-//                    DatabaseReference gameRef = mDatabaseReference.child("game").child(uid);
-//                    DatabaseReference todoRef = mDatabaseReference.child("todo").child(uid);
-//                    DatabaseReference shopRef = mDatabaseReference.child("shop").child(uid);
-//                    DatabaseReference repairRef = mDatabaseReference.child("todo").child(uid);
-//                    DatabaseReference inventoryRef = mDatabaseReference.child("inventory").child(uid);
-
-
-//                    gameRef.push().setValue(true);
-//
-//                    todoListRef.push().setValue(true);
-//
-//                    shopListRef.push().setValue(true);
-//
-//                    invListRef.push().setValue(true);
-//
-//                    todoRef.push().setValue("todo item");
-
 
                 } else {
                     // user is not signed in

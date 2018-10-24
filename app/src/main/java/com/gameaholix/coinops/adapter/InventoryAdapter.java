@@ -1,7 +1,7 @@
 package com.gameaholix.coinops.adapter;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +9,19 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.InventoryListItemBinding;
-import com.gameaholix.coinops.inventory.InventoryItem;
+import com.gameaholix.coinops.model.InventoryItem;
 
 import java.util.List;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.InventoryAdapterViewHolder> {
     private List<InventoryItem> mInventoryItems;
-    private final Context mContext;
     private final InventoryAdapterOnClickHandler mClickHandler;
 
     public interface InventoryAdapterOnClickHandler {
         void onClick(InventoryItem inventoryItem);
     }
 
-    public InventoryAdapter (Context context, InventoryAdapterOnClickHandler clickHandler) {
-        mContext = context;
+    public InventoryAdapter (InventoryAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
@@ -45,19 +43,18 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         }
     }
 
+    @NonNull
     @Override
-    public InventoryAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public InventoryAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         InventoryListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.inventory_list_item, parent, false);
 
-        InventoryAdapterViewHolder viewHolder = new InventoryAdapterViewHolder(binding);
-
-        return viewHolder;
+        return new InventoryAdapterViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(InventoryAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull InventoryAdapterViewHolder holder, int position) {
         InventoryItem inventoryItem = mInventoryItems.get(position);
 
         holder.mBinding.setInventoryItem(inventoryItem);

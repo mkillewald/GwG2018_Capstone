@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.ShoppingAdapter;
+import com.gameaholix.coinops.model.ShoppingItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 public class ShoppingListFragment extends Fragment implements
         ShoppingAdapter.ShoppingAdapterOnClickHandler {
 
-    private static final String TAG = ShoppingListFragment.class.getSimpleName();
+//    private static final String TAG = ShoppingListFragment.class.getSimpleName();
     private static final String EXTRA_SHOPPING_LIST = "CoinOpsShoppingList";
 
     private OnFragmentInteractionListener mListener;
@@ -47,13 +48,13 @@ public class ShoppingListFragment extends Fragment implements
                 false);
 
         if (savedInstanceState == null) {
-            mShoppingList = new ArrayList<ShoppingItem>();
+            mShoppingList = new ArrayList<>();
         } else {
             mShoppingList = savedInstanceState.getParcelableArrayList(EXTRA_SHOPPING_LIST);
         }
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_shopping_list);
-        mShoppingAdapter = new ShoppingAdapter(getContext(), this);
+        mShoppingAdapter = new ShoppingAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mShoppingAdapter);
@@ -68,6 +69,7 @@ public class ShoppingListFragment extends Fragment implements
             // user is signed in
             final String uid = user.getUid();
 
+            // TODO: finish this
             // Setup database references
 
             // read list of shopping items
@@ -86,8 +88,9 @@ public class ShoppingListFragment extends Fragment implements
 //                            userShopListRef.child(shopId).setValue(true);
 //                        }
 //                    });
-        } else {
-            // user is not signed in
+
+//        } else {
+//            // user is not signed in
         }
 
         return rootView;

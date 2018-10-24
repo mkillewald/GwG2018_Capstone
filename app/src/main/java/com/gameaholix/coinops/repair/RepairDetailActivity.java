@@ -3,16 +3,15 @@ package com.gameaholix.coinops.repair;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.step.AddStepActivity;
+import com.gameaholix.coinops.model.RepairLog;
 
 public class RepairDetailActivity extends AppCompatActivity implements
         RepairDetailFragment.OnFragmentInteractionListener {
 
-    private static final String TAG = RepairDetailActivity.class.getSimpleName();
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.repair.RepairLog";
+//    private static final String TAG = RepairDetailActivity.class.getSimpleName();
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
     private static final String EXTRA_REPAIR_ID = "CoinOpsRepairLogId";
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 

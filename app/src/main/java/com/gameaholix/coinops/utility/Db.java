@@ -52,8 +52,8 @@ public class Db {
     public static final String[] INVENTORY_STRINGS = { Db.NAME, Db.DESCRIPTION };
     public static final String[] INVENTORY_INTS = { Db.TYPE, Db.CONDITION };
 
-    public static final String[] REPAIR_STRINGS = {};
-    public static final String[] REPAIR_INTS = {};
+//    public static final String[] REPAIR_STRINGS = {};
+//    public static final String[] REPAIR_INTS = {};
 
 //    public static final String[] TO_DO_STRINGS = {};
 //    public static final String[] TO_DO_INTS = {};

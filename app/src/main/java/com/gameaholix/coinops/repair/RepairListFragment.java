@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.RepairAdapter;
+import com.gameaholix.coinops.model.RepairLog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -20,12 +21,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 public class RepairListFragment extends Fragment implements RepairAdapter.RepairAdapterOnClickHandler {
-    private static final String TAG = RepairListFragment.class.getSimpleName();
+//    private static final String TAG = RepairListFragment.class.getSimpleName();
     private static final String EXTRA_REPAIR_LIST = "CoinOpsRepairList";
 
     private OnFragmentInteractionListener mListener;
 
-    private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
 
     private RepairAdapter mRepairAdapter;
@@ -61,20 +61,21 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
         mRepairAdapter.setRepairLogs(mRepairLogs);
 
         // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();
 
+            // TODO: finish this
             // Setup database references
 
             // read list of repair logs
 
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
 
         return rootView;

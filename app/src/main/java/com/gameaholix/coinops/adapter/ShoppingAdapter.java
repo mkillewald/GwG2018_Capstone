@@ -1,7 +1,7 @@
 package com.gameaholix.coinops.adapter;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +9,19 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.ShoppingListItemBinding;
-import com.gameaholix.coinops.shopping.ShoppingItem;
+import com.gameaholix.coinops.model.ShoppingItem;
 
 import java.util.List;
 
 public class ShoppingAdapter extends RecyclerView.Adapter<ShoppingAdapter.ShoppingAdapterViewHolder> {
     private List<ShoppingItem> mShoppingItems;
-    private final Context mContext;
     private final ShoppingAdapterOnClickHandler mClickHandler;
 
     public interface ShoppingAdapterOnClickHandler {
         void onClick(ShoppingItem shoppingItem);
     }
 
-    public ShoppingAdapter (Context context, ShoppingAdapterOnClickHandler clickHandler) {
-        mContext = context;
+    public ShoppingAdapter (ShoppingAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
@@ -45,19 +43,18 @@ public class ShoppingAdapter extends RecyclerView.Adapter<ShoppingAdapter.Shoppi
         }
     }
 
+    @NonNull
     @Override
-    public ShoppingAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ShoppingAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ShoppingListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.shopping_list_item, parent, false);
 
-        ShoppingAdapterViewHolder viewHolder = new ShoppingAdapterViewHolder(binding);
-
-        return viewHolder;
+        return new ShoppingAdapterViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(ShoppingAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ShoppingAdapterViewHolder holder, int position) {
         ShoppingItem shoppingItem = mShoppingItems.get(position);
 
         holder.mBinding.setShoppingItem(shoppingItem);

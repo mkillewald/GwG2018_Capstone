@@ -5,7 +5,7 @@
     <data>
         <variable
             name="shoppingItem"
-            type="com.gameaholix.coinops.shopping.ShoppingItem" />
+            type="com.gameaholix.coinops.model.ShoppingItem" />
     </data>
 
     <LinearLayout

@@ -17,7 +17,8 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.RepairAdapter;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
-import com.gameaholix.coinops.repair.RepairLog;
+import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.model.RepairLog;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 public class GameDetailFragment extends Fragment implements
         RepairAdapter.RepairAdapterOnClickHandler{
     private static final String TAG = GameDetailFragment.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.game.Game";
+    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_REPAIR_LIST = "CoinOpsRepairLogList";
 
     private Context mContext;
@@ -67,11 +68,10 @@ public class GameDetailFragment extends Fragment implements
         final View rootView = bind.getRoot();
 
         if (savedInstanceState == null) {
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
+            if (getActivity() != null && getActivity().getIntent() != null) {
+                Intent intent = getActivity().getIntent();
                 mGame = intent.getParcelableExtra(EXTRA_GAME);
             }
-
             mRepairLogs = new ArrayList<>();
         } else {
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
@@ -100,7 +100,6 @@ public class GameDetailFragment extends Fragment implements
 
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
 
             // Set up event listeners
             mGameListener = new ValueEventListener() {
@@ -212,8 +211,8 @@ public class GameDetailFragment extends Fragment implements
                     }
                 }
             });
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
 
         return rootView;

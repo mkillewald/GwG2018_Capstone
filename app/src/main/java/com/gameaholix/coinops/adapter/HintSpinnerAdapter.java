@@ -24,15 +24,9 @@ public class HintSpinnerAdapter extends ArrayAdapter<String> {
         super(context, R.layout.support_simple_spinner_dropdown_item, array);
     }
 
-    @NonNull
     @Override
     public boolean isEnabled(int position){
-        if (position == 0) {
-            // Disable first item which is used for hint.
-            return false;
-        } else {
-            return true;
-        }
+        return (position != 0);
     }
 
     @NonNull

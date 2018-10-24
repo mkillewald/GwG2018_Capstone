@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.WarnUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -118,8 +119,8 @@ public class AddInventoryActivity extends AppCompatActivity implements
                     }
                 }
             });
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
     }
 }

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.ToDoAdapter;
+import com.gameaholix.coinops.model.ToDoItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -50,7 +51,7 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         }
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_todo_list);
-        mToDoAdapter = new ToDoAdapter(getContext(), this);
+        mToDoAdapter = new ToDoAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mToDoAdapter);
@@ -65,6 +66,7 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
             // user is signed in
             final String uid = user.getUid();
 
+            // TODO: finish this
             // Setup database references
 
             // read to do list items

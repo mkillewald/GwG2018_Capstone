@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameAdapter;
+import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -58,7 +59,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         }
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_game_list);
-        mGameAdapter = new GameAdapter(getContext(), this);
+        mGameAdapter = new GameAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mGameAdapter);
@@ -100,8 +101,8 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             mUserGameListRef.addValueEventListener(mGameListener);
 
 
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
 
         return rootView;

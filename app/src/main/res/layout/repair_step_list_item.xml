@@ -5,7 +5,7 @@
     <data>
         <variable
             name="repairStep"
-            type="com.gameaholix.coinops.step.RepairStep" />
+            type="com.gameaholix.coinops.model.RepairStep" />
     </data>
 
     <LinearLayout

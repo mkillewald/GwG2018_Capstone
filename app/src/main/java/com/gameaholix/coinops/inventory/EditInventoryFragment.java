@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.HintSpinnerAdapter;
 import com.gameaholix.coinops.databinding.FragmentAddInventoryBinding;
+import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,8 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EditInventoryFragment extends Fragment {
-    private static final String TAG = EditInventoryFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.inventory.InventoryItem";
+//    private static final String TAG = EditInventoryFragment.class.getSimpleName();
+    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
     private static final String EXTRA_VALUES = "CoinOpsInventoryValuesToUpdate";
 
     private Context mContext;
@@ -55,12 +56,10 @@ public class EditInventoryFragment extends Fragment {
         final View rootView = bind.getRoot();
 
         if (savedInstanceState == null) {
-            Intent intent = getActivity().getIntent();
-
-            if (intent != null) {
+            if (getActivity() != null && getActivity().getIntent() != null) {
+                Intent intent = getActivity().getIntent();
                 mItem = intent.getParcelableExtra(EXTRA_INVENTORY_ITEM);
             }
-
             mValuesBundle = new Bundle();
         } else {
             mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
@@ -220,8 +219,8 @@ public class EditInventoryFragment extends Fragment {
                 }
             });
 
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
 
         return rootView;

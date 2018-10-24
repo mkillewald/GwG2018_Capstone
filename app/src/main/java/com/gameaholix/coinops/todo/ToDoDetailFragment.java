@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentToDoDetailBinding;
+import com.gameaholix.coinops.model.ToDoItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -21,7 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class ToDoDetailFragment extends Fragment {
 
     private static final String TAG = ToDoDetailFragment.class.getSimpleName();
-    private static final String EXTRA_TODO = "com.gameaholix.coinops.todo.ToDoItem";
+    private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
     private ToDoItem mToDoItem;
     private OnFragmentInteractionListener mListener;
@@ -63,6 +64,7 @@ public class ToDoDetailFragment extends Fragment {
 //            mUsername = user.getDisplayName();
             final String uid = user.getUid();
 
+            // TODO: finish this
             // Setup database references
 
             // read to do item details

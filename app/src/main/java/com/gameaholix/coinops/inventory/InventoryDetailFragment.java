@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryDetailBinding;
+import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,7 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 public class InventoryDetailFragment extends Fragment {
 
     private static final String TAG = InventoryDetailFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.inventory.InventoryItem";
+    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
     private InventoryItem mItem;
     private DatabaseReference mInventoryRef;
@@ -53,8 +54,8 @@ public class InventoryDetailFragment extends Fragment {
         final View rootView = binding.getRoot();
 
         if (savedInstanceState == null) {
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
+            if (getActivity() != null && getActivity().getIntent() != null) {
+                Intent intent = getActivity().getIntent();
                 mItem = intent.getParcelableExtra(EXTRA_INVENTORY_ITEM);
             }
         } else {
@@ -113,8 +114,8 @@ public class InventoryDetailFragment extends Fragment {
             });
 
 
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
 
         return rootView;

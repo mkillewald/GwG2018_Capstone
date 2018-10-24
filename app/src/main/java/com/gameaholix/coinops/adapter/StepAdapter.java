@@ -1,6 +1,7 @@
 package com.gameaholix.coinops.adapter;
 
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +9,12 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.RepairStepListItemBinding;
-import com.gameaholix.coinops.step.RepairStep;
+import com.gameaholix.coinops.model.RepairStep;
 
 import java.util.List;
 
 public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterViewHolder> {
     private List<RepairStep> mRepairSteps;
-//    private final Context mContext;
     private final StepAdapterOnClickHandler mClickHandler;
 
     public interface StepAdapterOnClickHandler {
@@ -44,19 +44,18 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterVie
         }
     }
 
+    @NonNull
     @Override
-    public StepAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StepAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         RepairStepListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.repair_step_list_item, parent, false);
 
-        StepAdapterViewHolder viewHolder = new StepAdapterViewHolder(binding);
-
-        return viewHolder;
+        return new StepAdapterViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(StepAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull StepAdapterViewHolder holder, int position) {
         RepairStep repairStep = mRepairSteps.get(position);
 
         holder.mBinding.setRepairStep(repairStep);

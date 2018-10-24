@@ -38,6 +38,7 @@
     <string name="delete_game">Delete Game</string>
     <string name="add_inventory_item">Add Part</string>
     <string name="delete_inventory_item">Delete Part</string>
+    <string name="new_trouble_report">New Trouble Report</string>
     <string name="add_repair_entry">Add Log Entry</string>
     <string name="delete_repair_entry">Delete Log Entry</string>
     <string name="add_repair_step">Add Step</string>

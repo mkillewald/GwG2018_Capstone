@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.WarnUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,7 +28,7 @@ public class EditInventoryActivity extends AppCompatActivity implements
         EditInventoryFragment.OnFragmentInteractionListener{
 
     private static final String TAG = EditInventoryActivity.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.inventory.InventoryItem";
+    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
     private InventoryItem mItem;
     private FirebaseAuth mFirebaseAuth;
@@ -111,8 +112,8 @@ public class EditInventoryActivity extends AppCompatActivity implements
                     }
                 }
             });
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
     }
 }

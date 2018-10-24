@@ -5,12 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.ToDoItem;
 
 public class ToDoListActivity extends AppCompatActivity implements
         ToDoListFragment.OnFragmentInteractionListener {
 
     private static final String TAG = ToDoListActivity.class.getSimpleName();
-    private static final String EXTRA_TODO = "com.gameaholix.coinops.todo.ToDoItem";
+    private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

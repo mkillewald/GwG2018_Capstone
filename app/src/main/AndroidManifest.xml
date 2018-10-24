@@ -68,7 +68,7 @@
             android:launchMode="singleTop"
             android:parentActivityName=".repair.RepairDetailActivity" />
         <activity
-            android:name=".step.AddStepActivity"
+            android:name=".repair.AddStepActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".repair.RepairDetailActivity"/>
         <activity

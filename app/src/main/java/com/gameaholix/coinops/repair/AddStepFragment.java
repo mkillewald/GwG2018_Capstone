@@ -1,26 +1,22 @@
-package com.gameaholix.coinops.step;
+package com.gameaholix.coinops.repair;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddStepBinding;
+import com.gameaholix.coinops.model.RepairStep;
 
 public class AddStepFragment extends Fragment {
-    private static final String TAG = AddStepFragment.class.getSimpleName();
-    private static final String EXTRA_STEP = "com.gameaholix.coinops.step.RepairStep";
+//    private static final String TAG = AddStepFragment.class.getSimpleName();
+    private static final String EXTRA_STEP = "com.gameaholix.coinops.model.RepairStep";
 
     private RepairStep mNewStep;
     private OnFragmentInteractionListener mListener;
@@ -35,7 +31,7 @@ public class AddStepFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final FragmentAddStepBinding bind = DataBindingUtil.inflate(
@@ -88,11 +84,11 @@ public class AddStepFragment extends Fragment {
         return rootView;
     }
 
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
+//    private void hideKeyboard(TextView view) {
+//        InputMethodManager imm = (InputMethodManager) view
+//                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {

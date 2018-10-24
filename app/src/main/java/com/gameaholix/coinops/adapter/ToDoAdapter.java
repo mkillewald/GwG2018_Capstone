@@ -1,7 +1,7 @@
 package com.gameaholix.coinops.adapter;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +9,19 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.TodoListItemBinding;
-import com.gameaholix.coinops.todo.ToDoItem;
+import com.gameaholix.coinops.model.ToDoItem;
 
 import java.util.List;
 
 public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoAdapterViewHolder> {
     private List<ToDoItem> mToDoItems;
-    private final Context mContext;
     private final ToDoAdapterOnClickHandler mClickHandler;
 
     public interface ToDoAdapterOnClickHandler {
         void onClick(ToDoItem toDoItem);
     }
 
-    public ToDoAdapter(Context context, ToDoAdapterOnClickHandler clickHandler) {
-        mContext = context;
+    public ToDoAdapter(ToDoAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
@@ -45,19 +43,18 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoAdapterVie
         }
     }
 
+    @NonNull
     @Override
-    public ToDoAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ToDoAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         TodoListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.todo_list_item, parent, false);
 
-        ToDoAdapterViewHolder viewHolder = new ToDoAdapterViewHolder(binding);
-
-        return viewHolder;
+        return new ToDoAdapterViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(ToDoAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ToDoAdapterViewHolder holder, int position) {
         ToDoItem toDoItem = mToDoItems.get(position);
 
         holder.mBinding.setToDoItem(toDoItem);

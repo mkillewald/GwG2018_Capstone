@@ -5,7 +5,7 @@
     <data>
         <variable
             name="toDoItem"
-            type="com.gameaholix.coinops.todo.ToDoItem" />
+            type="com.gameaholix.coinops.model.ToDoItem" />
     </data>
 
     <LinearLayout

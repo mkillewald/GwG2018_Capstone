@@ -5,12 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.ShoppingItem;
 
 public class ShoppingDetailActivity extends AppCompatActivity implements
         ShoppingDetailFragment.OnFragmentInteractionListener {
 
     private static final String TAG = ShoppingDetailActivity.class.getSimpleName();
-    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.shopping.ShoppingItem";
+    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.model.ShoppingItem";
 
     private ShoppingItem mShoppingItem;
 
@@ -29,7 +30,7 @@ public class ShoppingDetailActivity extends AppCompatActivity implements
             mShoppingItem = savedInstanceState.getParcelable(EXTRA_SHOPPING);
         }
 
-        setTitle(mShoppingItem.getName());
+        setTitle(R.string.shopping_details_title);
     }
 
     @Override
