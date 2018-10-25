@@ -140,7 +140,7 @@ public class AddGameFragment extends Fragment {
                 mContext, R.array.game_condition, android.R.layout.simple_spinner_item);
         conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerGameCondition.setAdapter(conditionAdapter);
-        bind.spinnerGameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        bind.spinnerGameCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 mNewGame.setCondition(position);
@@ -151,14 +151,90 @@ public class AddGameFragment extends Fragment {
         });
 
         // Setup Monitor Details Dialog
-        final AlertDialog.Builder monitorDialog = createMonitorDialog(inflater, container);
+        final AlertDialog.Builder monitorDialog = new AlertDialog.Builder(mContext);
+        final DialogMonitorDetailsBinding dialogBind = DataBindingUtil.inflate(
+                inflater, R.layout.dialog_monitor_details, container, false);
+        monitorDialog.setTitle(R.string.select_game_monitor_details);
+        final View monitorDialogView = dialogBind.getRoot();
+        monitorDialog.setView(monitorDialogView);
+        monitorDialog.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                updateMonitorDetails(mNewGame, bind.tvMonitorDetails);
+                ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
+                dialogInterface.dismiss();
+            }
+        });
+        monitorDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                updateMonitorDetails(mNewGame, bind.tvMonitorDetails);
+                ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
+                dialogInterface.dismiss();
+            }
+        });
 
-        bind.tvMonitorDetails.setOnClickListener(new View.OnClickListener() {
+        // Setup NumberPickers in dialog
+        dialogBind.npGameMonitorSize.setMinValue(0);
+        dialogBind.npGameMonitorSize.setMaxValue(5);
+        dialogBind.npGameMonitorSize.setDisplayedValues(
+                getResources().getStringArray(R.array.game_monitor_size));
+        dialogBind.npGameMonitorSize.setWrapSelectorWheel(false);
+        dialogBind.npGameMonitorSize.setValue(mNewGame.getMonitorSize());
+        dialogBind.npGameMonitorSize.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                mNewGame.setMonitorSize(numberPicker.getValue());
+            }
+        });
+
+        dialogBind.npGameMonitorPhospher.setMinValue(0);
+        dialogBind.npGameMonitorPhospher.setMaxValue(2);
+        dialogBind.npGameMonitorPhospher.setDisplayedValues(
+                getResources().getStringArray(R.array.game_monitor_phospher));
+        dialogBind.npGameMonitorPhospher.setWrapSelectorWheel(false);
+        dialogBind.npGameMonitorPhospher.setValue(mNewGame.getMonitorPhospher());
+        dialogBind.npGameMonitorPhospher.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                mNewGame.setMonitorPhospher(numberPicker.getValue());
+            }
+        });
+
+        dialogBind.npGameMonitorBeam.setMinValue(0);
+        dialogBind.npGameMonitorBeam.setMaxValue(2);
+        dialogBind.npGameMonitorBeam.setDisplayedValues(
+                getResources().getStringArray(R.array.game_monitor_beam));
+        dialogBind.npGameMonitorBeam.setWrapSelectorWheel(false);
+        dialogBind.npGameMonitorBeam.setValue(mNewGame.getMonitorBeam());
+        dialogBind.npGameMonitorBeam.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                mNewGame.setMonitorBeam(numberPicker.getValue());
+            }
+        });
+
+        dialogBind.npGameMonitorTech.setMinValue(0);
+        dialogBind.npGameMonitorTech.setMaxValue(2);
+        dialogBind.npGameMonitorTech.setDisplayedValues(
+                getResources().getStringArray(R.array.game_monitor_tech));
+        dialogBind.npGameMonitorTech.setWrapSelectorWheel(false);
+        dialogBind.npGameMonitorTech.setValue(mNewGame.getMonitorTech());
+        dialogBind.npGameMonitorTech.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                mNewGame.setMonitorTech(numberPicker.getValue());
+            }
+        });
+
+        View.OnClickListener monitorDetailsListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 monitorDialog.show();
             }
-        });
+        };
+        bind.tvMonitorDetails.setOnClickListener(monitorDetailsListener);
+        bind.ibMonitorDetailsArrow.setOnClickListener(monitorDetailsListener);
 
         // Setup Buttons
         Button addGameButton = bind.btnSave;
@@ -206,80 +282,22 @@ public class AddGameFragment extends Fragment {
         mListener = null;
     }
 
-    private AlertDialog.Builder createMonitorDialog(LayoutInflater inflater, ViewGroup container) {
-        final AlertDialog.Builder monitorDialog = new AlertDialog.Builder(mContext);
-        final DialogMonitorDetailsBinding monitorDetailsBinding = DataBindingUtil.inflate(
-                inflater, R.layout.dialog_monitor_details, container, false);
-        monitorDialog.setTitle(R.string.select_game_monitor);
-        monitorDialog.setMessage("this is a message");
-        final View monitorDialogView = monitorDetailsBinding.getRoot();
-        monitorDialog.setView(monitorDialogView);
-        monitorDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-//                Log.d(TAG, "onClick: " + numberPicker.getValue());
-                ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
-                dialogInterface.dismiss();
-            }
-        });
-        monitorDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
-                dialogInterface.dismiss();
-            }
-        });
+    private void updateMonitorDetails(Game game, TextView monitorDetails) {
+        String[] sizeArr = getResources().getStringArray(R.array.game_monitor_size);
+        String[] phospherArr = getResources().getStringArray(R.array.game_monitor_phospher);
+        String[] beamArr = getResources().getStringArray(R.array.game_monitor_beam);
+        String[] techArr = getResources().getStringArray(R.array.game_monitor_tech);
 
-        // Setup NumberPickers
-        monitorDetailsBinding.npGameMonitorSize.setMinValue(0);
-        monitorDetailsBinding.npGameMonitorSize.setMaxValue(5);
-        monitorDetailsBinding.npGameMonitorSize.setDisplayedValues(
-                getResources().getStringArray(R.array.game_monitor_size));
-        monitorDetailsBinding.npGameMonitorSize.setWrapSelectorWheel(false);
-        monitorDetailsBinding.npGameMonitorSize.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                mNewGame.setMonitorSize(numberPicker.getValue());
-            }
-        });
-
-        monitorDetailsBinding.npGameMonitorPhospher.setMinValue(0);
-        monitorDetailsBinding.npGameMonitorPhospher.setMaxValue(2);
-        monitorDetailsBinding.npGameMonitorPhospher.setDisplayedValues(
-                getResources().getStringArray(R.array.game_monitor_phospher));
-        monitorDetailsBinding.npGameMonitorPhospher.setWrapSelectorWheel(false);
-        monitorDetailsBinding.npGameMonitorPhospher.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                mNewGame.setMonitorPhospher(numberPicker.getValue());
-            }
-        });
-
-        monitorDetailsBinding.npGameMonitorTech.setMinValue(0);
-        monitorDetailsBinding.npGameMonitorTech.setMaxValue(2);
-        monitorDetailsBinding.npGameMonitorTech.setDisplayedValues(
-                getResources().getStringArray(R.array.game_monitor_tech));
-        monitorDetailsBinding.npGameMonitorTech.setWrapSelectorWheel(false);
-        monitorDetailsBinding.npGameMonitorTech.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                mNewGame.setMonitorTech(numberPicker.getValue());
-            }
-        });
-
-        monitorDetailsBinding.npGameMonitorType.setMinValue(0);
-        monitorDetailsBinding.npGameMonitorType.setMaxValue(2);
-        monitorDetailsBinding.npGameMonitorType.setDisplayedValues(
-                getResources().getStringArray(R.array.game_monitor_type));
-        monitorDetailsBinding.npGameMonitorType.setWrapSelectorWheel(false);
-        monitorDetailsBinding.npGameMonitorType.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                mNewGame.setMonitorType(numberPicker.getValue());
-            }
-        });
-
-        return monitorDialog;
+        if (game.getMonitorSize() == 0 && game.getMonitorPhospher() == 0 &&
+                game.getMonitorBeam() == 0 && game.getMonitorTech() == 0 ){
+            monitorDetails.setText(R.string.select_game_monitor);
+        } else {
+            String details = sizeArr[game.getMonitorSize()] + " " +
+                    phospherArr[game.getMonitorPhospher()] + " " +
+                    beamArr[game.getMonitorBeam()] + " " +
+                    techArr[game.getMonitorTech()];
+            monitorDetails.setText(details);
+        }
     }
 
     /**

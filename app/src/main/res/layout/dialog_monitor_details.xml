@@ -1,33 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
         <NumberPicker
             android:id="@+id/np_game_monitor_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/np_game_monitor_phospher"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:descendantFocusability="blocksDescendants"/>
 
         <NumberPicker
             android:id="@+id/np_game_monitor_phospher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/np_game_monitor_size"
+            app:layout_constraintEnd_toStartOf="@id/np_game_monitor_beam"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:descendantFocusability="blocksDescendants"/>
 
         <NumberPicker
-            android:id="@+id/np_game_monitor_type"
+            android:id="@+id/np_game_monitor_beam"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/np_game_monitor_phospher"
+            app:layout_constraintEnd_toStartOf="@id/np_game_monitor_tech"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:descendantFocusability="blocksDescendants"/>
 
         <NumberPicker
             android:id="@+id/np_game_monitor_tech"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/np_game_monitor_beam"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:descendantFocusability="blocksDescendants"/>
 
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 </layout>

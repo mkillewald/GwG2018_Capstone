@@ -16,7 +16,7 @@ import android.widget.EditText;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.RepairLog;
 import com.gameaholix.coinops.utility.Db;
-import com.gameaholix.coinops.utility.WarnUser;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -95,7 +95,7 @@ public class AddRepairActivity extends AppCompatActivity implements
 
     private void addLog(RepairLog log) {
         if (TextUtils.isEmpty(log.getDescription())) {
-            WarnUser.displayAlert(this,
+            PromptUser.displayAlert(this,
                     R.string.error_add_repair_log_failed,
                     R.string.error_repair_log_description_empty);
             return;
@@ -129,7 +129,7 @@ public class AddRepairActivity extends AppCompatActivity implements
                     if (databaseError == null) {
                         finish();
                     } else {
-                        WarnUser.displayAlert(AddRepairActivity.this,
+                        PromptUser.displayAlert(AddRepairActivity.this,
                                 R.string.error_add_repair_log_failed, databaseError.getMessage());
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +

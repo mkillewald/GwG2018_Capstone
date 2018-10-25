@@ -122,7 +122,7 @@ public class GameDetailFragment extends Fragment implements
                         String[] monitorPhospherArr =
                                 getResources().getStringArray(R.array.game_monitor_phospher);
                         String[] monitorTypeArr =
-                                getResources().getStringArray(R.array.game_monitor_type);
+                                getResources().getStringArray(R.array.game_monitor_beam);
                         String[] monitorTechArr =
                                 getResources().getStringArray(R.array.game_monitor_tech);
                         String[] monitorSizeArr =
@@ -136,7 +136,7 @@ public class GameDetailFragment extends Fragment implements
                         bind.tvGameCondition.setText(conditionArr[mGame.getCondition()]);
                         bind.tvGameMonitorPhospher
                                 .setText(monitorPhospherArr[mGame.getMonitorPhospher()]);
-                        bind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorType()]);
+                        bind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorBeam()]);
                         bind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
                         bind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
                     }

@@ -14,7 +14,7 @@ import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Game;
-import com.gameaholix.coinops.utility.WarnUser;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -103,7 +103,7 @@ public class EditGameActivity extends AppCompatActivity implements
                     if (databaseError == null) {
                         finish();
                     } else {
-                        WarnUser.displayAlert(EditGameActivity.this,
+                        PromptUser.displayAlert(EditGameActivity.this,
                                 R.string.error_edit_game_failed, databaseError.getMessage());
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +

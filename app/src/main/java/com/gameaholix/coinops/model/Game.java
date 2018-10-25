@@ -18,7 +18,7 @@ public class Game implements Parcelable {
     private int monitorSize;
     private int monitorPhospher;
     private int monitorTech;
-    private int monitorType;
+    private int monitorBeam;
 
     private String monitorChassis;
     private String tubeModel;
@@ -52,7 +52,7 @@ public class Game implements Parcelable {
         this.monitorSize = in.readInt();
         this.monitorPhospher = in.readInt();
         this.monitorTech = in.readInt();
-        this.monitorType = in.readInt();
+        this.monitorBeam = in.readInt();
         this.monitorChassis = in.readString();
         this.tubeModel = in.readString();
         this.serialNumber = in.readString();
@@ -82,7 +82,7 @@ public class Game implements Parcelable {
         dest.writeInt(monitorSize);
         dest.writeInt(monitorPhospher);
         dest.writeInt(monitorTech);
-        dest.writeInt(monitorType);
+        dest.writeInt(monitorBeam);
         dest.writeString(monitorChassis);
         dest.writeString(tubeModel);
         dest.writeString(serialNumber);
@@ -197,12 +197,12 @@ public class Game implements Parcelable {
         this.monitorTech = monitorTech;
     }
 
-    public int getMonitorType() {
-        return monitorType;
+    public int getMonitorBeam() {
+        return monitorBeam;
     }
 
-    public void setMonitorType(int monitorType) {
-        this.monitorType = monitorType;
+    public void setMonitorBeam(int monitorBeam) {
+        this.monitorBeam = monitorBeam;
     }
 
     public String getMonitorChassis() {

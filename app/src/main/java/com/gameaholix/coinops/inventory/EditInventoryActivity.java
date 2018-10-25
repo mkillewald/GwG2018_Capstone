@@ -15,7 +15,7 @@ import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.InventoryItem;
-import com.gameaholix.coinops.utility.WarnUser;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -104,7 +104,7 @@ public class EditInventoryActivity extends AppCompatActivity implements
                     if (databaseError == null) {
                         finish();
                     } else {
-                        WarnUser.displayAlert(EditInventoryActivity.this,
+                        PromptUser.displayAlert(EditInventoryActivity.this,
                                 R.string.error_edit_inventory_failed, databaseError.getMessage());
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +

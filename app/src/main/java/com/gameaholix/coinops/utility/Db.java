@@ -34,7 +34,7 @@ public class Db {
     public static final String MONITOR_SIZE = "monitorSize";
     public static final String MONITOR_PHOSPHER = "monitorPhospher";
     public static final String MONITOR_TECH = "monitorTech";
-    public static final String MONITOR_TYPE = "monitorType";
+    public static final String MONITOR_BEAM = "monitorBeam";
     public static final String DESCRIPTION = "description";
 
     public static final String[] GAME_STRINGS = { Db.NAME };
@@ -46,7 +46,7 @@ public class Db {
             Db.CONDITION,
             Db.MONITOR_SIZE,
             Db.MONITOR_PHOSPHER,
-            Db.MONITOR_TYPE,
+            Db.MONITOR_BEAM,
             Db.MONITOR_TECH };
 
     public static final String[] INVENTORY_STRINGS = { Db.NAME, Db.DESCRIPTION };

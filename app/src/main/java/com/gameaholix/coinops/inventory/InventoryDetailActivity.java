@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
-import com.gameaholix.coinops.utility.WarnUser;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -128,7 +128,7 @@ public class InventoryDetailActivity extends AppCompatActivity implements
                     if (databaseError == null) {
                         finish();
                     } else {
-                        WarnUser.displayAlert(InventoryDetailActivity.this,
+                        PromptUser.displayAlert(InventoryDetailActivity.this,
                                 R.string.error_delete_inventory_failed, databaseError.getMessage());
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +

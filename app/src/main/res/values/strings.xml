@@ -59,23 +59,24 @@
     <string name="not_set">Not Set</string>
     <string name="none">None</string>
     <string name="blank"/>
-    <string name="select">Select...</string>
+    <string name="select">Select&#8230;</string>
+    <string name="done">Done</string>
 
     <string name="game_name">Game Name</string>
 
-    <string name="select_game_type">Game Type</string>
+    <string name="select_game_type">Select Type</string>
     <string name="game_type1">Videogame</string>
     <string name="game_type2">Pinball</string>
     <string name="game_type3">Slot Machine</string>
     <string name="game_type4">Pachinko</string>
     <string name="game_type5">Other</string>
 
-    <string name="select_game_cabinet">Cabinet Type</string>
+    <string name="select_game_cabinet">Select Cabinet</string>
     <string name="game_cabinet1">Original/Dedicated</string>
     <string name="game_cabinet2">Conversion</string>
     <string name="game_cabinet3">Board Only</string>
 
-    <string name="select_game_condition">Condition</string>
+    <string name="select_game_condition">Select Condition</string>
     <string name="game_condition1">A+</string>
     <string name="game_condition2">A</string>
     <string name="game_condition3">A-</string>
@@ -88,12 +89,13 @@
     <string name="game_condition10">D</string>
     <string name="game_condition11">F</string>
 
-    <string name="select_game_working">Game Status</string>
+    <string name="select_game_working">Select Status</string>
     <string name="game_working1">Working 100%</string>
     <string name="game_working2">Partially Working</string>
     <string name="game_working3">Non-working</string>
 
-    <string name="select_game_monitor">Select Monitor Details</string>
+    <string name="select_game_monitor">Select Monitor</string>
+    <string name="select_game_monitor_details">Select Monitor Details</string>
     <string name="select_game_monitor_size">Monitor Size</string>
     <string name="game_monitor_size1">13\"</string>
     <string name="game_monitor_size2">19\"</string>
@@ -109,7 +111,7 @@
     <string name="game_monitor_vector">Vector</string>
     <string name="game_monitor_raster">Raster</string>
 
-    <string name="select_game_ownership">Ownership Status</string>
+    <string name="select_game_ownership">Select Ownership</string>
     <string name="game_ownership1">Have</string>
     <string name="game_ownership2">Want</string>
     <string name="game_ownership3">Sold</string>

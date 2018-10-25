@@ -1,6 +1,8 @@
 package com.gameaholix.coinops.game;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.databinding.DialogMonitorDetailsBinding;
 import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
@@ -28,6 +31,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
 import java.util.Map;
+
+// TODO: combine AddGame.. and EditGame.. to one activity/fragment
 
 public class EditGameFragment extends Fragment {
 //    private static final String TAG = EditGameFragment.class.getSimpleName();
@@ -182,10 +187,8 @@ public class EditGameFragment extends Fragment {
                     mContext, R.array.game_condition, android.R.layout.simple_spinner_item);
             conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             bind.spinnerGameCondition.setAdapter(conditionAdapter);
-            if (mGame.getCondition() > 0) {
-                bind.spinnerGameCondition.setSelection(mGame.getCondition());
-            }
-            bind.spinnerGameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            bind.spinnerGameCondition.setSelection(mGame.getCondition());
+            bind.spinnerGameCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                     mValuesBundle.putInt(Db.CONDITION, position);
@@ -195,66 +198,95 @@ public class EditGameFragment extends Fragment {
                 public void onNothingSelected(AdapterView<?> adapterView) {}
             });
 
-            // Setup NumberPickers
-//            bind.npGameMonitorSize.setMinValue(0);
-//            bind.npGameMonitorSize.setMaxValue(5);
-//            bind.npGameMonitorSize.setDisplayedValues(
-//                    getResources().getStringArray(R.array.game_monitor_size));
-//            bind.npGameMonitorSize.setWrapSelectorWheel(false);
-//            if (mGame.getMonitorSize() > 0) {
-//                bind.npGameMonitorSize.setValue(mGame.getMonitorSize());
-//            }
-//            bind.npGameMonitorSize.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-//                @Override
-//                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-//                    mValuesBundle.putInt(Db.MONITOR_SIZE, numberPicker.getValue());
-//                }
-//            });
-//
-//            bind.npGameMonitorPhospher.setMinValue(0);
-//            bind.npGameMonitorPhospher.setMaxValue(2);
-//            bind.npGameMonitorPhospher.setDisplayedValues(
-//                    getResources().getStringArray(R.array.game_monitor_phospher));
-//            bind.npGameMonitorPhospher.setWrapSelectorWheel(false);
-//            if (mGame.getMonitorPhospher() > 0) {
-//                bind.npGameMonitorPhospher.setValue(mGame.getMonitorPhospher());
-//            }
-//            bind.npGameMonitorPhospher.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-//                @Override
-//                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-//                    mValuesBundle.putInt(Db.MONITOR_PHOSPHER, numberPicker.getValue());
-//                }
-//            });
-//
-//            bind.npGameMonitorTech.setMinValue(0);
-//            bind.npGameMonitorTech.setMaxValue(2);
-//            bind.npGameMonitorTech.setDisplayedValues(
-//                    getResources().getStringArray(R.array.game_monitor_tech));
-//            bind.npGameMonitorTech.setWrapSelectorWheel(false);
-//            if (mGame.getMonitorTech() > 0) {
-//                bind.npGameMonitorTech.setValue(mGame.getMonitorTech());
-//            }
-//            bind.npGameMonitorTech.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-//                @Override
-//                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-//                    mValuesBundle.putInt(Db.MONITOR_TECH, numberPicker.getValue());
-//                }
-//            });
-//
-//            bind.npGameMonitorType.setMinValue(0);
-//            bind.npGameMonitorType.setMaxValue(2);
-//            bind.npGameMonitorType.setDisplayedValues(
-//                    getResources().getStringArray(R.array.game_monitor_type));
-//            bind.npGameMonitorType.setWrapSelectorWheel(false);
-//            if (mGame.getMonitorType() > 0) {
-//                bind.npGameMonitorType.setValue(mGame.getMonitorType());
-//            }
-//            bind.npGameMonitorType.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-//                @Override
-//                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-//                    mValuesBundle.putInt(Db.MONITOR_TYPE, numberPicker.getValue());
-//                }
-//            });
+            // Setup Monitor Details Dialog
+            final AlertDialog.Builder monitorDialog = new AlertDialog.Builder(mContext);
+            final DialogMonitorDetailsBinding dialogBind = DataBindingUtil.inflate(
+                    inflater, R.layout.dialog_monitor_details, container, false);
+            monitorDialog.setTitle(R.string.select_game_monitor_details);
+            final View monitorDialogView = dialogBind.getRoot();
+            monitorDialog.setView(monitorDialogView);
+            monitorDialog.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
+                    updateMonitorDetails(mGame, bind.tvMonitorDetails);
+                    dialogInterface.dismiss();
+                }
+            });
+            monitorDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
+                    updateMonitorDetails(mGame, bind.tvMonitorDetails);
+                    dialogInterface.dismiss();
+                }
+            });
+            updateMonitorDetails(mGame, bind.tvMonitorDetails);
+
+            // Setup NumberPickers in dialog
+            dialogBind.npGameMonitorSize.setMinValue(0);
+            dialogBind.npGameMonitorSize.setMaxValue(5);
+            dialogBind.npGameMonitorSize.setDisplayedValues(
+                    getResources().getStringArray(R.array.game_monitor_size));
+            dialogBind.npGameMonitorSize.setWrapSelectorWheel(false);
+            dialogBind.npGameMonitorSize.setValue(mGame.getMonitorSize());
+            dialogBind.npGameMonitorSize.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                @Override
+                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                    mGame.setMonitorSize(numberPicker.getValue());
+                    mValuesBundle.putInt(Db.MONITOR_SIZE, numberPicker.getValue());                }
+            });
+
+            dialogBind.npGameMonitorPhospher.setMinValue(0);
+            dialogBind.npGameMonitorPhospher.setMaxValue(2);
+            dialogBind.npGameMonitorPhospher.setDisplayedValues(
+                    getResources().getStringArray(R.array.game_monitor_phospher));
+            dialogBind.npGameMonitorPhospher.setWrapSelectorWheel(false);
+            dialogBind.npGameMonitorPhospher.setValue(mGame.getMonitorPhospher());
+            dialogBind.npGameMonitorPhospher.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                @Override
+                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                    mGame.setMonitorPhospher(numberPicker.getValue());
+                    mValuesBundle.putInt(Db.MONITOR_PHOSPHER, numberPicker.getValue());
+                }
+            });
+
+            dialogBind.npGameMonitorBeam.setMinValue(0);
+            dialogBind.npGameMonitorBeam.setMaxValue(2);
+            dialogBind.npGameMonitorBeam.setDisplayedValues(
+                    getResources().getStringArray(R.array.game_monitor_beam));
+            dialogBind.npGameMonitorBeam.setWrapSelectorWheel(false);
+            dialogBind.npGameMonitorBeam.setValue(mGame.getMonitorBeam());
+            dialogBind.npGameMonitorBeam.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                @Override
+                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                    mGame.setMonitorBeam(numberPicker.getValue());
+                    mValuesBundle.putInt(Db.MONITOR_BEAM, numberPicker.getValue());
+                }
+            });
+
+            dialogBind.npGameMonitorTech.setMinValue(0);
+            dialogBind.npGameMonitorTech.setMaxValue(2);
+            dialogBind.npGameMonitorTech.setDisplayedValues(
+                    getResources().getStringArray(R.array.game_monitor_tech));
+            dialogBind.npGameMonitorTech.setWrapSelectorWheel(false);
+            dialogBind.npGameMonitorTech.setValue(mGame.getMonitorTech());
+            dialogBind.npGameMonitorTech.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                @Override
+                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                    mGame.setMonitorTech(numberPicker.getValue());
+                    mValuesBundle.putInt(Db.MONITOR_TECH, numberPicker.getValue());
+                }
+            });
+
+            View.OnClickListener monitorDetailsListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    monitorDialog.show();
+                }
+            };
+            bind.tvMonitorDetails.setOnClickListener(monitorDetailsListener);
+            bind.ibMonitorDetailsArrow.setOnClickListener(monitorDetailsListener);
 
             // Setup Button
             bind.btnSave.setText(R.string.save_changes);
@@ -338,6 +370,24 @@ public class EditGameFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void updateMonitorDetails(Game game, TextView monitorDetails) {
+        String[] sizeArr = getResources().getStringArray(R.array.game_monitor_size);
+        String[] phospherArr = getResources().getStringArray(R.array.game_monitor_phospher);
+        String[] beamArr = getResources().getStringArray(R.array.game_monitor_beam);
+        String[] techArr = getResources().getStringArray(R.array.game_monitor_tech);
+
+        if (game.getMonitorSize() == 0 && game.getMonitorPhospher() == 0 &&
+                game.getMonitorBeam() == 0 && game.getMonitorTech() == 0 ){
+            monitorDetails.setText(R.string.select_game_monitor);
+        } else {
+            String details = sizeArr[game.getMonitorSize()] + " " +
+                    phospherArr[game.getMonitorPhospher()] + " " +
+                    beamArr[game.getMonitorBeam()] + " " +
+                    techArr[game.getMonitorTech()];
+            monitorDetails.setText(details);
+        }
     }
 
     /**

@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 
-public class WarnUser {
+public class PromptUser {
 
     public static void displayAlert(Context context, int title, int message) {
         AlertDialog.Builder builder;

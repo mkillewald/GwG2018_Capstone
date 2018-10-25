@@ -16,7 +16,7 @@ import android.widget.EditText;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
-import com.gameaholix.coinops.utility.WarnUser;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -80,7 +80,7 @@ public class AddGameActivity extends AppCompatActivity implements
 
     private void addGame(Game game) {
         if (TextUtils.isEmpty(game.getName())) {
-            WarnUser.displayAlert(this,
+            PromptUser.displayAlert(this,
                     R.string.error_add_game_failed,
                     R.string.error_name_empty);
             return;
@@ -114,7 +114,7 @@ public class AddGameActivity extends AppCompatActivity implements
                     if (databaseError == null) {
                         finish();
                     } else {
-                        WarnUser.displayAlert(AddGameActivity.this,
+                        PromptUser.displayAlert(AddGameActivity.this,
                                 R.string.error_add_game_failed, databaseError.getMessage());
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +

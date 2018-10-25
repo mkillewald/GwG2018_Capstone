@@ -17,7 +17,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5"/>
+                app:layout_constraintGuide_percent="0.52"/>
 
             <EditText
                 android:id="@+id/et_game_name"
@@ -155,15 +155,34 @@
 
             <TextView
                 android:id="@+id/tv_monitor_details"
+                style="?android:attr/spinnerItemStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingTop="2dp"
+                android:paddingLeft="@dimen/spinner_label_padding"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/gl_vertical_center"
-                app:layout_constraintRight_toLeftOf="@id/gl_vertical_center"
+                app:layout_constraintEnd_toStartOf="@id/ib_monitor_details_arrow"
+                app:layout_constraintRight_toLeftOf="@id/ib_monitor_details_arrow"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintTop_toBottomOf="@id/tv_monitor_label"
                 android:text="@string/select_game_monitor"/>
+
+            <ImageView
+                android:id="@+id/ib_monitor_details_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_drop_down_24dp"
+                android:paddingRight="12dp"
+                app:layout_constraintStart_toEndOf="@id/tv_monitor_details"
+                app:layout_constraintLeft_toRightOf="@id/tv_monitor_details"
+                app:layout_constraintEnd_toStartOf="@id/gl_vertical_center"
+                app:layout_constraintRight_toLeftOf="@id/gl_vertical_center"
+                app:layout_constraintTop_toTopOf="@id/tv_monitor_details"
+                app:layout_constraintBottom_toBottomOf="@id/tv_monitor_details"
+                android:contentDescription="@string/select_game_monitor_details"/>
 
             <TextView
                 android:id="@+id/tv_condition_label"

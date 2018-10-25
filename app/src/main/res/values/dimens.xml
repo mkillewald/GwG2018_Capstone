@@ -24,6 +24,6 @@
     <dimen name="edit_text_margin">2dp</dimen>
 
     <!-- padding -->
-    <dimen name="spinner_label_padding">7dp</dimen>
+    <dimen name="spinner_label_padding">6dp</dimen>
 
 </resources>
