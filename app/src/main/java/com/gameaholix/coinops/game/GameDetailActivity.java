@@ -5,15 +5,19 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.adapter.GameDetailFragmentPagerAdapter;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.repair.AddRepairActivity;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
@@ -63,6 +67,15 @@ public class GameDetailActivity extends AppCompatActivity implements
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         setTitle(R.string.game_details_title);
+
+        // Get the ViewPager and set it's PagerAdapter so that it can display items
+        ViewPager viewPager = findViewById(R.id.viewpager);
+        viewPager.setAdapter(new GameDetailFragmentPagerAdapter(getSupportFragmentManager(),
+                GameDetailActivity.this));
+
+        // Give the TabLayout the ViewPager
+        TabLayout tabLayout = findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
