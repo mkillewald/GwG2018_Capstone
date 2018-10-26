@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="game_details_tab_titles">
+        <item>@string/game_details_tab1</item>
+        <item>@string/game_details_tab2</item>
+        <item>@string/game_details_tab3</item>
+        <item>@string/game_details_tab4</item>
+    </string-array>
+
     <string-array name="game_type">
         <item>@string/select_game_type</item>
         <item>@string/game_type1</item>

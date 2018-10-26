@@ -19,13 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:layout_margin="@dimen/margin"
         android:background="@android:color/white" />
-
-    <fragment
-        android:id="@+id/game_detail_fragment"
-        android:name="com.gameaholix.coinops.game.GameDetailFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/margin"/>
 
 </LinearLayout>

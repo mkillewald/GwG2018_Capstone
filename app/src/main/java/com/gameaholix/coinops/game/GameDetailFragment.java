@@ -51,9 +51,27 @@ public class GameDetailFragment extends Fragment implements
         // Required empty public constructor
     }
 
+    public static GameDetailFragment newInstance(Game game) {
+        Bundle args = new Bundle();
+        GameDetailFragment fragment = new GameDetailFragment();
+        args.putParcelable(EXTRA_GAME, game);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            if (getArguments() != null) {
+                mGame = getArguments().getParcelable(EXTRA_GAME);
+            }
+            mRepairLogs = new ArrayList<>();
+        } else {
+            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
+            mRepairLogs = savedInstanceState.getParcelableArrayList(EXTRA_REPAIR_LIST);
+        }
         setHasOptionsMenu(true);
 
     }
@@ -67,16 +85,7 @@ public class GameDetailFragment extends Fragment implements
 
         final View rootView = bind.getRoot();
 
-        if (savedInstanceState == null) {
-            if (getActivity() != null && getActivity().getIntent() != null) {
-                Intent intent = getActivity().getIntent();
-                mGame = intent.getParcelableExtra(EXTRA_GAME);
-            }
-            mRepairLogs = new ArrayList<>();
-        } else {
-            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
-            mRepairLogs = savedInstanceState.getParcelableArrayList(EXTRA_REPAIR_LIST);
-        }
+
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();

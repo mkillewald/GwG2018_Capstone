@@ -29,6 +29,12 @@
     <string name="add_shopping_title">Add New Item</string>
     <string name="edit_shopping_title">Edit Item</string>
 
+    <!-- Game Details Tab Titles -->
+    <string name="game_details_tab1">Info</string>
+    <string name="game_details_tab2">Repair Log</string>
+    <string name="game_details_tab3">To Do</string>
+    <string name="game_details_tab4">Shopping</string>
+
     <!-- Actions -->
     <string name="sign_out">Sign Out</string>
     <string name="add">Add</string>
@@ -58,7 +64,7 @@
     <string name="off">Off</string>
     <string name="not_set">Not Set</string>
     <string name="none">None</string>
-    <string name="blank"/>
+    <string name="blank" />
     <string name="select">Select&#8230;</string>
     <string name="done">Done</string>
 
