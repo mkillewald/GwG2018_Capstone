@@ -30,7 +30,7 @@ public class AddRepairActivity extends AppCompatActivity implements
         AddRepairFragment.OnFragmentInteractionListener {
 
     private static final String TAG = AddRepairActivity.class.getSimpleName();
-    private static final String EXTRA_GAME_ID = "CoinOpsGameID";
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
     private String mGameId;
     private FirebaseAuth mFirebaseAuth;

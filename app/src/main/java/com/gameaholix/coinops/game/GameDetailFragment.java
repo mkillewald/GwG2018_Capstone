@@ -1,13 +1,15 @@
 package com.gameaholix.coinops.game;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,6 +22,7 @@ import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.RepairLog;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameDetailFragment extends Fragment implements
         RepairAdapter.RepairAdapterOnClickHandler{
@@ -39,12 +44,10 @@ public class GameDetailFragment extends Fragment implements
     private Context mContext;
     private Game mGame;
     private ArrayList<RepairLog> mRepairLogs;
-    private RepairAdapter mRepairAdapter;
+    private DatabaseReference mDatabaseReference;
     private DatabaseReference mGameRef;
-    private DatabaseReference mRrepairListRef;
     private FirebaseUser mUser;
     private ValueEventListener mGameListener;
-    private ValueEventListener mRepairListener;
     private OnFragmentInteractionListener mListener;
 
     public GameDetailFragment() {
@@ -85,32 +88,23 @@ public class GameDetailFragment extends Fragment implements
 
         final View rootView = bind.getRoot();
 
-
-
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         // get current user
         mUser = firebaseAuth.getCurrentUser();
 
         // Setup database references
-        mGameRef = databaseReference
-                .child(Db.GAME).child(mUser.getUid()).child(mGame.getGameId());
-        mRrepairListRef = mGameRef.child(Db.REPAIR_LIST);
-
-        // Setup Repair Log RecyclerView
-        final RecyclerView recyclerView = rootView.findViewById(R.id.rv_repair_list);
-        mRepairAdapter = new RepairAdapter( this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(mRepairAdapter);
-        mRepairAdapter.setRepairLogs(mRepairLogs);
+        mGameRef = mDatabaseReference
+                .child(Db.GAME)
+                .child(mUser.getUid())
+                .child(mGame.getGameId());
 
         if (mUser != null) {
             // user is signed in
 
-            // Set up event listeners
+            // Setup event listener
             mGameListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -137,7 +131,10 @@ public class GameDetailFragment extends Fragment implements
                         String[] monitorSizeArr =
                                 getResources().getStringArray(R.array.game_monitor_size);
 
-                        bind.tvGameName.setText(mGame.getName());
+                        if (mListener != null) {
+                            mListener.onGameNameChanged(mGame.getName());
+                        }
+
                         bind.tvGameType.setText(typeArr[mGame.getType()]);
                         bind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
                         bind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
@@ -148,6 +145,7 @@ public class GameDetailFragment extends Fragment implements
                         bind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorBeam()]);
                         bind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
                         bind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
+
                     }
                 }
 
@@ -161,63 +159,38 @@ public class GameDetailFragment extends Fragment implements
             // read list of games
             mGameRef.addValueEventListener(mGameListener);
 
-            mRepairListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    mRepairLogs.clear();
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        String logId = dataSnapshot1.getKey();
-                        String description = (String) dataSnapshot1.getValue();
-                        RepairLog repairLog = new RepairLog(logId, mGame.getGameId(), description);
-                        mRepairLogs.add(repairLog);
-                    }
-                    mRepairAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Failed to read value
-                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
-                }
-            };
-
-            // read list of repair logs
-            mRrepairListRef.addValueEventListener(mRepairListener);
-
             // Setup Buttons
-            bind.btnAddRepair.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mListener != null) {
-                        mListener.onAddRepairButtonPressed(mGame.getGameId());
-                    }
-                }
-            });
-
-            bind.btnAddTodo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mListener != null) {
-                        mListener.onAddTodoButtonPressed(mGame.getGameId());
-                    }
-                }
-            });
-
-            bind.btnAddShopping.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mListener != null) {
-                        mListener.onAddShoppingButtonPressed(mGame.getGameId());
-                    }
-                }
-            });
+//            bind.btnAddRepair.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (mListener != null) {
+//                        mListener.onAddRepairButtonPressed(mGame.getGameId());
+//                    }
+//                }
+//            });
+//
+//            bind.btnAddTodo.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (mListener != null) {
+//                        mListener.onAddTodoButtonPressed(mGame.getGameId());
+//                    }
+//                }
+//            });
+//
+//            bind.btnAddShopping.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (mListener != null) {
+//                        mListener.onAddShoppingButtonPressed(mGame.getGameId());
+//                    }
+//                }
+//            });
 
             bind.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mListener != null) {
-                        mListener.onDeleteButtonPressed(mGame.getGameId());
-                    }
+                    deleteGameAlert();
                 }
             });
 //        } else {
@@ -233,7 +206,7 @@ public class GameDetailFragment extends Fragment implements
 
         if (mUser != null) {
             mGameRef.removeEventListener(mGameListener);
-            mRrepairListRef.removeEventListener(mRepairListener);
+//            mRepairListRef.removeEventListener(mRepairListener);
         }
     }
 
@@ -288,6 +261,65 @@ public class GameDetailFragment extends Fragment implements
         }
     }
 
+    private void deleteGameAlert() {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(mContext);
+        }
+        builder.setTitle(getString(R.string.really_delete_game))
+                .setMessage(getString(R.string.game_will_be_deleted))
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteGame();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void deleteGame() {
+        if (mUser != null) {
+            // user is signed in
+            String uid = mUser.getUid();
+            String gameId = mGame.getGameId();
+
+            // Get database paths from helper class
+            String gamePath = Db.getGamePath(uid, gameId);
+            String userGamePath = Db.getGameListPath(uid, gameId);
+
+            Map<String, Object> valuesToDelete= new HashMap<>();
+            valuesToDelete.put(gamePath, null);
+            valuesToDelete.put(userGamePath + Db.NAME, null);
+
+            mDatabaseReference.updateChildren(valuesToDelete, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        if (getActivity() != null) {
+                            getActivity().finish();
+                        }
+                    } else {
+                        PromptUser.displayAlert(mContext,
+                                R.string.error_delete_game_failed, databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+//        } else {
+//            // user is not signed in
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -299,10 +331,10 @@ public class GameDetailFragment extends Fragment implements
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onDeleteButtonPressed(String gameId);
-        void onAddTodoButtonPressed(String gameId);
-        void onAddShoppingButtonPressed(String gameId);
-        void onAddRepairButtonPressed(String gameId);
+        void onGameNameChanged(String name);
+//        void onAddTodoButtonPressed(String gameId);
+//        void onAddShoppingButtonPressed(String gameId);
+//        void onAddRepairButtonPressed(String gameId);
         void onLogSelected(RepairLog repairLog);
     }
 
