@@ -1,7 +1,6 @@
 package com.gameaholix.coinops.repair;
 
 import android.content.Context;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -59,9 +58,27 @@ public class RepairDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static RepairDetailFragment newInstance(RepairLog log) {
+        Bundle args = new Bundle();
+        RepairDetailFragment fragment = new RepairDetailFragment();
+        args.putParcelable(EXTRA_REPAIR, log);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            if (getArguments() != null) {
+                mRepairLog = getArguments().getParcelable(EXTRA_REPAIR);
+            }
+            mRepairSteps = new ArrayList<>();
+        } else {
+            mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
+            mRepairSteps = savedInstanceState.getParcelableArrayList(EXTRA_STEP_LIST);
+        }
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -77,17 +94,6 @@ public class RepairDetailFragment extends Fragment {
                 inflater, R.layout.fragment_repair_detail, container, false);
 
         final View rootView = mBind.getRoot();
-
-        if (savedInstanceState == null) {
-            if (getActivity() != null && getActivity().getIntent() != null) {
-                Intent intent = getActivity().getIntent();
-                mRepairLog = intent.getParcelableExtra(EXTRA_REPAIR);
-            }
-            mRepairSteps = new ArrayList<>();
-        } else {
-            mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
-            mRepairSteps = savedInstanceState.getParcelableArrayList(EXTRA_STEP_LIST);
-        }
 
         if (mUser != null) {
             // user is signed in

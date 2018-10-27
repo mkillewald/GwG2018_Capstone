@@ -21,7 +21,7 @@ public class EditGameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_game);
+        setContentView(R.layout.activity_fragment_host);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -34,6 +34,11 @@ public class EditGameActivity extends AppCompatActivity {
         }
 
         setTitle(R.string.edit_game_title);
+
+        EditGameFragment fragment = EditGameFragment.newInstance(mGame);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit();
     }
 
     @Override

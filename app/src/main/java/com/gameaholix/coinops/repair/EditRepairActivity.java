@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import com.gameaholix.coinops.R;
 
+// TODO: finish this
+
 public class EditRepairActivity extends AppCompatActivity {
 
     @Override

@@ -23,7 +23,7 @@ public class RepairDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_repair_detail);
+        setContentView(R.layout.activity_fragment_host);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -38,6 +38,11 @@ public class RepairDetailActivity extends AppCompatActivity {
         }
 
         setTitle(mGameName);
+
+        RepairDetailFragment fragment = RepairDetailFragment.newInstance(mRepairLog);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit();
     }
 
     @Override

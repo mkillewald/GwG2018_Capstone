@@ -18,13 +18,18 @@ public class AddGameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_game);
+        setContentView(R.layout.activity_fragment_host);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         setTitle(R.string.add_game_title);
+
+        AddGameFragment fragment = new AddGameFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit();
     }
 
     // Hide keyboard after touch event occurs outside of EditText

@@ -3,7 +3,6 @@ package com.gameaholix.coinops.game;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -48,7 +47,6 @@ public class EditGameFragment extends Fragment {
     private Context mContext;
     private Game mGame;
     private Bundle mValuesBundle;
-    private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
 
@@ -56,14 +54,32 @@ public class EditGameFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static EditGameFragment newInstance(Game game) {
+        Bundle args = new Bundle();
+        EditGameFragment fragment = new EditGameFragment();
+        args.putParcelable(EXTRA_GAME, game);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState == null) {
+            if (getArguments() != null) {
+                mGame = getArguments().getParcelable(EXTRA_GAME);
+            }
+            mValuesBundle = new Bundle();
+        } else {
+            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
+            mValuesBundle = savedInstanceState.getBundle(EXTRA_VALUES);
+        }
+
         // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mUser = mFirebaseAuth.getCurrentUser();
+        mUser = firebaseAuth.getCurrentUser();
     }
 
     @Override
@@ -73,17 +89,6 @@ public class EditGameFragment extends Fragment {
         final FragmentAddGameBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_add_game, container, false);
         final View rootView = bind.getRoot();
-
-        if (savedInstanceState == null) {
-            if (getActivity() != null && getActivity().getIntent() != null) {
-                Intent intent = getActivity().getIntent();
-                mGame = intent.getParcelableExtra(EXTRA_GAME);
-            }
-            mValuesBundle = new Bundle();
-        } else {
-            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
-            mValuesBundle = savedInstanceState.getBundle(EXTRA_VALUES);
-        }
 
         if (mUser != null) {
             // user is signed in
