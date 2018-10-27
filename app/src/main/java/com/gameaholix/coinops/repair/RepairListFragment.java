@@ -152,7 +152,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
     @Override
     public void onClick(RepairLog repairLog) {
         if (mListener != null) {
-//            mListener.onRepairLogSelected(repairLog);
+            mListener.onRepairLogSelected(repairLog);
         }
     }
 
@@ -198,6 +198,6 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-//        void onRepairLogSelected(RepairLog repairLog);
+        void onRepairLogSelected(RepairLog repairLog);
     }
 }

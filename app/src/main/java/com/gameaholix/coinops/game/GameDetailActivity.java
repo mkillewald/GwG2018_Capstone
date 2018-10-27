@@ -26,7 +26,6 @@ public class GameDetailActivity extends AppCompatActivity implements
 
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
-//    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
 
     private Game mGame;
@@ -100,6 +99,7 @@ public class GameDetailActivity extends AppCompatActivity implements
             default:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
                 menu.findItem(R.id.menu_add_repair).setVisible(false);
+                break;
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -128,30 +128,9 @@ public class GameDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLogSelected(RepairLog repairLog) {
+    public void onRepairLogSelected(RepairLog repairLog) {
         Intent intent = new Intent(this, RepairDetailActivity.class);
         intent.putExtra(EXTRA_REPAIR, repairLog);
         startActivity(intent);
     }
-
-//    @Override
-//    public void onAddRepairButtonPressed(String gameId) {
-//        Intent intent = new Intent(GameDetailActivity.this, AddRepairActivity.class);
-//        intent.putExtra(EXTRA_GAME_ID, gameId);
-//        startActivity(intent);
-//    }
-//
-//    @Override
-//    public void onAddTodoButtonPressed(String gameId) {
-//        Intent intent = new Intent(GameDetailActivity.this, AddToDoActivity.class);
-//        startActivity(intent);
-//    }
-//
-//    @Override
-//    public void onAddShoppingButtonPressed(String gameId) {
-//        Intent intent = new Intent(GameDetailActivity.this, AddShoppingActivity.class);
-//        startActivity(intent);
-//
-//    }
-
 }

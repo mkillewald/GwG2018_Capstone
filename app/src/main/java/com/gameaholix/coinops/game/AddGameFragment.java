@@ -6,7 +6,10 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,14 +27,25 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
 import com.gameaholix.coinops.databinding.DialogMonitorDetailsBinding;
 import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.PromptUser;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddGameFragment extends Fragment {
-//    private static final String TAG = AddGameFragment.class.getSimpleName();
+    private static final String TAG = AddGameFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
     private Context mContext;
     private Game mNewGame;
-    private OnFragmentInteractionListener mListener;
+    private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference mDatabaseReference;
 
     public AddGameFragment() {
         // Required empty public constructor
@@ -40,6 +54,10 @@ public class AddGameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Firebase components
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -242,9 +260,10 @@ public class AddGameFragment extends Fragment {
         addGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mListener != null) {
-                    mListener.onAddGameButtonPressed(mNewGame);
-                }
+                addGame(mNewGame);
+//                if (mListener != null) {
+//                    mListener.onAddGameButtonPressed(mNewGame);
+//                }
             }
         });
 
@@ -268,18 +287,11 @@ public class AddGameFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     private void updateMonitorDetails(Game game, TextView monitorDetails) {
@@ -300,17 +312,54 @@ public class AddGameFragment extends Fragment {
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onAddGameButtonPressed(Game game);
+    private void addGame(Game game) {
+        if (TextUtils.isEmpty(game.getName())) {
+            PromptUser.displayAlert(mContext,
+                    R.string.error_add_game_failed,
+                    R.string.error_name_empty);
+            return;
+        }
+
+        // TODO: add checks for if game name already exists.
+
+        // Add Game object to Firebase
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (user != null) {
+            // user is signed in
+            final String uid = user.getUid();
+
+            final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
+
+            final String gameId = gameRef.push().getKey();
+
+            // Get database paths from helper class
+            String gamePath = Db.getGamePath(uid, gameId);
+            String userGamePath = Db.getGameListPath(uid, gameId);
+
+            Map<String, Object> valuesToAdd = new HashMap<>();
+            valuesToAdd.put(gamePath, game);
+            valuesToAdd.put(userGamePath + Db.NAME, game.getName());
+
+            // TODO: add progress spinner
+
+            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        if (getActivity() != null) {
+                            getActivity().finish();
+                        }
+                    } else {
+                        PromptUser.displayAlert(mContext, R.string.error_add_game_failed,
+                                databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+//        } else {
+//            // user is not signed in
+        }
     }
 }

@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.adapter.RepairAdapter;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.RepairLog;
@@ -35,8 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameDetailFragment extends Fragment implements
-        RepairAdapter.RepairAdapterOnClickHandler{
+public class GameDetailFragment extends Fragment {
+
     private static final String TAG = GameDetailFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_REPAIR_LIST = "CoinOpsRepairLogList";
@@ -159,34 +158,7 @@ public class GameDetailFragment extends Fragment implements
             // read list of games
             mGameRef.addValueEventListener(mGameListener);
 
-            // Setup Buttons
-//            bind.btnAddRepair.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (mListener != null) {
-//                        mListener.onAddRepairButtonPressed(mGame.getGameId());
-//                    }
-//                }
-//            });
-//
-//            bind.btnAddTodo.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (mListener != null) {
-//                        mListener.onAddTodoButtonPressed(mGame.getGameId());
-//                    }
-//                }
-//            });
-//
-//            bind.btnAddShopping.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (mListener != null) {
-//                        mListener.onAddShoppingButtonPressed(mGame.getGameId());
-//                    }
-//                }
-//            });
-
+            // Setup Delete Button
             bind.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -207,13 +179,6 @@ public class GameDetailFragment extends Fragment implements
         if (mUser != null) {
             mGameRef.removeEventListener(mGameListener);
 //            mRepairListRef.removeEventListener(mRepairListener);
-        }
-    }
-
-    @Override
-    public void onClick(RepairLog repairLog) {
-        if (mListener != null) {
-            mListener.onLogSelected(repairLog);
         }
     }
 
@@ -332,10 +297,6 @@ public class GameDetailFragment extends Fragment implements
      */
     public interface OnFragmentInteractionListener {
         void onGameNameChanged(String name);
-//        void onAddTodoButtonPressed(String gameId);
-//        void onAddShoppingButtonPressed(String gameId);
-//        void onAddRepairButtonPressed(String gameId);
-        void onLogSelected(RepairLog repairLog);
     }
 
 

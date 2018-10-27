@@ -30,7 +30,7 @@
     <string name="edit_shopping_title">Edit Item</string>
 
     <!-- Game Details Tab Titles -->
-    <string name="game_details_tab1">Info</string>
+    <string name="game_details_tab1">Details</string>
     <string name="game_details_tab2">Repair Log</string>
     <string name="game_details_tab3">To Do</string>
     <string name="game_details_tab4">Shopping</string>

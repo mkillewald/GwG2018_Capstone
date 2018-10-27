@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +28,12 @@ import com.gameaholix.coinops.databinding.DialogMonitorDetailsBinding;
 import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,14 +41,16 @@ import java.util.Map;
 // TODO: combine AddGame.. and EditGame.. to one activity/fragment
 
 public class EditGameFragment extends Fragment {
-//    private static final String TAG = EditGameFragment.class.getSimpleName();
+    private static final String TAG = EditGameFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_VALUES = "CoinOpsGameValuesToUpdate";
 
     private Context mContext;
     private Game mGame;
     private Bundle mValuesBundle;
-    private OnFragmentInteractionListener mListener;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mUser;
+    private DatabaseReference mDatabaseReference;
 
     public EditGameFragment() {
         // Required empty public constructor
@@ -51,6 +59,11 @@ public class EditGameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Firebase components
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mUser = mFirebaseAuth.getCurrentUser();
     }
 
     @Override
@@ -72,14 +85,9 @@ public class EditGameFragment extends Fragment {
             mValuesBundle = savedInstanceState.getBundle(EXTRA_VALUES);
         }
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
-
-        final FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
+            final String uid = mUser.getUid();
             final String gameId = mGame.getGameId();
 
             // Setup EditText
@@ -293,32 +301,29 @@ public class EditGameFragment extends Fragment {
             bind.btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mListener != null) {
+                    // Get database paths from helper class
+                    String gamePath = Db.getGamePath(uid, gameId);
+                    String userGamePath = Db.getGameListPath(uid, gameId);
 
-                        // Get database paths from helper class
-                        String gamePath = Db.getGamePath(uid, gameId);
-                        String userGamePath = Db.getGameListPath(uid, gameId);
+                    // Convert values Bundle to HashMap for Firebase call to updateChildren()
+                    Map<String, Object> valuesMap = new HashMap<>();
 
-                        // Convert values Bundle to HashMap for Firebase call to updateChildren()
-                        Map<String, Object> valuesMap = new HashMap<>();
-
-                        for (String key : Db.GAME_STRINGS) {
-                            if (mValuesBundle.containsKey(key)) {
-                                valuesMap.put(gamePath + key, mValuesBundle.getString(key));
-                                if (key.equals(Db.NAME)) {
-                                    valuesMap.put(userGamePath + key, mValuesBundle.getString(key));
-                                }
+                    for (String key : Db.GAME_STRINGS) {
+                        if (mValuesBundle.containsKey(key)) {
+                            valuesMap.put(gamePath + key, mValuesBundle.getString(key));
+                            if (key.equals(Db.NAME)) {
+                                valuesMap.put(userGamePath + key, mValuesBundle.getString(key));
                             }
                         }
-
-                        for (String key : Db.GAME_INTS) {
-                            if (mValuesBundle.containsKey(key)) {
-                                valuesMap.put(gamePath + key, mValuesBundle.getInt(key));
-                            }
-                        }
-
-                        mListener.onEditGameButtonPressed(valuesMap);
                     }
+
+                    for (String key : Db.GAME_INTS) {
+                        if (mValuesBundle.containsKey(key)) {
+                            valuesMap.put(gamePath + key, mValuesBundle.getInt(key));
+                        }
+                    }
+
+                    updateGame(valuesMap);
                 }
             });
 
@@ -358,18 +363,11 @@ public class EditGameFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     private void updateMonitorDetails(Game game, TextView monitorDetails) {
@@ -390,17 +388,32 @@ public class EditGameFragment extends Fragment {
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onEditGameButtonPressed(Map<String, Object> valuesToUpdate);
+    private void updateGame(Map<String, Object> valuesToUpdate) {
+        // TODO: add checks for if game name already exists.
+
+        // Update Firebase
+        if (mUser != null) {
+            // user is signed in
+            // TODO: show progress spinner
+
+            mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        if (getActivity() != null) {
+                            getActivity().finish();
+                        }
+                    } else {
+                        PromptUser.displayAlert(mContext, R.string.error_edit_game_failed,
+                                databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+//        } else {
+//            // user is not signed in
+        }
     }
 }

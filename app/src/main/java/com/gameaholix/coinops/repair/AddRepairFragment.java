@@ -4,7 +4,10 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +16,27 @@ import android.widget.Button;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddRepairBinding;
 import com.gameaholix.coinops.model.RepairLog;
+import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.PromptUser;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddRepairFragment extends Fragment {
-//    private static final String TAG = AddRepairFragment.class.getSimpleName();
+    private static final String TAG = AddRepairFragment.class.getSimpleName();
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
 
+    private Context mContext;
+    private String mGameId;
     private RepairLog mNewLog;
-    private OnFragmentInteractionListener mListener;
+    private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference mDatabaseReference;
 
     public AddRepairFragment() {
         // Required empty public constructor
@@ -28,6 +45,10 @@ public class AddRepairFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Firebase components
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -39,9 +60,13 @@ public class AddRepairFragment extends Fragment {
         final View rootView = bind.getRoot();
 
         if (savedInstanceState == null) {
+            if (getActivity() != null && getActivity().getIntent() != null) {
+                mGameId = getActivity().getIntent().getStringExtra(EXTRA_GAME_ID);
+            }
             mNewLog = new RepairLog();
         } else {
             mNewLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
+            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
         }
 
         //Setup EditText
@@ -74,10 +99,8 @@ public class AddRepairFragment extends Fragment {
         addLogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mListener != null) {
-                    mNewLog.setDescription(bind.etRepairLogDescription.getText().toString().trim());
-                    mListener.onAddButtonPressed(mNewLog);
-                }
+                mNewLog.setDescription(bind.etRepairLogDescription.getText().toString().trim());
+                addLog(mNewLog);
             }
         });
 
@@ -95,36 +118,68 @@ public class AddRepairFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(EXTRA_REPAIR, mNewLog);
+        outState.putString(EXTRA_GAME_ID, mGameId);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        mContext = context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onAddButtonPressed(RepairLog log);
+    private void addLog(RepairLog log) {
+        if (TextUtils.isEmpty(log.getDescription())) {
+            PromptUser.displayAlert(mContext,
+                    R.string.error_add_repair_log_failed,
+                    R.string.error_repair_log_description_empty);
+            return;
+        }
+
+        // TODO: add checks for if item name already exists.
+
+        // Add RepairLog object to Firebase
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (user != null) {
+            // user is signed in
+            final String uid = user.getUid();
+
+            final DatabaseReference repairRef = mDatabaseReference.child(Db.REPAIR).child(uid);
+            final String logId = repairRef.push().getKey();
+
+            // Get database paths from helper class
+            String repairPath = Db.getRepairPath(uid, mGameId, logId);
+            String userRepairPath = Db.getRepairListPath(uid, mGameId, logId);
+
+            Map<String, Object> valuesToAdd = new HashMap<>();
+            valuesToAdd.put(repairPath, log);
+            valuesToAdd.put(userRepairPath, log.getDescription());
+
+            // TODO: add progress spinner
+
+            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError,
+                                       @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        if (getActivity() != null) {
+                            getActivity().finish();
+                        }
+                    } else {
+                        PromptUser.displayAlert(mContext, R.string.error_add_repair_log_failed,
+                                databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+//        } else {
+//            // user is not signed in
+        }
     }
 }
