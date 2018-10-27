@@ -25,5 +25,7 @@
 
     <!-- padding -->
     <dimen name="spinner_label_padding">6dp</dimen>
+    <dimen name="row_separation">16dp</dimen>
+    <dimen name="text_separation">8dp</dimen>
 
 </resources>

@@ -5,13 +5,19 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.StepAdapter;
@@ -19,7 +25,7 @@ import com.gameaholix.coinops.databinding.FragmentRepairDetailBinding;
 import com.gameaholix.coinops.model.RepairLog;
 import com.gameaholix.coinops.model.RepairStep;
 import com.gameaholix.coinops.utility.Db;
-import com.gameaholix.coinops.utility.DateHelper;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,9 +35,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-
-public class RepairDetailFragment extends Fragment implements StepAdapter.StepAdapterOnClickHandler {
+public class RepairDetailFragment extends Fragment {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
     private static final String EXTRA_STEP_LIST = "CoinOpsRepairStepList";
@@ -39,12 +46,14 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
     private Context mContext;
     private RepairLog mRepairLog;
     private ArrayList<RepairStep> mRepairSteps;
+    private FirebaseUser mUser;
+    private DatabaseReference mDatabaseReference;
     private DatabaseReference mRepairRef;
     private DatabaseReference mStepRef;
     private ValueEventListener mRepairListener;
     private ValueEventListener mStepListener;
+    private FragmentRepairDetailBinding mBind;
     private StepAdapter mStepAdapter;
-    private OnFragmentInteractionListener mListener;
 
     public RepairDetailFragment() {
         // Required empty public constructor
@@ -53,16 +62,21 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mUser = firebaseAuth.getCurrentUser();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentRepairDetailBinding bind = DataBindingUtil.inflate(
+        mBind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_repair_detail, container, false);
 
-        final View rootView = bind.getRoot();
+        final View rootView = mBind.getRoot();
 
         if (savedInstanceState == null) {
             if (getActivity() != null && getActivity().getIntent() != null) {
@@ -75,24 +89,19 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
             mRepairSteps = savedInstanceState.getParcelableArrayList(EXTRA_STEP_LIST);
         }
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
+            final String uid = mUser.getUid();
             final String gameId = mRepairLog.getGameId();
             String logId = mRepairLog.getId();
 
             // Setup database references
-            mRepairRef = databaseReference.child(Db.REPAIR).child(uid).child(gameId).child(logId);
+            mRepairRef = mDatabaseReference.child(Db.REPAIR).child(uid).child(gameId).child(logId);
             mStepRef = mRepairRef.child(Db.STEPS);
 
             // Setup Repair Step RecyclerView
             final RecyclerView recyclerView = rootView.findViewById(R.id.rv_repair_steps);
-            mStepAdapter = new StepAdapter( this);
+            mStepAdapter = new StepAdapter( mContext, null );
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(mStepAdapter);
@@ -111,10 +120,7 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
                         mRepairLog.setId(id);
                         mRepairLog.setGameId(gameId);
 
-                        String createdAtString =
-                                DateHelper.getDateTime(mContext, mRepairLog.getCreatedAtLong());
-                        bind.tvRepairCreatedAt.setText(createdAtString);
-                        bind.tvRepairDescription.setText(mRepairLog.getDescription());
+                        mBind.tvRepairDescription.setText(mRepairLog.getDescription());
                     }
                 }
 
@@ -149,13 +155,36 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
             };
             mStepRef.addValueEventListener(mStepListener);
 
+            // Setup EditText
+            mBind.etAddStepEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                    if (i == EditorInfo.IME_ACTION_DONE) {
+                        hideKeyboard(textView);
+                    }
+                    return false;
+                }
+            });
+//            mBind.etAddStepEntry.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//                @Override
+//                public void onFocusChange(View view, boolean hasFocus) {
+//                    if (view.getId() == R.id.et_game_name && !hasFocus) {
+//                        if (view instanceof EditText) {
+//                            EditText editText = (EditText) view;
+//                            hideKeyboard(editText);
+//                        }
+//                    }
+//                }
+//            });
+
+
             // Setup Button
-            bind.btnAddStep.setOnClickListener(new View.OnClickListener() {
+            mBind.btnAddStep.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mListener != null) {
-                        mListener.onAddStepButtonPressed(mRepairLog.getGameId(), mRepairLog.getId());
-                    }
+                    RepairStep newStep = new RepairStep();
+                    newStep.setEntry(mBind.etAddStepEntry.getText().toString().trim());
+                    addStep(newStep);
                 }
             });
 //        } else {
@@ -174,11 +203,6 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
     }
 
     @Override
-    public void onClick(RepairStep repairStep) {
-        // TODO: fill this in as needed
-    }
-
-    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -190,31 +214,72 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onAddStepButtonPressed(String gameId, String logId);
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) view
+                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void addStep(RepairStep step) {
+        if (TextUtils.isEmpty(step.getEntry())) {
+            PromptUser.displayAlert(mContext,
+                    R.string.error_add_repair_log_failed,
+                    R.string.error_repair_step_entry_empty);
+            return;
+        }
+
+        // TODO: add checks for if item name already exists.
+
+        // Add RepairLog object to Firebase
+        if (mUser != null) {
+            // user is signed in
+            final String uid = mUser.getUid();
+
+            final DatabaseReference stepRef = mDatabaseReference
+                    .child(Db.REPAIR)
+                    .child(uid)
+                    .child(mRepairLog.getGameId())
+                    .child(mRepairLog.getId())
+                    .child(Db.STEPS);
+            final String stepId = stepRef.push().getKey();
+
+            // Get database paths from helper class
+            String stepPath = Db.getStepsPath(uid, mRepairLog.getGameId(), mRepairLog.getId(), stepId);
+//            String stepListPath = Db.getStepListPath(uid, mGameId, mLogId, stepId);
+
+            Map<String, Object> valuesToAdd = new HashMap<>();
+            valuesToAdd.put(stepPath, step);
+//            valuesToAdd.put(stepListPath, true);
+
+            // TODO: add progress spinner
+
+            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError,
+                                       @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        hideKeyboard(mBind.etAddStepEntry);
+                        mBind.etAddStepEntry.setText(null);
+                        mBind.etAddStepEntry.clearFocus();
+                    } else {
+                        PromptUser.displayAlert(mContext, R.string.error_add_repair_step_failed,
+                                databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+
+//        } else {
+//            // user is not signed in
+        }
     }
 }

@@ -7,10 +7,10 @@
         android:title="@string/edit"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/menu_add_repair"
-        android:title="@string/add_repair_entry"
-        app:showAsAction="always" />
+    <!--<item-->
+        <!--android:id="@+id/menu_add_repair"-->
+        <!--android:title="@string/add_repair_log"-->
+        <!--app:showAsAction="always" />-->
         <!--android:icon="@drawable/ic_playlist_add_white_24dp"-->
 
 

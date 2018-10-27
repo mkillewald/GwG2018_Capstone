@@ -1,5 +1,6 @@
 package com.gameaholix.coinops.adapter;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,10 +11,12 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.RepairStepListItemBinding;
 import com.gameaholix.coinops.model.RepairStep;
+import com.gameaholix.coinops.utility.DateHelper;
 
 import java.util.List;
 
 public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterViewHolder> {
+    private Context mContext;
     private List<RepairStep> mRepairSteps;
     private final StepAdapterOnClickHandler mClickHandler;
 
@@ -21,8 +24,8 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterVie
         void onClick(RepairStep repairStep);
     }
 
-    public StepAdapter(StepAdapterOnClickHandler clickHandler) {
-//        mContext = context;
+    public StepAdapter(Context context, StepAdapterOnClickHandler clickHandler) {
+        mContext = context;
         mClickHandler = clickHandler;
     }
 
@@ -60,6 +63,8 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterVie
 
         holder.mBinding.setRepairStep(repairStep);
         holder.mBinding.tvRepairStepEntry.setText(repairStep.getEntry());
+        String dateString = DateHelper.getDateTime(mContext, repairStep.getCreatedAtLong());
+        holder.mBinding.tvRepairStepCreatedAt.setText(dateString);
     }
 
     @Override

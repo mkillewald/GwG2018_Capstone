@@ -1,6 +1,8 @@
 package com.gameaholix.coinops.game;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -9,6 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
@@ -26,6 +32,7 @@ public class GameDetailActivity extends AppCompatActivity implements
 
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
+    private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
 
     private Game mGame;
@@ -90,15 +97,15 @@ public class GameDetailActivity extends AppCompatActivity implements
         switch (mViewPager.getCurrentItem()) {
             case 0:
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
-                menu.findItem(R.id.menu_add_repair).setVisible(false);
+//                menu.findItem(R.id.menu_add_repair).setVisible(false);
                 break;
             case 1:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
-                menu.findItem(R.id.menu_add_repair).setVisible(true);
+//                menu.findItem(R.id.menu_add_repair).setVisible(true);
                 break;
             default:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
-                menu.findItem(R.id.menu_add_repair).setVisible(false);
+//                menu.findItem(R.id.menu_add_repair).setVisible(false);
                 break;
         }
         return super.onCreateOptionsMenu(menu);
@@ -109,8 +116,8 @@ public class GameDetailActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
                 return false;
-            case R.id.menu_add_repair:
-                return false;
+//            case R.id.menu_add_repair:
+//                return false;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -131,6 +138,30 @@ public class GameDetailActivity extends AppCompatActivity implements
     public void onRepairLogSelected(RepairLog repairLog) {
         Intent intent = new Intent(this, RepairDetailActivity.class);
         intent.putExtra(EXTRA_REPAIR, repairLog);
+        intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
         startActivity(intent);
+    }
+
+    // Hide keyboard after touch event occurs outside of EditText
+    // Solution used from:
+    // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if ( view instanceof EditText) {
+                Rect outRect = new Rect();
+                view.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    view.clearFocus();
+                    InputMethodManager imm =
+                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
     }
 }

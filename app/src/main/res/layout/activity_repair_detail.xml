@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="@dimen/margin"
     tools:context=".repair.RepairDetailActivity">
+
     <fragment
         android:id="@+id/repair_detail_fragment"
         android:name="com.gameaholix.coinops.repair.RepairDetailFragment"
