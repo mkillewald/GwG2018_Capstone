@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.ShoppingAdapter;
-import com.gameaholix.coinops.model.ShoppingItem;
+import com.gameaholix.coinops.model.Entry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -29,7 +29,7 @@ public class ShoppingListFragment extends Fragment implements
     private OnFragmentInteractionListener mListener;
 
     private ShoppingAdapter mShoppingAdapter;
-    private ArrayList<ShoppingItem> mShoppingList;
+    private ArrayList<Entry> mShoppingList;
 
     public ShoppingListFragment() {
         // Required empty public constructor
@@ -104,7 +104,7 @@ public class ShoppingListFragment extends Fragment implements
     }
 
     @Override
-    public void onClick(ShoppingItem shoppingItem) {
+    public void onClick(Entry shoppingItem) {
         if (mListener != null) {
             mListener.onShoppingItemSelected(shoppingItem);
         }
@@ -139,6 +139,6 @@ public class ShoppingListFragment extends Fragment implements
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onShoppingItemSelected(ShoppingItem shoppingItem);
+        void onShoppingItemSelected(Entry shoppingItem);
     }
 }

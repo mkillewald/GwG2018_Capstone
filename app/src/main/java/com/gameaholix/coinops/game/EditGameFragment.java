@@ -93,7 +93,7 @@ public class EditGameFragment extends Fragment {
         if (mUser != null) {
             // user is signed in
             final String uid = mUser.getUid();
-            final String gameId = mGame.getGameId();
+            final String gameId = mGame.getId();
 
             // Setup EditText
             bind.etGameName.setText(mGame.getName());

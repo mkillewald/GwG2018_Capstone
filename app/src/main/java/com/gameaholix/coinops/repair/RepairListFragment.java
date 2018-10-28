@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.RepairAdapter;
 import com.gameaholix.coinops.databinding.FragmentRepairListBinding;
-import com.gameaholix.coinops.model.RepairLog;
+import com.gameaholix.coinops.model.Entry;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,7 +45,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
 
     private Context mContext;
     private String mGameId;
-    private ArrayList<RepairLog> mRepairLogs;
+    private ArrayList<Entry> mRepairLogs;
     private RepairAdapter mRepairAdapter;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mRepairListRef;
@@ -124,7 +124,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         String logId = dataSnapshot1.getKey();
                         String description = (String) dataSnapshot1.getValue();
-                        RepairLog repairLog = new RepairLog(logId, mGameId, description);
+                        Entry repairLog = new Entry(logId, mGameId, description);
                         mRepairLogs.add(repairLog);
                     }
                     mRepairAdapter.notifyDataSetChanged();
@@ -168,8 +168,8 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
             addLogButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    RepairLog newLog = new RepairLog();
-                    newLog.setDescription(mBind.etRepairLogDescription.getText().toString().trim());
+                    Entry newLog = new Entry();
+                    newLog.setEntry(mBind.etRepairLogDescription.getText().toString().trim());
                     addLog(newLog);
                 }
             });
@@ -199,7 +199,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
     }
 
     @Override
-    public void onClick(RepairLog repairLog) {
+    public void onClick(Entry repairLog) {
         if (mListener != null) {
             mListener.onRepairLogSelected(repairLog);
         }
@@ -242,8 +242,8 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void addLog(RepairLog log) {
-        if (TextUtils.isEmpty(log.getDescription())) {
+    private void addLog(Entry log) {
+        if (TextUtils.isEmpty(log.getEntry())) {
             PromptUser.displayAlert(mContext,
                     R.string.error_add_repair_log_failed,
                     R.string.error_repair_log_description_empty);
@@ -252,7 +252,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
 
         // TODO: add checks for if item name already exists.
 
-        // Add RepairLog object to Firebase
+        // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in
             final String uid = mUser.getUid();
@@ -266,7 +266,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
 
             Map<String, Object> valuesToAdd = new HashMap<>();
             valuesToAdd.put(repairPath, log);
-            valuesToAdd.put(userRepairPath, log.getDescription());
+            valuesToAdd.put(userRepairPath, log.getEntry());
 
             // TODO: add progress spinner
 
@@ -303,6 +303,6 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onRepairLogSelected(RepairLog repairLog);
+        void onRepairLogSelected(Entry repairLog);
     }
 }

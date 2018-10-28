@@ -18,8 +18,8 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
+import com.gameaholix.coinops.model.Entry;
 import com.gameaholix.coinops.model.Game;
-import com.gameaholix.coinops.model.RepairLog;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +42,7 @@ public class GameDetailFragment extends Fragment {
 
     private Context mContext;
     private Game mGame;
-    private ArrayList<RepairLog> mRepairLogs;
+    private ArrayList<Entry> mRepairLogs;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mGameRef;
     private FirebaseUser mUser;
@@ -83,7 +83,7 @@ public class GameDetailFragment extends Fragment {
         mGameRef = mDatabaseReference
                 .child(Db.GAME)
                 .child(mUser.getUid())
-                .child(mGame.getGameId());
+                .child(mGame.getId());
     }
 
     @Override
@@ -108,14 +108,21 @@ public class GameDetailFragment extends Fragment {
                     if (mGame == null) {
                         Log.d(TAG, "Error: Game details not found");
                     } else {
-                        mGame.setGameId(gameId);
+                        mGame.setId(gameId);
+
+                        String noSelection = getString(R.string.not_available);
                         String[] typeArr = getResources().getStringArray(R.array.game_type);
+                        typeArr[0] = noSelection;
                         String[] cabinetArr = getResources().getStringArray(R.array.game_cabinet);
+                        cabinetArr[0] = noSelection;
                         String[] workingArr = getResources().getStringArray(R.array.game_working);
+                        workingArr[0] = noSelection;
                         String[] ownershipArr =
                                 getResources().getStringArray(R.array.game_ownership);
+                        ownershipArr[0] = noSelection;
                         String[] conditionArr =
                                 getResources().getStringArray(R.array.game_condition);
+                        conditionArr[0] = noSelection;
                         String[] monitorPhospherArr =
                                 getResources().getStringArray(R.array.game_monitor_phospher);
                         String[] monitorTypeArr =
@@ -249,7 +256,7 @@ public class GameDetailFragment extends Fragment {
         if (mUser != null) {
             // user is signed in
             String uid = mUser.getUid();
-            String gameId = mGame.getGameId();
+            String gameId = mGame.getId();
 
             // Get database paths from helper class
             String gamePath = Db.getGamePath(uid, gameId);

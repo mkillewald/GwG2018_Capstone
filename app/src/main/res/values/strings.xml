@@ -190,7 +190,7 @@
 
     <string name="error_please_try_again">Please try again.</string>
     <string name="error_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
-    <string name="error_repair_log_description_empty">Trouble description cannot be blank. Please
+    <string name="error_repair_log_description_empty">Trouble entry cannot be blank. Please
         describe the problem that is occurring and try again.</string>
     <string name="error_repair_step_entry_empty">Entry cannot be blank. Please
         enter the repair action performed and try again.</string>

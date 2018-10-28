@@ -24,18 +24,19 @@
 
             <TextView
                 android:id="@+id/tv_inventory_name"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@android:color/primary_text_light"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Headline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_type_label"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_marginTop="@dimen/margin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -53,9 +54,9 @@
 
             <TextView
                 android:id="@+id/tv_condition_label"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Small"
                 app:layout_constraintStart_toEndOf="@id/gl_vertical_center"
                 app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"
                 app:layout_constraintTop_toTopOf="@id/tv_type_label"
@@ -72,9 +73,9 @@
 
             <TextView
                 android:id="@+id/tv_description_label"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_marginTop="@dimen/margin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"

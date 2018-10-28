@@ -5,7 +5,7 @@
     <data>
         <variable
             name="repairStep"
-            type="com.gameaholix.coinops.model.RepairStep" />
+            type="com.gameaholix.coinops.model.Entry" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -14,7 +14,7 @@
 
         <TextView
             android:id="@+id/tv_repair_step_entry"
-            style="@style/TextAppearance.AppCompat.Body1"
+            style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/text_separation"

@@ -9,9 +9,11 @@ public class InventoryItem implements Parcelable {
 
     private String id;
     private String name;
+    private String description;
+
     private int type;
     private int condition;
-    private String description;
+
 
     public InventoryItem() {
         // Default constructor required for calls to DataSnapshot.getValue()
@@ -24,9 +26,9 @@ public class InventoryItem implements Parcelable {
     private InventoryItem(Parcel in) {
         this.id = in.readString();
         this.name = in.readString();
+        this.description = in.readString();
         this.type = in.readInt();
         this.condition = in.readInt();
-        this.description = in.readString();
     }
 
     @Override
@@ -38,9 +40,9 @@ public class InventoryItem implements Parcelable {
     public void writeToParcel(Parcel dest, int i) {
         dest.writeString(id);
         dest.writeString(name);
+        dest.writeString(description);
         dest.writeInt(type);
         dest.writeInt(condition);
-        dest.writeString(description);
     }
 
     public final static Parcelable.Creator<InventoryItem> CREATOR = new Parcelable.Creator<InventoryItem>() {
@@ -76,6 +78,14 @@ public class InventoryItem implements Parcelable {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public int getType() {
         return type;
     }
@@ -90,13 +100,5 @@ public class InventoryItem implements Parcelable {
 
     public void setCondition(int condition) {
         this.condition = condition;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

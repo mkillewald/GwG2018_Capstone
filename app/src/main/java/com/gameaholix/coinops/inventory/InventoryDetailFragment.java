@@ -102,9 +102,12 @@ public class InventoryDetailFragment extends Fragment {
                         Log.d(TAG, "Error: Item details not found");
                     } else {
                         mItem.setId(id);
+                        String noSelection = getString(R.string.not_available);
                         String[] typeArr = getResources().getStringArray(R.array.inventory_type);
+                        typeArr[0] = noSelection;
                         String[] conditionArr =
                                 getResources().getStringArray(R.array.inventory_condition);
+                        conditionArr[0] = noSelection;
                         bind.tvInventoryName.setText(mItem.getName());
                         bind.tvInventoryType.setText(typeArr[mItem.getType()]);
                         bind.tvInventoryCondition.setText(conditionArr[mItem.getCondition()]);

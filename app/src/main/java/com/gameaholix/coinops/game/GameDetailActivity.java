@@ -18,9 +18,9 @@ import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
+import com.gameaholix.coinops.model.Entry;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
-import com.gameaholix.coinops.model.RepairLog;
 import com.gameaholix.coinops.repair.RepairListFragment;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class GameDetailActivity extends AppCompatActivity implements
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Entry";
 
     private Game mGame;
     private ViewPager mViewPager;
@@ -60,7 +60,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         List<Fragment> fragments = new Vector<>();
 
         fragments.add(GameDetailFragment.newInstance(mGame));
-        fragments.add(RepairListFragment.newInstance(mGame.getGameId()));
+        fragments.add(RepairListFragment.newInstance(mGame.getId()));
         fragments.add(BlankFragment.newInstance());
         fragments.add(BlankFragment.newInstance());
 
@@ -135,7 +135,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onRepairLogSelected(RepairLog repairLog) {
+    public void onRepairLogSelected(Entry repairLog) {
         Intent intent = new Intent(this, RepairDetailActivity.class);
         intent.putExtra(EXTRA_REPAIR, repairLog);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());

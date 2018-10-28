@@ -133,7 +133,7 @@ public class EditInventoryFragment extends Fragment {
                     if (i == EditorInfo.IME_ACTION_DONE) {
                         String input = textView.getText().toString().trim();
                         if (textInputIsValid(input)) {
-                            mValuesBundle.putString(Db.DESCRIPTION, input);
+                            mValuesBundle.putString(Db.ENTRY, input);
                         } else {
                             textView.setText(mItem.getDescription());
                         }
@@ -151,7 +151,7 @@ public class EditInventoryFragment extends Fragment {
                             EditText editText = (EditText) view;
                             String input = editText.getText().toString().trim();
                             if (textInputIsValid(input)) {
-                                mValuesBundle.putString(Db.DESCRIPTION, input);
+                                mValuesBundle.putString(Db.ENTRY, input);
                             } else {
                                 editText.setText(mItem.getDescription());
                             }

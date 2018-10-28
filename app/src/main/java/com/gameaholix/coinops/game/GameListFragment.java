@@ -85,7 +85,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         String gameId = dataSnapshot1.getKey();
                         Game game = dataSnapshot1.getValue(Game.class);
-                        if (game != null) { game.setGameId(gameId); }
+                        if (game != null) { game.setId(gameId); }
                         mGames.add(game);
                     }
                     mGameAdapter.notifyDataSetChanged();

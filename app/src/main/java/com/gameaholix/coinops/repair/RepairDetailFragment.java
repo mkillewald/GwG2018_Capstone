@@ -21,8 +21,7 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.StepAdapter;
 import com.gameaholix.coinops.databinding.FragmentRepairDetailBinding;
-import com.gameaholix.coinops.model.RepairLog;
-import com.gameaholix.coinops.model.RepairStep;
+import com.gameaholix.coinops.model.Entry;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,12 +38,12 @@ import java.util.Map;
 
 public class RepairDetailFragment extends Fragment {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Entry";
     private static final String EXTRA_STEP_LIST = "CoinOpsRepairStepList";
 
     private Context mContext;
-    private RepairLog mRepairLog;
-    private ArrayList<RepairStep> mRepairSteps;
+    private Entry mRepairLog;
+    private ArrayList<Entry> mRepairSteps;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mRepairRef;
@@ -58,7 +57,7 @@ public class RepairDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static RepairDetailFragment newInstance(RepairLog log) {
+    public static RepairDetailFragment newInstance(Entry log) {
         Bundle args = new Bundle();
         RepairDetailFragment fragment = new RepairDetailFragment();
         args.putParcelable(EXTRA_REPAIR, log);
@@ -98,7 +97,7 @@ public class RepairDetailFragment extends Fragment {
         if (mUser != null) {
             // user is signed in
             final String uid = mUser.getUid();
-            final String gameId = mRepairLog.getGameId();
+            final String gameId = mRepairLog.getParentId();
             String logId = mRepairLog.getId();
 
             // Setup database references
@@ -119,14 +118,14 @@ public class RepairDetailFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String id = dataSnapshot.getKey();
 
-                    mRepairLog = dataSnapshot.getValue(RepairLog.class);
+                    mRepairLog = dataSnapshot.getValue(Entry.class);
                     if (mRepairLog == null) {
                         Log.d(TAG, "Error: Repair log details not found");
                     } else {
                         mRepairLog.setId(id);
-                        mRepairLog.setGameId(gameId);
+                        mRepairLog.setParentId(gameId);
 
-                        mBind.tvRepairDescription.setText(mRepairLog.getDescription());
+                        mBind.tvRepairDescription.setText(mRepairLog.getEntry());
                     }
                 }
 
@@ -146,7 +145,7 @@ public class RepairDetailFragment extends Fragment {
 //                        String stepId = dataSnapshot1.getKey();
 
                         // TODO: finish this
-                        RepairStep repairStep = dataSnapshot1.getValue(RepairStep.class);
+                        Entry repairStep = dataSnapshot1.getValue(Entry.class);
                         mRepairSteps.add(repairStep);
                     }
                     mStepAdapter.notifyDataSetChanged();
@@ -188,7 +187,7 @@ public class RepairDetailFragment extends Fragment {
             mBind.btnAddStep.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    RepairStep newStep = new RepairStep();
+                    Entry newStep = new Entry();
                     newStep.setEntry(mBind.etAddStepEntry.getText().toString().trim());
                     addStep(newStep);
                 }
@@ -233,7 +232,7 @@ public class RepairDetailFragment extends Fragment {
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void addStep(RepairStep step) {
+    private void addStep(Entry step) {
         if (TextUtils.isEmpty(step.getEntry())) {
             PromptUser.displayAlert(mContext,
                     R.string.error_add_repair_log_failed,
@@ -243,7 +242,7 @@ public class RepairDetailFragment extends Fragment {
 
         // TODO: add checks for if item name already exists.
 
-        // Add RepairLog object to Firebase
+        // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in
             final String uid = mUser.getUid();
@@ -251,13 +250,13 @@ public class RepairDetailFragment extends Fragment {
             final DatabaseReference stepRef = mDatabaseReference
                     .child(Db.REPAIR)
                     .child(uid)
-                    .child(mRepairLog.getGameId())
+                    .child(mRepairLog.getParentId())
                     .child(mRepairLog.getId())
                     .child(Db.STEPS);
             final String stepId = stepRef.push().getKey();
 
             // Get database paths from helper class
-            String stepPath = Db.getStepsPath(uid, mRepairLog.getGameId(), mRepairLog.getId(), stepId);
+            String stepPath = Db.getStepsPath(uid, mRepairLog.getParentId(), mRepairLog.getId(), stepId);
 //            String stepListPath = Db.getStepListPath(uid, mGameId, mLogId, stepId);
 
             Map<String, Object> valuesToAdd = new HashMap<>();
