@@ -76,6 +76,14 @@ public class GameDetailFragment extends Fragment {
         }
         setHasOptionsMenu(true);
 
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mGameRef = mDatabaseReference
+                .child(Db.GAME)
+                .child(mUser.getUid())
+                .child(mGame.getGameId());
     }
 
     @Override
@@ -86,19 +94,6 @@ public class GameDetailFragment extends Fragment {
                 inflater, R.layout.fragment_game_detail, container, false);
 
         final View rootView = bind.getRoot();
-
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-        // get current user
-        mUser = firebaseAuth.getCurrentUser();
-
-        // Setup database references
-        mGameRef = mDatabaseReference
-                .child(Db.GAME)
-                .child(mUser.getUid())
-                .child(mGame.getGameId());
 
         if (mUser != null) {
             // user is signed in
@@ -272,8 +267,8 @@ public class GameDetailFragment extends Fragment {
                             getActivity().finish();
                         }
                     } else {
-                        PromptUser.displayAlert(mContext,
-                                R.string.error_delete_game_failed, databaseError.getMessage());
+                        PromptUser.displayAlert(mContext, R.string.error_delete_game_failed,
+                                databaseError.getMessage());
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
                                 " Details: " + databaseError.getDetails());

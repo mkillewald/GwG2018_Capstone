@@ -1,11 +1,15 @@
 package com.gameaholix.coinops.inventory;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,6 +20,7 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryDetailBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,14 +29,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class InventoryDetailFragment extends Fragment {
     private static final String TAG = InventoryDetailFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
+    private Context mContext;
     private InventoryItem mItem;
+    private FirebaseUser mUser;
+    private DatabaseReference mDatabaseReference;
     private DatabaseReference mInventoryRef;
     private ValueEventListener mInventoryListener;
-    private OnFragmentInteractionListener mListener;
 
     public InventoryDetailFragment() {
         // Required empty public constructor
@@ -49,6 +59,15 @@ public class InventoryDetailFragment extends Fragment {
         } else {
             mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
         }
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mInventoryRef = mDatabaseReference
+                .child(Db.INVENTORY)
+                .child(mUser.getUid())
+                .child(mItem.getId());
     }
 
     public static InventoryDetailFragment newInstance(InventoryItem item) {
@@ -63,22 +82,14 @@ public class InventoryDetailFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentInventoryDetailBinding binding = DataBindingUtil.inflate(
+        final FragmentInventoryDetailBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_inventory_detail, container, false);
 
-        final View rootView = binding.getRoot();
+        final View rootView = bind.getRoot();
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
-
-            // Setup database references
-            mInventoryRef = databaseReference.child(Db.INVENTORY).child(uid).child(mItem.getId());
+            final String uid = mUser.getUid();
 
             // read inventory item details
             mInventoryListener = new ValueEventListener() {
@@ -94,10 +105,10 @@ public class InventoryDetailFragment extends Fragment {
                         String[] typeArr = getResources().getStringArray(R.array.inventory_type);
                         String[] conditionArr =
                                 getResources().getStringArray(R.array.inventory_condition);
-                        binding.tvInventoryName.setText(mItem.getName());
-                        binding.tvInventoryType.setText(typeArr[mItem.getType()]);
-                        binding.tvInventoryCondition.setText(conditionArr[mItem.getCondition()]);
-                        binding.tvInventoryDescription.setText(mItem.getDescription());
+                        bind.tvInventoryName.setText(mItem.getName());
+                        bind.tvInventoryType.setText(typeArr[mItem.getType()]);
+                        bind.tvInventoryCondition.setText(conditionArr[mItem.getCondition()]);
+                        bind.tvInventoryDescription.setText(mItem.getDescription());
                     }
                 }
 
@@ -110,12 +121,10 @@ public class InventoryDetailFragment extends Fragment {
 
             mInventoryRef.addValueEventListener(mInventoryListener);
 
-            binding.btnDelete.setOnClickListener(new View.OnClickListener() {
+            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mListener != null) {
-                        mListener.onDeleteButtonPressed(mItem.getId());
-                    }
+                        deleteItemAlert();
                 }
             });
 
@@ -144,18 +153,13 @@ public class InventoryDetailFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        mContext = context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mInventoryRef.removeEventListener(mInventoryListener);
     }
 
     @Override
@@ -171,17 +175,61 @@ public class InventoryDetailFragment extends Fragment {
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onDeleteButtonPressed(String id);
+    private void deleteItemAlert() {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(mContext);
+        }
+        builder.setTitle(getString(R.string.really_delete_inventory_item))
+                .setMessage(getString(R.string.inventory_item_will_be_deleted))
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteItem();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void deleteItem() {
+        if (mUser != null) {
+            // user is signed in
+            final String uid = mUser.getUid();
+
+            // Get database paths from helper class
+            String inventoryPath = Db.getInventoryPath(uid, mItem.getId());
+            String userInventoryPath = Db.getInventoryListPath(uid, mItem.getId());
+
+            Map<String, Object> valuesToDelete= new HashMap<>();
+            valuesToDelete.put(inventoryPath, null);
+            valuesToDelete.put(userInventoryPath + Db.NAME, null);
+
+            mDatabaseReference.updateChildren(valuesToDelete, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        if (getActivity() != null) {
+                            getActivity().finish();
+                        }
+                    } else {
+                        PromptUser.displayAlert(mContext, R.string.error_delete_inventory_failed,
+                                databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+//        } else {
+//            // user is not signed in
+        }
     }
 }

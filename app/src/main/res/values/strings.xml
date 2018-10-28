@@ -57,7 +57,7 @@
     <string name="ownership_label">Ownership:</string>
     <string name="condition_label">Condition:</string>
     <string name="monitor_label">Monitor:</string>
-
+    <string name="description_label">Description:</string>
     <string name="repair_created_at_label">Issue Reported On:"</string>
     <string name="repair_description_label">Issue:</string>
     <string name="repair_steps_label">Repair Steps Taken:</string>
@@ -130,7 +130,7 @@
     <string name="inventory_name">Part Name</string>
     <string name="inventory_description">Part Description</string>
 
-    <string name="select_inventory_type">Part Type</string>
+    <string name="select_inventory_type">Select Type</string>
     <string name="inventory_type1">Board</string>
     <string name="inventory_type2">Power Supply</string>
     <string name="inventory_type3">Lighting / Electrical</string>
@@ -141,7 +141,7 @@
     <string name="inventory_type8">Cabinet Interior</string>
     <string name="inventory_type9">Other</string>
 
-    <string name="select_inventory_condition">Part Condition</string>
+    <string name="select_inventory_condition">Select Condition</string>
     <string name="inventory_condition1">Working</string>
     <string name="inventory_condition2">Failed</string>
     <string name="inventory_condition3">Untested</string>
