@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.InventoryListItemBinding;
+import com.gameaholix.coinops.databinding.ListItemBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
 
     public class InventoryAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        final InventoryListItemBinding mBinding;
+        final ListItemBinding mBinding;
 
-        InventoryAdapterViewHolder(InventoryListItemBinding inventoryListItemBinding) {
-            super(inventoryListItemBinding.getRoot());
-            mBinding = inventoryListItemBinding;
-            mBinding.tvInventoryName.setOnClickListener(this);
+        InventoryAdapterViewHolder(ListItemBinding listItemBinding) {
+            super(listItemBinding.getRoot());
+            mBinding = listItemBinding;
+            mBinding.tvName.setOnClickListener(this);
         }
 
         @Override
@@ -46,9 +46,9 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
     @NonNull
     @Override
     public InventoryAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        InventoryListItemBinding binding = DataBindingUtil.inflate(
+        ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.inventory_list_item, parent, false);
+                R.layout.list_item, parent, false);
 
         return new InventoryAdapterViewHolder(binding);
     }
@@ -57,8 +57,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
     public void onBindViewHolder(@NonNull InventoryAdapterViewHolder holder, int position) {
         InventoryItem inventoryItem = mInventoryItems.get(position);
 
-        holder.mBinding.setInventoryItem(inventoryItem);
-        holder.mBinding.tvInventoryName.setText(inventoryItem.getName());
+        holder.mBinding.tvName.setText(inventoryItem.getName());
     }
 
     @Override

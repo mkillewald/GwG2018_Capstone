@@ -2,55 +2,35 @@ package com.gameaholix.coinops.inventory;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.InventoryItem;
-import com.gameaholix.coinops.utility.Db;
-import com.gameaholix.coinops.utility.PromptUser;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class AddInventoryActivity extends AppCompatActivity implements
-        AddInventoryFragment.OnFragmentInteractionListener {
-    private static final String TAG = AddInventoryActivity.class.getSimpleName();
-
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
+public class AddInventoryActivity extends AppCompatActivity {
+//    private static final String TAG = AddInventoryActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_inventory);
+        setContentView(R.layout.activity_fragment_host);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
         setTitle(R.string.add_inventory_title);
-    }
 
-    @Override
-    public void onAddItemButtonPressed(final InventoryItem item) { addItem(item); }
+        AddInventoryFragment fragment = new AddInventoryFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit();
+
+    }
 
     // Hide keyboard after touch event occurs outside of EditText
     // Solution used from:
@@ -73,54 +53,5 @@ public class AddInventoryActivity extends AppCompatActivity implements
             }
         }
         return super.dispatchTouchEvent(event);
-    }
-
-    private void addItem(InventoryItem item) {
-        if (TextUtils.isEmpty(item.getName())) {
-            PromptUser.displayAlert(this,
-                    R.string.error_add_inventory_failed,
-                    R.string.error_name_empty);
-            return;
-        }
-
-        // TODO: add checks for if item name already exists.
-
-        // Add InventoryItem object to Firebase
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        if (user != null) {
-            // user is signed in
-            final String uid = user.getUid();
-
-            final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
-
-            final String id = inventoryRef.push().getKey();
-
-            // Get database paths from helper class
-            String inventoryPath = Db.getInventoryPath(uid, id);
-            String userInventoryPath = Db.getInventoryListPath(uid, id);
-
-            Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(inventoryPath, item);
-            valuesToAdd.put(userInventoryPath + Db.NAME, item.getName());
-
-            // TODO: add progress spinner
-
-            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        finish();
-                    } else {
-                        PromptUser.displayAlert(AddInventoryActivity.this,
-                                R.string.error_add_inventory_failed, databaseError.getMessage());
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
-                    }
-                }
-            });
-//        } else {
-//            // user is not signed in
-        }
     }
 }

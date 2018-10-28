@@ -1,12 +1,13 @@
 package com.gameaholix.coinops.inventory;
 
 import android.content.Context;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,29 +23,57 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddInventoryBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class EditInventoryFragment extends Fragment {
-//    private static final String TAG = EditInventoryFragment.class.getSimpleName();
+    private static final String TAG = EditInventoryFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
     private static final String EXTRA_VALUES = "CoinOpsInventoryValuesToUpdate";
 
     private Context mContext;
     private InventoryItem mItem;
     private Bundle mValuesBundle;
-    private OnFragmentInteractionListener mListener;
+    private FirebaseUser mUser;
+    private DatabaseReference mDatabaseReference;
 
     public EditInventoryFragment() {
         // Required empty public constructor
     }
 
+    public static EditInventoryFragment newInstance(InventoryItem item) {
+        Bundle args = new Bundle();
+        EditInventoryFragment fragment = new EditInventoryFragment();
+        args.putParcelable(EXTRA_INVENTORY_ITEM, item);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            if (getArguments() != null) {
+                mItem = getArguments().getParcelable(EXTRA_INVENTORY_ITEM);
+            }
+            mValuesBundle = new Bundle();
+        } else {
+            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
+            mValuesBundle = savedInstanceState.getBundle(EXTRA_VALUES);
+        }
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mUser = firebaseAuth.getCurrentUser();
     }
 
     @Override
@@ -55,24 +84,10 @@ public class EditInventoryFragment extends Fragment {
                 inflater, R.layout.fragment_add_inventory, container, false);
         final View rootView = bind.getRoot();
 
-        if (savedInstanceState == null) {
-            if (getActivity() != null && getActivity().getIntent() != null) {
-                Intent intent = getActivity().getIntent();
-                mItem = intent.getParcelableExtra(EXTRA_INVENTORY_ITEM);
-            }
-            mValuesBundle = new Bundle();
-        } else {
-            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
-            mValuesBundle = savedInstanceState.getBundle(EXTRA_VALUES);
-        }
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
-        final FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
+            final String uid = mUser.getUid();
             final String id = mItem.getId();
 
             // Setup EditText
@@ -182,32 +197,29 @@ public class EditInventoryFragment extends Fragment {
             bind.btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mListener != null) {
+                    // Get database paths from helper class
+                    String inventoryPath = Db.getInventoryPath(uid, id);
+                    String userInventoryPath = Db.getInventoryListPath(uid, id);
 
-                        // Get database paths from helper class
-                        String inventoryPath = Db.getInventoryPath(uid, id);
-                        String userInventoryPath = Db.getInventoryListPath(uid, id);
+                    // Convert values Bundle to HashMap for Firebase call to updateChildren()
+                    Map<String, Object> valuesMap = new HashMap<>();
 
-                        // Convert values Bundle to HashMap for Firebase call to updateChildren()
-                        Map<String, Object> valuesMap = new HashMap<>();
-
-                        for (String key : Db.INVENTORY_STRINGS) {
-                            if (mValuesBundle.containsKey(key)) {
-                                valuesMap.put(inventoryPath + key, mValuesBundle.getString(key));
-                                if (key.equals(Db.NAME)) {
-                                    valuesMap.put(userInventoryPath + key, mValuesBundle.getString(key));
-                                }
+                    for (String key : Db.INVENTORY_STRINGS) {
+                        if (mValuesBundle.containsKey(key)) {
+                            valuesMap.put(inventoryPath + key, mValuesBundle.getString(key));
+                            if (key.equals(Db.NAME)) {
+                                valuesMap.put(userInventoryPath + key, mValuesBundle.getString(key));
                             }
                         }
-
-                        for (String key : Db.INVENTORY_INTS) {
-                            if (mValuesBundle.containsKey(key)) {
-                                valuesMap.put(inventoryPath + key, mValuesBundle.getInt(key));
-                            }
-                        }
-
-                        mListener.onEditButtonPressed(valuesMap);
                     }
+
+                    for (String key : Db.INVENTORY_INTS) {
+                        if (mValuesBundle.containsKey(key)) {
+                            valuesMap.put(inventoryPath + key, mValuesBundle.getInt(key));
+                        }
+                    }
+
+                    updateItem(valuesMap);
                 }
             });
 
@@ -247,31 +259,39 @@ public class EditInventoryFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onEditButtonPressed(Map<String, Object> valuesToUpdate);
+    private void updateItem(Map<String, Object> valuesToUpdate) {
+        // TODO: add checks for if game name already exists.
+
+        // Update Firebase
+        if (mUser != null) {
+            // user is signed in
+            // TODO: show progress spinner
+
+            mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        if (getActivity() != null) {
+                            getActivity().finish();
+                        }
+                    } else {
+                        PromptUser.displayAlert(mContext, R.string.error_edit_inventory_failed,
+                                databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+//        } else {
+//            // user is not signed in
+        }
     }
 }

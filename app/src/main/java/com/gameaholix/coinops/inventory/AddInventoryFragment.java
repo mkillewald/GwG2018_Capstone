@@ -4,7 +4,10 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +23,25 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddInventoryBinding;
 import com.gameaholix.coinops.model.InventoryItem;
+import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.PromptUser;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddInventoryFragment extends Fragment {
-//    private static final String TAG = AddInventoryFragment.class.getSimpleName();
+    private static final String TAG = AddInventoryFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
     private Context mContext;
     private InventoryItem mNewItem;
-    private OnFragmentInteractionListener mListener;
+    private FirebaseUser mUser;
+    private DatabaseReference mDatabaseReference;
 
     public AddInventoryFragment() {
         // Required empty public constructor
@@ -36,6 +50,17 @@ public class AddInventoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            mNewItem = new InventoryItem();
+        } else {
+            mNewItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
+        }
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -45,12 +70,6 @@ public class AddInventoryFragment extends Fragment {
         final FragmentAddInventoryBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_add_inventory, container, false);
         final View rootView = bind.getRoot();
-
-        if (savedInstanceState == null) {
-            mNewItem = new InventoryItem();
-        } else {
-            mNewItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
-        }
 
         // Setup EditText
         bind.etAddInventoryName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -160,9 +179,7 @@ public class AddInventoryFragment extends Fragment {
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mListener != null) {
-                    mListener.onAddItemButtonPressed(mNewItem);
-                }
+                addItem(mNewItem);
             }
         });
 
@@ -180,31 +197,60 @@ public class AddInventoryFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onAddItemButtonPressed(InventoryItem item);
+    private void addItem(InventoryItem item) {
+        if (TextUtils.isEmpty(item.getName())) {
+            PromptUser.displayAlert(mContext,
+                    R.string.error_add_inventory_failed,
+                    R.string.error_name_empty);
+            return;
+        }
+
+        // TODO: add checks for if item name already exists.
+
+        // Add InventoryItem object to Firebase
+        if (mUser != null) {
+            // user is signed in
+            final String uid = mUser.getUid();
+
+            final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
+
+            final String id = inventoryRef.push().getKey();
+
+            // Get database paths from helper class
+            String inventoryPath = Db.getInventoryPath(uid, id);
+            String userInventoryPath = Db.getInventoryListPath(uid, id);
+
+            Map<String, Object> valuesToAdd = new HashMap<>();
+            valuesToAdd.put(inventoryPath, item);
+            valuesToAdd.put(userInventoryPath + Db.NAME, item.getName());
+
+            // TODO: add progress spinner
+
+            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        if (getActivity() != null) {
+                            getActivity().finish();
+                        }
+                    } else {
+                        PromptUser.displayAlert(mContext, R.string.error_add_inventory_failed,
+                                databaseError.getMessage());
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+//        } else {
+//            // user is not signed in
+        }
     }
 }

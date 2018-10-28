@@ -49,7 +49,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_game_list, container,
+        final View rootView = inflater.inflate(R.layout.fragment_list, container,
                 false);
 
         if (savedInstanceState == null) {
@@ -58,7 +58,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             mGames = savedInstanceState.getParcelableArrayList(EXTRA_GAME_LIST);
         }
 
-        RecyclerView recyclerView = rootView.findViewById(R.id.rv_game_list);
+        RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
         mGameAdapter = new GameAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);

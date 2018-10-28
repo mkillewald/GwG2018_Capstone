@@ -38,7 +38,7 @@ public class InventoryDetailActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inventory_detail);
+        setContentView(R.layout.activity_fragment_host);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -54,6 +54,11 @@ public class InventoryDetailActivity extends AppCompatActivity implements
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         setTitle(R.string.inventory_details_title);
+
+        InventoryDetailFragment fragment = InventoryDetailFragment.newInstance(mInventoryItem);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit();
     }
 
     @Override

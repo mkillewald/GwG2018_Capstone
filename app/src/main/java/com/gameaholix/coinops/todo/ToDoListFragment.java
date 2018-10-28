@@ -42,7 +42,7 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_to_do_list, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
         if (savedInstanceState == null) {
             mToDoList = new ArrayList<ToDoItem>();
@@ -50,7 +50,7 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
             mToDoList = savedInstanceState.getParcelableArrayList(EXTRA_TODO_LIST);
         }
 
-        RecyclerView recyclerView = rootView.findViewById(R.id.rv_todo_list);
+        RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
         mToDoAdapter = new ToDoAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);

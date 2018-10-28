@@ -42,22 +42,22 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_inventory_list, container,
-                false);
 
         if (savedInstanceState == null) {
             mInventoryItems = new ArrayList<>();
         } else {
             mInventoryItems = savedInstanceState.getParcelableArrayList(EXTRA_INVENTORY_LIST);
         }
+    }
 
-        RecyclerView recyclerView = rootView.findViewById(R.id.rv_inventory_list);
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_list, container,
+                false);
+
+        RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
         mInventoryAdapter = new InventoryAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);

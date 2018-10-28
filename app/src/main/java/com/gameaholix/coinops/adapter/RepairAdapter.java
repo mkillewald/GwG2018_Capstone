@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.RepairListItemBinding;
+import com.gameaholix.coinops.databinding.ListItemBinding;
 import com.gameaholix.coinops.model.RepairLog;
 import java.util.List;
 
@@ -26,12 +26,12 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
 
     public class RepairAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        final RepairListItemBinding mBinding;
+        final ListItemBinding mBinding;
 
-        RepairAdapterViewHolder(RepairListItemBinding repairListItemBinding) {
-            super(repairListItemBinding.getRoot());
-            mBinding = repairListItemBinding;
-            mBinding.tvRepairDescription.setOnClickListener(this);
+        RepairAdapterViewHolder(ListItemBinding listItemBinding) {
+            super(listItemBinding.getRoot());
+            mBinding = listItemBinding;
+            mBinding.tvName.setOnClickListener(this);
         }
 
         @Override
@@ -45,9 +45,9 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
     @NonNull
     @Override
     public RepairAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        RepairListItemBinding binding = DataBindingUtil.inflate(
+        ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.repair_list_item, parent, false);
+                R.layout.list_item, parent, false);
 
         return new RepairAdapterViewHolder(binding);
     }
@@ -56,8 +56,7 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
     public void onBindViewHolder(@NonNull RepairAdapterViewHolder holder, int position) {
         RepairLog repairLog = mRepairLogs.get(position);
 
-        holder.mBinding.setRepairLog(repairLog);
-        holder.mBinding.tvRepairDescription.setText(repairLog.getDescription());
+        holder.mBinding.tvName.setText(repairLog.getDescription());
     }
 
     @Override

@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.GameListItemBinding;
+import com.gameaholix.coinops.databinding.ListItemBinding;
 import com.gameaholix.coinops.model.Game;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
 
     public class GameAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        final GameListItemBinding mBinding;
+        final ListItemBinding mBinding;
 
-        GameAdapterViewHolder(GameListItemBinding gameListItemBinding) {
-            super(gameListItemBinding.getRoot());
-            mBinding = gameListItemBinding;
-            mBinding.tvGameName.setOnClickListener(this);
+        GameAdapterViewHolder(ListItemBinding listItemBinding) {
+            super(listItemBinding.getRoot());
+            mBinding = listItemBinding;
+            mBinding.tvName.setOnClickListener(this);
         }
 
         @Override
@@ -46,9 +46,9 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
     @NonNull
     @Override
     public GameAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        GameListItemBinding binding = DataBindingUtil.inflate(
+        ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.game_list_item, parent, false);
+                R.layout.list_item, parent, false);
 
         return new GameAdapterViewHolder(binding);
     }
@@ -57,8 +57,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
     public void onBindViewHolder(@NonNull GameAdapterViewHolder holder, int position) {
         Game game = mGames.get(position);
 
-        holder.mBinding.setGame(game);
-        holder.mBinding.tvGameName.setText(game.getName());
+        holder.mBinding.tvName.setText(game.getName());
     }
 
     @Override

@@ -44,7 +44,7 @@ public class ShoppingListFragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_shopping_list, container,
+        final View rootView = inflater.inflate(R.layout.fragment_list, container,
                 false);
 
         if (savedInstanceState == null) {
@@ -53,7 +53,7 @@ public class ShoppingListFragment extends Fragment implements
             mShoppingList = savedInstanceState.getParcelableArrayList(EXTRA_SHOPPING_LIST);
         }
 
-        RecyclerView recyclerView = rootView.findViewById(R.id.rv_shopping_list);
+        RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
         mShoppingAdapter = new ShoppingAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);

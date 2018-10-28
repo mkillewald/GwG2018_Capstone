@@ -19,9 +19,14 @@ public class InventoryListActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inventory_list);
+        setContentView(R.layout.activity_fragment_host);
 
         setTitle(R.string.inventory_list_title);
+
+        InventoryListFragment fragment = new InventoryListFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit();
     }
 
     @Override

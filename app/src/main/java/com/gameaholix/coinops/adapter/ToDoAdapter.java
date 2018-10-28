@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.TodoListItemBinding;
+import com.gameaholix.coinops.databinding.ListItemBinding;
 import com.gameaholix.coinops.model.ToDoItem;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoAdapterVie
 
     public class ToDoAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        final TodoListItemBinding mBinding;
+        final ListItemBinding mBinding;
 
-        ToDoAdapterViewHolder(TodoListItemBinding todoListItemBinding) {
-            super(todoListItemBinding.getRoot());
-            mBinding = todoListItemBinding;
-            mBinding.tvTodoName.setOnClickListener(this);
+        ToDoAdapterViewHolder(ListItemBinding listItemBinding) {
+            super(listItemBinding.getRoot());
+            mBinding = listItemBinding;
+            mBinding.tvName.setOnClickListener(this);
         }
 
         @Override
@@ -46,9 +46,9 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoAdapterVie
     @NonNull
     @Override
     public ToDoAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        TodoListItemBinding binding = DataBindingUtil.inflate(
+        ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.todo_list_item, parent, false);
+                R.layout.list_item, parent, false);
 
         return new ToDoAdapterViewHolder(binding);
     }
@@ -57,8 +57,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoAdapterVie
     public void onBindViewHolder(@NonNull ToDoAdapterViewHolder holder, int position) {
         ToDoItem toDoItem = mToDoItems.get(position);
 
-        holder.mBinding.setToDoItem(toDoItem);
-        holder.mBinding.tvTodoName.setText(toDoItem.getName());
+        holder.mBinding.tvName.setText(toDoItem.getName());
     }
 
     @Override

@@ -25,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class InventoryDetailFragment extends Fragment {
-
     private static final String TAG = InventoryDetailFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
@@ -42,6 +41,22 @@ public class InventoryDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (savedInstanceState == null) {
+            if (getArguments() != null) {
+                mItem = getArguments().getParcelable(EXTRA_INVENTORY_ITEM);
+            }
+        } else {
+            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
+        }
+    }
+
+    public static InventoryDetailFragment newInstance(InventoryItem item) {
+        Bundle args = new Bundle();
+        InventoryDetailFragment fragment = new InventoryDetailFragment();
+        args.putParcelable(EXTRA_INVENTORY_ITEM, item);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -52,15 +67,6 @@ public class InventoryDetailFragment extends Fragment {
                 inflater, R.layout.fragment_inventory_detail, container, false);
 
         final View rootView = binding.getRoot();
-
-        if (savedInstanceState == null) {
-            if (getActivity() != null && getActivity().getIntent() != null) {
-                Intent intent = getActivity().getIntent();
-                mItem = intent.getParcelableExtra(EXTRA_INVENTORY_ITEM);
-            }
-        } else {
-            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
-        }
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();

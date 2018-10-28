@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.ShoppingListItemBinding;
+import com.gameaholix.coinops.databinding.ListItemBinding;
 import com.gameaholix.coinops.model.ShoppingItem;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class ShoppingAdapter extends RecyclerView.Adapter<ShoppingAdapter.Shoppi
 
     public class ShoppingAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        final ShoppingListItemBinding mBinding;
+        final ListItemBinding mBinding;
 
-        ShoppingAdapterViewHolder(ShoppingListItemBinding shoppingListItemBinding) {
-            super(shoppingListItemBinding.getRoot());
-            mBinding = shoppingListItemBinding;
-            mBinding.tvShoppingName.setOnClickListener(this);
+        ShoppingAdapterViewHolder(ListItemBinding listItemBinding) {
+            super(listItemBinding.getRoot());
+            mBinding = listItemBinding;
+            mBinding.tvName.setOnClickListener(this);
         }
 
         @Override
@@ -46,9 +46,9 @@ public class ShoppingAdapter extends RecyclerView.Adapter<ShoppingAdapter.Shoppi
     @NonNull
     @Override
     public ShoppingAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ShoppingListItemBinding binding = DataBindingUtil.inflate(
+        ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.shopping_list_item, parent, false);
+                R.layout.list_item, parent, false);
 
         return new ShoppingAdapterViewHolder(binding);
     }
@@ -57,8 +57,7 @@ public class ShoppingAdapter extends RecyclerView.Adapter<ShoppingAdapter.Shoppi
     public void onBindViewHolder(@NonNull ShoppingAdapterViewHolder holder, int position) {
         ShoppingItem shoppingItem = mShoppingItems.get(position);
 
-        holder.mBinding.setShoppingItem(shoppingItem);
-        holder.mBinding.tvShoppingName.setText(shoppingItem.getName());
+        holder.mBinding.tvName.setText(shoppingItem.getName());
     }
 
     @Override

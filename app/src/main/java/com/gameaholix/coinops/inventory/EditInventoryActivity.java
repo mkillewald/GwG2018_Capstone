@@ -1,13 +1,9 @@
 package com.gameaholix.coinops.inventory;
 
-
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,29 +11,17 @@ import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.InventoryItem;
-import com.gameaholix.coinops.utility.PromptUser;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Map;
-
-public class EditInventoryActivity extends AppCompatActivity implements
-        EditInventoryFragment.OnFragmentInteractionListener{
-
-    private static final String TAG = EditInventoryActivity.class.getSimpleName();
+public class EditInventoryActivity extends AppCompatActivity {
+//    private static final String TAG = EditInventoryActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
     private InventoryItem mItem;
-    private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_inventory);
+        setContentView(R.layout.activity_fragment_host);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -51,20 +35,16 @@ public class EditInventoryActivity extends AppCompatActivity implements
 
         setTitle(R.string.edit_inventory_title);
 
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        EditInventoryFragment fragment = EditInventoryFragment.newInstance(mItem);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_INVENTORY_ITEM, mItem);
-    }
-
-    @Override
-    public void onEditButtonPressed(Map<String, Object> valuesToUpdate) {
-        updateItem(valuesToUpdate);
     }
 
     // Hide keyboard after touch event occurs outside of EditText
@@ -87,33 +67,5 @@ public class EditInventoryActivity extends AppCompatActivity implements
             }
         }
         return super.dispatchTouchEvent(event);
-    }
-
-    private void updateItem(Map<String, Object> valuesToUpdate) {
-        // TODO: add checks for if game name already exists.
-
-        // Update Firebase
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        if (user != null) {
-            // user is signed in
-            // TODO: show progress spinner
-
-            mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        finish();
-                    } else {
-                        PromptUser.displayAlert(EditInventoryActivity.this,
-                                R.string.error_edit_inventory_failed, databaseError.getMessage());
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
-                    }
-                }
-            });
-//        } else {
-//            // user is not signed in
-        }
     }
 }

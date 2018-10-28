@@ -9,15 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.model.RepairLog;
 
 // TODO: finish this
 
 public class EditRepairFragment extends Fragment {
-
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.RepairLog";
     private OnFragmentInteractionListener mListener;
 
     public EditRepairFragment() {
         // Required empty public constructor
+    }
+
+    public static EditRepairFragment newInstance(RepairLog log) {
+        Bundle args = new Bundle();
+        EditRepairFragment fragment = new EditRepairFragment();
+        args.putParcelable(EXTRA_REPAIR, log);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
