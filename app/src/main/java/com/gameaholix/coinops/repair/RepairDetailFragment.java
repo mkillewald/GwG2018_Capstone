@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.StepAdapter;
 import com.gameaholix.coinops.databinding.FragmentRepairDetailBinding;
-import com.gameaholix.coinops.model.Entry;
+import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,8 +42,8 @@ public class RepairDetailFragment extends Fragment {
     private static final String EXTRA_STEP_LIST = "CoinOpsRepairStepList";
 
     private Context mContext;
-    private Entry mRepairLog;
-    private ArrayList<Entry> mRepairSteps;
+    private Item mRepairLog;
+    private ArrayList<Item> mRepairSteps;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mRepairRef;
@@ -57,7 +57,7 @@ public class RepairDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static RepairDetailFragment newInstance(Entry log) {
+    public static RepairDetailFragment newInstance(Item log) {
         Bundle args = new Bundle();
         RepairDetailFragment fragment = new RepairDetailFragment();
         args.putParcelable(EXTRA_REPAIR, log);
@@ -118,14 +118,14 @@ public class RepairDetailFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String id = dataSnapshot.getKey();
 
-                    mRepairLog = dataSnapshot.getValue(Entry.class);
+                    mRepairLog = dataSnapshot.getValue(Item.class);
                     if (mRepairLog == null) {
                         Log.d(TAG, "Error: Repair log details not found");
                     } else {
                         mRepairLog.setId(id);
                         mRepairLog.setParentId(gameId);
 
-                        mBind.tvRepairDescription.setText(mRepairLog.getEntry());
+                        mBind.tvRepairDescription.setText(mRepairLog.getName());
                     }
                 }
 
@@ -145,7 +145,7 @@ public class RepairDetailFragment extends Fragment {
 //                        String stepId = dataSnapshot1.getKey();
 
                         // TODO: finish this
-                        Entry repairStep = dataSnapshot1.getValue(Entry.class);
+                        Item repairStep = dataSnapshot1.getValue(Item.class);
                         mRepairSteps.add(repairStep);
                     }
                     mStepAdapter.notifyDataSetChanged();
@@ -187,8 +187,8 @@ public class RepairDetailFragment extends Fragment {
             mBind.btnAddStep.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Entry newStep = new Entry();
-                    newStep.setEntry(mBind.etAddStepEntry.getText().toString().trim());
+                    Item newStep = new Item();
+                    newStep.setName(mBind.etAddStepEntry.getText().toString().trim());
                     addStep(newStep);
                 }
             });
@@ -232,8 +232,8 @@ public class RepairDetailFragment extends Fragment {
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void addStep(Entry step) {
-        if (TextUtils.isEmpty(step.getEntry())) {
+    private void addStep(Item step) {
+        if (TextUtils.isEmpty(step.getName())) {
             PromptUser.displayAlert(mContext,
                     R.string.error_add_repair_step_failed,
                     R.string.error_repair_step_entry_empty);
@@ -263,25 +263,21 @@ public class RepairDetailFragment extends Fragment {
             valuesToAdd.put(stepPath, step);
 //            valuesToAdd.put(stepListPath, true);
 
-            // TODO: add progress spinner
-
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError,
                                        @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        hideKeyboard(mBind.etAddStepEntry);
-                        mBind.etAddStepEntry.setText(null);
-                        mBind.etAddStepEntry.clearFocus();
-                    } else {
-                        PromptUser.displayAlert(mContext, R.string.error_add_repair_step_failed,
-                                databaseError.getMessage());
+                    if (databaseError != null) {
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
                                 " Details: " + databaseError.getDetails());
                     }
                 }
             });
+
+            hideKeyboard(mBind.etAddStepEntry);
+            mBind.etAddStepEntry.setText(null);
+            mBind.etAddStepEntry.clearFocus();
 
 //        } else {
 //            // user is not signed in

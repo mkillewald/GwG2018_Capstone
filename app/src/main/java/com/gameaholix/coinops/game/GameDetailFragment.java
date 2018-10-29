@@ -18,8 +18,8 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
-import com.gameaholix.coinops.model.Entry;
 import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +42,7 @@ public class GameDetailFragment extends Fragment {
 
     private Context mContext;
     private Game mGame;
-    private ArrayList<Entry> mRepairLogs;
+    private ArrayList<Item> mRepairLogs;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mGameRef;
     private FirebaseUser mUser;

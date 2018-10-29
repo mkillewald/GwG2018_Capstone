@@ -55,6 +55,12 @@ public class AddGameFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState == null) {
+            mNewGame = new Game();
+        } else {
+            mNewGame = savedInstanceState.getParcelable(EXTRA_GAME);
+        }
+
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -68,11 +74,6 @@ public class AddGameFragment extends Fragment {
                 inflater, R.layout.fragment_add_game, container, false);
         final View rootView = bind.getRoot();
 
-        if (savedInstanceState == null) {
-            mNewGame = new Game();
-        } else {
-            mNewGame = savedInstanceState.getParcelable(EXTRA_GAME);
-        }
         // Setup EditText
         bind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -340,24 +341,20 @@ public class AddGameFragment extends Fragment {
             valuesToAdd.put(gamePath, game);
             valuesToAdd.put(userGamePath + Db.NAME, game.getName());
 
-            // TODO: add progress spinner
-
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        if (getActivity() != null) {
-                            getActivity().finish();
-                        }
-                    } else {
-                        PromptUser.displayAlert(mContext, R.string.error_add_game_failed,
-                                databaseError.getMessage());
+                    if (databaseError != null) {
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
                                 " Details: " + databaseError.getDetails());
                     }
                 }
             });
+
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
 //        } else {
 //            // user is not signed in
         }

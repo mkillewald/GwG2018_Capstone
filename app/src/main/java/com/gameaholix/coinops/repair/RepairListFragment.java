@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.RepairAdapter;
 import com.gameaholix.coinops.databinding.FragmentListWithButtonBinding;
-import com.gameaholix.coinops.model.Entry;
+import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,7 +45,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
 
     private Context mContext;
     private String mGameId;
-    private ArrayList<Entry> mRepairLogs;
+    private ArrayList<Item> mRepairLogs;
     private RepairAdapter mRepairAdapter;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mRepairRef;
@@ -122,8 +122,8 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
                     mRepairLogs.clear();
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         String logId = dataSnapshot1.getKey();
-                        String description = (String) dataSnapshot1.getValue();
-                        Entry repairLog = new Entry(logId, mGameId, description);
+                        String name = (String) dataSnapshot1.getValue();
+                        Item repairLog = new Item(logId, mGameId, name);
                         mRepairLogs.add(repairLog);
                     }
                     mRepairAdapter.notifyDataSetChanged();
@@ -168,8 +168,8 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
             addLogButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Entry newLog = new Entry();
-                    newLog.setEntry(mBind.etEntry.getText().toString().trim());
+                    Item newLog = new Item();
+                    newLog.setName(mBind.etEntry.getText().toString().trim());
                     addLog(newLog);
                 }
             });
@@ -199,7 +199,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
     }
 
     @Override
-    public void onClick(Entry repairLog) {
+    public void onClick(Item repairLog) {
         if (mListener != null) {
             mListener.onRepairLogSelected(repairLog);
         }
@@ -242,8 +242,8 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void addLog(Entry log) {
-        if (TextUtils.isEmpty(log.getEntry())) {
+    private void addLog(Item log) {
+        if (TextUtils.isEmpty(log.getName())) {
             PromptUser.displayAlert(mContext,
                     R.string.error_add_repair_log_failed,
                     R.string.error_repair_log_description_empty);
@@ -264,27 +264,23 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
 
             Map<String, Object> valuesToAdd = new HashMap<>();
             valuesToAdd.put(repairPath, log);
-            valuesToAdd.put(userRepairPath, log.getEntry());
-
-            // TODO: add progress spinner
+            valuesToAdd.put(userRepairPath, log.getName());
 
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError,
                                        @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        hideKeyboard(mBind.etEntry);
-                        mBind.etEntry.setText(null);
-                        mBind.etEntry.clearFocus();
-                    } else {
-                        PromptUser.displayAlert(mContext, R.string.error_add_repair_log_failed,
-                                databaseError.getMessage());
+                    if (databaseError != null) {
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
                                 " Details: " + databaseError.getDetails());
                     }
                 }
             });
+
+            hideKeyboard(mBind.etEntry);
+            mBind.etEntry.setText(null);
+            mBind.etEntry.clearFocus();
 //        } else {
 //            // user is not signed in
         }
@@ -301,6 +297,6 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onRepairLogSelected(Entry repairLog);
+        void onRepairLogSelected(Item repairLog);
     }
 }

@@ -19,20 +19,20 @@
     <string name="edit_repair_title">Edit Log Entry</string>
     <string name="add_repair_step_title">Add Repair Step</string>
 
-    <string name="to_do_list_title">To Do List</string>
+    <string name="to_do_list_title">Combined To Do List</string>
     <string name="to_do_details_title">Entry Details</string>
     <string name="add_to_do_title">Add To Do Item</string>
     <string name="edit_to_do_title">Edit To Do Item</string>
 
-    <string name="shopping_list_title">Shopping List</string>
+    <string name="shopping_list_title">Combined Shopping List</string>
     <string name="shopping_details_title">Item Details</string>
     <string name="edit_shopping_title">Edit Item</string>
 
     <!-- Game Details Tab Titles -->
-    <string name="game_details_tab1">Details</string>
-    <string name="game_details_tab2">Repair Log</string>
-    <string name="game_details_tab3">To Do</string>
-    <string name="game_details_tab4">Shopping</string>
+    <string name="game_details_tab1">Game\nDetails</string>
+    <string name="game_details_tab2">Repair\nLogs</string>
+    <string name="game_details_tab3">To Do\nList</string>
+    <string name="game_details_tab4">Shopping\nList</string>
 
     <!-- Actions -->
     <string name="sign_out">Sign Out</string>

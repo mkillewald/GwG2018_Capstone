@@ -268,27 +268,23 @@ public class ShoppingListFragment extends Fragment implements
             valuesToAdd.put(gameShopListPath, item.getName());
             valuesToAdd.put(userShopListPath, item.getName());
 
-            // TODO: add progress spinner
-
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError,
                                        @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        if (mShowAddButton) {
-                            hideKeyboard(mBind.etEntry);
-                            mBind.etEntry.setText(null);
-                            mBind.etEntry.clearFocus();
-                        }
-                    } else {
-                        PromptUser.displayAlert(mContext, R.string.error_add_repair_log_failed,
-                                databaseError.getMessage());
+                    if (databaseError != null) {
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
                                 " Details: " + databaseError.getDetails());
                     }
                 }
             });
+
+            if (mShowAddButton) {
+                hideKeyboard(mBind.etEntry);
+                mBind.etEntry.setText(null);
+                mBind.etEntry.clearFocus();
+            }
 //        } else {
 //            // user is not signed in
         }

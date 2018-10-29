@@ -272,24 +272,21 @@ public class EditInventoryFragment extends Fragment {
         // Update Firebase
         if (mUser != null) {
             // user is signed in
-            // TODO: show progress spinner
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        if (getActivity() != null) {
-                            getActivity().finish();
-                        }
-                    } else {
-                        PromptUser.displayAlert(mContext, R.string.error_edit_inventory_failed,
-                                databaseError.getMessage());
+                    if (databaseError != null) {
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
                                 " Details: " + databaseError.getDetails());
                     }
                 }
             });
+
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
 //        } else {
 //            // user is not signed in
         }

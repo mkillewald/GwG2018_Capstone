@@ -4,14 +4,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.Entry;
+import com.gameaholix.coinops.model.Item;
 
 // TODO: finish this
 
 public class EditRepairActivity extends AppCompatActivity {
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Entry";
 
-    private Entry mRepairLog;
+    private Item mRepairLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

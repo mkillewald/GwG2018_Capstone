@@ -10,18 +10,18 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.RepairStepListItemBinding;
-import com.gameaholix.coinops.model.Entry;
+import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.DateHelper;
 
 import java.util.List;
 
 public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterViewHolder> {
     private Context mContext;
-    private List<Entry> mRepairSteps;
+    private List<Item> mRepairSteps;
     private final StepAdapterOnClickHandler mClickHandler;
 
     public interface StepAdapterOnClickHandler {
-        void onClick(Entry repairStep);
+        void onClick(Item repairStep);
     }
 
     public StepAdapter(Context context, StepAdapterOnClickHandler clickHandler) {
@@ -42,7 +42,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterVie
         @Override
         public void onClick(View view) {
             int adapterPosition  = getAdapterPosition();
-            Entry repairStep = mRepairSteps.get(adapterPosition);
+            Item repairStep = mRepairSteps.get(adapterPosition);
             mClickHandler.onClick(repairStep);
         }
     }
@@ -59,10 +59,9 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull StepAdapterViewHolder holder, int position) {
-        Entry repairStep = mRepairSteps.get(position);
+        Item repairStep = mRepairSteps.get(position);
 
-        holder.mBinding.setRepairStep(repairStep);
-        holder.mBinding.tvRepairStepEntry.setText(repairStep.getEntry());
+        holder.mBinding.tvRepairStepEntry.setText(repairStep.getName());
         String dateString = DateHelper.getDateTime(mContext, repairStep.getCreatedAtLong());
         holder.mBinding.tvRepairStepCreatedAt.setText(dateString);
     }
@@ -72,5 +71,5 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterVie
         return mRepairSteps == null ? 0 : mRepairSteps.size();
     }
 
-    public void setRepairSteps(List<Entry> repairSteps) { mRepairSteps = repairSteps; }
+    public void setRepairSteps(List<Item> repairSteps) { mRepairSteps = repairSteps; }
 }

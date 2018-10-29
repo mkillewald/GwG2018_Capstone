@@ -31,8 +31,8 @@ public class ShoppingListActivity extends AppCompatActivity implements
 
     @Override
     public void onShoppingItemSelected(Item shoppingItem) {
-        Intent intent = new Intent(this, ShoppingDetailActivity.class);
-        intent.putExtra(EXTRA_SHOPPING, shoppingItem);
-        startActivity(intent);
+//        Intent intent = new Intent(this, ShoppingDetailActivity.class);
+//        intent.putExtra(EXTRA_SHOPPING, shoppingItem);
+//        startActivity(intent);
     }
 }

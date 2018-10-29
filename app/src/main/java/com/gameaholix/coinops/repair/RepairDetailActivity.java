@@ -10,14 +10,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.Entry;
+import com.gameaholix.coinops.model.Item;
 
 public class RepairDetailActivity extends AppCompatActivity {
 //    private static final String TAG = RepairDetailActivity.class.getSimpleName();
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Entry";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
 
-    private Entry mRepairLog;
+    private Item mRepairLog;
     private String mGameName;
 
     @Override

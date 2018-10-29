@@ -231,24 +231,20 @@ public class AddInventoryFragment extends Fragment {
             valuesToAdd.put(inventoryPath, item);
             valuesToAdd.put(userInventoryPath + Db.NAME, item.getName());
 
-            // TODO: add progress spinner
-
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        if (getActivity() != null) {
-                            getActivity().finish();
-                        }
-                    } else {
-                        PromptUser.displayAlert(mContext, R.string.error_add_inventory_failed,
-                                databaseError.getMessage());
+                    if (databaseError != null) {
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
                                 " Details: " + databaseError.getDetails());
                     }
                 }
             });
+
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
 //        } else {
 //            // user is not signed in
         }

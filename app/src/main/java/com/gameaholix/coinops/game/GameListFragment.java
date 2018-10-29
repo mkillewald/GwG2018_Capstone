@@ -32,6 +32,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     private Context mContext;
     private ArrayList<Game> mGames;
     private GameAdapter mGameAdapter;
+    private FirebaseUser mUser;
     private DatabaseReference mUserGameListRef;
     private ValueEventListener mGameListener;
     private OnFragmentInteractionListener mListener;
@@ -43,6 +44,20 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            mGames = new ArrayList<>();
+        } else {
+            mGames = savedInstanceState.getParcelableArrayList(EXTRA_GAME_LIST);
+        }
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
+
+        // Setup database references
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        mUserGameListRef = databaseReference.child(Db.USER).child(mUser.getUid()).child(Db.GAME_LIST);
     }
 
     @Override
@@ -52,12 +67,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         final View rootView = inflater.inflate(R.layout.fragment_list, container,
                 false);
 
-        if (savedInstanceState == null) {
-            mGames = new ArrayList<>();
-        } else {
-            mGames = savedInstanceState.getParcelableArrayList(EXTRA_GAME_LIST);
-        }
-
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
         mGameAdapter = new GameAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
@@ -65,17 +74,9 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         recyclerView.setAdapter(mGameAdapter);
         mGameAdapter.setGames(mGames);
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
-
-            // Setup database references
-            mUserGameListRef = databaseReference.child(Db.USER).child(uid).child(Db.GAME_LIST);
 
             // read list of games
             mGameListener = new ValueEventListener() {

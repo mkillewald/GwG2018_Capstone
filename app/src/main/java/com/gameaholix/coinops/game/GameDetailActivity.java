@@ -18,7 +18,6 @@ import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
-import com.gameaholix.coinops.model.Entry;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
@@ -138,7 +137,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onRepairLogSelected(Entry repairLog) {
+    public void onRepairLogSelected(Item repairLog) {
         Intent intent = new Intent(this, RepairDetailActivity.class);
         intent.putExtra(EXTRA_REPAIR, repairLog);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
@@ -147,7 +146,9 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onShoppingItemSelected(Item shoppingItem) {
-
+//        Intent intent = new Intent(this, ShoppingDetailActivity.class);
+//        intent.putExtra(EXTRA_SHOPPING, shoppingItem);
+//        startActivity(intent);
     }
 
     // Hide keyboard after touch event occurs outside of EditText

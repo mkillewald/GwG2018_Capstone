@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.Entry;
+import com.gameaholix.coinops.model.Item;
 
 // TODO: finish this
 
@@ -21,7 +21,7 @@ public class EditRepairFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static EditRepairFragment newInstance(Entry log) {
+    public static EditRepairFragment newInstance(Item log) {
         Bundle args = new Bundle();
         EditRepairFragment fragment = new EditRepairFragment();
         args.putParcelable(EXTRA_REPAIR, log);
@@ -69,7 +69,6 @@ public class EditRepairFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onEditButtonPressesed(String id);
     }
 }
