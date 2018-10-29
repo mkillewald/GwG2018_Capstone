@@ -16,6 +16,10 @@ public class ToDoItem extends Item implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue()
     }
 
+    public ToDoItem(String id, String parentId, String name) {
+        super(id, parentId, name);
+    }
+
     private ToDoItem(Parcel in) {
         super(in);
         this.notes = in.readString();
@@ -48,7 +52,6 @@ public class ToDoItem extends Item implements Parcelable {
         @Override
         public ToDoItem[] newArray(int size) { return (new ToDoItem[size]); }
     };
-
 
     public String getNotes() {
         return notes;

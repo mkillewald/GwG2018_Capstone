@@ -21,8 +21,8 @@ public class Db {
     public static final String SHOP = "shop";
     public static final String SHOP_LIST = "shop_list";
 
-//    public static final String TO_DO = "to_do";
-//    public static final String TO_DO_LIST = "to_do_list";
+    public static final String TODO = "todo";
+    public static final String TODO_LIST = "todo_list";
 
     // Database keys
     public static final String NAME = "name";
@@ -110,11 +110,15 @@ public class Db {
         return  getUserPath(uid) + Db.SHOP_LIST + "/" + id + "/";
     }
 
-//    public static String getToDoPath(String uid, String id) {
-//        return "/" + Db.TO_DO + "/" + uid + "/" + id + "/";
-//    }
-//
-//    public static String getToDoListPath(String uid, String id) {
-//        return  getUserPath(uid) + Db.TO_DO_LIST + "/" + id + "/";
-//    }
+    public static String getToDoPath(String uid, String id) {
+        return "/" + Db.TODO + "/" + uid + "/" + id + "/";
+    }
+
+    public static String getGameToDoListPath(String uid, String gameId, String id) {
+        return  getGamePath(uid, gameId) + Db.TODO_LIST + "/" + id + "/";
+    }
+
+    public static String getUserToDoListPath(String uid, String id) {
+        return getUserPath(uid) + Db.TODO_LIST + "/" + id + "/";
+    }
 }

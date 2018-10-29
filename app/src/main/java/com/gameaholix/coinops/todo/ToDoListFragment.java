@@ -1,53 +1,157 @@
 package com.gameaholix.coinops.todo;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.ToDoAdapter;
+import com.gameaholix.coinops.databinding.FragmentListWithButtonBinding;
 import com.gameaholix.coinops.model.ToDoItem;
+import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapterOnClickHandler {
-
     private static final String TAG = ToDoListFragment.class.getSimpleName();
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_TODO_LIST = "CoinOpsToDoList";
+    private static final String EXTRA_SHOW_ADD_BUTTON = "CoinOpsShowAddButton";
 
-    private ArrayList<ToDoItem> mToDoList;
+    private Context mContext;
+    private String mGameId;
+    private boolean mShowAddButton;
     private ToDoAdapter mToDoAdapter;
+    private ArrayList<ToDoItem> mToDoList;
+    private DatabaseReference mDatabaseReference;
+    private DatabaseReference mToDoRef;
+    private DatabaseReference mToDoListRef;
+    private FirebaseUser mUser;
+    private ValueEventListener mToDoListener;
+    private FragmentListWithButtonBinding mBind;
     private OnFragmentInteractionListener mListener;
 
     public ToDoListFragment() {
         // Required empty public constructor
     }
 
+    public static ToDoListFragment newInstance(String gameId) {
+        Bundle args = new Bundle();
+        ToDoListFragment fragment = new ToDoListFragment();
+        args.putString(EXTRA_GAME_ID, gameId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static ToDoListFragment newInstance() {
+        return new ToDoListFragment();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            if (getArguments() != null) {
+                mGameId = getArguments().getString(EXTRA_GAME_ID);
+                mShowAddButton = true;
+            } else {
+                mGameId = null;
+                mShowAddButton = false;
+            }
+            mToDoList = new ArrayList<>();
+        } else {
+            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
+            mToDoList = savedInstanceState.getParcelableArrayList(EXTRA_TODO_LIST);
+            mShowAddButton = savedInstanceState.getBoolean(EXTRA_SHOW_ADD_BUTTON);
+        }
+//        setHasOptionsMenu(true);
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mToDoRef = mDatabaseReference
+                .child(Db.TODO)
+                .child(mUser.getUid());
+        if (mShowAddButton) {
+            // use game specific list reference
+            mToDoListRef = mDatabaseReference
+                    .child(Db.GAME)
+                    .child(mUser.getUid())
+                    .child(mGameId)
+                    .child(Db.TODO_LIST);
+        } else {
+            // use global list reference
+            mToDoListRef = mDatabaseReference
+                    .child(Db.USER)
+                    .child(mUser.getUid())
+                    .child(Db.TODO_LIST);
+        }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        final View rootView;
 
-        if (savedInstanceState == null) {
-            mToDoList = new ArrayList<ToDoItem>();
+        // Choose which layout to inflate for this fragment depending on whether or not this fragment
+        // is displayed as a game specific list or as a global list.
+        if (mShowAddButton) {
+            mBind = DataBindingUtil.inflate(inflater,
+                    R.layout.fragment_list_with_button, container, false);
+            rootView = mBind.getRoot();
+
+            //Setup EditText
+            mBind.etEntry.setHint(R.string.shopping_entry_hint);
+            mBind.etEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                    if (i == EditorInfo.IME_ACTION_DONE) {
+                        hideKeyboard(textView);
+                    }
+                    return false;
+                }
+            });
+
+            // Setup Button
+            Button addButton = mBind.btnSave;
+            addButton.setText(R.string.add_item);
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ToDoItem newItem = new ToDoItem();
+                    newItem.setName(mBind.etEntry.getText().toString().trim());
+                    addItem(newItem);
+                }
+            });
         } else {
-            mToDoList = savedInstanceState.getParcelableArrayList(EXTRA_TODO_LIST);
+            rootView = inflater.inflate(R.layout.fragment_list, container, false);
         }
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
@@ -57,35 +161,34 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         recyclerView.setAdapter(mToDoAdapter);
         mToDoAdapter.setToDoItems(mToDoList);
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
 
-            // TODO: finish this
-            // Setup database references
+            // Setup event listener
+            mToDoListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    mToDoList.clear();
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        String id = dataSnapshot1.getKey();
+                        String name = (String) dataSnapshot1.getValue();
+                        ToDoItem toDoItem = new ToDoItem(id, mGameId, name);
+                        mToDoList.add(toDoItem);
+                    }
+                    mToDoAdapter.notifyDataSetChanged();
+                }
 
-            // read to do list items
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
+                }
+            };
 
-            // add a to-do list item
-//                    DatabaseReference todoIdRef = todoRef.push();
-//                    Map<String, Object> todoDetails = new HashMap<>();
-//                    todoDetails.put("name", "to do list item name");
-//                    todoDetails.put("description", "to do list item description");
-//                    todoDetails.put( "game", gameId);
-//                    todoIdRef.setValue(todoDetails, new DatabaseReference.CompletionListener() {
-//                        @Override
-//                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-//                            String todoId = databaseReference.getKey();
-//                            gameTodoListRef.child(todoId).setValue(true);
-//                            userTodoListRef.child(todoId).setValue(true);
-//                        }
-//                    });
-        } else {
+            // read list of repair logs
+            mToDoListRef.addValueEventListener(mToDoListener);
+
+//        } else {
             // user is not signed in
         }
 
@@ -93,10 +196,20 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mToDoListRef.removeEventListener(mToDoListener);
+
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putString(EXTRA_GAME_ID, mGameId);
         outState.putParcelableArrayList(EXTRA_TODO_LIST, mToDoList);
+        outState.putBoolean(EXTRA_SHOW_ADD_BUTTON, mShowAddButton);
     }
 
     @Override
@@ -109,6 +222,7 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -121,6 +235,60 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) view
+                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void addItem(ToDoItem item) {
+        if (TextUtils.isEmpty(item.getName())) {
+            PromptUser.displayAlert(mContext,
+                    R.string.error_add_item_failed,
+                    R.string.error_item_name_empty);
+            return;
+        }
+
+        // TODO: add checks for if item name already exists.
+
+        // Add Entry object to Firebase
+        if (mUser != null) {
+            // user is signed in
+            String uid = mUser.getUid();
+            String id = mToDoRef.push().getKey();
+
+            // Get database paths from helper class
+            String toDoPath = Db.getToDoPath(uid, id);
+            String gameToDoListPath = Db.getGameToDoListPath(uid, mGameId, id);
+            String userToDoListPath = Db.getUserToDoListPath(uid, id);
+
+            Map<String, Object> valuesToAdd = new HashMap<>();
+            valuesToAdd.put(toDoPath, item);
+            valuesToAdd.put(gameToDoListPath, item.getName());
+            valuesToAdd.put(userToDoListPath, item.getName());
+
+            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError,
+                                       @NonNull DatabaseReference databaseReference) {
+                    if (databaseError != null) {
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+
+            if (mShowAddButton) {
+                hideKeyboard(mBind.etEntry);
+                mBind.etEntry.setText(null);
+                mBind.etEntry.clearFocus();
+            }
+//        } else {
+//            // user is not signed in
+        }
     }
 
     /**

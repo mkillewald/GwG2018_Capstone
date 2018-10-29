@@ -120,8 +120,10 @@ public class ShoppingListFragment extends Fragment implements
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         final View rootView;
+
+        // Choose which layout to inflate for this fragment depending on whether or not this fragment
+        // is displayed as a game specific list or as a global list.
         if (mShowAddButton) {
             mBind = DataBindingUtil.inflate(inflater,
                     R.layout.fragment_list_with_button, container, false);
@@ -140,9 +142,9 @@ public class ShoppingListFragment extends Fragment implements
             });
 
             // Setup Button
-            Button addLogButton = mBind.btnSave;
-            addLogButton.setText(R.string.add_item);
-            addLogButton.setOnClickListener(new View.OnClickListener() {
+            Button addButton = mBind.btnSave;
+            addButton.setText(R.string.add_item);
+            addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Item newItem = new Item();

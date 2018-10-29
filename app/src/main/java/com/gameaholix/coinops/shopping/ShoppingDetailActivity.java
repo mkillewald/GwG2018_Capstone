@@ -11,7 +11,7 @@ public class ShoppingDetailActivity extends AppCompatActivity implements
         ShoppingDetailFragment.OnFragmentInteractionListener {
 
     private static final String TAG = ShoppingDetailActivity.class.getSimpleName();
-    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.model.ShoppingItem";
+    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.model.Item";
 
     private Item mShoppingItem;
 

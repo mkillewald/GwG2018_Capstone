@@ -10,7 +10,7 @@ import com.gameaholix.coinops.model.Item;
 public class ShoppingListActivity extends AppCompatActivity implements
         ShoppingListFragment.OnFragmentInteractionListener {
     private static final String TAG = ShoppingListActivity.class.getSimpleName();
-    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.model.ShoppingItem";
+    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.model.Item";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -20,9 +20,11 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.Item;
+import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.repair.RepairListFragment;
 import com.gameaholix.coinops.shopping.ShoppingListFragment;
+import com.gameaholix.coinops.todo.ToDoListFragment;
 
 import java.util.List;
 import java.util.Vector;
@@ -30,12 +32,13 @@ import java.util.Vector;
 public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
         RepairListFragment.OnFragmentInteractionListener,
+        ToDoListFragment.OnFragmentInteractionListener,
         ShoppingListFragment.OnFragmentInteractionListener {
 
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Entry";
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Item";
 
     private Game mGame;
     private ViewPager mViewPager;
@@ -63,7 +66,7 @@ public class GameDetailActivity extends AppCompatActivity implements
 
         fragments.add(GameDetailFragment.newInstance(mGame));
         fragments.add(RepairListFragment.newInstance(mGame.getId()));
-        fragments.add(BlankFragment.newInstance());
+        fragments.add(ToDoListFragment.newInstance(mGame.getId()));
         fragments.add(ShoppingListFragment.newInstance(mGame.getId()));
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
@@ -142,6 +145,13 @@ public class GameDetailActivity extends AppCompatActivity implements
         intent.putExtra(EXTRA_REPAIR, repairLog);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
         startActivity(intent);
+    }
+
+    @Override
+    public void onToDoItemSelected(ToDoItem toDoItem) {
+//        Intent intent = new Intent(this, ToDoDetailActivity.class);
+//        intent.putExtra(EXTRA_TODO, toDoItem);
+//        startActivity(intent);
     }
 
     @Override
