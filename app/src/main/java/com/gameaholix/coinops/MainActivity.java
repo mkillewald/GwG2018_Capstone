@@ -62,11 +62,11 @@ public class MainActivity extends AppCompatActivity {
                     // FirebaseUser.getIdToken() instead.
                     final String uid = user.getUid();
 
-                    Log.d(TAG, "Uid: " + uid);
-                    Log.d(TAG, "name: " + mUsername);
-                    Log.d(TAG, "email: " + email);
-                    Log.d(TAG, "emailVerified: " + emailVerified);
-                    Log.d(TAG, "photoUrl: " + photoUrl);
+//                    Log.d(TAG, "Uid: " + uid);
+//                    Log.d(TAG, "name: " + mUsername);
+//                    Log.d(TAG, "email: " + email);
+//                    Log.d(TAG, "emailVerified: " + emailVerified);
+//                    Log.d(TAG, "photoUrl: " + photoUrl);
 
                     final Button gameButton = findViewById(R.id.btn_game_list);
                     gameButton.setOnClickListener(new View.OnClickListener() {

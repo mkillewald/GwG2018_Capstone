@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.RepairAdapter;
-import com.gameaholix.coinops.databinding.FragmentRepairListBinding;
+import com.gameaholix.coinops.databinding.FragmentListWithButtonBinding;
 import com.gameaholix.coinops.model.Entry;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
@@ -48,10 +48,11 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
     private ArrayList<Entry> mRepairLogs;
     private RepairAdapter mRepairAdapter;
     private DatabaseReference mDatabaseReference;
+    private DatabaseReference mRepairRef;
     private DatabaseReference mRepairListRef;
     private FirebaseUser mUser;
     private ValueEventListener mRepairListener;
-    private FragmentRepairListBinding mBind;
+    private FragmentListWithButtonBinding mBind;
     private OnFragmentInteractionListener mListener;
 
     public RepairListFragment() {
@@ -80,6 +81,19 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
             mRepairLogs = savedInstanceState.getParcelableArrayList(EXTRA_REPAIR_LIST);
         }
 //        setHasOptionsMenu(true);
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
+        mDatabaseReference= FirebaseDatabase.getInstance().getReference();
+        mRepairRef = mDatabaseReference
+                .child(Db.REPAIR)
+                .child(mUser.getUid());
+        mRepairListRef = mDatabaseReference
+                .child(Db.GAME)
+                .child(mUser.getUid())
+                .child(mGameId)
+                .child(Db.REPAIR_LIST);
     }
 
     @Override
@@ -87,26 +101,11 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mBind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_repair_list, container, false);
+                inflater, R.layout.fragment_list_with_button, container, false);
         final View rootView = mBind.getRoot();
 
-
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-        // get current user
-        mUser = firebaseAuth.getCurrentUser();
-
-        // Setup database references
-        mRepairListRef = mDatabaseReference
-                .child(Db.GAME)
-                .child(mUser.getUid())
-                .child(mGameId)
-                .child(Db.REPAIR_LIST);
-
         // Setup Repair Log RecyclerView
-        RecyclerView recyclerView = rootView.findViewById(R.id.rv_repair_list);
+        RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
         mRepairAdapter = new RepairAdapter( this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -141,7 +140,8 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
             mRepairListRef.addValueEventListener(mRepairListener);
 
             //Setup EditText
-            mBind.etRepairLogDescription.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            mBind.etEntry.setHint(R.string.repair_entry_hint);
+            mBind.etEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                     if (i == EditorInfo.IME_ACTION_DONE) {
@@ -169,7 +169,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
                 @Override
                 public void onClick(View view) {
                     Entry newLog = new Entry();
-                    newLog.setEntry(mBind.etRepairLogDescription.getText().toString().trim());
+                    newLog.setEntry(mBind.etEntry.getText().toString().trim());
                     addLog(newLog);
                 }
             });
@@ -255,10 +255,8 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
         // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
-
-            final DatabaseReference repairRef = mDatabaseReference.child(Db.REPAIR).child(uid);
-            final String logId = repairRef.push().getKey();
+            String uid = mUser.getUid();
+            String logId = mRepairRef.push().getKey();
 
             // Get database paths from helper class
             String repairPath = Db.getRepairPath(uid, mGameId, logId);
@@ -275,9 +273,9 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
                 public void onComplete(@Nullable DatabaseError databaseError,
                                        @NonNull DatabaseReference databaseReference) {
                     if (databaseError == null) {
-                        hideKeyboard(mBind.etRepairLogDescription);
-                        mBind.etRepairLogDescription.setText(null);
-                        mBind.etRepairLogDescription.clearFocus();
+                        hideKeyboard(mBind.etEntry);
+                        mBind.etEntry.setText(null);
+                        mBind.etEntry.clearFocus();
                     } else {
                         PromptUser.displayAlert(mContext, R.string.error_add_repair_log_failed,
                                 databaseError.getMessage());

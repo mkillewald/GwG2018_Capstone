@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.ShoppingItem;
+import com.gameaholix.coinops.model.Entry;
 
 public class ShoppingDetailActivity extends AppCompatActivity implements
         ShoppingDetailFragment.OnFragmentInteractionListener {
@@ -13,7 +13,7 @@ public class ShoppingDetailActivity extends AppCompatActivity implements
     private static final String TAG = ShoppingDetailActivity.class.getSimpleName();
     private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.model.ShoppingItem";
 
-    private ShoppingItem mShoppingItem;
+    private Entry mShoppingItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

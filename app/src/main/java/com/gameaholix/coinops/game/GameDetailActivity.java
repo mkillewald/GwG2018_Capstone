@@ -20,15 +20,18 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
 import com.gameaholix.coinops.model.Entry;
 import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.repair.RepairListFragment;
+import com.gameaholix.coinops.shopping.ShoppingListFragment;
 
 import java.util.List;
 import java.util.Vector;
 
 public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
-        RepairListFragment.OnFragmentInteractionListener {
+        RepairListFragment.OnFragmentInteractionListener,
+        ShoppingListFragment.OnFragmentInteractionListener {
 
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
@@ -62,7 +65,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         fragments.add(GameDetailFragment.newInstance(mGame));
         fragments.add(RepairListFragment.newInstance(mGame.getId()));
         fragments.add(BlankFragment.newInstance());
-        fragments.add(BlankFragment.newInstance());
+        fragments.add(ShoppingListFragment.newInstance(mGame.getId()));
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager = findViewById(R.id.viewpager);
@@ -140,6 +143,11 @@ public class GameDetailActivity extends AppCompatActivity implements
         intent.putExtra(EXTRA_REPAIR, repairLog);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
         startActivity(intent);
+    }
+
+    @Override
+    public void onShoppingItemSelected(Item shoppingItem) {
+
     }
 
     // Hide keyboard after touch event occurs outside of EditText

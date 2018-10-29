@@ -235,7 +235,7 @@ public class RepairDetailFragment extends Fragment {
     private void addStep(Entry step) {
         if (TextUtils.isEmpty(step.getEntry())) {
             PromptUser.displayAlert(mContext,
-                    R.string.error_add_repair_log_failed,
+                    R.string.error_add_repair_step_failed,
                     R.string.error_repair_step_entry_empty);
             return;
         }

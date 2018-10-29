@@ -18,11 +18,11 @@ public class Db {
     public static final String STEPS = "steps";
 //    public static final String STEP_LIST = "step_list";
 
+    public static final String SHOP = "shop";
+    public static final String SHOP_LIST = "shop_list";
+
 //    public static final String TO_DO = "to_do";
 //    public static final String TO_DO_LIST = "to_do_list";
-//
-//    public static final String SHOP = "shop";
-//    public static final String SHOP_LIST = "shop_list";
 
     // Database keys
     public static final String NAME = "name";
@@ -94,13 +94,21 @@ public class Db {
         return getRepairPath(uid, gameId, logId) + Db.STEPS + "/" + stepId + "/";
     }
 
-//    public static String getStepsPath(String uid, String gameId, String logId, String stepId) {
-//        return "/" + Db.STEPS + "/" + uid + "/" + gameId + "/" + logId + "/" + stepId + "/";
-//    }
-
 //    public static String getStepListPath(String uid, String gameId, String logId, String stepId) {
 //        return  getRepairPath(uid, gameId, logId) + Db.STEP_LIST + "/" + stepId + "/";
 //    }
+
+    public static String getShopPath(String uid, String id) {
+        return "/" + Db.SHOP + "/" + uid + "/" + id + "/";
+    }
+
+    public static String getGameShopListPath(String uid, String gameId, String id) {
+        return  getGamePath(uid, gameId) + Db.SHOP_LIST + "/" + id + "/";
+    }
+
+    public static String getUserShopListPath(String uid, String id) {
+        return  getUserPath(uid) + Db.SHOP_LIST + "/" + id + "/";
+    }
 
 //    public static String getToDoPath(String uid, String id) {
 //        return "/" + Db.TO_DO + "/" + uid + "/" + id + "/";
@@ -108,13 +116,5 @@ public class Db {
 //
 //    public static String getToDoListPath(String uid, String id) {
 //        return  getUserPath(uid) + Db.TO_DO_LIST + "/" + id + "/";
-//    }
-//
-//    public static String getShoppingPath(String uid, String id) {
-//        return "/" + Db.SHOP + "/" + uid + "/" + id + "/";
-//    }
-//
-//    public static String getShoppingListPath(String uid, String id) {
-//        return  getUserPath(uid) + Db.SHOP_LIST + "/" + id + "/";
 //    }
 }

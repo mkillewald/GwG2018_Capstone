@@ -26,7 +26,6 @@
 
     <string name="shopping_list_title">Shopping List</string>
     <string name="shopping_details_title">Item Details</string>
-    <string name="add_shopping_title">Add New Item</string>
     <string name="edit_shopping_title">Edit Item</string>
 
     <!-- Game Details Tab Titles -->
@@ -49,6 +48,7 @@
     <string name="delete_repair_entry">Delete Log Entry</string>
     <string name="add_repair_step">Add Step</string>
     <string name="delete_repair_step">Delete Step</string>
+    <string name="add_item">Add Item</string>
 
     <!-- Labels -->
     <string name="type_label">Type:</string>
@@ -146,8 +146,9 @@
     <string name="inventory_condition2">Failed</string>
     <string name="inventory_condition3">Untested</string>
 
-    <string name="repair_description">Trouble Description</string>
-    <string name="repair_step_entry">Repair Step Taken</string>
+    <string name="repair_entry_hint">Trouble Description</string>
+    <string name="repair_step_entry_hint">Repair Step Taken</string>
+    <string name="shopping_entry_hint">Needed Item</string>
 
     <!-- User Prompts -->
     <string name="really_delete_game">Delete Game</string>
@@ -172,28 +173,30 @@
     <string name="error_edit_inventory_failed">Failed to save changes!</string>
     <string name="error_delete_inventory_failed">Failed to delete part!</string>
 
-    <string name="error_add_repair_log_failed">Failed to add Repair Log!</string>
+    <string name="error_add_repair_log_failed">Failed to add repair log!</string>
     <string name="error_edit_repair_log_failed">Failed to save changes!</string>
-    <string name="error_delete_repair_log_failed">Failed to delete Repair Log!</string>
+    <string name="error_delete_repair_log_failed">Failed to delete repair log!</string>
 
-    <string name="error_add_repair_step_failed">Failed to add entry!</string>
+    <string name="error_add_repair_step_failed">Failed to add repair step!</string>
     <string name="error_edit_repair_step_failed">Failed to save changes!</string>
-    <string name="error_delete_repair_step_failed">Failed to delete entry!</string>
+    <string name="error_delete_repair_step_failed">Failed to delete name!</string>
 
-    <string name="error_add_todo_failed">Failed to add entry!</string>
+    <string name="error_add_todo_failed">Failed to add name!</string>
     <string name="error_edit_todo_failed">Failed to save changes!</string>
-    <string name="error_delete_todo_failed">Failed to delete entry!</string>
+    <string name="error_delete_todo_failed">Failed to delete name!</string>
 
-    <string name="error_add_shopping_failed">Failed to add item!</string>
+    <string name="error_add_item_failed">Failed to add item!</string>
     <string name="error_edit_shopping_failed">Failed to save changes!</string>
     <string name="error_delete_shopping_failed">Failed to delete item!</string>
 
     <string name="error_please_try_again">Please try again.</string>
     <string name="error_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
-    <string name="error_repair_log_description_empty">Trouble entry cannot be blank. Please
+    <string name="error_repair_log_description_empty">Trouble description cannot be blank. Please
         describe the problem that is occurring and try again.</string>
-    <string name="error_repair_step_entry_empty">Entry cannot be blank. Please
+    <string name="error_repair_step_entry_empty">Repair step cannot be blank. Please
         enter the repair action performed and try again.</string>
+    <string name="error_item_name_empty">Item name cannot be blank. Please
+        describe the item needed and try again.</string>
 
     <!-- Content Descriptions -->
     <string name="next_arrow">more information</string>

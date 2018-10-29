@@ -9,16 +9,16 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.ListItemBinding;
-import com.gameaholix.coinops.model.Entry;
+import com.gameaholix.coinops.model.Item;
 
 import java.util.List;
 
 public class ShoppingAdapter extends RecyclerView.Adapter<ShoppingAdapter.ShoppingAdapterViewHolder> {
-    private List<Entry> mShoppingItems;
+    private List<Item> mShoppingItems;
     private final ShoppingAdapterOnClickHandler mClickHandler;
 
     public interface ShoppingAdapterOnClickHandler {
-        void onClick(Entry shoppingItem);
+        void onClick(Item shoppingItem);
     }
 
     public ShoppingAdapter (ShoppingAdapterOnClickHandler clickHandler) {
@@ -38,7 +38,7 @@ public class ShoppingAdapter extends RecyclerView.Adapter<ShoppingAdapter.Shoppi
         @Override
         public void onClick(View view) {
             int adapterPosition  = getAdapterPosition();
-            Entry shoppingItem = mShoppingItems.get(adapterPosition);
+            Item shoppingItem = mShoppingItems.get(adapterPosition);
             mClickHandler.onClick(shoppingItem);
         }
     }
@@ -55,9 +55,9 @@ public class ShoppingAdapter extends RecyclerView.Adapter<ShoppingAdapter.Shoppi
 
     @Override
     public void onBindViewHolder(@NonNull ShoppingAdapterViewHolder holder, int position) {
-        Entry shoppingItem = mShoppingItems.get(position);
+        Item shoppingItem = mShoppingItems.get(position);
 
-//        holder.mBinding.tvName.setText(shoppingItem.getName());
+        holder.mBinding.tvName.setText(shoppingItem.getName());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ShoppingAdapter extends RecyclerView.Adapter<ShoppingAdapter.Shoppi
         return mShoppingItems == null ? 0 : mShoppingItems.size();
     }
 
-    public void setShoppingItems(List<Entry> shoppingItems) {
+    public void setShoppingItems(List<Item> shoppingItems) {
         mShoppingItems = shoppingItems;
     }
 

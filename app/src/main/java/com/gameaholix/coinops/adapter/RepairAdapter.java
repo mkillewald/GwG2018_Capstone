@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.ListItemBinding;
+import com.gameaholix.coinops.databinding.ListItemMoreBinding;
 import com.gameaholix.coinops.model.Entry;
 
 import java.util.List;
@@ -27,11 +27,11 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
 
     public class RepairAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        final ListItemBinding mBinding;
+        final ListItemMoreBinding mBinding;
 
-        RepairAdapterViewHolder(ListItemBinding listItemBinding) {
-            super(listItemBinding.getRoot());
-            mBinding = listItemBinding;
+        RepairAdapterViewHolder(ListItemMoreBinding listItemMoreBinding) {
+            super(listItemMoreBinding.getRoot());
+            mBinding = listItemMoreBinding;
             mBinding.tvName.setOnClickListener(this);
         }
 
@@ -46,9 +46,9 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
     @NonNull
     @Override
     public RepairAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ListItemBinding binding = DataBindingUtil.inflate(
+        ListItemMoreBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.list_item, parent, false);
+                R.layout.list_item_more, parent, false);
 
         return new RepairAdapterViewHolder(binding);
     }
