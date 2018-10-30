@@ -120,9 +120,9 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     mRepairLogs.clear();
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        String logId = dataSnapshot1.getKey();
-                        String name = (String) dataSnapshot1.getValue();
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        String logId = child.getKey();
+                        String name = (String) child.getValue();
                         Item repairLog = new Item(logId, mGameId, name);
                         mRepairLogs.add(repairLog);
                     }
@@ -185,7 +185,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (mUser != null) {
+        if (mRepairListener != null) {
             mRepairListRef.removeEventListener(mRepairListener);
         }
     }

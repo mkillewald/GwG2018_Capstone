@@ -83,9 +83,9 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     mGames.clear();
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        String gameId = dataSnapshot1.getKey();
-                        String name = (String) dataSnapshot1.getValue();
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        String gameId = child.getKey();
+                        String name = (String) child.getValue();
                         Game game = new Game(gameId, name);
                         mGames.add(game);
                     }

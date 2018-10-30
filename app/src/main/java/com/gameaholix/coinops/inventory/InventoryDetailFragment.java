@@ -7,7 +7,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -20,7 +19,6 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryDetailBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
-import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,9 +26,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class InventoryDetailFragment extends Fragment {
     private static final String TAG = InventoryDetailFragment.class.getSimpleName();
@@ -121,17 +116,14 @@ public class InventoryDetailFragment extends Fragment {
                     Log.d(TAG, "Failed to read from database.", databaseError.toException());
                 }
             };
-
             mInventoryRef.addValueEventListener(mInventoryListener);
 
             bind.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                        deleteItemAlert();
+                        showDeleteAlert();
                 }
             });
-
-
 //        } else {
 //            // user is not signed in
         }
@@ -178,61 +170,49 @@ public class InventoryDetailFragment extends Fragment {
         }
     }
 
-    private void deleteItemAlert() {
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(mContext);
-        }
-        builder.setTitle(getString(R.string.really_delete_inventory_item))
-                .setMessage(getString(R.string.inventory_item_will_be_deleted))
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteItem();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
-    private void deleteItem() {
+    private void showDeleteAlert() {
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
 
-            // Get database paths from helper class
-            String inventoryPath = Db.getInventoryPath(uid) + mItem.getId();
-            String userInventoryPath = Db.getInventoryListPath(uid) + mItem.getId();
-
-            Map<String, Object> valuesToDelete= new HashMap<>();
-            valuesToDelete.put(inventoryPath, null);
-            valuesToDelete.put(userInventoryPath + Db.NAME, null);
-
-            mDatabaseReference.updateChildren(valuesToDelete, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        if (getActivity() != null) {
-                            getActivity().finish();
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(mContext);
+            }
+            builder.setTitle(getString(R.string.really_delete_inventory_item))
+                    .setMessage(getString(R.string.inventory_item_will_be_deleted))
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
                         }
-                    } else {
-                        PromptUser.displayAlert(mContext, R.string.error_delete_inventory_failed,
-                                databaseError.getMessage());
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
-                    }
-                }
-            });
+                    })
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteItemData();
+                            if (getActivity() != null) {
+                                getActivity().finish();
+                            }
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
 //        } else {
 //            // user is not signed in
         }
+    }
+
+    private void deleteItemData() {
+        // delete inventory item
+        mInventoryRef.removeValue();
+
+        // delete inventory list entry
+        mDatabaseReference
+                .child(Db.USER)
+                .child(mUser.getUid())
+                .child(Db.INVENTORY_LIST)
+                .child(mItem.getId())
+                .removeValue();
     }
 }

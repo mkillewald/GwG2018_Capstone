@@ -20,8 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class ToDoDetailFragment extends Fragment {
-
-    private static final String TAG = ToDoDetailFragment.class.getSimpleName();
+//    private static final String TAG = ToDoDetailFragment.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
     private ToDoItem mToDoItem;

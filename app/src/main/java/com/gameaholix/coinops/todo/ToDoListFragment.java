@@ -169,9 +169,9 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     mToDoList.clear();
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        String id = dataSnapshot1.getKey();
-                        String name = (String) dataSnapshot1.getValue();
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        String id = child.getKey();
+                        String name = (String) child.getValue();
                         ToDoItem toDoItem = new ToDoItem(id, mGameId, name);
                         mToDoList.add(toDoItem);
                     }

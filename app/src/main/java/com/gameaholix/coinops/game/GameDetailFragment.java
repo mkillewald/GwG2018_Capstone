@@ -81,6 +81,12 @@ public class GameDetailFragment extends Fragment {
         mUserRef = mDatabaseReference
                 .child(Db.USER)
                 .child(mUser.getUid());
+        mToDoRef = mDatabaseReference
+                .child(Db.TODO)
+                .child(mUser.getUid());
+        mShopRef = mDatabaseReference
+                .child(Db.SHOP)
+                .child(mUser.getUid());
     }
 
     @Override
@@ -175,15 +181,15 @@ public class GameDetailFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (mUser != null) {
+        if (mGameListener != null) {
             mGameRef.removeEventListener(mGameListener);
         }
 
-        if (mToDoRef != null) {
+        if (mDeleteTodoListener != null) {
             mToDoRef.removeEventListener(mDeleteTodoListener);
         }
 
-        if (mShopRef != null) {
+        if (mDeleteShopListener != null) {
             mShopRef.removeEventListener(mDeleteShopListener);
         }
     }
@@ -268,10 +274,12 @@ public class GameDetailFragment extends Fragment {
         mDeleteTodoListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    String key = dataSnapshot1.getKey();
-                    dataSnapshot1.getRef().removeValue();
-                    mUserRef.child(Db.TODO_LIST).child(key).removeValue();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    if (child.getKey() != null) {
+                        String key = child.getKey();
+                        child.getRef().removeValue();
+                        mUserRef.child(Db.TODO_LIST).child(key).removeValue();
+                    }
                 }
             }
 
@@ -284,10 +292,12 @@ public class GameDetailFragment extends Fragment {
         mDeleteShopListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    String key = dataSnapshot1.getKey();
-                    dataSnapshot1.getRef().removeValue();
-                    mUserRef.child(Db.SHOP_LIST).child(key).removeValue();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    if (child.getKey() != null) {
+                        String key = child.getKey();
+                        child.getRef().removeValue();
+                        mUserRef.child(Db.SHOP_LIST).child(key).removeValue();
+                    }
                 }
             }
 
@@ -305,7 +315,7 @@ public class GameDetailFragment extends Fragment {
                 .child(mGame.getId())
                 .removeValue();
 
-        // delete repair logs
+        // delete repair logs and steps
         mDatabaseReference
                 .child(Db.REPAIR)
                 .child(mUser.getUid())
@@ -313,19 +323,11 @@ public class GameDetailFragment extends Fragment {
                 .removeValue();
 
         // delete to do items
-        mToDoRef = mDatabaseReference
-                .child(Db.TODO)
-                .child(mUser.getUid());
-
         mToDoRef.orderByChild(Db.PARENT_ID)
                 .equalTo(mGame.getId())
                 .addValueEventListener(mDeleteTodoListener);
 
         // delete shopping list items
-        mShopRef = mDatabaseReference
-                .child(Db.SHOP)
-                .child(mUser.getUid());
-
         mShopRef.orderByChild(Db.PARENT_ID)
                 .equalTo(mGame.getId())
                 .addValueEventListener(mDeleteShopListener);

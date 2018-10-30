@@ -171,9 +171,9 @@ public class ShoppingListFragment extends Fragment implements
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     mShoppingList.clear();
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        String id = dataSnapshot1.getKey();
-                        String name = (String) dataSnapshot1.getValue();
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        String id = child.getKey();
+                        String name = (String) child.getValue();
                         Item shoppingItem = new Item(id, mGameId, name);
                         mShoppingList.add(shoppingItem);
                     }
