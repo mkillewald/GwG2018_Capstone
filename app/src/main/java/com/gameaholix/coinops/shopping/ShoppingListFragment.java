@@ -130,7 +130,7 @@ public class ShoppingListFragment extends Fragment implements
             rootView = mBind.getRoot();
 
             //Setup EditText
-            mBind.etEntry.setHint(R.string.shopping_entry_hint);
+            mBind.etEntry.setHint(R.string.shopping_name_hint);
             mBind.etEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {

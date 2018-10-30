@@ -47,7 +47,7 @@
             android:id="@+id/et_add_step_entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/repair_step_entry_hint"
+            android:hint="@string/repair_step_name_hint"
             android:minLines="1"
             android:maxLines="5"
             android:gravity="top|start"

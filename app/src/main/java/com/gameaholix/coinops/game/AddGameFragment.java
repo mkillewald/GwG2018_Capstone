@@ -44,7 +44,7 @@ public class AddGameFragment extends Fragment {
 
     private Context mContext;
     private Game mNewGame;
-    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
 
     public AddGameFragment() {
@@ -62,7 +62,8 @@ public class AddGameFragment extends Fragment {
         }
 
         // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
@@ -246,6 +247,7 @@ public class AddGameFragment extends Fragment {
             }
         });
 
+        // Setup monitor details onClickListener
         View.OnClickListener monitorDetailsListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -255,7 +257,7 @@ public class AddGameFragment extends Fragment {
         bind.tvMonitorDetails.setOnClickListener(monitorDetailsListener);
         bind.ibMonitorDetailsArrow.setOnClickListener(monitorDetailsListener);
 
-        // Setup Buttons
+        // Setup Button
         Button addGameButton = bind.btnSave;
         addGameButton.setText(R.string.add_game);
         addGameButton.setOnClickListener(new View.OnClickListener() {
@@ -324,10 +326,9 @@ public class AddGameFragment extends Fragment {
         // TODO: add checks for if game name already exists.
 
         // Add Game object to Firebase
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
+            final String uid = mUser.getUid();
 
             final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
 

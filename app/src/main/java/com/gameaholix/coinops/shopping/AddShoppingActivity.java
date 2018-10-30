@@ -10,6 +10,6 @@ public class AddShoppingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_shopping);
+        setContentView(R.layout.activity_fragment_host);
     }
 }

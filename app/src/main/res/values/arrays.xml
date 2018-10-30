@@ -99,4 +99,11 @@
         <item>@string/inventory_condition3</item>
     </string-array>
 
+    <string-array name="priority">
+        <item>@string/select_priority</item>
+        <item>@string/priority1</item>
+        <item>@string/priority2</item>
+        <item>@string/priority3</item>
+    </string-array>
+
 </resources>

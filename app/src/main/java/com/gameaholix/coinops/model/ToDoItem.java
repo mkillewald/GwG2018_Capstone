@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 public class ToDoItem extends Item implements Parcelable {
 
-    private String notes;
     private int priority;
     private boolean reminder;
     private boolean repeat;
@@ -22,7 +21,6 @@ public class ToDoItem extends Item implements Parcelable {
 
     private ToDoItem(Parcel in) {
         super(in);
-        this.notes = in.readString();
         this.priority = in.readInt();
         this.reminder = (boolean) in.readValue(getClass().getClassLoader());
         this.repeat = (boolean) in.readValue(getClass().getClassLoader());
@@ -37,7 +35,6 @@ public class ToDoItem extends Item implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int i) {
         super.writeToParcel(dest, i);
-        dest.writeString(notes);
         dest.writeInt(priority);
         dest.writeValue(reminder);
         dest.writeValue(repeat);
@@ -52,14 +49,6 @@ public class ToDoItem extends Item implements Parcelable {
         @Override
         public ToDoItem[] newArray(int size) { return (new ToDoItem[size]); }
     };
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
 
     public int getPriority() {
         return priority;

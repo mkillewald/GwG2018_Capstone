@@ -81,12 +81,10 @@ public class GameDetailActivity extends AppCompatActivity implements
 
             @Override
             public void onPageSelected(int i) {
-
             }
 
             @Override
             public void onPageScrollStateChanged(int i) {
-
             }
         });
 
@@ -102,15 +100,23 @@ public class GameDetailActivity extends AppCompatActivity implements
         switch (mViewPager.getCurrentItem()) {
             case 0:
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
-//                menu.findItem(R.id.menu_add_repair).setVisible(false);
+                menu.findItem(R.id.menu_add_repair).setVisible(false);
+                menu.findItem(R.id.menu_add_todo).setVisible(false);
                 break;
             case 1:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
-//                menu.findItem(R.id.menu_add_repair).setVisible(true);
+                menu.findItem(R.id.menu_add_repair).setVisible(false);
+                menu.findItem(R.id.menu_add_todo).setVisible(false);
+                break;
+            case 2:
+                menu.findItem(R.id.menu_edit_game).setVisible(false);
+                menu.findItem(R.id.menu_add_repair).setVisible(false);
+                menu.findItem(R.id.menu_add_todo).setVisible(true);
                 break;
             default:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
-//                menu.findItem(R.id.menu_add_repair).setVisible(false);
+                menu.findItem(R.id.menu_add_repair).setVisible(false);
+                menu.findItem(R.id.menu_add_todo).setVisible(false);
                 break;
         }
         return super.onCreateOptionsMenu(menu);
@@ -121,8 +127,10 @@ public class GameDetailActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
                 return false;
-//            case R.id.menu_add_repair:
-//                return false;
+            case R.id.menu_add_repair:
+                return false;
+            case R.id.menu_add_todo:
+                return false;
             default:
                 return super.onOptionsItemSelected(item);
         }
