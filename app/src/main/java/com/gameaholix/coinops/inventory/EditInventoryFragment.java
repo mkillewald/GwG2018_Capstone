@@ -198,17 +198,17 @@ public class EditInventoryFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     // Get database paths from helper class
-                    String inventoryPath = Db.getInventoryPath(uid, id);
-                    String userInventoryPath = Db.getInventoryListPath(uid, id);
+                    String inventoryPath = Db.getInventoryPath(uid) + id;
+                    String userInventoryListPath = Db.getInventoryListPath(uid) + id;
 
                     // Convert values Bundle to HashMap for Firebase call to updateChildren()
                     Map<String, Object> valuesMap = new HashMap<>();
 
                     for (String key : Db.INVENTORY_STRINGS) {
                         if (mValuesBundle.containsKey(key)) {
-                            valuesMap.put(inventoryPath + key, mValuesBundle.getString(key));
+                            valuesMap.put(inventoryPath + "/" + key, mValuesBundle.getString(key));
                             if (key.equals(Db.NAME)) {
-                                valuesMap.put(userInventoryPath + key, mValuesBundle.getString(key));
+                                valuesMap.put(userInventoryListPath, mValuesBundle.getString(key));
                             }
                         }
                     }

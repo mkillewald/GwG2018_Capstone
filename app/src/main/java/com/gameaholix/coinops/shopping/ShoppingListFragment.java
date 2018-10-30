@@ -147,8 +147,8 @@ public class ShoppingListFragment extends Fragment implements
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Item newItem = new Item();
-                    newItem.setName(mBind.etEntry.getText().toString().trim());
+                    String name = mBind.etEntry.getText().toString().trim();
+                    Item newItem = new Item(null, mGameId, name);
                     addItem(newItem);
                 }
             });
@@ -261,9 +261,9 @@ public class ShoppingListFragment extends Fragment implements
             String id = mShopRef.push().getKey();
 
             // Get database paths from helper class
-            String shopPath = Db.getShopPath(uid, id);
-            String gameShopListPath = Db.getGameShopListPath(uid, mGameId, id);
-            String userShopListPath = Db.getUserShopListPath(uid, id);
+            String shopPath = Db.getShopPath(uid) + id;
+            String gameShopListPath = Db.getGameShopListPath(uid, mGameId) + id;
+            String userShopListPath = Db.getUserShopListPath(uid) + id;
 
             Map<String, Object> valuesToAdd = new HashMap<>();
             valuesToAdd.put(shopPath, item);

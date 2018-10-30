@@ -334,12 +334,12 @@ public class AddGameFragment extends Fragment {
             final String gameId = gameRef.push().getKey();
 
             // Get database paths from helper class
-            String gamePath = Db.getGamePath(uid, gameId);
-            String userGamePath = Db.getGameListPath(uid, gameId);
+            String gamePath = Db.getGamePath(uid) + gameId;
+            String userGameListPath = Db.getGameListPath(uid) + gameId;
 
             Map<String, Object> valuesToAdd = new HashMap<>();
             valuesToAdd.put(gamePath, game);
-            valuesToAdd.put(userGamePath + Db.NAME, game.getName());
+            valuesToAdd.put(userGameListPath, game.getName());
 
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override

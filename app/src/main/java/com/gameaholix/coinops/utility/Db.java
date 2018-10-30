@@ -25,6 +25,7 @@ public class Db {
     public static final String TODO_LIST = "todo_list";
 
     // Database keys
+    public static final String PARENT_ID = "parentId";
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String CABINET = "cabinet";
@@ -66,59 +67,59 @@ public class Db {
         return  "/" + Db.USER + "/" + uid + "/";
     }
 
-    public static String getGamePath(String uid, String gameId) {
-        return "/" + Db.GAME + "/" + uid + "/" + gameId + "/";
+    public static String getGamePath(String uid) {
+        return "/" + Db.GAME + "/" + uid + "/";
     }
 
-    public static String getGameListPath(String uid, String gameId) {
-        return  getUserPath(uid) + Db.GAME_LIST + "/" + gameId + "/";
+    public static String getGameListPath(String uid) {
+        return  getUserPath(uid) + Db.GAME_LIST + "/";
     }
 
-    public  static String getInventoryPath(String uid, String id) {
-        return "/" + Db.INVENTORY +  "/" + uid + "/" + id + "/";
+    public  static String getInventoryPath(String uid) {
+        return "/" + Db.INVENTORY +  "/" + uid + "/";
     }
 
-    public static String getInventoryListPath(String uid, String id) {
-        return  getUserPath(uid) + Db.INVENTORY_LIST + "/" + id + "/";
+    public static String getInventoryListPath(String uid) {
+        return  getUserPath(uid) + Db.INVENTORY_LIST + "/";
     }
 
-    public static String getRepairPath(String uid, String gameId, String logId) {
-        return "/" + Db.REPAIR + "/" + uid + "/" + gameId + "/" + logId + "/";
+    public static String getRepairPath(String uid, String gameId) {
+        return "/" + Db.REPAIR + "/" + uid + "/" + gameId + "/";
     }
 
-    public static String getRepairListPath(String uid, String gameId, String logId) {
-        return  getGamePath(uid, gameId) + Db.REPAIR_LIST + "/" + logId + "/";
+    public static String getRepairListPath(String uid, String gameId) {
+        return  getGamePath(uid) + gameId + "/" + Db.REPAIR_LIST + "/";
     }
 
-    public static String getStepsPath(String uid, String gameId, String logId, String stepId) {
-        return getRepairPath(uid, gameId, logId) + Db.STEPS + "/" + stepId + "/";
+    public static String getStepsPath(String uid, String gameId, String logId) {
+        return getRepairPath(uid, gameId)  + logId + "/" + Db.STEPS + "/";
     }
 
 //    public static String getStepListPath(String uid, String gameId, String logId, String stepId) {
 //        return  getRepairPath(uid, gameId, logId) + Db.STEP_LIST + "/" + stepId + "/";
 //    }
 
-    public static String getShopPath(String uid, String id) {
-        return "/" + Db.SHOP + "/" + uid + "/" + id + "/";
+    public static String getShopPath(String uid) {
+        return "/" + Db.SHOP + "/" + uid + "/";
     }
 
-    public static String getGameShopListPath(String uid, String gameId, String id) {
-        return  getGamePath(uid, gameId) + Db.SHOP_LIST + "/" + id + "/";
+    public static String getGameShopListPath(String uid, String gameId) {
+        return  getGamePath(uid) + gameId + "/" + Db.SHOP_LIST + "/";
     }
 
-    public static String getUserShopListPath(String uid, String id) {
-        return  getUserPath(uid) + Db.SHOP_LIST + "/" + id + "/";
+    public static String getUserShopListPath(String uid) {
+        return  getUserPath(uid) + Db.SHOP_LIST + "/";
     }
 
-    public static String getToDoPath(String uid, String id) {
-        return "/" + Db.TODO + "/" + uid + "/" + id + "/";
+    public static String getToDoPath(String uid) {
+        return "/" + Db.TODO + "/" + uid + "/";
     }
 
-    public static String getGameToDoListPath(String uid, String gameId, String id) {
-        return  getGamePath(uid, gameId) + Db.TODO_LIST + "/" + id + "/";
+    public static String getGameToDoListPath(String uid, String gameId) {
+        return  getGamePath(uid) + gameId + "/" + Db.TODO_LIST + "/";
     }
 
-    public static String getUserToDoListPath(String uid, String id) {
-        return getUserPath(uid) + Db.TODO_LIST + "/" + id + "/";
+    public static String getUserToDoListPath(String uid) {
+        return getUserPath(uid) + Db.TODO_LIST + "/";
     }
 }

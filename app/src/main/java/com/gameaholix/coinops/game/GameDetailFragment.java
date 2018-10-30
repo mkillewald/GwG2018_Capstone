@@ -7,7 +7,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -19,9 +18,7 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
 import com.gameaholix.coinops.model.Game;
-import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
-import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,22 +26,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GameDetailFragment extends Fragment {
-
     private static final String TAG = GameDetailFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
-    private static final String EXTRA_REPAIR_LIST = "CoinOpsRepairLogList";
 
     private Context mContext;
     private Game mGame;
-    private ArrayList<Item> mRepairLogs;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mGameRef;
+    private DatabaseReference mUserRef;
     private FirebaseUser mUser;
     private ValueEventListener mGameListener;
     private OnFragmentInteractionListener mListener;
@@ -69,10 +64,9 @@ public class GameDetailFragment extends Fragment {
             if (getArguments() != null) {
                 mGame = getArguments().getParcelable(EXTRA_GAME);
             }
-            mRepairLogs = new ArrayList<>();
+//            mRepairLogs = new ArrayList<>();
         } else {
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
-            mRepairLogs = savedInstanceState.getParcelableArrayList(EXTRA_REPAIR_LIST);
         }
         setHasOptionsMenu(true);
 
@@ -84,6 +78,9 @@ public class GameDetailFragment extends Fragment {
                 .child(Db.GAME)
                 .child(mUser.getUid())
                 .child(mGame.getId());
+        mUserRef = mDatabaseReference
+                .child(Db.USER)
+                .child(mUser.getUid());
     }
 
     @Override
@@ -164,7 +161,7 @@ public class GameDetailFragment extends Fragment {
             bind.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteGameAlert();
+                    deleteGame();
                 }
             });
 //        } else {
@@ -180,7 +177,6 @@ public class GameDetailFragment extends Fragment {
 
         if (mUser != null) {
             mGameRef.removeEventListener(mGameListener);
-//            mRepairListRef.removeEventListener(mRepairListener);
         }
     }
 
@@ -189,7 +185,6 @@ public class GameDetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(EXTRA_GAME, mGame);
-        outState.putParcelableArrayList(EXTRA_REPAIR_LIST, mRepairLogs);
     }
 
     @Override
@@ -228,64 +223,109 @@ public class GameDetailFragment extends Fragment {
         }
     }
 
-    private void deleteGameAlert() {
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(mContext);
-        }
-        builder.setTitle(getString(R.string.really_delete_game))
-                .setMessage(getString(R.string.game_will_be_deleted))
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteGame();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
     private void deleteGame() {
         if (mUser != null) {
-            // user is signed in
-            String uid = mUser.getUid();
-            String gameId = mGame.getId();
+            //user is signed in
+            final Map<String, Object> valuesToDelete = getValuesToDelete();
 
-            // Get database paths from helper class
-            String gamePath = Db.getGamePath(uid, gameId);
-            String userGamePath = Db.getGameListPath(uid, gameId);
-
-            Map<String, Object> valuesToDelete= new HashMap<>();
-            valuesToDelete.put(gamePath, null);
-            valuesToDelete.put(userGamePath + Db.NAME, null);
-
-            mDatabaseReference.updateChildren(valuesToDelete, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError == null) {
-                        if (getActivity() != null) {
-                            getActivity().finish();
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(mContext);
+            }
+            builder.setTitle(getString(R.string.really_delete_game))
+                    .setMessage(getString(R.string.game_will_be_deleted))
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
                         }
-                    } else {
-                        PromptUser.displayAlert(mContext, R.string.error_delete_game_failed,
-                                databaseError.getMessage());
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
-                    }
-                }
-            });
+                    })
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteValues(valuesToDelete);
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
 //        } else {
 //            // user is not signed in
         }
     }
+
+    private Map<String, Object> getValuesToDelete() {
+        final Map<String, Object> valuesToDelete = new HashMap<>();
+        final String uid = mUser.getUid();
+        final String gameId = mGame.getId();
+
+        // Get database paths from helper class
+        String gamePath = Db.getGamePath(uid) + gameId;
+        String userGameListPath = Db.getGameListPath(uid) + gameId;
+        String repairPath = Db.getRepairPath(uid, gameId);
+
+        valuesToDelete.put(gamePath, null);
+        valuesToDelete.put(userGameListPath, null);
+        valuesToDelete.put(repairPath, null);
+
+        ValueEventListener toDoListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String toDoPath = Db.getToDoPath(uid);
+                String userToDoListPath = Db.getUserToDoListPath(uid);
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    String key = dataSnapshot1.getKey();
+                    valuesToDelete.put(toDoPath + key, null);
+                    valuesToDelete.put(userToDoListPath + key, null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mGameRef.child(Db.TODO_LIST).addListenerForSingleValueEvent(toDoListener);
+
+        ValueEventListener shopListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String shopPath = Db.getShopPath(uid);
+                String userShopListPath = Db.getUserShopListPath(uid);
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    String key = dataSnapshot1.getKey();
+                    valuesToDelete.put(shopPath + key, null);
+                    valuesToDelete.put(userShopListPath + key, null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mGameRef.child(Db.SHOP_LIST).addListenerForSingleValueEvent(shopListener);
+
+        return valuesToDelete;
+    }
+
+    private void deleteValues(Map<String, Object> valuesToDelete) {
+        mDatabaseReference.updateChildren(valuesToDelete, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                            " Code: " + databaseError.getCode() +
+                            " Details: " + databaseError.getDetails());
+                }
+            }
+        });
+
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this

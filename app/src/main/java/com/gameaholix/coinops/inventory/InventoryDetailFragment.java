@@ -208,8 +208,8 @@ public class InventoryDetailFragment extends Fragment {
             final String uid = mUser.getUid();
 
             // Get database paths from helper class
-            String inventoryPath = Db.getInventoryPath(uid, mItem.getId());
-            String userInventoryPath = Db.getInventoryListPath(uid, mItem.getId());
+            String inventoryPath = Db.getInventoryPath(uid) + mItem.getId();
+            String userInventoryPath = Db.getInventoryListPath(uid) + mItem.getId();
 
             Map<String, Object> valuesToDelete= new HashMap<>();
             valuesToDelete.put(inventoryPath, null);

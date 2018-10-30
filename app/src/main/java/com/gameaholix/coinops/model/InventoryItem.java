@@ -13,8 +13,8 @@ public class InventoryItem extends Item implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue()
     }
 
-    public InventoryItem(String name) {
-        super(name);
+    public InventoryItem(String id, String name) {
+        super(id, name);
     }
 
     private InventoryItem(Parcel in) {

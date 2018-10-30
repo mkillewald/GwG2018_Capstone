@@ -259,8 +259,8 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
             String logId = mRepairRef.push().getKey();
 
             // Get database paths from helper class
-            String repairPath = Db.getRepairPath(uid, mGameId, logId);
-            String userRepairPath = Db.getRepairListPath(uid, mGameId, logId);
+            String repairPath = Db.getRepairPath(uid, mGameId) +  logId;
+            String userRepairPath = Db.getRepairListPath(uid, mGameId) + logId;
 
             Map<String, Object> valuesToAdd = new HashMap<>();
             valuesToAdd.put(repairPath, log);

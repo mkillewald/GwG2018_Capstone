@@ -37,7 +37,8 @@ public class Game implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue()
     }
 
-    public Game(String name) {
+    public Game(String id, String name) {
+        this.id = id;
         this.name = name;
     }
 

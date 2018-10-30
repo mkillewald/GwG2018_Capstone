@@ -256,7 +256,7 @@ public class RepairDetailFragment extends Fragment {
             final String stepId = stepRef.push().getKey();
 
             // Get database paths from helper class
-            String stepPath = Db.getStepsPath(uid, mRepairLog.getParentId(), mRepairLog.getId(), stepId);
+            String stepPath = Db.getStepsPath(uid, mRepairLog.getParentId(), mRepairLog.getId()) + stepId;
 //            String stepListPath = Db.getStepListPath(uid, mGameId, mLogId, stepId);
 
             Map<String, Object> valuesToAdd = new HashMap<>();

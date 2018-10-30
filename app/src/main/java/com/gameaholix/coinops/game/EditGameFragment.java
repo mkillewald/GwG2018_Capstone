@@ -307,17 +307,18 @@ public class EditGameFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     // Get database paths from helper class
-                    String gamePath = Db.getGamePath(uid, gameId);
-                    String userGamePath = Db.getGameListPath(uid, gameId);
+                    String gamePath = Db.getGamePath(uid) + gameId;
+                    String userGameListPath = Db.getGameListPath(uid) + gameId;
+
 
                     // Convert values Bundle to HashMap for Firebase call to updateChildren()
                     Map<String, Object> valuesMap = new HashMap<>();
 
                     for (String key : Db.GAME_STRINGS) {
                         if (mValuesBundle.containsKey(key)) {
-                            valuesMap.put(gamePath + key, mValuesBundle.getString(key));
+                            valuesMap.put(gamePath + "/" + key, mValuesBundle.getString(key));
                             if (key.equals(Db.NAME)) {
-                                valuesMap.put(userGamePath + key, mValuesBundle.getString(key));
+                                valuesMap.put(userGameListPath, mValuesBundle.getString(key));
                             }
                         }
                     }

@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 
+// TODO: finish this
+
 public class EditToDoFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;

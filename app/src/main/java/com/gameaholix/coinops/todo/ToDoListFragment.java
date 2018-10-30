@@ -145,8 +145,8 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ToDoItem newItem = new ToDoItem();
-                    newItem.setName(mBind.etEntry.getText().toString().trim());
+                    String name =  mBind.etEntry.getText().toString().trim();
+                    ToDoItem newItem = new ToDoItem(null, mGameId, name);
                     addItem(newItem);
                 }
             });
@@ -260,14 +260,16 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
             String id = mToDoRef.push().getKey();
 
             // Get database paths from helper class
-            String toDoPath = Db.getToDoPath(uid, id);
-            String gameToDoListPath = Db.getGameToDoListPath(uid, mGameId, id);
-            String userToDoListPath = Db.getUserToDoListPath(uid, id);
+            String toDoPath = Db.getToDoPath(uid) + id;
+            String gameToDoListPath = Db.getGameToDoListPath(uid, mGameId) + id;
+            String userToDoListPath = Db.getUserToDoListPath(uid) + id;
 
             Map<String, Object> valuesToAdd = new HashMap<>();
             valuesToAdd.put(toDoPath, item);
             valuesToAdd.put(gameToDoListPath, item.getName());
             valuesToAdd.put(userToDoListPath, item.getName());
+
+            Log.d(TAG, valuesToAdd.toString());
 
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override

@@ -224,12 +224,12 @@ public class AddInventoryFragment extends Fragment {
             final String id = inventoryRef.push().getKey();
 
             // Get database paths from helper class
-            String inventoryPath = Db.getInventoryPath(uid, id);
-            String userInventoryPath = Db.getInventoryListPath(uid, id);
+            String inventoryPath = Db.getInventoryPath(uid) + id;
+            String userInventoryListPath = Db.getInventoryListPath(uid) + id;
 
             Map<String, Object> valuesToAdd = new HashMap<>();
             valuesToAdd.put(inventoryPath, item);
-            valuesToAdd.put(userInventoryPath + Db.NAME, item.getName());
+            valuesToAdd.put(userInventoryListPath, item.getName());
 
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override

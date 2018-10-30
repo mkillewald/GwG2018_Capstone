@@ -83,10 +83,8 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
                     mInventoryItems.clear();
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         String id = dataSnapshot1.getKey();
-                        InventoryItem item =  dataSnapshot1.getValue(InventoryItem.class);
-                        if (item != null) {
-                            item.setId(id);
-                        }
+                        String name = (String) dataSnapshot1.getValue();
+                        InventoryItem item = new InventoryItem(id, name);
                         mInventoryItems.add(item);
                     }
                     mInventoryAdapter.notifyDataSetChanged();
