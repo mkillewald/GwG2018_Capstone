@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -13,8 +14,8 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Item;
 
 public class RepairDetailActivity extends AppCompatActivity {
-//    private static final String TAG = RepairDetailActivity.class.getSimpleName();
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Entry";
+    private static final String TAG = RepairDetailActivity.class.getSimpleName();
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Item";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
 
     private Item mRepairLog;
@@ -38,6 +39,8 @@ public class RepairDetailActivity extends AppCompatActivity {
         }
 
         setTitle(mGameName);
+
+        Log.d(TAG, mRepairLog.getParentId());
 
         RepairDetailFragment fragment = RepairDetailFragment.newInstance(mRepairLog);
         getSupportFragmentManager().beginTransaction()

@@ -38,7 +38,7 @@ import java.util.Map;
 
 public class RepairDetailFragment extends Fragment {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Entry";
+    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Item";
     private static final String EXTRA_STEP_LIST = "CoinOpsRepairStepList";
 
     private Context mContext;

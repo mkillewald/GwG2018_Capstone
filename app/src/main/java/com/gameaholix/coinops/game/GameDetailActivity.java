@@ -142,6 +142,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     @Override
     public void onRepairLogSelected(Item repairLog) {
         Intent intent = new Intent(this, RepairDetailActivity.class);
+//        repairLog.setParentId(mGame.getId());
         intent.putExtra(EXTRA_REPAIR, repairLog);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
         startActivity(intent);
