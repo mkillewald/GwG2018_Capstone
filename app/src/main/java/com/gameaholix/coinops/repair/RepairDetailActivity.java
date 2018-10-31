@@ -15,7 +15,7 @@ import com.gameaholix.coinops.model.Item;
 
 public class RepairDetailActivity extends AppCompatActivity {
     private static final String TAG = RepairDetailActivity.class.getSimpleName();
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Item";
+    private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
 
     private Item mRepairLog;

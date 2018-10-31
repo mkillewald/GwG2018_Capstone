@@ -1,16 +1,13 @@
 package com.gameaholix.coinops.todo;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -77,8 +74,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
             mToDoList = savedInstanceState.getParcelableArrayList(EXTRA_TODO_LIST);
             mShowAddButton = savedInstanceState.getBoolean(EXTRA_SHOW_ADD_BUTTON);
         }
-
-        setHasOptionsMenu(mShowAddButton);
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -153,7 +148,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         super.onDestroyView();
 
         mToDoListRef.removeEventListener(mToDoListener);
-
     }
 
     @Override
@@ -187,21 +181,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_add_todo:
-                Intent intent = new Intent(getContext(), AddToDoActivity.class);
-                if (!TextUtils.isEmpty(mGameId)) {
-                    intent.putExtra(EXTRA_GAME_ID, mGameId);
-                }
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     /**

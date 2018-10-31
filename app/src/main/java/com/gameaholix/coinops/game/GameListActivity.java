@@ -1,6 +1,7 @@
 package com.gameaholix.coinops.game;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -43,8 +44,7 @@ public class GameListActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_game:
-                Intent intent = new Intent(this, AddGameActivity.class);
-                startActivity(intent);
+                showAddGameDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -57,4 +57,11 @@ public class GameListActivity extends AppCompatActivity implements
         intent.putExtra(EXTRA_GAME, game);
         startActivity(intent);
     }
+
+    private void showAddGameDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        AddGameFragment fragment = new AddGameFragment();
+        fragment.show(fm, "fragment_add_game");
+    }
+
 }

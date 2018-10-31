@@ -49,6 +49,7 @@
     <string name="add_repair_step">Add Step</string>
     <string name="delete_repair_step">Delete Step</string>
     <string name="add_item">Add Item</string>
+    <string name="add_todo_item">Add To Do Item</string>
 
     <!-- Labels -->
     <string name="type_label">Type:</string>
@@ -65,7 +66,7 @@
     <string name="reminder_label">Reminder</string>
 
     <!-- Form Input -->
-    <string name="repair_entry_hint">Trouble Description</string>
+    <string name="repair_description_hint">Trouble Description</string>
     <string name="repair_step_name_hint">Repair Step Taken</string>
     <string name="todo_name_hint">Title</string>
     <string name="todo_description_hint">Notes</string>
@@ -154,9 +155,9 @@
     <string name="inventory_condition3">Untested</string>
 
     <string name="select_priority">Select Priority</string>
-    <string name="priority1">High</string>
-    <string name="priority2">Medium</string>
-    <string name="priority3">Low</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
 
     <string name="select_date">Select Date</string>
     <string name="select_time">Select Time</string>

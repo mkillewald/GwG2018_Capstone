@@ -70,7 +70,7 @@
         <activity
             android:name=".repair.AddStepActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".repair.RepairDetailActivity"/>
+            android:parentActivityName=".repair.RepairDetailActivity" />
         <activity
             android:name=".todo.ToDoListActivity"
             android:launchMode="singleTop"

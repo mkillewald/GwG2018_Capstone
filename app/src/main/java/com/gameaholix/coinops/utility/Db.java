@@ -36,7 +36,7 @@ public class Db {
     public static final String MONITOR_PHOSPHER = "monitorPhospher";
     public static final String MONITOR_TECH = "monitorTech";
     public static final String MONITOR_BEAM = "monitorBeam";
-    public static final String ENTRY = "entry";
+    public static final String DESCRIPTION = "description";
 
     public static final String[] GAME_STRINGS = { Db.NAME };
     public static final String[] GAME_INTS = {
@@ -50,7 +50,7 @@ public class Db {
             Db.MONITOR_BEAM,
             Db.MONITOR_TECH };
 
-    public static final String[] INVENTORY_STRINGS = { Db.NAME, Db.ENTRY};
+    public static final String[] INVENTORY_STRINGS = { Db.NAME, Db.DESCRIPTION};
     public static final String[] INVENTORY_INTS = { Db.TYPE, Db.CONDITION };
 
 //    public static final String[] REPAIR_STRINGS = {};

@@ -4,19 +4,16 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
@@ -36,7 +33,7 @@ import java.util.Map;
 
 // TODO: finish this
 
-public class AddToDoFragment extends Fragment {
+public class AddToDoFragment extends DialogFragment {
     private static final String TAG = AddToDoFragment.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
@@ -88,15 +85,6 @@ public class AddToDoFragment extends Fragment {
         final View rootView = bind.getRoot();
 
         //Setup EditTexts
-        bind.etTodoName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_DONE) {
-                    hideKeyboard(textView);
-                }
-                return false;
-            }
-        });
         bind.etTodoName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -109,15 +97,6 @@ public class AddToDoFragment extends Fragment {
             }
         });
 
-        bind.etTodoDescription.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_DONE) {
-                    hideKeyboard(textView);
-                }
-                return false;
-            }
-        });
         bind.etTodoDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -130,99 +109,35 @@ public class AddToDoFragment extends Fragment {
             }
         });
 
-        // Setup Spinner
-        ArrayAdapter<CharSequence> priorityAdapter = ArrayAdapter.createFromResource(
-                mContext, R.array.priority, android.R.layout.simple_spinner_item);
-        priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerPriority.setAdapter(priorityAdapter);
-        bind.spinnerPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        // Setup radio group
+        bind.rgPriority.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mNewToDoItem.setPriority(position);
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                switch(checkedId) {
+                    case R.id.rb_priority_high:
+                        mNewToDoItem.setPriority(2);
+                        break;
+                    case R.id.rb_priority_medium:
+                        mNewToDoItem.setPriority(1);
+                        break;
+                    default:
+                    case R.id.rb_priority_low:
+                        mNewToDoItem.setPriority(0);
+                        break;
+                }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-
-//        // Setup Switch
-//        bind.switchReminder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean isOn) {
-//                mNewToDoItem.setReminder(isOn);
-//                if (isOn) {
-//                    bind.tvReminderDate.setVisibility(View.VISIBLE);
-//                    bind.ibReminderDateArrow.setVisibility(View.VISIBLE);
-//                    bind.tvReminderTime.setVisibility(View.VISIBLE);
-//                    bind.ibReminderTimeArrow.setVisibility(View.VISIBLE);
-//                } else {
-//                    bind.tvReminderDate.setVisibility(View.GONE);
-//                    bind.ibReminderDateArrow.setVisibility(View.GONE);
-//                    bind.tvReminderTime.setVisibility(View.GONE);
-//                    bind.ibReminderTimeArrow.setVisibility(View.GONE);
-//                }
-//            }
-//        });
-//
-//        // Setup date picker dialog
-//        // Get Current date
-//        final Calendar calendar = Calendar.getInstance();
-//        int currentYear = calendar.get(Calendar.YEAR);
-//        int currentMonth = calendar.get(Calendar.MONTH);
-//        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-//
-//        final DatePickerDialog datePickerDialog = new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
-//            @Override
-//            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-//                String datePicked = (month + 1)  + "-" + day + "-" + year;
-//                bind.tvReminderDate.setText(datePicked);
-//            }
-//        }, currentYear, currentMonth, currentDay);
-//
-//        // Setup date onClickListener
-//        View.OnClickListener dateListener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                datePickerDialog.show();
-//            }
-//        };
-//        bind.tvReminderDate.setOnClickListener(dateListener);
-//        bind.ibReminderDateArrow.setOnClickListener(dateListener);
-//
-//        // Setup time picker dialog
-//        // Get current time
-//        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-//        int currentMinute = calendar.get(Calendar.MINUTE);
-//
-//        final TimePickerDialog timePickerDialog = new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener() {
-//            @Override
-//            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-//                String timePicked = hour + ":" + minute;
-//                bind.tvReminderTime.setText(timePicked);
-//            }
-//        }, currentHour, currentMinute, false);
-//
-//        // Setup time onClickListener
-//        View.OnClickListener timeListener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                timePickerDialog.show();
-//            }
-//        };
-//        bind.tvReminderTime.setOnClickListener(timeListener);
-//        bind.ibReminderTimeArrow.setOnClickListener(timeListener);
-
         // Setup Button
-        Button addButton = bind.btnSave;
-        addButton.setText(R.string.add_item);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        bind.btnSave.setText(R.string.add_item);
+        bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // get text from EditTexts
                 mNewToDoItem.setName(bind.etTodoName.getText().toString().trim());
                 mNewToDoItem.setDescription(bind.etTodoDescription.getText().toString().trim());
                 addItem(mNewToDoItem);
-                getActivity().finish();
+                getDialog().dismiss();
             }
         });
 
@@ -241,6 +156,20 @@ public class AddToDoFragment extends Fragment {
 
         outState.putString(EXTRA_GAME_ID, mGameId);
         outState.putParcelable(EXTRA_TODO, mNewToDoItem);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // set width and height of this DialogFragment, code block used from
+        // https://stackoverflow.com/questions/12478520/how-to-set-dialogfragments-width-and-height
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        if (params != null) {
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        }
     }
 
     @Override

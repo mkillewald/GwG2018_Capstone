@@ -5,14 +5,12 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,7 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddInventoryFragment extends Fragment {
+public class AddInventoryFragment extends DialogFragment {
     private static final String TAG = AddInventoryFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
@@ -71,75 +69,27 @@ public class AddInventoryFragment extends Fragment {
                 inflater, R.layout.fragment_add_inventory, container, false);
         final View rootView = bind.getRoot();
 
-        // Setup EditText
-        bind.etAddInventoryName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_DONE) {
-
-                    // save text input
-                    mNewItem.setName(textView.getText().toString().trim());
-
-                    // hide keyboard
-                    InputMethodManager imm = (InputMethodManager) textView
-                            .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
-                    return true;
-                }
-                return false;
-            }
-        });
+        // Setup EditTexts
         bind.etAddInventoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
-
-                    // save text input
                     if (view instanceof EditText) {
                         EditText editText = (EditText) view;
-                        mNewItem.setName(editText.getText().toString().trim());
+                        hideKeyboard(editText);
                     }
-
-                    // hide keyboard
-                    InputMethodManager imm = (InputMethodManager) view
-                            .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
         });
-        
-        bind.etAddInventoryDescription.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_DONE) {
 
-                    // save text input
-                    mNewItem.setDescription(textView.getText().toString().trim());
-
-                    // hide keyboard
-                    InputMethodManager imm = (InputMethodManager) textView
-                            .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
-                    return true;
-                }
-                return false;
-            }
-        });
         bind.etAddInventoryDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
-
-                    // save text input
                     if (view instanceof EditText) {
                         EditText editText = (EditText) view;
-                        mNewItem.setDescription(editText.getText().toString().trim());
+                        hideKeyboard(editText);
                     }
-
-                    // hide keyboard
-                    InputMethodManager imm = (InputMethodManager) view
-                            .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
         });
@@ -179,11 +129,21 @@ public class AddInventoryFragment extends Fragment {
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Get text from EditTexts
+                mNewItem.setName(bind.etAddInventoryName.getText().toString().trim());
+                mNewItem.setDescription(bind.etAddInventoryDescription.getText().toString().trim());
                 addItem(mNewItem);
+                getDialog().dismiss();
             }
         });
 
         return rootView;
+    }
+
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) view
+                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -191,6 +151,20 @@ public class AddInventoryFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(EXTRA_INVENTORY_ITEM, mNewItem);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // set width and height of this DialogFragment, code block used from
+        // https://stackoverflow.com/questions/12478520/how-to-set-dialogfragments-width-and-height
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        if (params != null) {
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        }
     }
 
     @Override
@@ -241,10 +215,6 @@ public class AddInventoryFragment extends Fragment {
                     }
                 }
             });
-
-            if (getActivity() != null) {
-                getActivity().finish();
-            }
 //        } else {
 //            // user is not signed in
         }

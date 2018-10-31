@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,9 +22,12 @@ import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.model.ToDoItem;
+import com.gameaholix.coinops.repair.AddRepairFragment;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.repair.RepairListFragment;
+import com.gameaholix.coinops.shopping.AddShoppingFragment;
 import com.gameaholix.coinops.shopping.ShoppingListFragment;
+import com.gameaholix.coinops.todo.AddToDoFragment;
 import com.gameaholix.coinops.todo.ToDoListFragment;
 
 import java.util.List;
@@ -38,7 +42,7 @@ public class GameDetailActivity extends AppCompatActivity implements
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Item";
+    private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
 
     private Game mGame;
     private ViewPager mViewPager;
@@ -102,21 +106,26 @@ public class GameDetailActivity extends AppCompatActivity implements
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
                 menu.findItem(R.id.menu_add_repair).setVisible(false);
                 menu.findItem(R.id.menu_add_todo).setVisible(false);
+                menu.findItem(R.id.menu_add_shopping).setVisible(false);
                 break;
             case 1:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
-                menu.findItem(R.id.menu_add_repair).setVisible(false);
+                menu.findItem(R.id.menu_add_repair).setVisible(true);
                 menu.findItem(R.id.menu_add_todo).setVisible(false);
+                menu.findItem(R.id.menu_add_shopping).setVisible(false);
                 break;
             case 2:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
                 menu.findItem(R.id.menu_add_repair).setVisible(false);
                 menu.findItem(R.id.menu_add_todo).setVisible(true);
+                menu.findItem(R.id.menu_add_shopping).setVisible(false);
                 break;
             default:
+            case 3:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
                 menu.findItem(R.id.menu_add_repair).setVisible(false);
                 menu.findItem(R.id.menu_add_todo).setVisible(false);
+                menu.findItem(R.id.menu_add_shopping).setVisible(true);
                 break;
         }
         return super.onCreateOptionsMenu(menu);
@@ -126,11 +135,17 @@ public class GameDetailActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
+                // handled in GameDetailFragment
                 return false;
             case R.id.menu_add_repair:
-                return false;
+                showAddRepairDialog();
+                return true;
             case R.id.menu_add_todo:
-                return false;
+                showAddToDoDialog();
+                return true;
+            case R.id.menu_add_shopping:
+                showAddShoppingDialog();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -150,7 +165,6 @@ public class GameDetailActivity extends AppCompatActivity implements
     @Override
     public void onRepairLogSelected(Item repairLog) {
         Intent intent = new Intent(this, RepairDetailActivity.class);
-//        repairLog.setParentId(mGame.getId());
         intent.putExtra(EXTRA_REPAIR, repairLog);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
         startActivity(intent);
@@ -168,6 +182,24 @@ public class GameDetailActivity extends AppCompatActivity implements
 //        Intent intent = new Intent(this, ShoppingDetailActivity.class);
 //        intent.putExtra(EXTRA_SHOPPING, shoppingItem);
 //        startActivity(intent);
+    }
+
+    private void showAddRepairDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        AddRepairFragment fragment = AddRepairFragment.newInstance(mGame.getId());
+        fragment.show(fm, "fragment_add_repair");
+    }
+
+    private void showAddToDoDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        AddToDoFragment fragment = AddToDoFragment.newInstance(mGame.getId());
+        fragment.show(fm, "fragment_add_todo");
+    }
+
+    private void showAddShoppingDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        AddShoppingFragment fragment = AddShoppingFragment.newInstance(mGame.getId());
+        fragment.show(fm, "fragment_add_shopping");
     }
 
     // Hide keyboard after touch event occurs outside of EditText

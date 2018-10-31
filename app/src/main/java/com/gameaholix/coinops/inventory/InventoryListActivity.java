@@ -1,6 +1,7 @@
 package com.gameaholix.coinops.inventory;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -40,8 +41,7 @@ public class InventoryListActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_inventory_item:
-                Intent intent = new Intent(this, AddInventoryActivity.class);
-                startActivity(intent);
+                showAddInventoryDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -53,5 +53,11 @@ public class InventoryListActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, InventoryDetailActivity.class);
         intent.putExtra(EXTRA_INVENTORY, inventoryItem);
         startActivity(intent);
+    }
+
+    private void showAddInventoryDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        AddInventoryFragment fragment = new AddInventoryFragment();
+        fragment.show(fm, "fragment_add_inventory");
     }
 }

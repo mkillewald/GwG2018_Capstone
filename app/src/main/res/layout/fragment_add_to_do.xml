@@ -3,182 +3,98 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <ScrollView
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical">
-        <android.support.constraint.ConstraintLayout
+        android:padding="@dimen/margin"
+        tools:context=".todo.AddToDoFragment">
+
+        <EditText
+            android:id="@+id/et_todo_name"
+            style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".todo.AddToDoFragment">
+            android:hint="@string/todo_name_hint"
+            android:inputType="text"
+            android:maxLines="1"
+            android:lines="1"
+            android:imeOptions="actionDone"
+            android:layout_marginLeft="@dimen/edit_text_margin"
+            android:layout_marginStart="@dimen/edit_text_margin"
+            android:layout_marginRight="@dimen/edit_text_margin"
+            android:layout_marginEnd="@dimen/edit_text_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-            <android.support.constraint.Guideline
-                android:id="@+id/gl_vertical_center"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5"/>
+        <TextView
+            android:id="@+id/tv_priority_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:layout_marginTop="@dimen/margin"
+            android:paddingLeft="@dimen/spinner_label_padding"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_todo_name"
+            android:text="@string/priority_label" />
 
-            <EditText
-                android:id="@+id/et_todo_name"
-                style="@style/TextAppearance.AppCompat.Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/todo_name_hint"
-                android:inputType="text"
-                android:maxLines="1"
-                android:lines="1"
-                android:imeOptions="actionDone"
-                android:layout_marginLeft="@dimen/edit_text_margin"
-                android:layout_marginStart="@dimen/edit_text_margin"
-                android:layout_marginRight="@dimen/edit_text_margin"
-                android:layout_marginEnd="@dimen/edit_text_margin"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+        <RadioGroup
+            android:id="@+id/rg_priority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_priority_label">
 
-            <TextView
-                android:id="@+id/tv_priority_label"
+            <RadioButton
+                android:id="@+id/rb_priority_low"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Small"
-                android:layout_marginTop="@dimen/margin"
-                android:paddingLeft="@dimen/spinner_label_padding"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/et_todo_name"
-                android:text="@string/priority_label" />
+                android:text="@string/priority_low"/>
 
-            <Spinner
-                android:id="@+id/spinner_priority"
-                style="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_width="0dp"
+            <RadioButton
+                android:id="@+id/rb_priority_medium"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:entries="@array/priority"
-                android:prompt="@string/select_priority"
-                android:spinnerMode="dropdown"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintStart_toStartOf="@id/tv_priority_label"
-                app:layout_constraintLeft_toLeftOf="@id/tv_priority_label"
-                app:layout_constraintEnd_toStartOf="@id/gl_vertical_center"
-                app:layout_constraintRight_toLeftOf="@id/gl_vertical_center"
-                app:layout_constraintTop_toBottomOf="@id/tv_priority_label" />
+                android:text="@string/priority_medium"/>
 
-            <!--<TextView-->
-                <!--android:id="@+id/tv_reminder_label"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--style="@style/TextAppearance.AppCompat.Small"-->
-                <!--android:layout_marginTop="@dimen/margin"-->
-                <!--android:paddingLeft="@dimen/spinner_label_padding"-->
-                <!--app:layout_constraintStart_toEndOf="@id/gl_vertical_center"-->
-                <!--app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"-->
-                <!--app:layout_constraintTop_toBottomOf="@id/et_todo_name"-->
-                <!--android:text="@string/reminder_label" />-->
-
-            <!--<Switch-->
-                <!--android:id="@+id/switch_reminder"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--app:layout_constraintTop_toTopOf="@id/tv_reminder_label"-->
-                <!--app:layout_constraintBottom_toBottomOf="@id/tv_reminder_label"-->
-                <!--app:layout_constraintEnd_toEndOf="parent"-->
-                <!--app:layout_constraintRight_toRightOf="parent" />-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/tv_reminder_date"-->
-                <!--style="?android:attr/spinnerItemStyle"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:maxLines="1"-->
-                <!--android:ellipsize="end"-->
-                <!--android:paddingTop="2dp"-->
-                <!--android:paddingLeft="@dimen/spinner_label_padding"-->
-                <!--app:layout_constraintStart_toEndOf="@id/gl_vertical_center"-->
-                <!--app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"-->
-                <!--app:layout_constraintEnd_toStartOf="@id/ib_reminder_date_arrow"-->
-                <!--app:layout_constraintRight_toLeftOf="@id/ib_reminder_date_arrow"-->
-                <!--app:layout_constraintHorizontal_chainStyle="spread"-->
-                <!--app:layout_constraintTop_toBottomOf="@id/tv_reminder_label"-->
-                <!--android:visibility="gone"-->
-                <!--android:text="@string/select_date"/>-->
-
-            <!--<ImageView-->
-                <!--android:id="@+id/ib_reminder_date_arrow"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/ic_arrow_drop_down_24dp"-->
-                <!--android:paddingRight="12dp"-->
-                <!--app:layout_constraintStart_toEndOf="@id/tv_reminder_date"-->
-                <!--app:layout_constraintLeft_toRightOf="@id/tv_reminder_date"-->
-                <!--app:layout_constraintEnd_toStartOf="@id/tv_reminder_time"-->
-                <!--app:layout_constraintRight_toLeftOf="@id/tv_reminder_time"-->
-                <!--app:layout_constraintTop_toTopOf="@id/tv_reminder_date"-->
-                <!--app:layout_constraintBottom_toBottomOf="@id/tv_reminder_date"-->
-                <!--android:visibility="gone"-->
-                <!--android:contentDescription="@string/select_date"/>-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/tv_reminder_time"-->
-                <!--style="?android:attr/spinnerItemStyle"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:maxLines="1"-->
-                <!--android:ellipsize="end"-->
-                <!--android:paddingTop="2dp"-->
-                <!--android:paddingLeft="@dimen/spinner_label_padding"-->
-                <!--app:layout_constraintStart_toEndOf="@id/ib_reminder_date_arrow"-->
-                <!--app:layout_constraintLeft_toRightOf="@id/ib_reminder_date_arrow"-->
-                <!--app:layout_constraintEnd_toStartOf="@id/ib_reminder_time_arrow"-->
-                <!--app:layout_constraintRight_toLeftOf="@id/ib_reminder_time_arrow"-->
-                <!--app:layout_constraintHorizontal_chainStyle="spread"-->
-                <!--app:layout_constraintTop_toBottomOf="@id/tv_reminder_label"-->
-                <!--android:visibility="gone"-->
-                <!--android:text="@string/select_time"/>-->
-
-            <!--<ImageView-->
-                <!--android:id="@+id/ib_reminder_time_arrow"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/ic_arrow_drop_down_24dp"-->
-                <!--android:paddingRight="12dp"-->
-                <!--app:layout_constraintStart_toEndOf="@id/tv_reminder_time"-->
-                <!--app:layout_constraintLeft_toRightOf="@id/tv_reminder_time"-->
-                <!--app:layout_constraintEnd_toEndOf="parent"-->
-                <!--app:layout_constraintRight_toRightOf="parent"-->
-                <!--app:layout_constraintTop_toTopOf="@id/tv_reminder_time"-->
-                <!--app:layout_constraintBottom_toBottomOf="@id/tv_reminder_time"-->
-                <!--android:visibility="gone"-->
-                <!--android:contentDescription="@string/select_time"/>-->
-
-            <EditText
-                android:id="@+id/et_todo_description"
-                style="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_width="match_parent"
+            <RadioButton
+                android:id="@+id/rb_priority_high"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/todo_description_hint"
-                android:gravity="top|start"
-                android:inputType="textMultiLine"
-                android:minLines="5"
-                android:maxLines="15"
-                android:imeOptions="actionDone"
-                android:layout_marginTop="@dimen/text_separation"
-                android:layout_marginLeft="@dimen/edit_text_margin"
-                android:layout_marginStart="@dimen/edit_text_margin"
-                android:layout_marginRight="@dimen/edit_text_margin"
-                android:layout_marginEnd="@dimen/edit_text_margin"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/spinner_priority"/>
+                 android:text="@string/priority_high"/>
 
-            <Button
-                android:id="@+id/btn_save"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/et_todo_description"
-                android:text="@string/add_item" />
+        </RadioGroup>
 
-        </android.support.constraint.ConstraintLayout>
-    </ScrollView>
+        <EditText
+            android:id="@+id/et_todo_description"
+            style="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/todo_description_hint"
+            android:gravity="top|start"
+            android:inputType="textMultiLine"
+            android:minLines="5"
+            android:maxLines="10"
+            android:imeOptions="actionDone"
+            android:layout_marginTop="@dimen/text_separation"
+            android:layout_marginLeft="@dimen/edit_text_margin"
+            android:layout_marginStart="@dimen/edit_text_margin"
+            android:layout_marginRight="@dimen/edit_text_margin"
+            android:layout_marginEnd="@dimen/edit_text_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rg_priority"/>
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_todo_description"
+            android:text="@string/add_item" />
+
+    </android.support.constraint.ConstraintLayout>
 </layout>

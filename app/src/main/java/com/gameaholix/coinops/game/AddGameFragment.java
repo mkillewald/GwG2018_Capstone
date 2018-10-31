@@ -7,14 +7,12 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,7 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddGameFragment extends Fragment {
+public class AddGameFragment extends DialogFragment {
     private static final String TAG = AddGameFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
@@ -70,29 +68,18 @@ public class AddGameFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this
+        // Inflate the layout for this fragment
         final FragmentAddGameBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_add_game, container, false);
         final View rootView = bind.getRoot();
 
         // Setup EditText
-        bind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_DONE) {
-                    mNewGame.setName(textView.getText().toString().trim());
-                    hideKeyboard(textView);
-                }
-                return false;
-            }
-        });
         bind.etGameName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_game_name && !hasFocus) {
                     if (view instanceof EditText) {
                         EditText editText = (EditText) view;
-                        mNewGame.setName(editText.getText().toString().trim());
                         hideKeyboard(editText);
                     }
                 }
@@ -263,10 +250,10 @@ public class AddGameFragment extends Fragment {
         addGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // get text from EditText
+                mNewGame.setName(bind.etGameName.getText().toString().trim());
                 addGame(mNewGame);
-//                if (mListener != null) {
-//                    mListener.onAddGameButtonPressed(mNewGame);
-//                }
+                getDialog().dismiss();
             }
         });
 
@@ -284,6 +271,20 @@ public class AddGameFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(EXTRA_GAME, mNewGame);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // set width and height of this DialogFragment, code block used from
+        // https://stackoverflow.com/questions/12478520/how-to-set-dialogfragments-width-and-height
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        if (params != null) {
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        }
     }
 
     @Override
@@ -353,9 +354,6 @@ public class AddGameFragment extends Fragment {
                 }
             });
 
-            if (getActivity() != null) {
-                getActivity().finish();
-            }
 //        } else {
 //            // user is not signed in
         }

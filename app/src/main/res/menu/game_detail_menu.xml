@@ -10,12 +10,19 @@
     <item
         android:id="@+id/menu_add_repair"
         android:title="@string/add_repair_log"
+        android:icon="@drawable/ic_playlist_add_white_24dp"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_add_todo"
-        android:title="@string/add"
+        android:title="@string/add_todo_item"
+        android:icon="@drawable/ic_playlist_add_white_24dp"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/menu_add_shopping"
+        android:title="@string/add_item"
+        android:icon="@drawable/ic_playlist_add_white_24dp"
+        app:showAsAction="always" />
 
 </menu>

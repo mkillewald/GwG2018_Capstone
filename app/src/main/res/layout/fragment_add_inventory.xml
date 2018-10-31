@@ -6,6 +6,7 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="@dimen/margin"
             tools:context=".inventory.AddInventoryFragment">
 
             <android.support.constraint.Guideline
@@ -94,7 +95,7 @@
                 android:importantForAutofill="no"
                 android:gravity="top|start"
                 android:minLines="5"
-                android:maxLines="15"
+                android:maxLines="10"
                 android:imeOptions="actionDone"
                 android:paddingTop="@dimen/text_separation"
                 android:layout_marginLeft="@dimen/edit_text_margin"
@@ -115,7 +116,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@id/et_add_inventory_description"/>
 
         </android.support.constraint.ConstraintLayout>
 </layout>
