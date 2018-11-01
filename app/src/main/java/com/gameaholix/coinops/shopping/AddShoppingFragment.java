@@ -85,8 +85,6 @@ public class AddShoppingFragment extends DialogFragment {
             }
         });
 
-        bind.btnDelete.setVisibility(View.GONE);
-
         bind.btnSave.setText(R.string.add_item);
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override

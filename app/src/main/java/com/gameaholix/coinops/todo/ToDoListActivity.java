@@ -9,7 +9,7 @@ import com.gameaholix.coinops.model.ToDoItem;
 
 public class ToDoListActivity extends AppCompatActivity implements
         ToDoListFragment.OnFragmentInteractionListener {
-    private static final String TAG = ToDoListActivity.class.getSimpleName();
+//    private static final String TAG = ToDoListActivity.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
     @Override
@@ -31,8 +31,8 @@ public class ToDoListActivity extends AppCompatActivity implements
 
     @Override
     public void onToDoItemSelected(ToDoItem toDoItem) {
-//        Intent intent = new Intent(this, ToDoDetailActivity.class);
-//        intent.putExtra(EXTRA_TODO, toDoItem);
-//        startActivity(intent);
+        Intent intent = new Intent(this, ToDoDetailActivity.class);
+        intent.putExtra(EXTRA_TODO, toDoItem);
+        startActivity(intent);
     }
 }

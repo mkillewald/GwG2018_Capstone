@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,11 +29,9 @@ import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,12 +46,6 @@ public class EditGameFragment extends DialogFragment {
     private Bundle mValuesBundle;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
-    private DatabaseReference mGameRef;
-    private DatabaseReference mUserRef;
-    private DatabaseReference mShopRef;
-    private DatabaseReference mToDoRef;
-    private ValueEventListener mDeleteTodoListener;
-    private ValueEventListener mDeleteShopListener;
 
     public EditGameFragment() {
         // Required empty public constructor
@@ -86,19 +77,6 @@ public class EditGameFragment extends DialogFragment {
         FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mGameRef = mDatabaseReference
-                .child(Db.GAME)
-                .child(mUser.getUid())
-                .child(mGame.getId());
-        mUserRef = mDatabaseReference
-                .child(Db.USER)
-                .child(mUser.getUid());
-        mToDoRef = mDatabaseReference
-                .child(Db.TODO)
-                .child(mUser.getUid());
-        mShopRef = mDatabaseReference
-                .child(Db.SHOP)
-                .child(mUser.getUid());
     }
 
     @Override
@@ -328,14 +306,6 @@ public class EditGameFragment extends DialogFragment {
                 }
             });
 
-            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showDeleteAlert();
-                    getDialog().dismiss();
-                }
-            });
-
             bind.btnSave.setText(R.string.save_changes);
             bind.btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -345,7 +315,9 @@ public class EditGameFragment extends DialogFragment {
                     String userGameListPath = Db.getGameListPath(uid) + gameId;
 
 
-                    // Convert values Bundle to HashMap for Firebase call to updateChildren()
+                    // Convert mValuesBundle to HashMap for Firebase call to updateChildren()
+                    // used a bundle to catch values from the UI to preserve instance state,
+                    // perhaps this is not necessary
                     Map<String, Object> valuesMap = new HashMap<>();
 
                     for (String key : Db.GAME_STRINGS) {
@@ -373,19 +345,6 @@ public class EditGameFragment extends DialogFragment {
         }
 
         return rootView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        if (mDeleteTodoListener != null) {
-            mToDoRef.removeEventListener(mDeleteTodoListener);
-        }
-
-        if (mDeleteShopListener != null) {
-            mShopRef.removeEventListener(mDeleteShopListener);
-        }
     }
 
     private boolean textInputIsValid(String inputText) {
@@ -476,101 +435,5 @@ public class EditGameFragment extends DialogFragment {
 //        } else {
 //            // user is not signed in
         }
-    }
-
-    private void showDeleteAlert() {
-        if (mUser != null) {
-            //user is signed in
-
-            android.support.v7.app.AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new android.support.v7.app.AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new android.support.v7.app.AlertDialog.Builder(mContext);
-            }
-            builder.setTitle(getString(R.string.really_delete_game))
-                    .setMessage(getString(R.string.game_will_be_deleted))
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteAllGameData();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                            }
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-//        } else {
-//            // user is not signed in
-        }
-    }
-
-    private void deleteAllGameData() {
-        mDeleteTodoListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.getKey() != null) {
-                        String key = child.getKey();
-                        child.getRef().removeValue();
-                        mUserRef.child(Db.TODO_LIST).child(key).removeValue();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        mDeleteShopListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.getKey() != null) {
-                        String key = child.getKey();
-                        child.getRef().removeValue();
-                        mUserRef.child(Db.SHOP_LIST).child(key).removeValue();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        // delete game details
-        mGameRef.removeValue();
-
-        // remove user game_list entry
-        mUserRef.child(Db.GAME_LIST)
-                .child(mGame.getId())
-                .removeValue();
-
-        // delete repair logs and steps
-        mDatabaseReference
-                .child(Db.REPAIR)
-                .child(mUser.getUid())
-                .child(mGame.getId())
-                .removeValue();
-
-        // delete to do items
-        mToDoRef.orderByChild(Db.PARENT_ID)
-                .equalTo(mGame.getId())
-                .addValueEventListener(mDeleteTodoListener);
-
-        // delete shopping list items
-        mShopRef.orderByChild(Db.PARENT_ID)
-                .equalTo(mGame.getId())
-                .addValueEventListener(mDeleteShopListener);
     }
 }

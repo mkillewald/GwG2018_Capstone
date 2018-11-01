@@ -89,8 +89,6 @@ public class AddRepairFragment extends DialogFragment {
             }
         });
 
-        bind.btnDelete.setVisibility(View.GONE);
-
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

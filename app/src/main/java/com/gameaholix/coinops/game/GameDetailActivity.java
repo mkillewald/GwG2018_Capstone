@@ -1,8 +1,11 @@
 package com.gameaholix.coinops.game;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,7 +31,16 @@ import com.gameaholix.coinops.repair.RepairListFragment;
 import com.gameaholix.coinops.shopping.AddShoppingFragment;
 import com.gameaholix.coinops.shopping.ShoppingListFragment;
 import com.gameaholix.coinops.todo.AddToDoFragment;
+import com.gameaholix.coinops.todo.ToDoDetailActivity;
 import com.gameaholix.coinops.todo.ToDoListFragment;
+import com.gameaholix.coinops.utility.Db;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 import java.util.Vector;
@@ -43,9 +55,18 @@ public class GameDetailActivity extends AppCompatActivity implements
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
+    private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
     private Game mGame;
     private ViewPager mViewPager;
+    private FirebaseUser mUser;
+    private DatabaseReference mDatabaseReference;
+    private DatabaseReference mGameRef;
+    private DatabaseReference mUserRef;
+    private DatabaseReference mShopRef;
+    private DatabaseReference mToDoRef;
+    private ValueEventListener mDeleteTodoListener;
+    private ValueEventListener mDeleteShopListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +116,37 @@ public class GameDetailActivity extends AppCompatActivity implements
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mGameRef = mDatabaseReference
+                .child(Db.GAME)
+                .child(mUser.getUid())
+                .child(mGame.getId());
+        mUserRef = mDatabaseReference
+                .child(Db.USER)
+                .child(mUser.getUid());
+        mToDoRef = mDatabaseReference
+                .child(Db.TODO)
+                .child(mUser.getUid());
+        mShopRef = mDatabaseReference
+                .child(Db.SHOP)
+                .child(mUser.getUid());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mDeleteTodoListener != null) {
+            mToDoRef.removeEventListener(mDeleteTodoListener);
+        }
+
+        if (mDeleteShopListener != null) {
+            mShopRef.removeEventListener(mDeleteShopListener);
+        }
     }
 
     @Override
@@ -146,6 +198,8 @@ public class GameDetailActivity extends AppCompatActivity implements
             case R.id.menu_add_shopping:
                 showAddShoppingDialog();
                 return true;
+            case R.id.menu_delete_game:
+                showDeleteAlert();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -172,9 +226,10 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onToDoItemSelected(ToDoItem toDoItem) {
-//        Intent intent = new Intent(this, ToDoDetailActivity.class);
-//        intent.putExtra(EXTRA_TODO, toDoItem);
-//        startActivity(intent);
+        Intent intent = new Intent(this, ToDoDetailActivity.class);
+        intent.putExtra(EXTRA_TODO, toDoItem);
+        intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
+        startActivity(intent);
     }
 
     @Override
@@ -200,6 +255,100 @@ public class GameDetailActivity extends AppCompatActivity implements
         FragmentManager fm = getSupportFragmentManager();
         AddShoppingFragment fragment = AddShoppingFragment.newInstance(mGame.getId());
         fragment.show(fm, "fragment_add_shopping");
+    }
+
+    private void showDeleteAlert() {
+        if (mUser != null) {
+            //user is signed in
+
+            android.support.v7.app.AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new android.support.v7.app.AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new android.support.v7.app.AlertDialog.Builder(this);
+            }
+            builder.setTitle(getString(R.string.really_delete_game))
+                    .setMessage(getString(R.string.game_will_be_deleted))
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteAllGameData();
+                            finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+//        } else {
+//            // user is not signed in
+        }
+    }
+
+    private void deleteAllGameData() {
+        mDeleteTodoListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    if (child.getKey() != null) {
+                        String key = child.getKey();
+                        child.getRef().removeValue();
+                        mUserRef.child(Db.TODO_LIST).child(key).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        mDeleteShopListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    if (child.getKey() != null) {
+                        String key = child.getKey();
+                        child.getRef().removeValue();
+                        mUserRef.child(Db.SHOP_LIST).child(key).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        // delete game details
+        mGameRef.removeValue();
+
+        // remove user game_list entry
+        mUserRef.child(Db.GAME_LIST)
+                .child(mGame.getId())
+                .removeValue();
+
+        // delete repair logs and steps
+        mDatabaseReference
+                .child(Db.REPAIR)
+                .child(mUser.getUid())
+                .child(mGame.getId())
+                .removeValue();
+
+        // delete to do items
+        mToDoRef.orderByChild(Db.PARENT_ID)
+                .equalTo(mGame.getId())
+                .addValueEventListener(mDeleteTodoListener);
+
+        // delete shopping list items
+        mShopRef.orderByChild(Db.PARENT_ID)
+                .equalTo(mGame.getId())
+                .addValueEventListener(mDeleteShopListener);
     }
 
     // Hide keyboard after touch event occurs outside of EditText

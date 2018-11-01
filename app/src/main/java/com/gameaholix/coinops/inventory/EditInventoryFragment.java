@@ -207,14 +207,6 @@ public class EditInventoryFragment extends DialogFragment {
                 }
             });
 
-            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showDeleteAlert();
-                    getDialog().dismiss();
-                }
-            });
-
             bind.btnSave.setText(R.string.save_changes);
             bind.btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -131,8 +131,6 @@ public class AddInventoryFragment extends DialogFragment {
             }
         });
 
-        bind.btnDelete.setVisibility(View.GONE);
-
         bind.btnSave.setText(R.string.add_inventory_item);
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override

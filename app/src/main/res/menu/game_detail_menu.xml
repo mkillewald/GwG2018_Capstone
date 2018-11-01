@@ -25,4 +25,9 @@
         android:icon="@drawable/ic_playlist_add_white_24dp"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/menu_delete_game"
+        android:title="@string/delete_game"
+        app:showAsAction="never"/>
+
 </menu>

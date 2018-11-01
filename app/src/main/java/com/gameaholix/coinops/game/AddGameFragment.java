@@ -252,8 +252,6 @@ public class AddGameFragment extends DialogFragment {
             }
         });
 
-        bind.btnDelete.setVisibility(View.GONE);
-
         bind.btnSave.setText(R.string.add_game);
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override

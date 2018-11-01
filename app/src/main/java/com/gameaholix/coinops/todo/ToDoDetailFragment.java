@@ -30,6 +30,14 @@ public class ToDoDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static ToDoDetailFragment newInstance(ToDoItem toDoItem) {
+        Bundle args = new Bundle();
+        ToDoDetailFragment fragment = new ToDoDetailFragment();
+        args.putParcelable(EXTRA_TODO, toDoItem);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
