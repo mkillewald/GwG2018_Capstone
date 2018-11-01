@@ -124,16 +124,23 @@ public class AddInventoryFragment extends DialogFragment {
         });
 
         // Setup Buttons
-        Button addItemButton = bind.btnSave;
-        addItemButton.setText(R.string.add_inventory_item);
-        addItemButton.setOnClickListener(new View.OnClickListener() {
+        bind.btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDialog().dismiss();
+            }
+        });
+
+        bind.btnDelete.setVisibility(View.GONE);
+
+        bind.btnSave.setText(R.string.add_inventory_item);
+        bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Get text from EditTexts
                 mNewItem.setName(bind.etAddInventoryName.getText().toString().trim());
                 mNewItem.setDescription(bind.etAddInventoryDescription.getText().toString().trim());
                 addItem(mNewItem);
-                getDialog().dismiss();
             }
         });
 
@@ -185,6 +192,8 @@ public class AddInventoryFragment extends DialogFragment {
                     R.string.error_name_empty);
             return;
         }
+
+        getDialog().dismiss();
 
         // TODO: add checks for if item name already exists.
 

@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentAddShoppingBinding;
@@ -78,16 +77,23 @@ public class AddShoppingFragment extends DialogFragment {
                 inflater, R.layout.fragment_add_shopping, container, false);
         final View rootView = bind.getRoot();
 
-        // Setup Button
-        Button addButton = bind.btnSave;
-        addButton.setText(R.string.add_item);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        // Setup Buttons
+        bind.btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDialog().dismiss();
+            }
+        });
+
+        bind.btnDelete.setVisibility(View.GONE);
+
+        bind.btnSave.setText(R.string.add_item);
+        bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String name = bind.etEntry.getText().toString().trim();
                 Item newItem = new Item(null, mGameId, name);
                 addItem(newItem);
-                getDialog().dismiss();
             }
         });
 
@@ -134,6 +140,8 @@ public class AddShoppingFragment extends DialogFragment {
                     R.string.error_item_name_empty);
             return;
         }
+
+        getDialog().dismiss();
 
         // TODO: add checks for if item name already exists.
 

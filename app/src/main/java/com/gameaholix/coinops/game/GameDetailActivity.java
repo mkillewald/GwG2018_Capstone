@@ -135,7 +135,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
-                // handled in GameDetailFragment
+                // handled by GameDetailFragment
                 return false;
             case R.id.menu_add_repair:
                 showAddRepairDialog();

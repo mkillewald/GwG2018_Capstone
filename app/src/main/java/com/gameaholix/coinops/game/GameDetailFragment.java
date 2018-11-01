@@ -1,14 +1,11 @@
 package com.gameaholix.coinops.game;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -31,17 +28,10 @@ public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
-    private Context mContext;
     private Game mGame;
-    private DatabaseReference mDatabaseReference;
     private DatabaseReference mGameRef;
-    private DatabaseReference mUserRef;
-    private DatabaseReference mShopRef;
-    private DatabaseReference mToDoRef;
     private FirebaseUser mUser;
     private ValueEventListener mGameListener;
-    private ValueEventListener mDeleteTodoListener;
-    private ValueEventListener mDeleteShopListener;
     private OnFragmentInteractionListener mListener;
 
     public GameDetailFragment() {
@@ -73,20 +63,11 @@ public class GameDetailFragment extends Fragment {
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mGameRef = mDatabaseReference
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        mGameRef = databaseReference
                 .child(Db.GAME)
                 .child(mUser.getUid())
                 .child(mGame.getId());
-        mUserRef = mDatabaseReference
-                .child(Db.USER)
-                .child(mUser.getUid());
-        mToDoRef = mDatabaseReference
-                .child(Db.TODO)
-                .child(mUser.getUid());
-        mShopRef = mDatabaseReference
-                .child(Db.SHOP)
-                .child(mUser.getUid());
     }
 
     @Override
@@ -163,13 +144,6 @@ public class GameDetailFragment extends Fragment {
             // read list of games
             mGameRef.addValueEventListener(mGameListener);
 
-            // Setup Delete Button
-            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showDeleteAlert();
-                }
-            });
 //        } else {
 //            // user is not signed in
         }
@@ -183,14 +157,6 @@ public class GameDetailFragment extends Fragment {
 
         if (mGameListener != null) {
             mGameRef.removeEventListener(mGameListener);
-        }
-
-        if (mDeleteTodoListener != null) {
-            mToDoRef.removeEventListener(mDeleteTodoListener);
-        }
-
-        if (mDeleteShopListener != null) {
-            mShopRef.removeEventListener(mDeleteShopListener);
         }
     }
 
@@ -209,7 +175,6 @@ public class GameDetailFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -228,109 +193,19 @@ public class GameDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
-                Intent intent = new Intent(getContext(), EditGameActivity.class);
-                intent.putExtra(EXTRA_GAME, mGame);
-                startActivity(intent);
+                showEditGameDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void showDeleteAlert() {
-        if (mUser != null) {
-            //user is signed in
-
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new AlertDialog.Builder(mContext);
-            }
-            builder.setTitle(getString(R.string.really_delete_game))
-                    .setMessage(getString(R.string.game_will_be_deleted))
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteAllGameData();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                            }
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-//        } else {
-//            // user is not signed in
+    private void showEditGameDialog() {
+        if (getActivity() != null) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            EditGameFragment fragment = EditGameFragment.newInstance(mGame);
+            fragment.show(fm, "fragment_edit_game");
         }
-    }
-
-    private void deleteAllGameData() {
-        mDeleteTodoListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.getKey() != null) {
-                        String key = child.getKey();
-                        child.getRef().removeValue();
-                        mUserRef.child(Db.TODO_LIST).child(key).removeValue();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        mDeleteShopListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.getKey() != null) {
-                        String key = child.getKey();
-                        child.getRef().removeValue();
-                        mUserRef.child(Db.SHOP_LIST).child(key).removeValue();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        // delete game details
-        mGameRef.removeValue();
-
-        // remove user game_list entry
-        mUserRef.child(Db.GAME_LIST)
-                .child(mGame.getId())
-                .removeValue();
-
-        // delete repair logs and steps
-        mDatabaseReference
-                .child(Db.REPAIR)
-                .child(mUser.getUid())
-                .child(mGame.getId())
-                .removeValue();
-
-        // delete to do items
-        mToDoRef.orderByChild(Db.PARENT_ID)
-                .equalTo(mGame.getId())
-                .addValueEventListener(mDeleteTodoListener);
-
-        // delete shopping list items
-        mShopRef.orderByChild(Db.PARENT_ID)
-                .equalTo(mGame.getId())
-                .addValueEventListener(mDeleteShopListener);
     }
 
     /**

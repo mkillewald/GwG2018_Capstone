@@ -128,7 +128,16 @@ public class AddToDoFragment extends DialogFragment {
             }
         });
 
-        // Setup Button
+        // Setup Buttons
+        bind.btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDialog().dismiss();
+            }
+        });
+
+        bind.btnDelete.setVisibility(View.GONE);
+
         bind.btnSave.setText(R.string.add_item);
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,7 +146,6 @@ public class AddToDoFragment extends DialogFragment {
                 mNewToDoItem.setName(bind.etTodoName.getText().toString().trim());
                 mNewToDoItem.setDescription(bind.etTodoDescription.getText().toString().trim());
                 addItem(mNewToDoItem);
-                getDialog().dismiss();
             }
         });
 
@@ -190,6 +198,8 @@ public class AddToDoFragment extends DialogFragment {
                     R.string.error_item_name_empty);
             return;
         }
+
+        getDialog().dismiss();
 
         // TODO: add checks for if item name already exists.
 

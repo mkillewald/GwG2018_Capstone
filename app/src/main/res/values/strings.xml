@@ -45,10 +45,11 @@
     <string name="delete_inventory_item">Delete Part</string>
     <string name="new_trouble_report">New Trouble Report</string>
     <string name="add_repair_log">Add Log</string>
-    <string name="delete_repair_entry">Delete Log Entry</string>
+    <string name="delete_repair_log">Delete Log</string>
     <string name="add_repair_step">Add Step</string>
     <string name="delete_repair_step">Delete Step</string>
     <string name="add_item">Add Item</string>
+    <string name="delete_item">Delete Item</string>
     <string name="add_todo_item">Add To Do Item</string>
 
     <!-- Labels -->

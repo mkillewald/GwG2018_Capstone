@@ -1,11 +1,14 @@
 package com.gameaholix.coinops.inventory;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -32,7 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditInventoryFragment extends Fragment {
+public class EditInventoryFragment extends DialogFragment {
     private static final String TAG = EditInventoryFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
     private static final String EXTRA_VALUES = "CoinOpsInventoryValuesToUpdate";
@@ -42,6 +45,7 @@ public class EditInventoryFragment extends Fragment {
     private Bundle mValuesBundle;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
+    private DatabaseReference mInventoryRef;
 
     public EditInventoryFragment() {
         // Required empty public constructor
@@ -71,8 +75,12 @@ public class EditInventoryFragment extends Fragment {
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mUser = firebaseAuth.getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mInventoryRef = mDatabaseReference
+                .child(Db.INVENTORY)
+                .child(mUser.getUid())
+                .child(mItem.getId());
     }
 
     @Override
@@ -191,7 +199,22 @@ public class EditInventoryFragment extends Fragment {
                 public void onNothingSelected(AdapterView<?> adapterView) {}
             });
 
-            // Setup Button
+            // Setup Buttons
+            bind.btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getDialog().dismiss();
+                }
+            });
+
+            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDeleteAlert();
+                    getDialog().dismiss();
+                }
+            });
+
             bind.btnSave.setText(R.string.save_changes);
             bind.btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -214,7 +237,7 @@ public class EditInventoryFragment extends Fragment {
 
                     for (String key : Db.INVENTORY_INTS) {
                         if (mValuesBundle.containsKey(key)) {
-                            valuesMap.put(inventoryPath + key, mValuesBundle.getInt(key));
+                            valuesMap.put(inventoryPath + "/" + key, mValuesBundle.getInt(key));
                         }
                     }
 
@@ -255,6 +278,20 @@ public class EditInventoryFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        // set width and height of this DialogFragment, code block used from
+        // https://stackoverflow.com/questions/12478520/how-to-set-dialogfragments-width-and-height
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        if (params != null) {
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        }
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
@@ -289,5 +326,51 @@ public class EditInventoryFragment extends Fragment {
 //        } else {
 //            // user is not signed in
         }
+    }
+
+    private void showDeleteAlert() {
+        if (mUser != null) {
+            // user is signed in
+
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(mContext);
+            }
+            builder.setTitle(getString(R.string.really_delete_inventory_item))
+                    .setMessage(getString(R.string.inventory_item_will_be_deleted))
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteItemData();
+                            if (getActivity() != null) {
+                                getActivity().finish();
+                            }
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+//        } else {
+//            // user is not signed in
+        }
+    }
+
+    private void deleteItemData() {
+        // delete inventory item
+        mInventoryRef.removeValue();
+
+        // delete inventory list entry
+        mDatabaseReference
+                .child(Db.USER)
+                .child(mUser.getUid())
+                .child(Db.INVENTORY_LIST)
+                .child(mItem.getId())
+                .removeValue();
     }
 }

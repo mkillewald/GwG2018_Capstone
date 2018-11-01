@@ -244,16 +244,23 @@ public class AddGameFragment extends DialogFragment {
         bind.tvMonitorDetails.setOnClickListener(monitorDetailsListener);
         bind.ibMonitorDetailsArrow.setOnClickListener(monitorDetailsListener);
 
-        // Setup Button
-        Button addGameButton = bind.btnSave;
-        addGameButton.setText(R.string.add_game);
-        addGameButton.setOnClickListener(new View.OnClickListener() {
+        // Setup Buttons
+        bind.btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDialog().dismiss();
+            }
+        });
+
+        bind.btnDelete.setVisibility(View.GONE);
+
+        bind.btnSave.setText(R.string.add_game);
+        bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // get text from EditText
                 mNewGame.setName(bind.etGameName.getText().toString().trim());
                 addGame(mNewGame);
-                getDialog().dismiss();
             }
         });
 
@@ -323,6 +330,8 @@ public class AddGameFragment extends DialogFragment {
                     R.string.error_name_empty);
             return;
         }
+
+        getDialog().dismiss();
 
         // TODO: add checks for if game name already exists.
 
