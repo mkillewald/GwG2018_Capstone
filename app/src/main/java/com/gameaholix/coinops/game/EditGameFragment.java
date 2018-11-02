@@ -310,6 +310,11 @@ public class EditGameFragment extends DialogFragment {
             bind.btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    String nameEntry = bind.etGameName.getText().toString().trim();
+                    if (textInputIsValid(nameEntry)) {
+                        mValuesBundle.putString(Db.NAME, nameEntry);
+                    }
+
                     // Get database paths from helper class
                     String gamePath = Db.getGamePath(uid) + gameId;
                     String userGameListPath = Db.getGameListPath(uid) + gameId;

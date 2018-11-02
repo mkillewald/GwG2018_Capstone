@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -43,6 +42,7 @@ public class RepairDetailFragment extends Fragment {
 
     private Context mContext;
     private Item mRepairLog;
+    private String mGameId;
     private ArrayList<Item> mRepairSteps;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
@@ -79,10 +79,18 @@ public class RepairDetailFragment extends Fragment {
             mRepairSteps = savedInstanceState.getParcelableArrayList(EXTRA_STEP_LIST);
         }
 
+        mGameId = mRepairLog.getParentId();
+
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mUser = firebaseAuth.getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mRepairRef = mDatabaseReference
+                .child(Db.REPAIR)
+                .child(mUser.getUid())
+                .child(mGameId)
+                .child(mRepairLog.getId());
+        mStepRef = mRepairRef.child(Db.STEPS);
     }
 
     @Override
@@ -95,21 +103,13 @@ public class RepairDetailFragment extends Fragment {
         final View rootView = mBind.getRoot();
 
         if (mUser != null) {
-            // user is signed in
-            final String uid = mUser.getUid();
-            final String gameId = mRepairLog.getParentId();
-            String logId = mRepairLog.getId();
-
-            // Setup database references
-            mRepairRef = mDatabaseReference.child(Db.REPAIR).child(uid).child(gameId).child(logId);
-            mStepRef = mRepairRef.child(Db.STEPS);
+            // user is signed in;
 
             // Setup Repair Step RecyclerView
-            final RecyclerView recyclerView = rootView.findViewById(R.id.rv_repair_steps);
             mStepAdapter = new StepAdapter( mContext, null );
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-            recyclerView.setLayoutManager(linearLayoutManager);
-            recyclerView.setAdapter(mStepAdapter);
+            mBind.rvRepairSteps.setLayoutManager(linearLayoutManager);
+            mBind.rvRepairSteps.setAdapter(mStepAdapter);
             mStepAdapter.setRepairSteps(mRepairSteps);
 
             // Setup event listeners
@@ -123,7 +123,7 @@ public class RepairDetailFragment extends Fragment {
                         Log.d(TAG, "Error: Repair log details not found");
                     } else {
                         mRepairLog.setId(id);
-                        mRepairLog.setParentId(gameId);
+                        mRepairLog.setParentId(mGameId);
 
                         mBind.tvRepairDescription.setText(mRepairLog.getName());
                     }
@@ -245,18 +245,11 @@ public class RepairDetailFragment extends Fragment {
         // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
-
-            final DatabaseReference stepRef = mDatabaseReference
-                    .child(Db.REPAIR)
-                    .child(uid)
-                    .child(mRepairLog.getParentId())
-                    .child(mRepairLog.getId())
-                    .child(Db.STEPS);
-            final String stepId = stepRef.push().getKey();
+            String uid = mUser.getUid();
+            String stepId = mStepRef.push().getKey();
 
             // Get database paths from helper class
-            String stepPath = Db.getStepsPath(uid, mRepairLog.getParentId(), mRepairLog.getId()) + stepId;
+            String stepPath = Db.getStepsPath(uid, mGameId, mRepairLog.getId()) + stepId;
 //            String stepListPath = Db.getStepListPath(uid, mGameId, mLogId, stepId);
 
             Map<String, Object> valuesToAdd = new HashMap<>();

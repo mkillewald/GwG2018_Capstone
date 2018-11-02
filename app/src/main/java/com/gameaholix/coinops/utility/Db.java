@@ -37,6 +37,7 @@ public class Db {
     public static final String MONITOR_TECH = "monitorTech";
     public static final String MONITOR_BEAM = "monitorBeam";
     public static final String DESCRIPTION = "description";
+    public static final String PRIORITY = "priority";
 
     public static final String[] GAME_STRINGS = { Db.NAME };
     public static final String[] GAME_INTS = {
@@ -56,9 +57,9 @@ public class Db {
 //    public static final String[] REPAIR_STRINGS = {};
 //    public static final String[] REPAIR_INTS = {};
 
-//    public static final String[] TO_DO_STRINGS = {};
-//    public static final String[] TO_DO_INTS = {};
-//
+    public static final String[] TO_DO_STRINGS = {Db.NAME, Db.DESCRIPTION};
+    public static final String[] TO_DO_INTS = {Db.PRIORITY};
+
 //    public static final String[] SHOP_STRINGS = {};
 //    public static final String[] SHOP_INTS = {};
 

@@ -5,7 +5,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -64,7 +64,8 @@ public class AddToDoFragment extends DialogFragment {
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
             }
-            mNewToDoItem = new ToDoItem();
+            mNewToDoItem = new ToDoItem(mGameId);
+
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
             mNewToDoItem = savedInstanceState.getParcelable(EXTRA_TODO);
@@ -113,18 +114,8 @@ public class AddToDoFragment extends DialogFragment {
         bind.rgPriority.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                switch(checkedId) {
-                    case R.id.rb_priority_high:
-                        mNewToDoItem.setPriority(2);
-                        break;
-                    case R.id.rb_priority_medium:
-                        mNewToDoItem.setPriority(1);
-                        break;
-                    default:
-                    case R.id.rb_priority_low:
-                        mNewToDoItem.setPriority(0);
-                        break;
-                }
+                RadioButton checkedButton = radioGroup.findViewById(checkedId);
+                mNewToDoItem.setPriority(radioGroup.indexOfChild(checkedButton));
             }
         });
 

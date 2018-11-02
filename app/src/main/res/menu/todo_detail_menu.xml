@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_edit_inventory"
+        android:id="@+id/menu_edit_todo"
         android:title="@string/edit"
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_delete_inventory"
-        android:title="@string/delete_inventory_item"
+        android:id="@+id/menu_delete_todo"
+        android:title="@string/delete_item"
         app:showAsAction="never" />
 
 </menu>

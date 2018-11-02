@@ -20,6 +20,10 @@ public class Item implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue()
     }
 
+    public Item(String parentId) {
+        this.parentId = parentId;
+    }
+
     public Item(String id, String name) {
         this.id = id;
         this.name = name;

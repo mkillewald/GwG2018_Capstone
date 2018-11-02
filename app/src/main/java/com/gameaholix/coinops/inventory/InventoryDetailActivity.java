@@ -49,6 +49,10 @@ public class InventoryDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_inventory:
+                // handled by InventoryDetailFragment
+                return false;
+            case R.id.menu_delete_inventory:
+                // handled by InventoryDetailFragment
                 return false;
             default:
                 return super.onOptionsItemSelected(item);

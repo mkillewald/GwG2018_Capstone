@@ -1,14 +1,11 @@
 package com.gameaholix.coinops.inventory;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -45,7 +42,6 @@ public class EditInventoryFragment extends DialogFragment {
     private Bundle mValuesBundle;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
-    private DatabaseReference mInventoryRef;
 
     public EditInventoryFragment() {
         // Required empty public constructor
@@ -77,10 +73,6 @@ public class EditInventoryFragment extends DialogFragment {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mInventoryRef = mDatabaseReference
-                .child(Db.INVENTORY)
-                .child(mUser.getUid())
-                .child(mItem.getId());
     }
 
     @Override
@@ -211,6 +203,16 @@ public class EditInventoryFragment extends DialogFragment {
             bind.btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    String nameEntry = bind.etAddInventoryName.getText().toString().trim();
+                    if (textInputIsValid(nameEntry)) {
+                        mValuesBundle.putString(Db.NAME, nameEntry);
+                    }
+
+                    String descriptionEntry = bind.etAddInventoryDescription.getText().toString().trim();
+                    if (textInputIsValid(descriptionEntry)) {
+                        mValuesBundle.putString(Db.DESCRIPTION, descriptionEntry);
+                    }
+
                     // Get database paths from helper class
                     String inventoryPath = Db.getInventoryPath(uid) + id;
                     String userInventoryListPath = Db.getInventoryListPath(uid) + id;
@@ -242,23 +244,6 @@ public class EditInventoryFragment extends DialogFragment {
         }
 
         return rootView;
-    }
-
-    private boolean textInputIsValid(String inputText) {
-        boolean result = true;
-
-        // TODO: possibly add more validation checks, and return false if any one of them fails.
-        if (TextUtils.isEmpty(inputText)) {
-            result = false;
-        }
-
-        return result;
-    }
-
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -294,6 +279,23 @@ public class EditInventoryFragment extends DialogFragment {
         super.onDetach();
     }
 
+    private boolean textInputIsValid(String inputText) {
+        boolean result = true;
+
+        // TODO: possibly add more validation checks, and return false if any one of them fails.
+        if (TextUtils.isEmpty(inputText)) {
+            result = false;
+        }
+
+        return result;
+    }
+
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) view
+                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     private void updateItem(Map<String, Object> valuesToUpdate) {
         // TODO: add checks for if game name already exists.
 
@@ -318,51 +320,5 @@ public class EditInventoryFragment extends DialogFragment {
 //        } else {
 //            // user is not signed in
         }
-    }
-
-    private void showDeleteAlert() {
-        if (mUser != null) {
-            // user is signed in
-
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new AlertDialog.Builder(mContext);
-            }
-            builder.setTitle(getString(R.string.really_delete_inventory_item))
-                    .setMessage(getString(R.string.inventory_item_will_be_deleted))
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteItemData();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                            }
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-//        } else {
-//            // user is not signed in
-        }
-    }
-
-    private void deleteItemData() {
-        // delete inventory item
-        mInventoryRef.removeValue();
-
-        // delete inventory list entry
-        mDatabaseReference
-                .child(Db.USER)
-                .child(mUser.getUid())
-                .child(Db.INVENTORY_LIST)
-                .child(mItem.getId())
-                .removeValue();
     }
 }

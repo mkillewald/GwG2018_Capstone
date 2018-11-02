@@ -15,6 +15,10 @@ public class ToDoItem extends Item implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue()
     }
 
+    public ToDoItem(String parentId) {
+        super(parentId);
+    }
+
     public ToDoItem(String id, String parentId, String name) {
         super(id, parentId, name);
     }
