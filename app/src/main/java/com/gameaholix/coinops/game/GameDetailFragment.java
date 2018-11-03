@@ -5,7 +5,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -193,18 +192,10 @@ public class GameDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
-                showEditGameDialog();
+                mListener.onEditButtonPressed(mGame);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void showEditGameDialog() {
-        if (getActivity() != null) {
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-            EditGameFragment fragment = EditGameFragment.newInstance(mGame);
-            fragment.show(fm, "fragment_edit_game");
         }
     }
 
@@ -220,6 +211,7 @@ public class GameDetailFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onGameNameChanged(String name);
+        void onEditButtonPressed(Game game);
     }
 
 

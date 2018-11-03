@@ -5,7 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -34,16 +34,16 @@ import java.util.Map;
 
 // TODO: finish this
 
-public class EditToDoFragment extends DialogFragment {
+public class EditToDoFragment extends Fragment {
     private static final String TAG = EditToDoFragment.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
     private static final String EXTRA_VALUES = "CoinOpsToDoValuesToUpdate";
 
-    private Context mContext;
     private ToDoItem mToDoItem;
     private Bundle mValuesBundle;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
+    private OnFragmentInteractionListener mListener;
 
     public EditToDoFragment() {
         // Required empty public constructor
@@ -178,7 +178,7 @@ public class EditToDoFragment extends DialogFragment {
             bind.btnCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getDialog().dismiss();
+                    mListener.onEditCompletedOrCancelled();
                 }
             });
 
@@ -221,6 +221,7 @@ public class EditToDoFragment extends DialogFragment {
                     }
 
                     updateItem(valuesMap);
+                    mListener.onEditCompletedOrCancelled();
                 }
             });
 
@@ -241,28 +242,20 @@ public class EditToDoFragment extends DialogFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        // set width and height of this DialogFragment, code block used from
-        // https://stackoverflow.com/questions/12478520/how-to-set-dialogfragments-width-and-height
-        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-        if (params != null) {
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
-        }
-    }
-
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     private boolean textInputIsValid(String inputText) {
@@ -299,12 +292,22 @@ public class EditToDoFragment extends DialogFragment {
                     }
                 }
             });
-
-            if (getActivity() != null) {
-                getActivity().finish();
-            }
 //        } else {
 //            // user is not signed in
         }
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        void onEditCompletedOrCancelled();
     }
 }

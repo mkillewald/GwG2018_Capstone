@@ -6,18 +6,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.gameaholix.coinops.R;
-
-import java.util.List;
-
-// TODO: finish this
+import com.gameaholix.coinops.game.PlaceholderFragment;
+import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.repair.RepairListFragment;
+import com.gameaholix.coinops.shopping.ShoppingListFragment;
+import com.gameaholix.coinops.todo.ToDoListFragment;
 
 public class GameDetailPagerAdapter extends FragmentPagerAdapter {
     private String[] mTabTitles;
-    private List<Fragment> mFragments;
+    private Game mGame;
 
-    public GameDetailPagerAdapter(Context context, FragmentManager fm, List<Fragment> fragments) {
+    public GameDetailPagerAdapter(Context context, FragmentManager fm, Game game) {
         super(fm);
-        this.mFragments = fragments;
+        this.mGame = game;
         this.mTabTitles = context.getResources().getStringArray(R.array.game_details_tab_titles);
     }
 
@@ -28,7 +29,18 @@ public class GameDetailPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return mFragments.get(position);
+
+        switch (position) {
+            default:
+            case 0:
+                return PlaceholderFragment.newInstance(mGame);
+            case 1:
+                return RepairListFragment.newInstance(mGame.getId());
+            case 2:
+                return ToDoListFragment.newInstance(mGame.getId());
+            case 3:
+                return ShoppingListFragment.newInstance(mGame.getId());
+        }
     }
 
     @Override

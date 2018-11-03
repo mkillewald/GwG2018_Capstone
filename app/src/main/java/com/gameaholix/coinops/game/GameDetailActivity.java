@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -42,14 +43,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
-import java.util.Vector;
-
 public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
         RepairListFragment.OnFragmentInteractionListener,
         ToDoListFragment.OnFragmentInteractionListener,
-        ShoppingListFragment.OnFragmentInteractionListener {
+        ShoppingListFragment.OnFragmentInteractionListener,
+        EditGameFragment.OnFragmentInteractionListener {
 
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
@@ -87,17 +86,12 @@ public class GameDetailActivity extends AppCompatActivity implements
             setTitle(mGame.getName());
         }
 
-        List<Fragment> fragments = new Vector<>();
-
-        fragments.add(GameDetailFragment.newInstance(mGame));
-        fragments.add(RepairListFragment.newInstance(mGame.getId()));
-        fragments.add(ToDoListFragment.newInstance(mGame.getId()));
-        fragments.add(ShoppingListFragment.newInstance(mGame.getId()));
+//        mShowEditMenu = true;
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager = findViewById(R.id.viewpager);
         mViewPager.setAdapter(new GameDetailPagerAdapter(this, getSupportFragmentManager(),
-                fragments));
+                mGame));
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -184,6 +178,20 @@ public class GameDetailActivity extends AppCompatActivity implements
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (mViewPager.getCurrentItem() == 0) {
+
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
+            if (currentFragment instanceof EditGameFragment) {
+                menu.findItem(R.id.menu_edit_game).setVisible(false);
+            } else {
+                menu.findItem(R.id.menu_edit_game).setVisible(true);
+            }
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
@@ -263,7 +271,8 @@ public class GameDetailActivity extends AppCompatActivity implements
 
             android.support.v7.app.AlertDialog.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new android.support.v7.app.AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+                builder = new android.support.v7.app.AlertDialog.Builder(this,
+                        android.R.style.Theme_Material_Dialog_Alert);
             } else {
                 builder = new android.support.v7.app.AlertDialog.Builder(this);
             }
@@ -372,5 +381,27 @@ public class GameDetailActivity extends AppCompatActivity implements
             }
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public void onEditButtonPressed(Game game) {
+        invalidateOptionsMenu();
+
+        // replace GameDetailFragment with EditGameFragment
+        Fragment editGameFragment = EditGameFragment.newInstance(game);
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_placeholder, editGameFragment);
+        ft.commit();
+    }
+
+    @Override
+    public void onEditCompletedOrCancelled() {
+        invalidateOptionsMenu();
+
+        // replace EditGameFragment with GameDetailFragment
+        Fragment gameDetailFragment = GameDetailFragment.newInstance(mGame);
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_placeholder, gameDetailFragment);
+        ft.commit();
     }
 }

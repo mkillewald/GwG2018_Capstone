@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +36,7 @@ public class InventoryDetailFragment extends Fragment {
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mInventoryRef;
     private ValueEventListener mInventoryListener;
+    private OnFragmentInteractionListener mListener;
 
     public InventoryDetailFragment() {
         // Required empty public constructor
@@ -136,7 +136,7 @@ public class InventoryDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_inventory:
-                showEditInventoryDialog();
+                mListener.onEditButtonPressed(mItem);
                 return true;
             case R.id.menu_delete_inventory:
                 showDeleteAlert();
@@ -157,20 +157,19 @@ public class InventoryDetailFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
         mInventoryRef.removeEventListener(mInventoryListener);
-    }
-
-    private void showEditInventoryDialog() {
-        if (getActivity() != null) {
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-            EditInventoryFragment fragment = EditInventoryFragment.newInstance(mItem);
-            fragment.show(fm, "fragment_edit_inventory");
-        }
     }
 
     private void showDeleteAlert() {
@@ -217,5 +216,19 @@ public class InventoryDetailFragment extends Fragment {
                 .child(Db.INVENTORY_LIST)
                 .child(mItem.getId())
                 .removeValue();
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        void onEditButtonPressed(InventoryItem inventoryItem);
     }
 }
