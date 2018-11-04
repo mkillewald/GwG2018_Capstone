@@ -30,6 +30,7 @@ import com.gameaholix.coinops.repair.AddRepairFragment;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.repair.RepairListFragment;
 import com.gameaholix.coinops.shopping.AddShoppingFragment;
+import com.gameaholix.coinops.shopping.EditShoppingFragment;
 import com.gameaholix.coinops.shopping.ShoppingListFragment;
 import com.gameaholix.coinops.todo.AddToDoFragment;
 import com.gameaholix.coinops.todo.ToDoDetailActivity;
@@ -242,9 +243,10 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onShoppingItemSelected(Item shoppingItem) {
-//        Intent intent = new Intent(this, ShoppingDetailActivity.class);
-//        intent.putExtra(EXTRA_SHOPPING, shoppingItem);
-//        startActivity(intent);
+        // show edit shopping dialog
+        FragmentManager fm = getSupportFragmentManager();
+        EditShoppingFragment fragment = EditShoppingFragment.newInstance(shoppingItem);
+        fragment.show(fm, "fragment_edit_shopping");
     }
 
     private void showAddRepairDialog() {
@@ -385,23 +387,23 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditButtonPressed(Game game) {
-        invalidateOptionsMenu();
-
         // replace GameDetailFragment with EditGameFragment
         Fragment editGameFragment = EditGameFragment.newInstance(game);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, editGameFragment);
         ft.commit();
+
+        invalidateOptionsMenu();
     }
 
     @Override
     public void onEditCompletedOrCancelled() {
-        invalidateOptionsMenu();
-
         // replace EditGameFragment with GameDetailFragment
         Fragment gameDetailFragment = GameDetailFragment.newInstance(mGame);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, gameDetailFragment);
         ft.commit();
+
+        invalidateOptionsMenu();
     }
 }

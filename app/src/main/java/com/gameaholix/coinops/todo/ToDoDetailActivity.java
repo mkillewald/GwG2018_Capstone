@@ -43,7 +43,7 @@ public class ToDoDetailActivity extends AppCompatActivity implements
         if (!TextUtils.isEmpty(mGameName)) {
             setTitle(mGameName);
         } else {
-            setTitle(mToDoItem.getName());
+            setTitle(R.string.to_do_details_title);
         }
 
         ToDoDetailFragment fragment = ToDoDetailFragment.newInstance(mToDoItem);
@@ -94,21 +94,21 @@ public class ToDoDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditButtonPressed(ToDoItem toDoItem) {
-        invalidateOptionsMenu();
-
         // replace ToDoDetailFragment with EditToDoFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, EditToDoFragment.newInstance(toDoItem));
         ft.commit();
+
+        invalidateOptionsMenu();
     }
 
     @Override
     public void onEditCompletedOrCancelled() {
-        invalidateOptionsMenu();
-
         // replace EditToDoFragment with ToDoDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mToDoItem));
         ft.commit();
+
+        invalidateOptionsMenu();
     }
 }

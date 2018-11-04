@@ -1,6 +1,6 @@
 package com.gameaholix.coinops.shopping;
 
-import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -10,7 +10,6 @@ import com.gameaholix.coinops.model.Item;
 public class ShoppingListActivity extends AppCompatActivity implements
         ShoppingListFragment.OnFragmentInteractionListener {
     private static final String TAG = ShoppingListActivity.class.getSimpleName();
-    private static final String EXTRA_SHOPPING = "com.gameaholix.coinops.model.Item";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +30,8 @@ public class ShoppingListActivity extends AppCompatActivity implements
 
     @Override
     public void onShoppingItemSelected(Item shoppingItem) {
-//        Intent intent = new Intent(this, ShoppingDetailActivity.class);
-//        intent.putExtra(EXTRA_SHOPPING, shoppingItem);
-//        startActivity(intent);
+        FragmentManager fm = getSupportFragmentManager();
+        EditShoppingFragment fragment = EditShoppingFragment.newInstance(shoppingItem);
+        fragment.show(fm, "fragment_edit_shopping");
     }
 }

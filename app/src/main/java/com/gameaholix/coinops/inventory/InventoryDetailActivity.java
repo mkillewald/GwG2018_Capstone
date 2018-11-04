@@ -82,22 +82,22 @@ public class InventoryDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditButtonPressed(InventoryItem inventoryItem) {
-        invalidateOptionsMenu();
-
         // replace InventoryDetailFragment with EditInventoryFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, EditInventoryFragment.newInstance(inventoryItem));
         ft.commit();
+
+        invalidateOptionsMenu();
     }
 
     @Override
     public void onEditCompletedOrCancelled() {
-        invalidateOptionsMenu();
-
         // replace EditInventoryFragment with InventoryDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance(mInventoryItem));
         ft.commit();
+
+        invalidateOptionsMenu();
     }
 
 }

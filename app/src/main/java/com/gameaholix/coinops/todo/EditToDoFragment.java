@@ -32,8 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: finish this
-
 public class EditToDoFragment extends Fragment {
     private static final String TAG = EditToDoFragment.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";

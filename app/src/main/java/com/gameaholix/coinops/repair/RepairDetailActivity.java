@@ -3,6 +3,7 @@ package com.gameaholix.coinops.repair;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -78,4 +79,24 @@ public class RepairDetailActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(event);
     }
+
+//    @Override
+//    public void onEditButtonPressed(ToDoItem toDoItem) {
+//        // replace ToDoDetailFragment with EditToDoFragment
+//        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//        ft.replace(R.id.fragment_container, EditToDoFragment.newInstance(toDoItem));
+//        ft.commit();
+//
+//        invalidateOptionsMenu();
+//    }
+//
+//    @Override
+//    public void onEditCompletedOrCancelled() {
+//        // replace EditToDoFragment with ToDoDetailFragment
+//        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//        ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mToDoItem));
+//        ft.commit();
+//
+//        invalidateOptionsMenu();
+//    }
 }

@@ -20,7 +20,7 @@
     <string name="add_repair_step_title">Add Repair Step</string>
 
     <string name="to_do_list_title">Combined To Do List</string>
-    <string name="to_do_details_title">Entry Details</string>
+    <string name="to_do_details_title">Item Details</string>
     <string name="add_to_do_title">Add To Do Item</string>
     <string name="edit_to_do_title">Edit To Do Item</string>
 
@@ -214,8 +214,5 @@
 
     <!-- Content Descriptions -->
     <string name="next_arrow">more information</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

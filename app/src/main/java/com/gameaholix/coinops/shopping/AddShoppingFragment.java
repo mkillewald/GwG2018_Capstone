@@ -95,6 +95,8 @@ public class AddShoppingFragment extends DialogFragment {
             }
         });
 
+        bind.btnDelete.setVisibility(View.GONE);
+
         return rootView;
     }
 

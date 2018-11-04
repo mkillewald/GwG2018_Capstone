@@ -1,7 +1,5 @@
 package com.gameaholix.coinops.utility;
 
-// TODO: flatten and denormalize data. Steps I'm looking at you.
-
 public class Db {
 
     // Database nodes

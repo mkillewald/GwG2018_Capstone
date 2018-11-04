@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.ShoppingAdapter;
-import com.gameaholix.coinops.databinding.FragmentListWithButtonBinding;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,17 +33,13 @@ public class ShoppingListFragment extends Fragment implements
     private static final String EXTRA_SHOPPING_LIST = "CoinOpsShoppingList";
     private static final String EXTRA_SHOW_GLOBAL = "CoinOpsShowAddButton";
 
-    private Context mContext;
     private String mGameId;
     private boolean mShowGlobalList;
     private ShoppingAdapter mShoppingAdapter;
     private ArrayList<Item> mShoppingList;
-    private DatabaseReference mDatabaseReference;
-    private DatabaseReference mShopRef;
     private DatabaseReference mShopListRef;
     private FirebaseUser mUser;
     private ValueEventListener mShoppingListener;
-    private FragmentListWithButtonBinding mBind;
     private OnFragmentInteractionListener mListener;
 
     public ShoppingListFragment() {
@@ -85,19 +80,16 @@ public class ShoppingListFragment extends Fragment implements
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mShopRef = mDatabaseReference
-                .child(Db.SHOP)
-                .child(mUser.getUid());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         if (mShowGlobalList) {
             // use global list reference
-            mShopListRef = mDatabaseReference
+            mShopListRef = databaseReference
                     .child(Db.USER)
                     .child(mUser.getUid())
                     .child(Db.SHOP_LIST);
         } else {
             // use game specific list reference
-            mShopListRef = mDatabaseReference
+            mShopListRef = databaseReference
                     .child(Db.GAME)
                     .child(mUser.getUid())
                     .child(mGameId)
@@ -178,7 +170,6 @@ public class ShoppingListFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
