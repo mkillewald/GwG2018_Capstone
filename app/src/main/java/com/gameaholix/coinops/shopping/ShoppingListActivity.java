@@ -31,7 +31,7 @@ public class ShoppingListActivity extends AppCompatActivity implements
     @Override
     public void onShoppingItemSelected(Item shoppingItem) {
         FragmentManager fm = getSupportFragmentManager();
-        EditShoppingFragment fragment = EditShoppingFragment.newInstance(shoppingItem);
+        ShoppingEditFragment fragment = ShoppingEditFragment.newInstance(shoppingItem);
         fragment.show(fm, "fragment_edit_shopping");
     }
 }

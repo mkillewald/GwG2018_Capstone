@@ -5,25 +5,25 @@
     <item
         android:id="@+id/menu_edit_game"
         android:title="@string/edit"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_add_repair"
         android:title="@string/add_repair_log"
         android:icon="@drawable/ic_playlist_add_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_add_todo"
         android:title="@string/add_todo_item"
         android:icon="@drawable/ic_playlist_add_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_add_shopping"
         android:title="@string/add_item"
         android:icon="@drawable/ic_playlist_add_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_delete_game"

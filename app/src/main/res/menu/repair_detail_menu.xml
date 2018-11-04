@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/menu_edit_inventory"
+        android:id="@+id/menu_edit_repair"
         android:title="@string/edit"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menu_delete_inventory"
-        android:title="@string/delete_inventory_item"
-        app:showAsAction="never" />
+        android:id="@+id/menu_delete_repair"
+        android:title="@string/delete_repair_log"
+        app:showAsAction="never"/>
 
 </menu>

@@ -170,6 +170,11 @@
         repair log, to do list and shopping list will also be deleted.\n\nThis is a permanent
         action and cannot be undone.</string>
 
+    <string name="really_delete_repair_log">Delete Repair Log</string>
+    <string name="repair_log_will_be_deleted">Are you sure you want to delete the entire repair log?
+        The repair log and all repair steps will be deleted.\n\nThis is a permanent action and
+        cannot be undone.</string>
+
     <string name="really_delete_inventory_item">Delete Part</string>
     <string name="inventory_item_will_be_deleted">Are you sure you want to delete this part? All
         data will be erased.\n\n This is a permanent action and cannot be undone.</string>

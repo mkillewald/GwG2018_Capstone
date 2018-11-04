@@ -60,8 +60,8 @@ public class GameListActivity extends AppCompatActivity implements
 
     private void showAddGameDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        AddGameFragment fragment = new AddGameFragment();
-        fragment.show(fm, "fragment_add_game");
+        GameAddFragment fragment = new GameAddFragment();
+        fragment.show(fm, "fragment_game_add");
     }
 
 }

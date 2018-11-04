@@ -13,7 +13,7 @@ import com.gameaholix.coinops.model.InventoryItem;
 
 public class InventoryDetailActivity extends AppCompatActivity implements
         InventoryDetailFragment.OnFragmentInteractionListener,
-        EditInventoryFragment.OnFragmentInteractionListener {
+        InventoryEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = InventoryDetailActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
@@ -52,7 +52,7 @@ public class InventoryDetailActivity extends AppCompatActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof EditInventoryFragment) {
+        if (currentFragment instanceof InventoryEditFragment) {
             menu.findItem(R.id.menu_edit_inventory).setVisible(false);
         } else {
             menu.findItem(R.id.menu_edit_inventory).setVisible(true);
@@ -82,9 +82,9 @@ public class InventoryDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditButtonPressed(InventoryItem inventoryItem) {
-        // replace InventoryDetailFragment with EditInventoryFragment
+        // replace InventoryDetailFragment with InventoryEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, EditInventoryFragment.newInstance(inventoryItem));
+        ft.replace(R.id.fragment_container, InventoryEditFragment.newInstance(inventoryItem));
         ft.commit();
 
         invalidateOptionsMenu();
@@ -92,7 +92,7 @@ public class InventoryDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditCompletedOrCancelled() {
-        // replace EditInventoryFragment with InventoryDetailFragment
+        // replace InventoryEditFragment with InventoryDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance(mInventoryItem));
         ft.commit();

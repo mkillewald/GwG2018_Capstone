@@ -1,16 +1,20 @@
 package com.gameaholix.coinops.repair;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -52,6 +56,7 @@ public class RepairDetailFragment extends Fragment {
     private ValueEventListener mStepListener;
     private FragmentRepairDetailBinding mBind;
     private StepAdapter mStepAdapter;
+    private OnFragmentInteractionListener mListener;
 
     public RepairDetailFragment() {
         // Required empty public constructor
@@ -68,6 +73,7 @@ public class RepairDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -170,18 +176,6 @@ public class RepairDetailFragment extends Fragment {
                     return false;
                 }
             });
-//            mBind.etAddStepEntry.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//                @Override
-//                public void onFocusChange(View view, boolean hasFocus) {
-//                    if (view.getId() == R.id.et_game_name && !hasFocus) {
-//                        if (view instanceof EditText) {
-//                            EditText editText = (EditText) view;
-//                            hideKeyboard(editText);
-//                        }
-//                    }
-//                }
-//            });
-
 
             // Setup Button
             mBind.btnAddStep.setOnClickListener(new View.OnClickListener() {
@@ -208,6 +202,20 @@ public class RepairDetailFragment extends Fragment {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_edit_repair:
+                mListener.onEditButtonPressed(mRepairLog);
+                return true;
+            case R.id.menu_delete_inventory:
+                showDeleteAlert();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -219,11 +227,18 @@ public class RepairDetailFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     private void hideKeyboard(TextView view) {
@@ -275,5 +290,65 @@ public class RepairDetailFragment extends Fragment {
 //        } else {
 //            // user is not signed in
         }
+    }
+
+    private void showDeleteAlert() {
+        if (mUser != null) {
+            // user is signed in
+
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(mContext);
+            }
+            builder.setTitle(getString(R.string.really_delete_repair_log))
+                    .setMessage(getString(R.string.repair_log_will_be_deleted))
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteItemData();
+                            if (getActivity() != null) {
+                                getActivity().finish();
+                            }
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+//        } else {
+//            // user is not signed in
+        }
+    }
+
+    private void deleteItemData() {
+        // delete repair log
+        mRepairRef.removeValue();
+
+        // delete repair log list entry
+        mDatabaseReference
+                .child(Db.GAME)
+                .child(mUser.getUid())
+                .child(mGameId)
+                .child(Db.REPAIR_LIST)
+                .child(mRepairLog.getId())
+                .removeValue();
+    }
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        void onEditButtonPressed(Item repairLog);
     }
 }

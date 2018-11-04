@@ -1,5 +1,4 @@
-package com.gameaholix.coinops.repair;
-
+package com.gameaholix.coinops.shopping;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -14,8 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentAddRepairBinding;
-import com.gameaholix.coinops.game.AddGameFragment;
+import com.gameaholix.coinops.databinding.FragmentShoppingAddBinding;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
@@ -28,24 +26,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddRepairFragment extends DialogFragment {
-    private static final String TAG = AddGameFragment.class.getSimpleName();
+public class ShoppingAddFragment extends DialogFragment {
+    private static final String TAG = ShoppingAddFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-    private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
+    private static final String EXTRA_SHOPPING = "CoinOpsShoppingItem";
 
     private Context mContext;
     private String mGameId;
-    private Item mNewRepair;
+    private Item mNewShoppingItem;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
 
-    public AddRepairFragment() {
+    public ShoppingAddFragment() {
         // Required empty public constructor
     }
 
-    public static AddRepairFragment newInstance(String gameId) {
+    public static ShoppingAddFragment newInstance(String gameId) {
         Bundle args = new Bundle();
-        AddRepairFragment fragment = new AddRepairFragment();
+        ShoppingAddFragment fragment = new ShoppingAddFragment();
         args.putString(EXTRA_GAME_ID, gameId);
         fragment.setArguments(args);
         return fragment;
@@ -59,10 +57,10 @@ public class AddRepairFragment extends DialogFragment {
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
             }
-            mNewRepair = new Item();
+            mNewShoppingItem = new Item();
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-            mNewRepair = savedInstanceState.getParcelable(EXTRA_REPAIR);
+            mNewShoppingItem = savedInstanceState.getParcelable(EXTRA_SHOPPING);
         }
 
         // Initialize Firebase components
@@ -72,14 +70,12 @@ public class AddRepairFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentAddRepairBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_add_repair, container, false);
+        final FragmentShoppingAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_shopping_add, container, false);
         final View rootView = bind.getRoot();
-
-        // Setup EditText
 
         // Setup Buttons
         bind.btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -89,15 +85,17 @@ public class AddRepairFragment extends DialogFragment {
             }
         });
 
+        bind.btnSave.setText(R.string.add_item);
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // get text from EditText
-                mNewRepair.setName(bind.etRepairDescription.getText().toString().trim());
-                addLog(mNewRepair);
-                getDialog().dismiss();
+                String name = bind.etEntry.getText().toString().trim();
+                Item newItem = new Item(null, mGameId, name);
+                addItem(newItem);
             }
         });
+
+        bind.btnDelete.setVisibility(View.GONE);
 
         return rootView;
     }
@@ -107,7 +105,7 @@ public class AddRepairFragment extends DialogFragment {
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_GAME_ID, mGameId);
-        outState.putParcelable(EXTRA_REPAIR, mNewRepair);
+        outState.putParcelable(EXTRA_SHOPPING, mNewShoppingItem);
     }
 
     @Override
@@ -135,37 +133,40 @@ public class AddRepairFragment extends DialogFragment {
         super.onDetach();
     }
 
-
-    private void addLog(Item repairLog) {
-        if (TextUtils.isEmpty(repairLog.getName())) {
+    private void addItem(Item item) {
+        if (TextUtils.isEmpty(item.getName())) {
             PromptUser.displayAlert(mContext,
-                    R.string.error_add_repair_log_failed,
-                    R.string.error_repair_log_description_empty);
+                    R.string.error_add_item_failed,
+                    R.string.error_item_name_empty);
             return;
         }
 
-        // TODO: add checks for if game name already exists.
+        getDialog().dismiss();
 
-        // Add Game object to Firebase
+        // TODO: add checks for if item name already exists.
+
+        // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in
             final String uid = mUser.getUid();
 
-            final DatabaseReference repairRef = mDatabaseReference.child(Db.REPAIR).child(uid);
-
-            final String id = repairRef.push().getKey();
+            final DatabaseReference shopRef = mDatabaseReference.child(Db.SHOP).child(uid);
+            String id = shopRef.push().getKey();
 
             // Get database paths from helper class
-            String repairPath = Db.getRepairPath(uid, mGameId) + id;
-            String repairListPath = Db.getRepairListPath(uid, mGameId) + id;
+            String shopPath = Db.getShopPath(uid) + id;
+            String gameShopListPath = Db.getGameShopListPath(uid, mGameId) + id;
+            String userShopListPath = Db.getUserShopListPath(uid) + id;
 
             Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(repairPath, repairLog);
-            valuesToAdd.put(repairListPath, repairLog.getName());
+            valuesToAdd.put(shopPath, item);
+            valuesToAdd.put(gameShopListPath, item.getName());
+            valuesToAdd.put(userShopListPath, item.getName());
 
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                public void onComplete(@Nullable DatabaseError databaseError,
+                                       @NonNull DatabaseReference databaseReference) {
                     if (databaseError != null) {
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
@@ -173,9 +174,9 @@ public class AddRepairFragment extends DialogFragment {
                     }
                 }
             });
+
 //        } else {
 //            // user is not signed in
         }
     }
-
 }

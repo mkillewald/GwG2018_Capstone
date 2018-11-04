@@ -1,10 +1,9 @@
-package com.gameaholix.coinops.inventory;
+package com.gameaholix.coinops.todo;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,15 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentAddInventoryBinding;
-import com.gameaholix.coinops.model.InventoryItem;
+import com.gameaholix.coinops.databinding.FragmentToDoAddBinding;
+import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,21 +26,34 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddInventoryFragment extends DialogFragment {
-    private static final String TAG = AddInventoryFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
+// TODO: finish this
+
+public class ToDoAddFragment extends DialogFragment {
+    private static final String TAG = ToDoAddFragment.class.getSimpleName();
+    private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
     private Context mContext;
-    private InventoryItem mNewItem;
+    private String mGameId;
+    private ToDoItem mNewToDoItem;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
 
-    public AddInventoryFragment() {
+    public ToDoAddFragment() {
         // Required empty public constructor
+    }
+
+    public static ToDoAddFragment newInstance(String gameId) {
+        Bundle args = new Bundle();
+        ToDoAddFragment fragment = new ToDoAddFragment();
+        args.putString(EXTRA_GAME_ID, gameId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -50,9 +61,14 @@ public class AddInventoryFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            mNewItem = new InventoryItem();
+            if (getArguments() != null) {
+                mGameId = getArguments().getString(EXTRA_GAME_ID);
+            }
+            mNewToDoItem = new ToDoItem(mGameId);
+
         } else {
-            mNewItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
+            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
+            mNewToDoItem = savedInstanceState.getParcelable(EXTRA_TODO);
         }
 
         // Initialize Firebase components
@@ -64,16 +80,16 @@ public class AddInventoryFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final FragmentAddInventoryBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_add_inventory, container, false);
+        // Inflate the layout for this
+        final FragmentToDoAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_to_do_add, container, false);
         final View rootView = bind.getRoot();
 
-        // Setup EditTexts
-        bind.etAddInventoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        //Setup EditTexts
+        bind.etTodoName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
+                if (view.getId() == R.id.et_game_name && !hasFocus) {
                     if (view instanceof EditText) {
                         EditText editText = (EditText) view;
                         hideKeyboard(editText);
@@ -82,10 +98,10 @@ public class AddInventoryFragment extends DialogFragment {
             }
         });
 
-        bind.etAddInventoryDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        bind.etTodoDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
+                if (view.getId() == R.id.et_game_name && !hasFocus) {
                     if (view instanceof EditText) {
                         EditText editText = (EditText) view;
                         hideKeyboard(editText);
@@ -93,34 +109,14 @@ public class AddInventoryFragment extends DialogFragment {
                 }
             }
         });
-        
-        // Setup Spinners
-        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
-                mContext, R.array.inventory_type, android.R.layout.simple_spinner_item);
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerInventoryType.setAdapter(typeAdapter);
-        bind.spinnerInventoryType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+        // Setup radio group
+        bind.rgPriority.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mNewItem.setType(position);
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                RadioButton checkedButton = radioGroup.findViewById(checkedId);
+                mNewToDoItem.setPriority(radioGroup.indexOfChild(checkedButton));
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
-        });
-
-        ArrayAdapter<CharSequence> conditionAdapter = ArrayAdapter.createFromResource(
-                mContext, R.array.inventory_condition, android.R.layout.simple_spinner_item);
-        conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerInventoryCondition.setAdapter(conditionAdapter);
-        bind.spinnerInventoryCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mNewItem.setCondition(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
         // Setup Buttons
@@ -131,14 +127,14 @@ public class AddInventoryFragment extends DialogFragment {
             }
         });
 
-        bind.btnSave.setText(R.string.add_inventory_item);
+        bind.btnSave.setText(R.string.add_item);
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get text from EditTexts
-                mNewItem.setName(bind.etAddInventoryName.getText().toString().trim());
-                mNewItem.setDescription(bind.etAddInventoryDescription.getText().toString().trim());
-                addItem(mNewItem);
+                // get text from EditTexts
+                mNewToDoItem.setName(bind.etTodoName.getText().toString().trim());
+                mNewToDoItem.setDescription(bind.etTodoDescription.getText().toString().trim());
+                addItem(mNewToDoItem);
             }
         });
 
@@ -155,7 +151,8 @@ public class AddInventoryFragment extends DialogFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_INVENTORY_ITEM, mNewItem);
+        outState.putString(EXTRA_GAME_ID, mGameId);
+        outState.putParcelable(EXTRA_TODO, mNewToDoItem);
     }
 
     @Override
@@ -183,11 +180,11 @@ public class AddInventoryFragment extends DialogFragment {
         super.onDetach();
     }
 
-    private void addItem(InventoryItem item) {
+    private void addItem(ToDoItem item) {
         if (TextUtils.isEmpty(item.getName())) {
             PromptUser.displayAlert(mContext,
-                    R.string.error_add_inventory_failed,
-                    R.string.error_name_empty);
+                    R.string.error_add_item_failed,
+                    R.string.error_item_name_empty);
             return;
         }
 
@@ -195,26 +192,29 @@ public class AddInventoryFragment extends DialogFragment {
 
         // TODO: add checks for if item name already exists.
 
-        // Add InventoryItem object to Firebase
+        // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
 
-            final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
-
-            final String id = inventoryRef.push().getKey();
+            String uid = mUser.getUid();
+            String id = mDatabaseReference.child(Db.TODO).child(uid).push().getKey();
 
             // Get database paths from helper class
-            String inventoryPath = Db.getInventoryPath(uid) + id;
-            String userInventoryListPath = Db.getInventoryListPath(uid) + id;
+            String toDoPath = Db.getToDoPath(uid) + id;
+            String gameToDoListPath = Db.getGameToDoListPath(uid, mGameId) + id;
+            String userToDoListPath = Db.getUserToDoListPath(uid) + id;
 
             Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(inventoryPath, item);
-            valuesToAdd.put(userInventoryListPath, item.getName());
+            valuesToAdd.put(toDoPath, item);
+            valuesToAdd.put(gameToDoListPath, item.getName());
+            valuesToAdd.put(userToDoListPath, item.getName());
+
+            Log.d(TAG, valuesToAdd.toString());
 
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                public void onComplete(@Nullable DatabaseError databaseError,
+                                       @NonNull DatabaseReference databaseReference) {
                     if (databaseError != null) {
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
@@ -222,8 +222,10 @@ public class AddInventoryFragment extends DialogFragment {
                     }
                 }
             });
+
 //        } else {
 //            // user is not signed in
         }
     }
+
 }

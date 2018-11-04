@@ -13,17 +13,17 @@ import com.gameaholix.coinops.model.Item;
 
 // TODO: finish this
 
-public class EditRepairFragment extends Fragment {
+public class RepairEditFragment extends Fragment {
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Entry";
     private OnFragmentInteractionListener mListener;
 
-    public EditRepairFragment() {
+    public RepairEditFragment() {
         // Required empty public constructor
     }
 
-    public static EditRepairFragment newInstance(Item log) {
+    public static RepairEditFragment newInstance(Item log) {
         Bundle args = new Bundle();
-        EditRepairFragment fragment = new EditRepairFragment();
+        RepairEditFragment fragment = new RepairEditFragment();
         args.putParcelable(EXTRA_REPAIR, log);
         fragment.setArguments(args);
         return fragment;
@@ -38,7 +38,7 @@ public class EditRepairFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_repair, container, false);
+        return inflater.inflate(R.layout.fragment_repair_edit, container, false);
     }
 
     @Override
@@ -69,6 +69,6 @@ public class EditRepairFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onEditButtonPressesed(String id);
+        void onEditCompletedOrCancelled();
     }
 }

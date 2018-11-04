@@ -14,7 +14,7 @@ import com.gameaholix.coinops.model.ToDoItem;
 
 public class ToDoDetailActivity extends AppCompatActivity implements
         ToDoDetailFragment.OnFragmentInteractionListener,
-        EditToDoFragment.OnFragmentInteractionListener {
+        ToDoEditFragment.OnFragmentInteractionListener {
 
     private static final String TAG = ToDoDetailActivity.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
@@ -62,7 +62,7 @@ public class ToDoDetailActivity extends AppCompatActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof EditToDoFragment) {
+        if (currentFragment instanceof ToDoEditFragment) {
             menu.findItem(R.id.menu_edit_todo).setVisible(false);
         } else {
             menu.findItem(R.id.menu_edit_todo).setVisible(true);
@@ -94,9 +94,9 @@ public class ToDoDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditButtonPressed(ToDoItem toDoItem) {
-        // replace ToDoDetailFragment with EditToDoFragment
+        // replace ToDoDetailFragment with ToDoEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, EditToDoFragment.newInstance(toDoItem));
+        ft.replace(R.id.fragment_container, ToDoEditFragment.newInstance(toDoItem));
         ft.commit();
 
         invalidateOptionsMenu();
@@ -104,7 +104,7 @@ public class ToDoDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditCompletedOrCancelled() {
-        // replace EditToDoFragment with ToDoDetailFragment
+        // replace ToDoEditFragment with ToDoDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mToDoItem));
         ft.commit();

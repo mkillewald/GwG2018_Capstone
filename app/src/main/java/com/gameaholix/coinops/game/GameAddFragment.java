@@ -16,13 +16,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
+import com.gameaholix.coinops.databinding.FragmentGameAddBinding;
 import com.gameaholix.coinops.databinding.DialogMonitorDetailsBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
@@ -36,8 +35,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddGameFragment extends DialogFragment {
-    private static final String TAG = AddGameFragment.class.getSimpleName();
+public class GameAddFragment extends DialogFragment {
+    private static final String TAG = GameAddFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
     private Context mContext;
@@ -45,7 +44,7 @@ public class AddGameFragment extends DialogFragment {
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
 
-    public AddGameFragment() {
+    public GameAddFragment() {
         // Required empty public constructor
     }
 
@@ -69,8 +68,8 @@ public class AddGameFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentAddGameBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_add_game, container, false);
+        final FragmentGameAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_game_add, container, false);
         final View rootView = bind.getRoot();
 
         // Setup EditText

@@ -14,7 +14,7 @@ import com.gameaholix.coinops.model.Item;
 
 // TODO: finish this
 
-public class EditRepairActivity extends AppCompatActivity {
+public class RepairEditActivity extends AppCompatActivity {
     private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Entry";
 
     private Item mRepairLog;
@@ -36,7 +36,7 @@ public class EditRepairActivity extends AppCompatActivity {
 
         setTitle(R.string.edit_repair_title);
 
-        EditRepairFragment fragment = EditRepairFragment.newInstance(mRepairLog);
+        RepairEditFragment fragment = RepairEditFragment.newInstance(mRepairLog);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .commit();

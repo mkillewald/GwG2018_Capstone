@@ -20,7 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentAddInventoryBinding;
+import com.gameaholix.coinops.databinding.FragmentInventoryAddBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,8 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditInventoryFragment extends Fragment {
-    private static final String TAG = EditInventoryFragment.class.getSimpleName();
+public class InventoryEditFragment extends Fragment {
+    private static final String TAG = InventoryEditFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
     private static final String EXTRA_VALUES = "CoinOpsInventoryValuesToUpdate";
 
@@ -44,13 +44,13 @@ public class EditInventoryFragment extends Fragment {
     private DatabaseReference mDatabaseReference;
     private OnFragmentInteractionListener mListener;
 
-    public EditInventoryFragment() {
+    public InventoryEditFragment() {
         // Required empty public constructor
     }
 
-    public static EditInventoryFragment newInstance(InventoryItem item) {
+    public static InventoryEditFragment newInstance(InventoryItem item) {
         Bundle args = new Bundle();
-        EditInventoryFragment fragment = new EditInventoryFragment();
+        InventoryEditFragment fragment = new InventoryEditFragment();
         args.putParcelable(EXTRA_INVENTORY_ITEM, item);
         fragment.setArguments(args);
         return fragment;
@@ -80,8 +80,8 @@ public class EditInventoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentAddInventoryBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_add_inventory, container, false);
+        final FragmentInventoryAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_inventory_add, container, false);
         final View rootView = bind.getRoot();
 
 

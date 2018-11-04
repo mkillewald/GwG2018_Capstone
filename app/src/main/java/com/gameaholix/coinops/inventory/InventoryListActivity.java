@@ -57,7 +57,7 @@ public class InventoryListActivity extends AppCompatActivity implements
 
     private void showAddInventoryDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        AddInventoryFragment fragment = new AddInventoryFragment();
-        fragment.show(fm, "fragment_add_inventory");
+        InventoryAddFragment fragment = new InventoryAddFragment();
+        fragment.show(fm, "fragment_inventory_add");
     }
 }

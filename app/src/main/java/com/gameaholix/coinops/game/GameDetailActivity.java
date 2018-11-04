@@ -26,13 +26,13 @@ import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.repair.AddRepairFragment;
+import com.gameaholix.coinops.repair.RepairAddFragment;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.repair.RepairListFragment;
-import com.gameaholix.coinops.shopping.AddShoppingFragment;
-import com.gameaholix.coinops.shopping.EditShoppingFragment;
+import com.gameaholix.coinops.shopping.ShoppingAddFragment;
+import com.gameaholix.coinops.shopping.ShoppingEditFragment;
 import com.gameaholix.coinops.shopping.ShoppingListFragment;
-import com.gameaholix.coinops.todo.AddToDoFragment;
+import com.gameaholix.coinops.todo.ToDoAddFragment;
 import com.gameaholix.coinops.todo.ToDoDetailActivity;
 import com.gameaholix.coinops.todo.ToDoListFragment;
 import com.gameaholix.coinops.utility.Db;
@@ -49,7 +49,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         RepairListFragment.OnFragmentInteractionListener,
         ToDoListFragment.OnFragmentInteractionListener,
         ShoppingListFragment.OnFragmentInteractionListener,
-        EditGameFragment.OnFragmentInteractionListener {
+        GameEditFragment.OnFragmentInteractionListener {
 
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
@@ -183,7 +183,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         if (mViewPager.getCurrentItem() == 0) {
 
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
-            if (currentFragment instanceof EditGameFragment) {
+            if (currentFragment instanceof GameEditFragment) {
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
             } else {
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
@@ -245,26 +245,26 @@ public class GameDetailActivity extends AppCompatActivity implements
     public void onShoppingItemSelected(Item shoppingItem) {
         // show edit shopping dialog
         FragmentManager fm = getSupportFragmentManager();
-        EditShoppingFragment fragment = EditShoppingFragment.newInstance(shoppingItem);
+        ShoppingEditFragment fragment = ShoppingEditFragment.newInstance(shoppingItem);
         fragment.show(fm, "fragment_edit_shopping");
     }
 
     private void showAddRepairDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        AddRepairFragment fragment = AddRepairFragment.newInstance(mGame.getId());
-        fragment.show(fm, "fragment_add_repair");
+        RepairAddFragment fragment = RepairAddFragment.newInstance(mGame.getId());
+        fragment.show(fm, "fragment_repair_add");
     }
 
     private void showAddToDoDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        AddToDoFragment fragment = AddToDoFragment.newInstance(mGame.getId());
+        ToDoAddFragment fragment = ToDoAddFragment.newInstance(mGame.getId());
         fragment.show(fm, "fragment_add_todo");
     }
 
     private void showAddShoppingDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        AddShoppingFragment fragment = AddShoppingFragment.newInstance(mGame.getId());
-        fragment.show(fm, "fragment_add_shopping");
+        ShoppingAddFragment fragment = ShoppingAddFragment.newInstance(mGame.getId());
+        fragment.show(fm, "fragment_shopping_add");
     }
 
     private void showDeleteAlert() {
@@ -387,8 +387,8 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditButtonPressed(Game game) {
-        // replace GameDetailFragment with EditGameFragment
-        Fragment editGameFragment = EditGameFragment.newInstance(game);
+        // replace GameDetailFragment with GameEditFragment
+        Fragment editGameFragment = GameEditFragment.newInstance(game);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, editGameFragment);
         ft.commit();
@@ -398,7 +398,7 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditCompletedOrCancelled() {
-        // replace EditGameFragment with GameDetailFragment
+        // replace GameEditFragment with GameDetailFragment
         Fragment gameDetailFragment = GameDetailFragment.newInstance(mGame);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, gameDetailFragment);

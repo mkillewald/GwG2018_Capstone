@@ -21,7 +21,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentAddShoppingBinding;
+import com.gameaholix.coinops.databinding.FragmentShoppingAddBinding;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,8 +33,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditShoppingFragment extends DialogFragment {
-    private static final String TAG = ShoppingDetailFragment.class.getSimpleName();
+public class ShoppingEditFragment extends DialogFragment {
+    private static final String TAG = ShoppingEditFragment.class.getSimpleName();
     private static final String EXTRA_SHOPPING = "CoinOpsShoppingItem";
 
     private Context mContext;
@@ -42,13 +42,13 @@ public class EditShoppingFragment extends DialogFragment {
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
 
-    public EditShoppingFragment() {
+    public ShoppingEditFragment() {
         // Required empty public constructor
     }
 
-    public static EditShoppingFragment newInstance(Item item) {
+    public static ShoppingEditFragment newInstance(Item item) {
         Bundle args = new Bundle();
-        EditShoppingFragment fragment = new EditShoppingFragment();
+        ShoppingEditFragment fragment = new ShoppingEditFragment();
         args.putParcelable(EXTRA_SHOPPING, item);
         fragment.setArguments(args);
         return fragment;
@@ -76,8 +76,8 @@ public class EditShoppingFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentAddShoppingBinding bind = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_add_shopping, container, false);
+        final FragmentShoppingAddBinding bind = DataBindingUtil.inflate(inflater,
+                R.layout.fragment_shopping_add, container, false);
         final View rootView = bind.getRoot();
 
         if (mUser != null) {

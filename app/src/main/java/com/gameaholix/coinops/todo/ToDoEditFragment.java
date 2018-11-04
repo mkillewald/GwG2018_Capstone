@@ -20,7 +20,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentAddToDoBinding;
+import com.gameaholix.coinops.databinding.FragmentToDoAddBinding;
 import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,8 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditToDoFragment extends Fragment {
-    private static final String TAG = EditToDoFragment.class.getSimpleName();
+public class ToDoEditFragment extends Fragment {
+    private static final String TAG = ToDoEditFragment.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
     private static final String EXTRA_VALUES = "CoinOpsToDoValuesToUpdate";
 
@@ -43,13 +43,13 @@ public class EditToDoFragment extends Fragment {
     private DatabaseReference mDatabaseReference;
     private OnFragmentInteractionListener mListener;
 
-    public EditToDoFragment() {
+    public ToDoEditFragment() {
         // Required empty public constructor
     }
 
-    public static EditToDoFragment newInstance(ToDoItem item) {
+    public static ToDoEditFragment newInstance(ToDoItem item) {
         Bundle args = new Bundle();
-        EditToDoFragment fragment = new EditToDoFragment();
+        ToDoEditFragment fragment = new ToDoEditFragment();
         args.putParcelable(EXTRA_TODO, item);
         fragment.setArguments(args);
         return fragment;
@@ -79,8 +79,8 @@ public class EditToDoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentAddToDoBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_add_to_do, container, false);
+        final FragmentToDoAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_to_do_add, container, false);
         final View rootView = bind.getRoot();
 
         if (mUser != null) {

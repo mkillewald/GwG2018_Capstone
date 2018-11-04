@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.DialogMonitorDetailsBinding;
-import com.gameaholix.coinops.databinding.FragmentAddGameBinding;
+import com.gameaholix.coinops.databinding.FragmentGameAddBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,8 +36,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditGameFragment extends Fragment {
-    private static final String TAG = EditGameFragment.class.getSimpleName();
+public class GameEditFragment extends Fragment {
+    private static final String TAG = GameEditFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_VALUES = "CoinOpsGameValuesToUpdate";
 
@@ -48,13 +48,13 @@ public class EditGameFragment extends Fragment {
     private DatabaseReference mDatabaseReference;
     private OnFragmentInteractionListener mListener;
 
-    public EditGameFragment() {
+    public GameEditFragment() {
         // Required empty public constructor
     }
 
-    public static EditGameFragment newInstance(Game game) {
+    public static GameEditFragment newInstance(Game game) {
         Bundle args = new Bundle();
-        EditGameFragment fragment = new EditGameFragment();
+        GameEditFragment fragment = new GameEditFragment();
         args.putParcelable(EXTRA_GAME, game);
         fragment.setArguments(args);
         return fragment;
@@ -84,8 +84,8 @@ public class EditGameFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentAddGameBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_add_game, container, false);
+        final FragmentGameAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_game_add, container, false);
         final View rootView = bind.getRoot();
 
         if (mUser != null) {

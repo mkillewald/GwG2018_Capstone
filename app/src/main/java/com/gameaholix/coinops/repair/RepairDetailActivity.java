@@ -3,9 +3,13 @@ package com.gameaholix.coinops.repair;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -14,7 +18,9 @@ import android.widget.EditText;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Item;
 
-public class RepairDetailActivity extends AppCompatActivity {
+public class RepairDetailActivity extends AppCompatActivity implements
+        RepairDetailFragment.OnFragmentInteractionListener,
+        RepairEditFragment.OnFragmentInteractionListener {
     private static final String TAG = RepairDetailActivity.class.getSimpleName();
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
@@ -50,6 +56,38 @@ public class RepairDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.repair_detail_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (currentFragment instanceof RepairEditFragment) {
+            menu.findItem(R.id.menu_edit_repair).setVisible(false);
+        } else {
+            menu.findItem(R.id.menu_edit_repair).setVisible(true);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_edit_repair:
+                // handled by RepairDetailFragment
+                return false;
+            case R.id.menu_delete_repair:
+                // handled by RepairDetailFragment
+                return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -80,23 +118,23 @@ public class RepairDetailActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
 
-//    @Override
-//    public void onEditButtonPressed(ToDoItem toDoItem) {
-//        // replace ToDoDetailFragment with EditToDoFragment
-//        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        ft.replace(R.id.fragment_container, EditToDoFragment.newInstance(toDoItem));
-//        ft.commit();
-//
-//        invalidateOptionsMenu();
-//    }
-//
-//    @Override
-//    public void onEditCompletedOrCancelled() {
-//        // replace EditToDoFragment with ToDoDetailFragment
-//        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mToDoItem));
-//        ft.commit();
-//
-//        invalidateOptionsMenu();
-//    }
+    @Override
+    public void onEditButtonPressed(Item repairLog) {
+        // replace RepairDetailFragment with RepairEditFragment
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, RepairEditFragment.newInstance(repairLog));
+        ft.commit();
+
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onEditCompletedOrCancelled() {
+        // replace RepairEditFragment with RepairDetailFragment
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, RepairDetailFragment.newInstance(mRepairLog));
+        ft.commit();
+
+        invalidateOptionsMenu();
+    }
 }
