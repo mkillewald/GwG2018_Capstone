@@ -28,14 +28,6 @@
             android:launchMode="singleTop"
             android:parentActivityName=".game.GameListActivity" />
         <activity
-            android:name=".game.AddGameActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".game.GameListActivity" />
-        <activity
-            android:name=".game.EditGameActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity" />
-        <activity
             android:name=".inventory.InventoryListActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
@@ -44,31 +36,11 @@
             android:launchMode="singleTop"
             android:parentActivityName=".inventory.InventoryListActivity" />
         <activity
-            android:name=".inventory.AddInventoryActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".inventory.InventoryListActivity" />
-        <activity
-            android:name=".inventory.EditInventoryActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".inventory.InventoryDetailActivity" />
-        <activity
-            android:name=".repair.RepairListActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
-        <activity
             android:name=".repair.RepairDetailActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".game.GameDetailActivity" />
         <activity
-            android:name=".repair.AddRepairActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity" />
-        <activity
             android:name=".repair.EditRepairActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".repair.RepairDetailActivity" />
-        <activity
-            android:name=".repair.AddStepActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".repair.RepairDetailActivity" />
         <activity
@@ -80,29 +52,9 @@
             android:launchMode="singleTop"
             android:parentActivityName=".game.GameDetailActivity" />
         <activity
-            android:name=".todo.AddToDoActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity" />
-        <activity
-            android:name=".todo.EditToDoActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".todo.ToDoDetailActivity" />
-        <activity
             android:name=".shopping.ShoppingListActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".shopping.ShoppingDetailActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".shopping.ShoppingListActivity" />
-        <activity
-            android:name=".shopping.AddShoppingActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity" />
-        <activity
-            android:name=".shopping.EditShoppingActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".shopping.ShoppingDetailActivity" />
     </application>
 
 </manifest>
