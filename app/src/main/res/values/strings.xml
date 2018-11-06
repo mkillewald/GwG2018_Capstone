@@ -232,5 +232,9 @@
     <!-- Widget -->
     <string name="add_widget">Add widget</string>
     <string name="to_do_list_empty">To do List is empty</string>
+    <string name="to_do_list_widget_title">CoinOps To Do List</string>
+    <string name="shopping_list_empty">Shopping List is empty</string>
+    <string name="shopping_list_widget_title">CoinOps Shopping List</string>
+
 
 </resources>

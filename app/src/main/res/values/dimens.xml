@@ -30,6 +30,4 @@
     <dimen name="text_separation">8dp</dimen>
     <dimen name="widget_listview_row_padding">8dp</dimen>
 
-
-
 </resources>

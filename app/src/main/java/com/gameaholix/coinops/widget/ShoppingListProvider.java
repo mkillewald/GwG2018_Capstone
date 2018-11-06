@@ -9,8 +9,8 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.todo.ToDoDetailActivity;
+import com.gameaholix.coinops.model.Item;
+import com.gameaholix.coinops.shopping.ShoppingListActivity;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,17 +22,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ToDoListProvider implements RemoteViewsService.RemoteViewsFactory {
-    private static final String TAG = ToDoListProvider.class.getSimpleName();
-    private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
+public class ShoppingListProvider implements RemoteViewsService.RemoteViewsFactory {
+    private static final String TAG = ShoppingListProvider.class.getSimpleName();
 
     private Context mContext;
-    private ArrayList<ToDoItem> mToDoList = new ArrayList<>();
-    private DatabaseReference mToDoListRef;
-    private ValueEventListener mToDoListener;
+    private ArrayList<Item> mShoppingList = new ArrayList<>();
+    private DatabaseReference mShopListRef;
+    private ValueEventListener mShoppingListener;
     private int appWidgetId;
 
-    ToDoListProvider(Context mContext, Intent intent) {
+    ShoppingListProvider(Context mContext, Intent intent) {
         this.mContext = mContext;
         appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -48,21 +47,21 @@ public class ToDoListProvider implements RemoteViewsService.RemoteViewsFactory {
         if (user != null) {
             // user is signed in
             // use global list reference
-            mToDoListRef = databaseReference
+            mShopListRef = databaseReference
                     .child(Db.USER)
                     .child(user.getUid())
-                    .child(Db.TODO_LIST);
+                    .child(Db.SHOP_LIST);
 
             // Setup event listener
-            mToDoListener = new ValueEventListener() {
+            mShoppingListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    mToDoList.clear();
+                    mShoppingList.clear();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         String id = child.getKey();
                         String name = (String) child.getValue();
-                        ToDoItem toDoItem = new ToDoItem(id, null, name);
-                        mToDoList.add(toDoItem);
+                        Item item = new Item(id, null, name);
+                        mShoppingList.add(item);
                     }
                     AppWidgetManager.getInstance(mContext)
                             .notifyAppWidgetViewDataChanged(appWidgetId, R.id.lv_widget);
@@ -74,7 +73,7 @@ public class ToDoListProvider implements RemoteViewsService.RemoteViewsFactory {
                     Log.d(TAG, "Failed to read from database.", databaseError.toException());
                 }
             };
-            mToDoListRef.addValueEventListener(mToDoListener);
+            mShopListRef.addValueEventListener(mShoppingListener);
 //        } else {
 //            // user is not signed in
         }
@@ -82,12 +81,12 @@ public class ToDoListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
-        mToDoListRef.removeEventListener(mToDoListener);
+        mShopListRef.removeEventListener(mShoppingListener);
     }
 
     @Override
     public int getCount() {
-        return mToDoList.size();
+        return mShoppingList.size();
     }
 
     @Override
@@ -98,11 +97,10 @@ public class ToDoListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public RemoteViews getViewAt(int position) {
         final RemoteViews remoteView = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_row);
-        ToDoItem toDoItem = mToDoList.get(position);
-        remoteView.setTextViewText(R.id.tv_item_name, toDoItem.getName());
+        Item item = mShoppingList.get(position);
+        remoteView.setTextViewText(R.id.tv_item_name, item.getName());
 
-        Intent intent = new Intent(mContext, ToDoDetailActivity.class);
-        intent.putExtra(EXTRA_TODO, toDoItem);
+        Intent intent = new Intent(mContext, ShoppingListActivity.class);
         remoteView.setOnClickFillInIntent(R.id.widget_list_row, intent);
 
         return remoteView;

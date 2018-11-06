@@ -10,12 +10,12 @@ import android.net.Uri;
 import android.widget.RemoteViews;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.todo.ToDoDetailActivity;
+import com.gameaholix.coinops.shopping.ShoppingListActivity;
 
 /**
  * Implementation of App Widget functionality.
  */
-public class ToDoWidgetProvider extends AppWidgetProvider {
+public class ShoppingWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -27,7 +27,7 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);
 
         // RemoteViews Service needed to provide adapter for ListView
-        Intent svcIntent = new Intent(context, ToDoWidgetService.class);
+        Intent svcIntent = new Intent(context, ShoppingWidgetService.class);
 
         // passing app widget id to that RemoteViews Service
         svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
@@ -41,13 +41,13 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
         views.setRemoteAdapter(R.id.lv_widget, svcIntent);
 
         // setting an empty view in case of no data
-        views.setTextViewText(R.id.tv_list_empty, context.getString(R.string.to_do_list_empty));
+        views.setTextViewText(R.id.tv_list_empty, context.getString(R.string.shopping_list_empty));
         views.setEmptyView(R.id.lv_widget, R.id.tv_list_empty);
 
-        views.setTextViewText(R.id.tv_widget_title, context.getString(R.string.to_do_list_widget_title));
+        views.setTextViewText(R.id.tv_widget_title, context.getString(R.string.shopping_list_widget_title));
 
         // Setup PendingIntent for the ListView
-        Intent intent = new Intent(context, ToDoDetailActivity.class);
+        Intent intent = new Intent(context, ShoppingListActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.lv_widget, pendingIntent);
@@ -77,7 +77,7 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         ComponentName widget = new ComponentName(context.getPackageName(),
-                ToDoWidgetProvider.class.getName());
+                ShoppingWidgetProvider.class.getName());
         int[] appWidgetIds = AppWidgetManager.getInstance(context).getAppWidgetIds(widget);
         onUpdate(context, AppWidgetManager.getInstance(context), appWidgetIds);
 
