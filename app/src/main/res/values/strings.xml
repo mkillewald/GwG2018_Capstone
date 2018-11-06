@@ -2,6 +2,10 @@
     <string name="app_name">CoinOps</string>
     <string name="anonymous_username">Player 1</string>
 
+    <!-- TODO: replace test id with real id in production -->
+    <!-- test id --><string name="ad_banner_id">ca-app-pub-3940256099942544/6300978111</string>
+    <!--&lt;!&ndash; real id &ndash;&gt;<string name="ad_banner_id">ca-app-pub-5476169458046094/2760949072</string> -->
+
     <!-- Activity Titles -->
     <string name="game_list_title">Game Collection</string>
     <string name="game_details_title">Game Details</string>

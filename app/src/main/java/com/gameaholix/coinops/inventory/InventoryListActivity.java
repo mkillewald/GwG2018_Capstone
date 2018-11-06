@@ -13,6 +13,8 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 public class InventoryListActivity extends AppCompatActivity implements
         InventoryListFragment.OnFragmentInteractionListener,
@@ -27,6 +29,10 @@ public class InventoryListActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_host);
+
+        AdView adView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
 
         setTitle(R.string.inventory_list_title);
 
