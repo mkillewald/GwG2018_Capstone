@@ -22,10 +22,14 @@
     <dimen name="form_margin">10dp</dimen>
     <dimen name="text_margin">8dp</dimen>
     <dimen name="edit_text_margin">2dp</dimen>
+    <dimen name="widget_margin">8dp</dimen>
 
     <!-- padding -->
     <dimen name="spinner_label_padding">6dp</dimen>
     <dimen name="row_separation">16dp</dimen>
     <dimen name="text_separation">8dp</dimen>
+    <dimen name="widget_listview_row_padding">8dp</dimen>
+
+
 
 </resources>

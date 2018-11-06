@@ -72,8 +72,8 @@
     <!-- Form Input -->
     <string name="repair_description_hint">Trouble Description</string>
     <string name="repair_step_name_hint">Repair Step Taken</string>
-    <string name="todo_name_hint">Title</string>
-    <string name="todo_description_hint">Notes</string>
+    <string name="to_do_name_hint">Title</string>
+    <string name="to_do_description_hint">Notes</string>
     <string name="shopping_name_hint">Needed Item</string>
 
     <string name="save_changes">Save Changes</string>
@@ -228,5 +228,9 @@
 
     <!-- Content Descriptions -->
     <string name="next_arrow">more information</string>
+
+    <!-- Widget -->
+    <string name="add_widget">Add widget</string>
+    <string name="to_do_list_empty">To do List is empty</string>
 
 </resources>
