@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/margin"
-            tools:context=".inventory.InventoryDetailFragment">
+            tools:mContext=".inventory.InventoryDetailFragment">
 
             <android.support.constraint.Guideline
                 android:id="@+id/gl_vertical_center"

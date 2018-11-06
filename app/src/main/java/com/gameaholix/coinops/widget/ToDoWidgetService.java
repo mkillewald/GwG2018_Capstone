@@ -1,4 +1,4 @@
-package com.gameaholix.coinops;
+package com.gameaholix.coinops.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;

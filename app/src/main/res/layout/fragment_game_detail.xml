@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/margin"
-        tools:context=".game.GameDetailFragment">
+        tools:mContext=".game.GameDetailFragment">
 
         <android.support.constraint.Guideline
             android:id="@+id/gl_vertical_center"

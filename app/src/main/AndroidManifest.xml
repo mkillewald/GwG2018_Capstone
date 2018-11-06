@@ -52,7 +52,7 @@
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
 
-        <receiver android:name=".ToDoWidgetProvider">
+        <receiver android:name=".widget.ToDoWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -63,7 +63,7 @@
         </receiver>
 
         <service
-            android:name=".ToDoWidgetService"
+            android:name=".widget.ToDoWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 

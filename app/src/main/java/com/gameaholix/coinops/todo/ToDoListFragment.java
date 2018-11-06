@@ -128,8 +128,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
                     Log.d(TAG, "Failed to read from database.", databaseError.toException());
                 }
             };
-
-            // read list of repair logs
             mToDoListRef.addValueEventListener(mToDoListener);
 
 //        } else {

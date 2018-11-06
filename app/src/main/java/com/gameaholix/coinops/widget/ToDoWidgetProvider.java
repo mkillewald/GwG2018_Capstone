@@ -1,4 +1,4 @@
-package com.gameaholix.coinops;
+package com.gameaholix.coinops.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.widget.RemoteViews;
+
+import com.gameaholix.coinops.R;
 
 /**
  * Implementation of App Widget functionality.
@@ -31,13 +33,14 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
                 svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
         //setting adapter to listview of the widget
-        views.setRemoteAdapter(appWidgetId, R.id.lv_to_do_widget, svcIntent);
+        views.setRemoteAdapter(R.id.lv_to_do_widget, svcIntent);
 
         //setting an empty view in case of no data
         views.setEmptyView(R.id.lv_to_do_widget, R.id.tv_list_empty);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+
     }
 
     @Override
