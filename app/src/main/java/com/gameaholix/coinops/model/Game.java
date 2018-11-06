@@ -122,6 +122,7 @@ public class Game implements Parcelable {
         return id;
     }
 
+    @Exclude
     public void setId(String id) {
         this.id = id;
     }

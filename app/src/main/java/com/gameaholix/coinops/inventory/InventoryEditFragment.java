@@ -87,8 +87,6 @@ public class InventoryEditFragment extends Fragment {
 
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
-            final String id = mItem.getId();
 
             // Setup EditTexts
             bind.etAddInventoryName.setText(mItem.getName());
@@ -97,9 +95,7 @@ public class InventoryEditFragment extends Fragment {
                 public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                     if (i == EditorInfo.IME_ACTION_DONE) {
                         String input = textView.getText().toString().trim();
-                        if (textInputIsValid(input)) {
-                            mValuesBundle.putString(Db.NAME, input);
-                        } else {
+                        if (!textInputIsValid(input)) {
                             textView.setText(mItem.getName());
                         }
                         hideKeyboard(textView);
@@ -115,9 +111,7 @@ public class InventoryEditFragment extends Fragment {
                         if (view instanceof EditText) {
                             EditText editText = (EditText) view;
                             String input = editText.getText().toString().trim();
-                            if (textInputIsValid(input)) {
-                                mValuesBundle.putString(Db.NAME, input);
-                            } else {
+                            if (!textInputIsValid(input)) {
                                 editText.setText(mItem.getName());
                             }
                             hideKeyboard(editText);
@@ -132,9 +126,7 @@ public class InventoryEditFragment extends Fragment {
                 public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                     if (i == EditorInfo.IME_ACTION_DONE) {
                         String input = textView.getText().toString().trim();
-                        if (textInputIsValid(input)) {
-                            mValuesBundle.putString(Db.DESCRIPTION, input);
-                        } else {
+                        if (!textInputIsValid(input)) {
                             textView.setText(mItem.getDescription());
                         }
                         hideKeyboard(textView);
@@ -150,9 +142,7 @@ public class InventoryEditFragment extends Fragment {
                         if (view instanceof EditText) {
                             EditText editText = (EditText) view;
                             String input = editText.getText().toString().trim();
-                            if (textInputIsValid(input)) {
-                                mValuesBundle.putString(Db.DESCRIPTION, input);
-                            } else {
+                            if (!textInputIsValid(input)) {
                                 editText.setText(mItem.getDescription());
                             }
                             hideKeyboard(editText);
@@ -214,29 +204,7 @@ public class InventoryEditFragment extends Fragment {
                         mValuesBundle.putString(Db.DESCRIPTION, descriptionEntry);
                     }
 
-                    // Get database paths from helper class
-                    String inventoryPath = Db.getInventoryPath(uid) + id;
-                    String userInventoryListPath = Db.getInventoryListPath(uid) + id;
-
-                    // Convert values Bundle to HashMap for Firebase call to updateChildren()
-                    Map<String, Object> valuesMap = new HashMap<>();
-
-                    for (String key : Db.INVENTORY_STRINGS) {
-                        if (mValuesBundle.containsKey(key)) {
-                            valuesMap.put(inventoryPath + "/" + key, mValuesBundle.getString(key));
-                            if (key.equals(Db.NAME)) {
-                                valuesMap.put(userInventoryListPath, mValuesBundle.getString(key));
-                            }
-                        }
-                    }
-
-                    for (String key : Db.INVENTORY_INTS) {
-                        if (mValuesBundle.containsKey(key)) {
-                            valuesMap.put(inventoryPath + "/" + key, mValuesBundle.getInt(key));
-                        }
-                    }
-
-                    updateItem(valuesMap);
+                    updateItem();
                     mListener.onEditCompletedOrCancelled();
                 }
             });
@@ -291,12 +259,36 @@ public class InventoryEditFragment extends Fragment {
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void updateItem(Map<String, Object> valuesToUpdate) {
+    private void updateItem() {
         // TODO: add checks for if game name already exists.
 
         // Update Firebase
         if (mUser != null) {
             // user is signed in
+            String uid = mUser.getUid();
+            String id = mItem.getId();
+
+            // Get database paths from helper class
+            String inventoryPath = Db.getInventoryPath(uid) + id;
+            String userInventoryListPath = Db.getInventoryListPath(uid) + id;
+
+            // Convert values Bundle to HashMap for Firebase call to updateChildren()
+            Map<String, Object> valuesToUpdate = new HashMap<>();
+
+            for (String key : Db.INVENTORY_STRINGS) {
+                if (mValuesBundle.containsKey(key)) {
+                    valuesToUpdate.put(inventoryPath + "/" + key, mValuesBundle.getString(key));
+                    if (key.equals(Db.NAME)) {
+                        valuesToUpdate.put(userInventoryListPath, mValuesBundle.getString(key));
+                    }
+                }
+            }
+
+            for (String key : Db.INVENTORY_INTS) {
+                if (mValuesBundle.containsKey(key)) {
+                    valuesToUpdate.put(inventoryPath + "/" + key, mValuesBundle.getInt(key));
+                }
+            }
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
                 @Override

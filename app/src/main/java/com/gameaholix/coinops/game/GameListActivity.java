@@ -27,10 +27,12 @@ public class GameListActivity extends AppCompatActivity implements
 
         setTitle(R.string.game_list_title);
 
-        GameListFragment fragment = new GameListFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, fragment)
-                .commit();
+        if (savedInstanceState == null) {
+            GameListFragment fragment = new GameListFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        }
     }
 
     @Override

@@ -12,7 +12,6 @@ public class Item implements Parcelable {
     protected String id;
     protected String parentId;
     protected String name;
-    protected String description;
     protected long createdAt;
     protected long modifiedAt;
 
@@ -39,7 +38,6 @@ public class Item implements Parcelable {
         this.id = in.readString();
         this.parentId = in.readString();
         this.name = in.readString();
-        this.description = in.readString();
         this.createdAt = in.readLong();
         this.modifiedAt = in.readLong();
     }
@@ -54,7 +52,6 @@ public class Item implements Parcelable {
         dest.writeString(id);
         dest.writeString(parentId);
         dest.writeString(name);
-        dest.writeString(description);
         dest.writeLong(createdAt);
         dest.writeLong(modifiedAt);
     }
@@ -79,6 +76,7 @@ public class Item implements Parcelable {
         return id;
     }
 
+    @Exclude
     public void setId(String id) {
         this.id = id;
     }
@@ -97,14 +95,6 @@ public class Item implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Map<String, String> getCreatedAt() {

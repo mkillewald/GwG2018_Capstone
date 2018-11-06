@@ -27,10 +27,8 @@ import java.util.ArrayList;
 
 public class GameListFragment extends Fragment implements GameAdapter.GameAdapterOnClickHandler {
     private static final String TAG = GameListFragment.class.getSimpleName();
-    private static final String EXTRA_GAME_LIST = "CoinOpsGameList";
 
     private Context mContext;
-    private ArrayList<Game> mGames;
     private GameAdapter mGameAdapter;
     private FirebaseUser mUser;
     private DatabaseReference mUserGameListRef;
@@ -44,12 +42,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            mGames = new ArrayList<>();
-        } else {
-            mGames = savedInstanceState.getParcelableArrayList(EXTRA_GAME_LIST);
-        }
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -72,7 +64,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mGameAdapter);
-        mGameAdapter.setGames(mGames);
+//        mGameAdapter.setGames(mGames);
 
 
         if (mUser != null) {
@@ -82,13 +74,15 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             mGameListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    mGames.clear();
+//                    mGames.clear();
+                    ArrayList<Game> games = new ArrayList<>();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         String gameId = child.getKey();
                         String name = (String) child.getValue();
                         Game game = new Game(gameId, name);
-                        mGames.add(game);
+                        games.add(game);
                     }
+                    mGameAdapter.setGames(games);
                     mGameAdapter.notifyDataSetChanged();
                 }
 
@@ -114,13 +108,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         super.onDestroyView();
 
         mUserGameListRef.removeEventListener(mGameListener);
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putParcelableArrayList(EXTRA_GAME_LIST, mGames);
     }
 
     @Override

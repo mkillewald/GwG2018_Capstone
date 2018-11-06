@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -58,6 +59,7 @@ public class ToDoEditFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -85,9 +87,6 @@ public class ToDoEditFragment extends Fragment {
 
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
-            final String id = mToDoItem.getId();
-            final String gameId = mToDoItem.getParentId();
 
             // Setup EditTexts
             bind.etTodoName.setText(mToDoItem.getName());
@@ -194,31 +193,7 @@ public class ToDoEditFragment extends Fragment {
                         mValuesBundle.putString(Db.DESCRIPTION, descriptionEntry);
                     }
 
-                    // Get database paths from helper class
-                    String toDoPath = Db.getToDoPath(uid) + id;
-                    String userToDoListPath = Db.getUserToDoListPath(uid) + id;
-                    String gameToDoListPath = Db.getGameToDoListPath(uid, gameId) + id;
-
-                    // Convert values Bundle to HashMap for Firebase call to updateChildren()
-                    Map<String, Object> valuesMap = new HashMap<>();
-
-                    for (String key : Db.TO_DO_STRINGS) {
-                        if (mValuesBundle.containsKey(key)) {
-                            valuesMap.put(toDoPath + "/" + key, mValuesBundle.getString(key));
-                            if (key.equals(Db.NAME)) {
-                                valuesMap.put(userToDoListPath, mValuesBundle.getString(key));
-                                valuesMap.put(gameToDoListPath, mValuesBundle.getString(key));
-                            }
-                        }
-                    }
-
-                    for (String key : Db.TO_DO_INTS) {
-                        if (mValuesBundle.containsKey(key)) {
-                            valuesMap.put(toDoPath + "/" + key, mValuesBundle.getInt(key));
-                        }
-                    }
-
-                    updateItem(valuesMap);
+                    updateItem();
                     mListener.onEditCompletedOrCancelled();
                 }
             });
@@ -229,6 +204,19 @@ public class ToDoEditFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_delete_todo:
+                if (mListener != null) {
+                    mListener.onDeleteButtonPressed(mToDoItem);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -273,12 +261,39 @@ public class ToDoEditFragment extends Fragment {
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void updateItem(Map<String, Object> valuesToUpdate) {
+    private void updateItem() {
         // TODO: add checks for if game name already exists.
 
         // Update Firebase
         if (mUser != null) {
             // user is signed in
+            String uid = mUser.getUid();
+            String id = mToDoItem.getId();
+            String gameId = mToDoItem.getParentId();
+
+            // Get database paths from helper class
+            String toDoPath = Db.getToDoPath(uid) + id;
+            String userToDoListPath = Db.getUserToDoListPath(uid) + id;
+            String gameToDoListPath = Db.getGameToDoListPath(uid, gameId) + id;
+
+            // Convert values Bundle to HashMap for Firebase call to updateChildren()
+            Map<String, Object> valuesToUpdate = new HashMap<>();
+
+            for (String key : Db.TO_DO_STRINGS) {
+                if (mValuesBundle.containsKey(key)) {
+                    valuesToUpdate.put(toDoPath + "/" + key, mValuesBundle.getString(key));
+                    if (key.equals(Db.NAME)) {
+                        valuesToUpdate.put(userToDoListPath, mValuesBundle.getString(key));
+                        valuesToUpdate.put(gameToDoListPath, mValuesBundle.getString(key));
+                    }
+                }
+            }
+
+            for (String key : Db.TO_DO_INTS) {
+                if (mValuesBundle.containsKey(key)) {
+                    valuesToUpdate.put(toDoPath + "/" + key, mValuesBundle.getInt(key));
+                }
+            }
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
                 @Override
@@ -307,5 +322,6 @@ public class ToDoEditFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onEditCompletedOrCancelled();
+        void onDeleteButtonPressed(ToDoItem toDoItem);
     }
 }

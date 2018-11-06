@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentShoppingAddBinding;
+import com.gameaholix.coinops.databinding.FragmentItemAddBinding;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
@@ -73,8 +73,8 @@ public class ShoppingAddFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentShoppingAddBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_shopping_add, container, false);
+        final FragmentItemAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_item_add, container, false);
         final View rootView = bind.getRoot();
 
         // Setup Buttons

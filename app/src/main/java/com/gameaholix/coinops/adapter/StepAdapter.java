@@ -36,7 +36,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterVie
         StepAdapterViewHolder(RepairStepListItemBinding stepListItemBinding) {
             super(stepListItemBinding.getRoot());
             mBinding = stepListItemBinding;
-//            mBinding.tvRepairDescription.setOnClickListener(this);
+            mBinding.getRoot().setOnClickListener(this);
         }
 
         @Override

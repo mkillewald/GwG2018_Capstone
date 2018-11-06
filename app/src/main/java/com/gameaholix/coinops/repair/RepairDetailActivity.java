@@ -3,10 +3,8 @@ package com.gameaholix.coinops.repair;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,9 +17,8 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Item;
 
 public class RepairDetailActivity extends AppCompatActivity implements
-        RepairDetailFragment.OnFragmentInteractionListener,
-        RepairEditFragment.OnFragmentInteractionListener {
-    private static final String TAG = RepairDetailActivity.class.getSimpleName();
+        RepairDetailFragment.OnFragmentInteractionListener {
+//    private static final String TAG = RepairDetailActivity.class.getSimpleName();
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
 
@@ -40,19 +37,17 @@ public class RepairDetailActivity extends AppCompatActivity implements
         if (savedInstanceState == null) {
             mGameName = getIntent().getStringExtra(EXTRA_GAME_NAME);
             mRepairLog = getIntent().getParcelableExtra(EXTRA_REPAIR);
+
+            RepairDetailFragment fragment = RepairDetailFragment.newInstance(mRepairLog);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
         } else {
             mGameName = savedInstanceState.getString(EXTRA_GAME_NAME);
             mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
         }
 
         setTitle(mGameName);
-
-        Log.d(TAG, mRepairLog.getParentId());
-
-        RepairDetailFragment fragment = RepairDetailFragment.newInstance(mRepairLog);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, fragment)
-                .commit();
     }
 
     @Override
@@ -63,22 +58,8 @@ public class RepairDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof RepairEditFragment) {
-            menu.findItem(R.id.menu_edit_repair).setVisible(false);
-        } else {
-            menu.findItem(R.id.menu_edit_repair).setVisible(true);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_edit_repair:
-                // handled by RepairDetailFragment
-                return false;
             case R.id.menu_delete_repair:
                 // handled by RepairDetailFragment
                 return false;
@@ -119,22 +100,16 @@ public class RepairDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onEditButtonPressed(Item repairLog) {
-        // replace RepairDetailFragment with RepairEditFragment
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, RepairEditFragment.newInstance(repairLog));
-        ft.commit();
-
-        invalidateOptionsMenu();
+    public void onDescriptionSelected(Item repairLog) {
+        FragmentManager fm = getSupportFragmentManager();
+        RepairEditFragment fragment = RepairEditFragment.newInstance(mRepairLog);
+        fragment.show(fm, "fragment_step_edit");
     }
 
     @Override
-    public void onEditCompletedOrCancelled() {
-        // replace RepairEditFragment with RepairDetailFragment
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, RepairDetailFragment.newInstance(mRepairLog));
-        ft.commit();
-
-        invalidateOptionsMenu();
+    public void onStepSelected(Item repairStep) {
+        FragmentManager fm = getSupportFragmentManager();
+        StepEditFragment fragment = StepEditFragment.newInstance(mRepairLog.getParentId(), repairStep);
+        fragment.show(fm, "fragment_step_edit");
     }
 }

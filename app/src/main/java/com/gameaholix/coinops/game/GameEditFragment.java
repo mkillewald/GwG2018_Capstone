@@ -90,8 +90,6 @@ public class GameEditFragment extends Fragment {
 
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
-            final String gameId = mGame.getId();
 
             // Setup EditText
             bind.etGameName.setText(mGame.getName());
@@ -316,32 +314,7 @@ public class GameEditFragment extends Fragment {
                         mValuesBundle.putString(Db.NAME, nameEntry);
                     }
 
-                    // Get database paths from helper class
-                    String gamePath = Db.getGamePath(uid) + gameId;
-                    String userGameListPath = Db.getGameListPath(uid) + gameId;
-
-
-                    // Convert mValuesBundle to HashMap for Firebase call to updateChildren()
-                    // used a bundle to catch values from the UI to preserve instance state,
-                    // perhaps this is not necessary
-                    Map<String, Object> valuesMap = new HashMap<>();
-
-                    for (String key : Db.GAME_STRINGS) {
-                        if (mValuesBundle.containsKey(key)) {
-                            valuesMap.put(gamePath + "/" + key, mValuesBundle.getString(key));
-                            if (key.equals(Db.NAME)) {
-                                valuesMap.put(userGameListPath, mValuesBundle.getString(key));
-                            }
-                        }
-                    }
-
-                    for (String key : Db.GAME_INTS) {
-                        if (mValuesBundle.containsKey(key)) {
-                            valuesMap.put(gamePath + "/" + key, mValuesBundle.getInt(key));
-                        }
-                    }
-
-                    updateGame(valuesMap);
+                    updateGame();
                     mListener.onEditCompletedOrCancelled();
 
                 }
@@ -415,12 +388,39 @@ public class GameEditFragment extends Fragment {
         }
     }
 
-    private void updateGame(Map<String, Object> valuesToUpdate) {
+    private void updateGame() {
         // TODO: add checks for if game name already exists.
 
         // Update Firebase
         if (mUser != null) {
             // user is signed in
+            String uid = mUser.getUid();
+            String gameId = mGame.getId();
+
+            // Get database paths from helper class
+            String gamePath = Db.getGamePath(uid) + gameId;
+            String userGameListPath = Db.getGameListPath(uid) + gameId;
+
+
+            // Convert mValuesBundle to HashMap for Firebase call to updateChildren()
+            // used a bundle to catch values from the UI to preserve instance state,
+            // perhaps this is not necessary
+            Map<String, Object> valuesToUpdate = new HashMap<>();
+
+            for (String key : Db.GAME_STRINGS) {
+                if (mValuesBundle.containsKey(key)) {
+                    valuesToUpdate.put(gamePath + "/" + key, mValuesBundle.getString(key));
+                    if (key.equals(Db.NAME)) {
+                        valuesToUpdate.put(userGameListPath, mValuesBundle.getString(key));
+                    }
+                }
+            }
+
+            for (String key : Db.GAME_INTS) {
+                if (mValuesBundle.containsKey(key)) {
+                    valuesToUpdate.put(gamePath + "/" + key, mValuesBundle.getInt(key));
+                }
+            }
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
                 @Override

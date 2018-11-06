@@ -40,10 +40,6 @@
             android:launchMode="singleTop"
             android:parentActivityName=".game.GameDetailActivity" />
         <activity
-            android:name=".repair.RepairEditActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".repair.RepairDetailActivity" />
-        <activity
             android:name=".todo.ToDoListActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />

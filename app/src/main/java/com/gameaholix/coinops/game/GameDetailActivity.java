@@ -264,7 +264,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     private void showAddShoppingDialog() {
         FragmentManager fm = getSupportFragmentManager();
         ShoppingAddFragment fragment = ShoppingAddFragment.newInstance(mGame.getId());
-        fragment.show(fm, "fragment_shopping_add");
+        fragment.show(fm, "fragment_item_add");
     }
 
     private void showDeleteAlert() {
@@ -278,8 +278,8 @@ public class GameDetailActivity extends AppCompatActivity implements
             } else {
                 builder = new android.support.v7.app.AlertDialog.Builder(this);
             }
-            builder.setTitle(getString(R.string.really_delete_game))
-                    .setMessage(getString(R.string.game_will_be_deleted))
+            builder.setTitle(R.string.really_delete_game)
+                    .setMessage(R.string.game_will_be_deleted)
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {

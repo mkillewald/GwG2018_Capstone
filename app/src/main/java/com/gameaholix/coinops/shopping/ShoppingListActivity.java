@@ -22,10 +22,12 @@ public class ShoppingListActivity extends AppCompatActivity implements
 
         setTitle(R.string.shopping_list_title);
 
-        ShoppingListFragment fragment = ShoppingListFragment.newInstance();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, fragment)
-                .commit();
+        if (savedInstanceState == null) {
+            ShoppingListFragment fragment = ShoppingListFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        }
     }
 
     @Override

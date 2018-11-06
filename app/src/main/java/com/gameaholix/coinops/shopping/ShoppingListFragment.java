@@ -30,13 +30,9 @@ public class ShoppingListFragment extends Fragment implements
 
     private static final String TAG = ShoppingListFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-    private static final String EXTRA_SHOPPING_LIST = "CoinOpsShoppingList";
-    private static final String EXTRA_SHOW_GLOBAL = "CoinOpsShowAddButton";
 
     private String mGameId;
-    private boolean mShowGlobalList;
     private ShoppingAdapter mShoppingAdapter;
-    private ArrayList<Item> mShoppingList;
     private DatabaseReference mShopListRef;
     private FirebaseUser mUser;
     private ValueEventListener mShoppingListener;
@@ -65,23 +61,18 @@ public class ShoppingListFragment extends Fragment implements
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
-                mShowGlobalList = false;
             } else {
                 mGameId = null;
-                mShowGlobalList = true;
             }
-            mShoppingList = new ArrayList<>();
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-            mShoppingList = savedInstanceState.getParcelableArrayList(EXTRA_SHOPPING_LIST);
-            mShowGlobalList = savedInstanceState.getBoolean(EXTRA_SHOW_GLOBAL);
         }
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        if (mShowGlobalList) {
+        if (mGameId == null) {
             // use global list reference
             mShopListRef = databaseReference
                     .child(Db.USER)
@@ -108,7 +99,6 @@ public class ShoppingListFragment extends Fragment implements
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mShoppingAdapter);
-        mShoppingAdapter.setShoppingItems(mShoppingList);
 
         if (mUser != null) {
             // user is signed in
@@ -117,13 +107,14 @@ public class ShoppingListFragment extends Fragment implements
             mShoppingListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    mShoppingList.clear();
+                    ArrayList<Item> shoppingList = new ArrayList<>();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         String id = child.getKey();
                         String name = (String) child.getValue();
                         Item shoppingItem = new Item(id, mGameId, name);
-                        mShoppingList.add(shoppingItem);
+                        shoppingList.add(shoppingItem);
                     }
+                    mShoppingAdapter.setShoppingItems(shoppingList);
                     mShoppingAdapter.notifyDataSetChanged();
                 }
 
@@ -156,8 +147,6 @@ public class ShoppingListFragment extends Fragment implements
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_GAME_ID, mGameId);
-        outState.putParcelableArrayList(EXTRA_SHOPPING_LIST, mShoppingList);
-        outState.putBoolean(EXTRA_SHOW_GLOBAL, mShowGlobalList);
     }
 
     @Override

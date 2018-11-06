@@ -8,18 +8,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/margin"
-        tools:context=".repair.RepairDetailFragment">
+        tools:context=".repair.RepairEditFragment">
 
-        <TextView
-            android:id="@+id/tv_repair_description"
+        <EditText
+            android:id="@+id/et_repair_description"
             style="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@android:color/primary_text_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/repair_description_hint"
+            android:inputType="textMultiLine"
+            android:minLines="1"
+            android:maxLines="5"
+            android:gravity="top|start"
+            android:imeOptions="actionDone"
             android:paddingBottom="@dimen/row_separation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/tv_repair_steps_label"
@@ -29,7 +35,7 @@
             android:paddingBottom="@dimen/text_separation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_repair_description"
+            app:layout_constraintTop_toBottomOf="@id/et_repair_description"
             android:text="@string/repair_steps_label" />
 
         <android.support.v7.widget.RecyclerView
@@ -42,32 +48,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_repair_steps_label"
-            app:layout_constraintBottom_toTopOf="@id/et_add_step_entry"/>
-
-        <EditText
-            android:id="@+id/et_add_step_entry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/repair_step_name_hint"
-            android:minLines="1"
-            android:maxLines="5"
-            android:gravity="top|start"
-            android:imeOptions="actionDone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/btn_add_step"/>
+            app:layout_constraintBottom_toTopOf="@id/btn_save"/>
 
         <Button
-            android:id="@+id/btn_add_step"
+            android:id="@+id/btn_cancel"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            android:text="@android:string/cancel"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/add_repair_step"/>
+            app:layout_constraintEnd_toStartOf="@id/btn_save"/>
+
+        <Button
+            android:id="@+id/btn_save"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_changes"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     </android.support.constraint.ConstraintLayout>
 </layout>

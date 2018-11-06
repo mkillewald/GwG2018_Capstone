@@ -27,10 +27,10 @@ import java.util.ArrayList;
 
 public class InventoryListFragment extends Fragment implements InventoryAdapter.InventoryAdapterOnClickHandler {
     private static final String TAG = InventoryListFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_LIST = "CoinOpsInventoryList";
 
+    private FirebaseUser mUser;
     private InventoryAdapter mInventoryAdapter;
-    private ArrayList<InventoryItem> mInventoryItems;
+    private DatabaseReference mDatabaseReference;
     private DatabaseReference mUserInventoryListRef;
     private ValueEventListener mInventoryListener;
     private OnFragmentInteractionListener mListener;
@@ -43,11 +43,10 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            mInventoryItems = new ArrayList<>();
-        } else {
-            mInventoryItems = savedInstanceState.getParcelableArrayList(EXTRA_INVENTORY_LIST);
-        }
+        // Initialize Firebase components
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -62,31 +61,26 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mInventoryAdapter);
-        mInventoryAdapter.setInventoryItems(mInventoryItems);
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (mUser != null) {
             // user is signed in
-            final String uid = user.getUid();
+            final String uid = mUser.getUid();
 
             // Setup database references
-            mUserInventoryListRef = databaseReference.child(Db.USER).child(uid).child(Db.INVENTORY_LIST);
+            mUserInventoryListRef = mDatabaseReference.child(Db.USER).child(uid).child(Db.INVENTORY_LIST);
 
             // read list of inventory items
             mInventoryListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    mInventoryItems.clear();
+                    ArrayList<InventoryItem> items = new ArrayList<>();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         String id = child.getKey();
                         String name = (String) child.getValue();
                         InventoryItem item = new InventoryItem(id, name);
-                        mInventoryItems.add(item);
+                        items.add(item);
                     }
+                    mInventoryAdapter.setInventoryItems(items);
                     mInventoryAdapter.notifyDataSetChanged();
                 }
 
@@ -96,7 +90,6 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
                     Log.d(TAG, "Failed to read from database.", databaseError.toException());
                 }
             };
-
             mUserInventoryListRef.addValueEventListener(mInventoryListener);
 
 //        } else {
@@ -111,13 +104,6 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
         super.onDestroyView();
 
         mUserInventoryListRef.removeEventListener(mInventoryListener);
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putParcelableArrayList(EXTRA_INVENTORY_LIST, mInventoryItems);
     }
 
     @Override

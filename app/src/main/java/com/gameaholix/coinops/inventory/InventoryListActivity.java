@@ -24,10 +24,12 @@ public class InventoryListActivity extends AppCompatActivity implements
 
         setTitle(R.string.inventory_list_title);
 
-        InventoryListFragment fragment = new InventoryListFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, fragment)
-                .commit();
+        if (savedInstanceState == null) {
+            InventoryListFragment fragment = new InventoryListFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        }
     }
 
     @Override

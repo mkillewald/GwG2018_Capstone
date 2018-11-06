@@ -1,13 +1,10 @@
 package com.gameaholix.coinops.inventory;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,10 +27,8 @@ public class InventoryDetailFragment extends Fragment {
     private static final String TAG = InventoryDetailFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
-    private Context mContext;
     private InventoryItem mItem;
     private FirebaseUser mUser;
-    private DatabaseReference mDatabaseReference;
     private DatabaseReference mInventoryRef;
     private ValueEventListener mInventoryListener;
     private OnFragmentInteractionListener mListener;
@@ -58,8 +53,8 @@ public class InventoryDetailFragment extends Fragment {
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mInventoryRef = mDatabaseReference
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        mInventoryRef = databaseReference
                 .child(Db.INVENTORY)
                 .child(mUser.getUid())
                 .child(mItem.getId());
@@ -138,9 +133,6 @@ public class InventoryDetailFragment extends Fragment {
             case R.id.menu_edit_inventory:
                 mListener.onEditButtonPressed(mItem);
                 return true;
-            case R.id.menu_delete_inventory:
-                showDeleteAlert();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -156,7 +148,6 @@ public class InventoryDetailFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -170,52 +161,6 @@ public class InventoryDetailFragment extends Fragment {
         super.onDetach();
         mListener = null;
         mInventoryRef.removeEventListener(mInventoryListener);
-    }
-
-    private void showDeleteAlert() {
-        if (mUser != null) {
-            // user is signed in
-
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new AlertDialog.Builder(mContext);
-            }
-            builder.setTitle(getString(R.string.really_delete_inventory_item))
-                    .setMessage(getString(R.string.inventory_item_will_be_deleted))
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteItemData();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                            }
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-//        } else {
-//            // user is not signed in
-        }
-    }
-
-    private void deleteItemData() {
-        // delete inventory item
-        mInventoryRef.removeValue();
-
-        // delete inventory list entry
-        mDatabaseReference
-                .child(Db.USER)
-                .child(mUser.getUid())
-                .child(Db.INVENTORY_LIST)
-                .child(mItem.getId())
-                .removeValue();
     }
 
     /**

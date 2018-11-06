@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.shopping;
+package com.gameaholix.coinops.repair;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,41 +23,36 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentItemAddBinding;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
-import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShoppingEditFragment extends DialogFragment {
-    private static final String TAG = ShoppingEditFragment.class.getSimpleName();
-    private static final String EXTRA_SHOPPING = "CoinOpsShoppingItem";
+public class StepEditFragment extends DialogFragment {
+    private static final String TAG = StepEditFragment.class.getSimpleName();
+    private static final String EXTRA_STEP = "CoinOpsRepairStep";
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
     private Context mContext;
-    private Item mShoppingItem;
-    private ValueEventListener mShopListener;
+    private String mGameId;
+    private Item mRepairStep;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
-    private DatabaseReference mShopRef;
 
-    public ShoppingEditFragment() {
+    public StepEditFragment() {
         // Required empty public constructor
     }
 
-    public static ShoppingEditFragment newInstance(Item shoppingItem) {
-        // When this factory method is called from the combined (global) shopping list,
-        // the shopping list item that is passed in will not have a parentId set.
-        // We will need to obtain the parentId from the database.
+    public static StepEditFragment newInstance(String gameId, Item repairStep) {
+        StepEditFragment fragment = new StepEditFragment();
         Bundle args = new Bundle();
-        ShoppingEditFragment fragment = new ShoppingEditFragment();
-        args.putParcelable(EXTRA_SHOPPING, shoppingItem);
+        args.putString(EXTRA_GAME_ID, gameId);
+        args.putParcelable(EXTRA_STEP, repairStep);
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,69 +63,40 @@ public class ShoppingEditFragment extends DialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                mShoppingItem = getArguments().getParcelable(EXTRA_SHOPPING);
+                mGameId = getArguments().getString(EXTRA_GAME_ID);
+                mRepairStep = getArguments().getParcelable(EXTRA_STEP);
             }
         } else {
-            mShoppingItem = savedInstanceState.getParcelable(EXTRA_SHOPPING);
+            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
+            mRepairStep = savedInstanceState.getParcelable(EXTRA_STEP);
         }
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mShopRef = mDatabaseReference
-                .child(Db.SHOP)
-                .child(mUser.getUid())
-                .child(mShoppingItem.getId());
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentItemAddBinding bind = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_item_add, container, false);
+        final FragmentItemAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_item_add, container, false);
         final View rootView = bind.getRoot();
 
         if (mUser != null) {
             // user is signed in
 
-            if (mShoppingItem.getParentId() == null) {
-                // Setup event listener
-                // This is needed to retrieve the parentId from the database
-                mShopListener = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String id = dataSnapshot.getKey();
-
-                        mShoppingItem = dataSnapshot.getValue(Item.class);
-
-                        // mShoppingItem should now have a parentId set
-
-                        if (mShoppingItem == null) {
-                            Log.d(TAG, "Error: To do item details not found");
-                        } else {
-                            mShoppingItem.setId(id);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                };
-                mShopRef.addValueEventListener(mShopListener);
-            }
-
             // Setup EditText
-            bind.etEntry.setText(mShoppingItem.getName());
+            bind.etEntry.setText(mRepairStep.getName());
             bind.etEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                     if (i == EditorInfo.IME_ACTION_DONE) {
                         String input = textView.getText().toString().trim();
                         if (!textInputIsValid(input)) {
-                            textView.setText(mShoppingItem.getName());
+                            textView.setText(mRepairStep.getName());
                         }
                         hideKeyboard(textView);
                         return true;
@@ -146,7 +112,7 @@ public class ShoppingEditFragment extends DialogFragment {
                             EditText editText = (EditText) view;
                             String input = editText.getText().toString().trim();
                             if (!textInputIsValid(input)) {
-                                editText.setText(mShoppingItem.getName());
+                                editText.setText(mRepairStep.getName());
                             }
                             hideKeyboard(editText);
                         }
@@ -168,21 +134,14 @@ public class ShoppingEditFragment extends DialogFragment {
                 public void onClick(View view) {
                     String input = bind.etEntry.getText().toString().trim();
                     if (textInputIsValid(input)) {
-                        mShoppingItem.setName(input);
+                        mRepairStep.setName(input);
                     }
+                    updateItem();
                     getDialog().dismiss();
-
-                    if (mShoppingItem.getParentId() != null) {
-                        updateItem();
-                    } else {
-                        PromptUser.displayAlert(mContext, R.string.error_edit_shopping_failed,
-                                R.string.error_please_try_again);
-                        Log.e(TAG, "ERROR: mShoppingItem.getParentId() is null");
-                    }
                 }
             });
 
-            bind.btnDelete.setText(R.string.delete_item);
+            bind.btnDelete.setText(R.string.delete_repair_step);
             bind.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -190,7 +149,6 @@ public class ShoppingEditFragment extends DialogFragment {
                     showDeleteAlert();
                 }
             });
-
 //        } else {
 //            // user is not signed in
         }
@@ -199,19 +157,11 @@ public class ShoppingEditFragment extends DialogFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        if (mShopListener != null) {
-            mShopRef.removeEventListener(mShopListener);
-        }
-    }
-
-    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_SHOPPING, mShoppingItem);
+        outState.putString(EXTRA_GAME_ID, mGameId);
+        outState.putParcelable(EXTRA_STEP, mRepairStep);
     }
 
     @Override
@@ -227,6 +177,7 @@ public class ShoppingEditFragment extends DialogFragment {
             getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
         }
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -263,18 +214,14 @@ public class ShoppingEditFragment extends DialogFragment {
         if (mUser != null) {
             // user is signed in
             final String uid = mUser.getUid();
-            final String id = mShoppingItem.getId();
-            final String gameId = mShoppingItem.getParentId();
+            final String id = mRepairStep.getId();
+            final String logId = mRepairStep.getParentId();
 
             // Get database paths from helper class
-            String shopPath = Db.getShopPath(uid) + id;
-            String gameShopListPath = Db.getGameShopListPath(uid, gameId) + id;
-            String userShopListPath = Db.getUserShopListPath(uid) + id;
+            String stepsPath = Db.getStepsPath(uid, mGameId, logId) + id;
 
             Map<String, Object> valuesToUpdate = new HashMap<>();
-            valuesToUpdate.put(shopPath, mShoppingItem);
-            valuesToUpdate.put(gameShopListPath, mShoppingItem.getName());
-            valuesToUpdate.put(userShopListPath, mShoppingItem.getName());
+            valuesToUpdate.put(stepsPath, mRepairStep);
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
                 @Override
@@ -286,6 +233,7 @@ public class ShoppingEditFragment extends DialogFragment {
                     }
                 }
             });
+
 //        } else {
 //            // user is not signed in
         }
@@ -301,8 +249,8 @@ public class ShoppingEditFragment extends DialogFragment {
             } else {
                 builder = new AlertDialog.Builder(mContext);
             }
-            builder.setTitle(R.string.really_delete_item)
-                    .setMessage(R.string.item_will_be_deleted)
+            builder.setTitle(R.string.really_delete_repair_step)
+                    .setMessage(R.string.repair_step_will_be_deleted)
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -311,13 +259,7 @@ public class ShoppingEditFragment extends DialogFragment {
                     })
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            if (mShoppingItem.getParentId() != null) {
-                                deleteItemData();
-                            } else {
-                                PromptUser.displayAlert(mContext, R.string.error_delete_shopping_failed,
-                                        R.string.error_please_try_again);
-                                Log.e(TAG, "ERROR: mShoppingItem.getParentId() is null");
-                            }
+                            deleteItemData();
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -328,24 +270,15 @@ public class ShoppingEditFragment extends DialogFragment {
     }
 
     private void deleteItemData() {
-        // delete shopping item
-        mShopRef.removeValue();
+        // delete inventory item
 
-        // delete game shopping list entry
         mDatabaseReference
-                .child(Db.GAME)
+                .child(Db.REPAIR)
                 .child(mUser.getUid())
-                .child(mShoppingItem.getParentId())
-                .child(Db.SHOP_LIST)
-                .child(mShoppingItem.getId())
-                .removeValue();
-
-        // delete user shopping entry (global list)
-        mDatabaseReference
-                .child(Db.USER)
-                .child(mUser.getUid())
-                .child(Db.SHOP_LIST)
-                .child(mShoppingItem.getId())
+                .child(mGameId)
+                .child(mRepairStep.getParentId())
+                .child(Db.STEPS)
+                .child(mRepairStep.getId())
                 .removeValue();
     }
 }

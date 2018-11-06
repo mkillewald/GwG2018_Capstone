@@ -1,6 +1,5 @@
 package com.gameaholix.coinops.repair;
 
-
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -72,7 +71,7 @@ public class RepairAddFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final FragmentRepairAddBinding bind = DataBindingUtil.inflate(

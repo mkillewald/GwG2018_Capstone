@@ -1,13 +1,10 @@
 package com.gameaholix.coinops.todo;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -31,10 +28,8 @@ public class ToDoDetailFragment extends Fragment {
     private static final String TAG = ToDoDetailFragment.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
-    private Context mContext;
     private ToDoItem mToDoItem;
     private FirebaseUser mUser;
-    private DatabaseReference mDatabaseReference;
     private DatabaseReference mToDoRef;
     private ValueEventListener mToDoListener;
     private OnFragmentInteractionListener mListener;
@@ -67,8 +62,8 @@ public class ToDoDetailFragment extends Fragment {
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mToDoRef = mDatabaseReference
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        mToDoRef = databaseReference
                 .child(Db.TODO)
                 .child(mUser.getUid())
                 .child(mToDoItem.getId());
@@ -135,7 +130,9 @@ public class ToDoDetailFragment extends Fragment {
                 }
                 return true;
             case R.id.menu_delete_todo:
-                showDeleteAlert();
+                if (mListener != null) {
+                    mListener.onDeleteButtonPressed(mToDoItem);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -151,7 +148,6 @@ public class ToDoDetailFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -166,61 +162,6 @@ public class ToDoDetailFragment extends Fragment {
         mListener = null;
     }
 
-    private void showDeleteAlert() {
-        if (mUser != null) {
-            // user is signed in
-
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new AlertDialog.Builder(mContext);
-            }
-            builder.setTitle(getString(R.string.really_delete_item))
-                    .setMessage(getString(R.string.item_will_be_deleted))
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteItemData();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                            }
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-//        } else {
-//            // user is not signed in
-        }
-    }
-
-    private void deleteItemData() {
-        // delete inventory item
-        mToDoRef.removeValue();
-
-        // delete game to do list entry
-        mDatabaseReference
-                .child(Db.GAME)
-                .child(mUser.getUid())
-                .child(mToDoItem.getParentId())
-                .child(Db.TODO_LIST)
-                .child(mToDoItem.getId())
-                .removeValue();
-
-        // delete user to do list entry (global list)
-        mDatabaseReference
-                .child(Db.USER)
-                .child(mUser.getUid())
-                .child(Db.TODO_LIST)
-                .child(mToDoItem.getId())
-                .removeValue();
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -233,5 +174,6 @@ public class ToDoDetailFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onEditButtonPressed(ToDoItem toDoItem);
+        void onDeleteButtonPressed(ToDoItem toDoItem);
     }
 }

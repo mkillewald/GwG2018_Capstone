@@ -23,10 +23,12 @@ public class ToDoListActivity extends AppCompatActivity implements
 
         setTitle(R.string.to_do_list_title);
 
-        ToDoListFragment fragment = ToDoListFragment.newInstance();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, fragment)
-                .commit();
+        if (savedInstanceState == null) {
+            ToDoListFragment fragment = ToDoListFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        }
     }
 
     @Override

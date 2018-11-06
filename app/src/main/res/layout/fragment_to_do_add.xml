@@ -11,7 +11,8 @@
 
         <EditText
             android:id="@+id/et_todo_name"
-            style="@style/TextAppearance.AppCompat.Title"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/primary_text_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/todo_name_hint"

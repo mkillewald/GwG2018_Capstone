@@ -28,13 +28,11 @@ import java.util.ArrayList;
 public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapterOnClickHandler {
     private static final String TAG = ToDoListFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-    private static final String EXTRA_TODO_LIST = "CoinOpsToDoList";
     private static final String EXTRA_SHOW_ADD_BUTTON = "CoinOpsShowAddButton";
 
     private String mGameId;
     private boolean mShowAddButton;
     private ToDoAdapter mToDoAdapter;
-    private ArrayList<ToDoItem> mToDoList;
     private DatabaseReference mToDoListRef;
     private FirebaseUser mUser;
     private ValueEventListener mToDoListener;
@@ -68,10 +66,8 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
                 mGameId = null;
                 mShowAddButton = false;
             }
-            mToDoList = new ArrayList<>();
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-            mToDoList = savedInstanceState.getParcelableArrayList(EXTRA_TODO_LIST);
             mShowAddButton = savedInstanceState.getBoolean(EXTRA_SHOW_ADD_BUTTON);
         }
 
@@ -107,7 +103,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mToDoAdapter);
-        mToDoAdapter.setToDoItems(mToDoList);
 
         if (mUser != null) {
             // user is signed in
@@ -116,13 +111,14 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
             mToDoListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    mToDoList.clear();
+                    ArrayList<ToDoItem> toDoList = new ArrayList<>();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         String id = child.getKey();
                         String name = (String) child.getValue();
                         ToDoItem toDoItem = new ToDoItem(id, mGameId, name);
-                        mToDoList.add(toDoItem);
+                        toDoList.add(toDoItem);
                     }
+                    mToDoAdapter.setToDoItems(toDoList);
                     mToDoAdapter.notifyDataSetChanged();
                 }
 
@@ -155,7 +151,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_GAME_ID, mGameId);
-        outState.putParcelableArrayList(EXTRA_TODO_LIST, mToDoList);
         outState.putBoolean(EXTRA_SHOW_ADD_BUTTON, mShowAddButton);
     }
 

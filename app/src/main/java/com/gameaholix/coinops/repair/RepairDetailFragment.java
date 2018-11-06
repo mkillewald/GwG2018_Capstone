@@ -39,15 +39,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RepairDetailFragment extends Fragment {
+public class RepairDetailFragment extends Fragment implements StepAdapter.StepAdapterOnClickHandler {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
-    private static final String EXTRA_REPAIR = "com.gameaholix.coinops.model.Item";
-    private static final String EXTRA_STEP_LIST = "CoinOpsRepairStepList";
+    private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
 
     private Context mContext;
     private Item mRepairLog;
     private String mGameId;
-    private ArrayList<Item> mRepairSteps;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mRepairRef;
@@ -79,13 +77,13 @@ public class RepairDetailFragment extends Fragment {
             if (getArguments() != null) {
                 mRepairLog = getArguments().getParcelable(EXTRA_REPAIR);
             }
-            mRepairSteps = new ArrayList<>();
         } else {
             mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
-            mRepairSteps = savedInstanceState.getParcelableArrayList(EXTRA_STEP_LIST);
         }
 
-        mGameId = mRepairLog.getParentId();
+        if (mRepairLog != null) {
+            mGameId = mRepairLog.getParentId();
+        }
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -112,18 +110,16 @@ public class RepairDetailFragment extends Fragment {
             // user is signed in;
 
             // Setup Repair Step RecyclerView
-            mStepAdapter = new StepAdapter( mContext, null );
+            mStepAdapter = new StepAdapter( mContext, this );
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
             mBind.rvRepairSteps.setLayoutManager(linearLayoutManager);
             mBind.rvRepairSteps.setAdapter(mStepAdapter);
-            mStepAdapter.setRepairSteps(mRepairSteps);
 
             // Setup event listeners
             mRepairListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String id = dataSnapshot.getKey();
-
                     mRepairLog = dataSnapshot.getValue(Item.class);
                     if (mRepairLog == null) {
                         Log.d(TAG, "Error: Repair log details not found");
@@ -132,6 +128,12 @@ public class RepairDetailFragment extends Fragment {
                         mRepairLog.setParentId(mGameId);
 
                         mBind.tvRepairDescription.setText(mRepairLog.getName());
+                        mBind.tvRepairDescription.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mListener.onDescriptionSelected(mRepairLog);
+                            }
+                        });
                     }
                 }
 
@@ -146,16 +148,18 @@ public class RepairDetailFragment extends Fragment {
             mStepListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    mRepairSteps.clear();
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-//                        String stepId = dataSnapshot1.getKey();
-
-                        // TODO: finish this
-                        Item repairStep = dataSnapshot1.getValue(Item.class);
-                        mRepairSteps.add(repairStep);
+                    ArrayList<Item> repairSteps = new ArrayList<>();
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        String stepId = child.getKey();
+                        Item repairStep = child.getValue(Item.class);
+                        if (repairStep != null) {
+                            repairStep.setId(stepId);
+                            repairStep.setParentId(mRepairLog.getId());
+                            repairSteps.add(repairStep);
+                        }
                     }
+                    mStepAdapter.setRepairSteps(repairSteps);
                     mStepAdapter.notifyDataSetChanged();
-
                 }
 
                 @Override
@@ -204,10 +208,7 @@ public class RepairDetailFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_edit_repair:
-                mListener.onEditButtonPressed(mRepairLog);
-                return true;
-            case R.id.menu_delete_inventory:
+            case R.id.menu_delete_repair:
                 showDeleteAlert();
                 return true;
             default:
@@ -220,7 +221,6 @@ public class RepairDetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(EXTRA_REPAIR, mRepairLog);
-        outState.putParcelableArrayList(EXTRA_STEP_LIST, mRepairSteps);
     }
 
     @Override
@@ -239,6 +239,13 @@ public class RepairDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(Item repairStep) {
+        if (mListener != null) {
+            mListener.onStepSelected(repairStep);
+        }
     }
 
     private void hideKeyboard(TextView view) {
@@ -265,11 +272,9 @@ public class RepairDetailFragment extends Fragment {
 
             // Get database paths from helper class
             String stepPath = Db.getStepsPath(uid, mGameId, mRepairLog.getId()) + stepId;
-//            String stepListPath = Db.getStepListPath(uid, mGameId, mLogId, stepId);
 
             Map<String, Object> valuesToAdd = new HashMap<>();
             valuesToAdd.put(stepPath, step);
-//            valuesToAdd.put(stepListPath, true);
 
             mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                 @Override
@@ -302,8 +307,8 @@ public class RepairDetailFragment extends Fragment {
             } else {
                 builder = new AlertDialog.Builder(mContext);
             }
-            builder.setTitle(getString(R.string.really_delete_repair_log))
-                    .setMessage(getString(R.string.repair_log_will_be_deleted))
+            builder.setTitle(R.string.really_delete_repair_log)
+                    .setMessage(R.string.repair_log_will_be_deleted)
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -338,6 +343,7 @@ public class RepairDetailFragment extends Fragment {
                 .child(mRepairLog.getId())
                 .removeValue();
     }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -349,6 +355,7 @@ public class RepairDetailFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onEditButtonPressed(Item repairLog);
+        void onStepSelected(Item repairStep);
+        void onDescriptionSelected(Item repairLog);
     }
 }

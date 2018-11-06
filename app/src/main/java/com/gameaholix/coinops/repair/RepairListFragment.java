@@ -28,11 +28,9 @@ import java.util.ArrayList;
 public class RepairListFragment extends Fragment implements RepairAdapter.RepairAdapterOnClickHandler {
     private static final String TAG = RepairListFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-    private static final String EXTRA_REPAIR_LIST = "CoinOpsRepairList";
 
     private Context mContext;
     private String mGameId;
-    private ArrayList<Item> mRepairLogs;
     private RepairAdapter mRepairAdapter;
     private DatabaseReference mRepairListRef;
     private FirebaseUser mUser;
@@ -59,10 +57,8 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
             }
-            mRepairLogs = new ArrayList<>();
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-            mRepairLogs = savedInstanceState.getParcelableArrayList(EXTRA_REPAIR_LIST);
         }
 
         // Initialize Firebase components
@@ -89,7 +85,6 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mRepairAdapter);
-        mRepairAdapter.setRepairLogs(mRepairLogs);
 
         if (mUser != null) {
             // user is signed in
@@ -98,13 +93,14 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
             mRepairListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    mRepairLogs.clear();
+                    ArrayList<Item> repairLogs = new ArrayList<>();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         String logId = child.getKey();
                         String name = (String) child.getValue();
                         Item repairLog = new Item(logId, mGameId, name);
-                        mRepairLogs.add(repairLog);
+                        repairLogs.add(repairLog);
                     }
+                    mRepairAdapter.setRepairLogs(repairLogs);
                     mRepairAdapter.notifyDataSetChanged();
                 }
 
@@ -139,7 +135,6 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_GAME_ID, mGameId);
-        outState.putParcelableArrayList(EXTRA_REPAIR_LIST, mRepairLogs);
     }
 
     @Override
