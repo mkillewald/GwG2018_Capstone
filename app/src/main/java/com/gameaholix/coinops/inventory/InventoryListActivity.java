@@ -1,6 +1,7 @@
 package com.gameaholix.coinops.inventory;
 
 import android.content.Intent;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,12 +11,17 @@ import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.InventoryItem;
+import com.gameaholix.coinops.utility.NetworkUtils;
+import com.gameaholix.coinops.utility.PromptUser;
 
 public class InventoryListActivity extends AppCompatActivity implements
-        InventoryListFragment.OnFragmentInteractionListener {
+        InventoryListFragment.OnFragmentInteractionListener,
+        NetworkUtils.CheckInternetConnection.TaskCompleted{
 
 //    private static final String TAG = InventoryListActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY = "com.gameaholix.coinops.model.InventoryItem";
+
+    private CoordinatorLayout mCoordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +35,14 @@ public class InventoryListActivity extends AppCompatActivity implements
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
+        }
+
+        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
+
+        if (NetworkUtils.isNetworkEnabled(this)) {
+            new NetworkUtils.CheckInternetConnection(this).execute();
+        } else {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
         }
     }
 
@@ -47,6 +61,13 @@ public class InventoryListActivity extends AppCompatActivity implements
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onInternetCheckCompleted(boolean networkIsOnline) {
+        if (!networkIsOnline) {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
         }
     }
 

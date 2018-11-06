@@ -2,6 +2,7 @@ package com.gameaholix.coinops.inventory;
 
 import android.content.DialogInterface;
 import android.os.Build;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +15,8 @@ import android.view.MenuItem;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.NetworkUtils;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -21,11 +24,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class InventoryDetailActivity extends AppCompatActivity implements
         InventoryDetailFragment.OnFragmentInteractionListener,
-        InventoryEditFragment.OnFragmentInteractionListener {
+        InventoryEditFragment.OnFragmentInteractionListener,
+        NetworkUtils.CheckInternetConnection.TaskCompleted{
 //    private static final String TAG = InventoryDetailActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
     private InventoryItem mInventoryItem;
+    private CoordinatorLayout mCoordinatorLayout;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mInventoryRef;
@@ -60,6 +65,14 @@ public class InventoryDetailActivity extends AppCompatActivity implements
                 .child(Db.INVENTORY)
                 .child(mUser.getUid())
                 .child(mInventoryItem.getId());
+
+        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
+
+        if (NetworkUtils.isNetworkEnabled(this)) {
+            new NetworkUtils.CheckInternetConnection(this).execute();
+        } else {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
+        }
     }
 
     @Override
@@ -98,6 +111,13 @@ public class InventoryDetailActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_INVENTORY_ITEM, mInventoryItem);
+    }
+
+    @Override
+    public void onInternetCheckCompleted(boolean networkIsOnline) {
+        if (!networkIsOnline) {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
+        }
     }
 
     @Override

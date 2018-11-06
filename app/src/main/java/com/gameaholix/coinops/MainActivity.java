@@ -1,12 +1,11 @@
 package com.gameaholix.coinops;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,20 +18,22 @@ import com.gameaholix.coinops.game.GameListActivity;
 import com.gameaholix.coinops.inventory.InventoryListActivity;
 import com.gameaholix.coinops.shopping.ShoppingListActivity;
 import com.gameaholix.coinops.todo.ToDoListActivity;
+import com.gameaholix.coinops.utility.NetworkUtils;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        NetworkUtils.CheckInternetConnection.TaskCompleted {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+//    private static final String TAG = MainActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 1;
 
+    private CoordinatorLayout mCoordinatorLayout;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-
-    private String mUsername;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,26 +48,14 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // user is signed in
-                    onSignedInInitialize(user.getDisplayName());
-
-                    // Name, email address, and profile photo Url
-                    mUsername = user.getDisplayName();
-                    String email = user.getEmail();
-                    Uri photoUrl = user.getPhotoUrl();
 
                     // Check if user's email is verified
-                    boolean emailVerified = user.isEmailVerified();
+//                    boolean emailVerified = user.isEmailVerified();
 
                     // The user's ID, unique to the Firebase project. Do NOT use this value to
                     // authenticate with your backend server, if you have one. Use
                     // FirebaseUser.getIdToken() instead.
-                    final String uid = user.getUid();
-
-//                    Log.d(TAG, "Uid: " + uid);
-//                    Log.d(TAG, "name: " + mUsername);
-//                    Log.d(TAG, "email: " + email);
-//                    Log.d(TAG, "emailVerified: " + emailVerified);
-//                    Log.d(TAG, "photoUrl: " + photoUrl);
+//                    final String uid = user.getUid();
 
                     final Button gameButton = findViewById(R.id.btn_game_list);
                     gameButton.setOnClickListener(new View.OnClickListener() {
@@ -102,8 +91,6 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     // user is not signed in
-                    mUsername = getString(R.string.anonymous_username);
-                    onSignedOutCleanUp();
                     startActivityForResult(
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
@@ -117,6 +104,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+
+        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
+
+        if (NetworkUtils.isNetworkEnabled(this)) {
+            new NetworkUtils.CheckInternetConnection(this).execute();
+        } else {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
+        }
     }
 
     @Override
@@ -165,12 +160,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void onSignedInInitialize(String username) {
-        mUsername = username;
+    @Override
+    public void onInternetCheckCompleted(boolean networkIsOnline) {
+        if (!networkIsOnline) {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
+        }
     }
-
-    private void onSignedOutCleanUp() {
-        mUsername = getString(R.string.anonymous_username);
-    }
-
 }

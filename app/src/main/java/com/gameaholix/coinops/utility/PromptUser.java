@@ -3,7 +3,12 @@ package com.gameaholix.coinops.utility;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
+
+import com.gameaholix.coinops.R;
 
 public class PromptUser {
 
@@ -22,6 +27,18 @@ public class PromptUser {
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert).show();
+    }
+
+    public static void displaySnackbar(CoordinatorLayout coordinatorLayout, int message) {
+        final Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, message, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        snackbar.dismiss();
+                    }
+                });
+        snackbar.show();
     }
 
 }

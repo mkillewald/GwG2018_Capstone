@@ -3,6 +3,7 @@ package com.gameaholix.coinops.repair;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -15,14 +16,18 @@ import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Item;
+import com.gameaholix.coinops.utility.NetworkUtils;
+import com.gameaholix.coinops.utility.PromptUser;
 
 public class RepairDetailActivity extends AppCompatActivity implements
-        RepairDetailFragment.OnFragmentInteractionListener {
+        RepairDetailFragment.OnFragmentInteractionListener,
+        NetworkUtils.CheckInternetConnection.TaskCompleted {
 //    private static final String TAG = RepairDetailActivity.class.getSimpleName();
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
 
     private Item mRepairLog;
+    private CoordinatorLayout mCoordinatorLayout;
     private String mGameName;
 
     @Override
@@ -48,6 +53,14 @@ public class RepairDetailActivity extends AppCompatActivity implements
         }
 
         setTitle(mGameName);
+
+        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
+
+        if (NetworkUtils.isNetworkEnabled(this)) {
+            new NetworkUtils.CheckInternetConnection(this).execute();
+        } else {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
+        }
     }
 
     @Override
@@ -97,6 +110,13 @@ public class RepairDetailActivity extends AppCompatActivity implements
             }
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public void onInternetCheckCompleted(boolean networkIsOnline) {
+        if (!networkIsOnline) {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
+        }
     }
 
     @Override

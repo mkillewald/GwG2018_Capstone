@@ -165,6 +165,18 @@
             app:layout_constraintLeft_toLeftOf="@id/tv_condition_label"
             app:layout_constraintTop_toBottomOf="@id/tv_condition_label" />
 
+        <Button
+            android:id="@+id/btn_web_search"
+            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/find_tech_info"
+            app:layout_constraintTop_toBottomOf="@id/tv_game_condition"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
     </android.support.constraint.ConstraintLayout>
 
 </layout>

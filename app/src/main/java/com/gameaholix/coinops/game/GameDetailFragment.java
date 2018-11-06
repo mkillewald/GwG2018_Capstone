@@ -1,7 +1,10 @@
 package com.gameaholix.coinops.game;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -139,9 +142,20 @@ public class GameDetailFragment extends Fragment {
                     Log.d(TAG, "Failed to read from database.", databaseError.toException());
                 }
             };
-
-            // read list of games
             mGameRef.addValueEventListener(mGameListener);
+
+            // Setup Button
+            bind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (getActivity() != null) {
+                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://sark.atomized.org/?s=" + mGame.getName()));
+                        getActivity().startActivity(webIntent);
+                    }
+                }
+            });
+
 
 //        } else {
 //            // user is not signed in

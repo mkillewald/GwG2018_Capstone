@@ -2,6 +2,7 @@ package com.gameaholix.coinops.todo;
 
 import android.content.DialogInterface;
 import android.os.Build;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -15,6 +16,8 @@ import android.view.MenuItem;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.NetworkUtils;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -22,12 +25,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class ToDoDetailActivity extends AppCompatActivity implements
         ToDoDetailFragment.OnFragmentInteractionListener,
-        ToDoEditFragment.OnFragmentInteractionListener {
+        ToDoEditFragment.OnFragmentInteractionListener,
+        NetworkUtils.CheckInternetConnection.TaskCompleted{
 //    private static final String TAG = ToDoDetailActivity.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
 
     private ToDoItem mToDoItem;
+    private CoordinatorLayout mCoordinatorLayout;
     private FirebaseUser mUser;
     private String mGameName;
 
@@ -62,6 +67,14 @@ public class ToDoDetailActivity extends AppCompatActivity implements
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
+
+        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
+
+        if (NetworkUtils.isNetworkEnabled(this)) {
+            new NetworkUtils.CheckInternetConnection(this).execute();
+        } else {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
+        }
     }
 
     @Override
@@ -102,6 +115,13 @@ public class ToDoDetailActivity extends AppCompatActivity implements
 
         outState.putParcelable(EXTRA_TODO, mToDoItem);
         outState.putString(EXTRA_GAME_NAME, mGameName);
+    }
+
+    @Override
+    public void onInternetCheckCompleted(boolean networkIsOnline) {
+        if (!networkIsOnline) {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
+        }
     }
 
     @Override

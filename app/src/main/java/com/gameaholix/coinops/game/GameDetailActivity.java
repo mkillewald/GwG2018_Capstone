@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +37,8 @@ import com.gameaholix.coinops.todo.ToDoAddFragment;
 import com.gameaholix.coinops.todo.ToDoDetailActivity;
 import com.gameaholix.coinops.todo.ToDoListFragment;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.NetworkUtils;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +52,8 @@ public class GameDetailActivity extends AppCompatActivity implements
         RepairListFragment.OnFragmentInteractionListener,
         ToDoListFragment.OnFragmentInteractionListener,
         ShoppingListFragment.OnFragmentInteractionListener,
-        GameEditFragment.OnFragmentInteractionListener {
+        GameEditFragment.OnFragmentInteractionListener,
+NetworkUtils.CheckInternetConnection.TaskCompleted {
 
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
@@ -58,6 +62,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
     private Game mGame;
+    private CoordinatorLayout mCoordinatorLayout;
     private ViewPager mViewPager;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
@@ -129,6 +134,14 @@ public class GameDetailActivity extends AppCompatActivity implements
         mShopRef = mDatabaseReference
                 .child(Db.SHOP)
                 .child(mUser.getUid());
+
+        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
+
+        if (NetworkUtils.isNetworkEnabled(this)) {
+            new NetworkUtils.CheckInternetConnection(this).execute();
+        } else {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
+        }
     }
 
     @Override
@@ -218,6 +231,13 @@ public class GameDetailActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_GAME, mGame);
+    }
+
+    @Override
+    public void onInternetCheckCompleted(boolean networkIsOnline) {
+        if (!networkIsOnline) {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
+        }
     }
 
     @Override
