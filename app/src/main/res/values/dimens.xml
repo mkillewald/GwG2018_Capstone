@@ -24,6 +24,9 @@
     <dimen name="edit_text_margin">2dp</dimen>
     <dimen name="widget_margin">8dp</dimen>
 
+    <!-- height of banner ad plus 16dp separation -->
+    <dimen name="container_bottom_margin">66dp</dimen>
+
     <!-- padding -->
     <dimen name="spinner_label_padding">6dp</dimen>
     <dimen name="row_separation">16dp</dimen>

@@ -124,7 +124,8 @@
             android:layout_marginLeft="@dimen/text_margin"
             app:layout_constraintStart_toEndOf="@id/tv_game_monitor_size"
             app:layout_constraintLeft_toRightOf="@id/tv_game_monitor_size"
-            app:layout_constraintTop_toBottomOf="@id/tv_monitor_label" />
+            app:layout_constraintTop_toBottomOf="@id/tv_monitor_label"
+            android:layout_marginStart="@dimen/text_margin" />
 
         <TextView
             android:id="@+id/tv_game_monitor_type"
@@ -134,7 +135,8 @@
             android:layout_marginLeft="@dimen/text_margin"
             app:layout_constraintStart_toEndOf="@id/tv_game_monitor_phospher"
             app:layout_constraintLeft_toRightOf="@id/tv_game_monitor_phospher"
-            app:layout_constraintTop_toBottomOf="@id/tv_monitor_label" />
+            app:layout_constraintTop_toBottomOf="@id/tv_monitor_label"
+            android:layout_marginStart="@dimen/text_margin" />
 
         <TextView
             android:id="@+id/tv_game_monitor_tech"
@@ -144,7 +146,8 @@
             android:layout_marginLeft="@dimen/text_margin"
             app:layout_constraintStart_toEndOf="@id/tv_game_monitor_type"
             app:layout_constraintLeft_toRightOf="@id/tv_game_monitor_type"
-            app:layout_constraintTop_toBottomOf="@id/tv_monitor_label" />
+            app:layout_constraintTop_toBottomOf="@id/tv_monitor_label"
+            android:layout_marginStart="@dimen/text_margin" />
 
         <TextView
             android:id="@+id/tv_condition_label"

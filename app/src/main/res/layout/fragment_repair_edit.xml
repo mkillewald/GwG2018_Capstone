@@ -16,6 +16,8 @@
             android:textColor="@android:color/primary_text_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:hint="@string/repair_description_hint"
             android:inputType="textMultiLine"
             android:minLines="1"

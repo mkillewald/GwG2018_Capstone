@@ -7,9 +7,11 @@
 
     <TextView
         android:id="@+id/tv_widget_title"
+        style="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/TextAppearance.AppCompat.Medium"
+        android:textDirection="locale"
+        android:textAlignment="viewStart"
         android:padding="@dimen/widget_listview_row_padding"
         android:textColor="@android:color/primary_text_dark"
         android:background="@color/colorPrimary" />

@@ -24,6 +24,8 @@
         android:id="@+id/et_entry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textDirection="locale"
+        android:textAlignment="viewStart"
         android:inputType="textMultiLine"
         android:minLines="1"
         android:maxLines="5"

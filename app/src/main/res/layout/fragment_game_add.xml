@@ -21,6 +21,8 @@
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:hint="@string/game_name"
             android:inputType="text"
             android:maxLines="1"
@@ -44,13 +46,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_game_name"
-            android:text="@string/type_label" />
+            android:text="@string/type_label"
+            android:paddingStart="@dimen/spinner_label_padding" />
 
         <Spinner
             android:id="@+id/spinner_game_type"
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:entries="@array/game_type"
             android:prompt="@string/select_game_type"
             android:spinnerMode="dropdown"
@@ -70,12 +75,15 @@
             app:layout_constraintStart_toEndOf="@id/gl_vertical_center"
             app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"
             app:layout_constraintTop_toTopOf="@id/tv_type_label"
-            android:text="@string/cabinet_label"/>
+            android:text="@string/cabinet_label"
+            android:paddingStart="@dimen/spinner_label_padding" />
 
         <Spinner
             android:id="@+id/spinner_game_cabinet"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:entries="@array/game_cabinet"
             android:prompt="@string/select_game_cabinet"
             android:spinnerMode="dropdown"
@@ -96,12 +104,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spinner_game_type"
-            android:text="@string/status_label" />
+            android:text="@string/status_label"
+            android:paddingStart="@dimen/spinner_label_padding" />
 
         <Spinner
             android:id="@+id/spinner_game_working"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:entries="@array/game_working"
             android:prompt="@string/select_game_working"
             android:spinnerMode="dropdown"
@@ -121,12 +132,15 @@
             app:layout_constraintStart_toEndOf="@id/gl_vertical_center"
             app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"
             app:layout_constraintTop_toTopOf="@id/tv_status_label"
-            android:text="@string/ownership_label"/>
+            android:text="@string/ownership_label"
+            android:paddingStart="@dimen/spinner_label_padding" />
 
         <Spinner
             android:id="@+id/spinner_game_ownership"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:entries="@array/game_ownership"
             android:prompt="@string/select_game_ownership"
             android:spinnerMode="dropdown"
@@ -141,19 +155,24 @@
             android:id="@+id/tv_monitor_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             style="@style/TextAppearance.AppCompat.Small"
             android:layout_marginTop="@dimen/margin"
             android:paddingLeft="@dimen/spinner_label_padding"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spinner_game_working"
-            android:text="@string/monitor_label" />
+            android:text="@string/monitor_label"
+            android:paddingStart="@dimen/spinner_label_padding" />
 
         <TextView
             android:id="@+id/tv_monitor_details"
             style="?android:attr/spinnerItemStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:maxLines="1"
             android:ellipsize="end"
             android:paddingTop="2dp"
@@ -164,7 +183,8 @@
             app:layout_constraintRight_toLeftOf="@id/ib_monitor_details_arrow"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintTop_toBottomOf="@id/tv_monitor_label"
-            android:text="@string/select_game_monitor"/>
+            android:text="@string/select_game_monitor"
+            android:paddingStart="@dimen/spinner_label_padding" />
 
         <ImageView
             android:id="@+id/ib_monitor_details_arrow"
@@ -178,7 +198,8 @@
             app:layout_constraintRight_toLeftOf="@id/gl_vertical_center"
             app:layout_constraintTop_toTopOf="@id/tv_monitor_details"
             app:layout_constraintBottom_toBottomOf="@id/tv_monitor_details"
-            android:contentDescription="@string/select_game_monitor_details"/>
+            android:contentDescription="@string/select_game_monitor_details"
+            android:paddingEnd="12dp" />
 
         <TextView
             android:id="@+id/tv_condition_label"
@@ -189,12 +210,15 @@
             app:layout_constraintStart_toEndOf="@id/gl_vertical_center"
             app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"
             app:layout_constraintTop_toTopOf="@id/tv_monitor_label"
-            android:text="@string/condition_label" />
+            android:text="@string/condition_label"
+            android:paddingStart="@dimen/spinner_label_padding" />
 
         <Spinner
             android:id="@+id/spinner_game_condition"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:entries="@array/game_condition"
             android:prompt="@string/select_game_condition"
             android:spinnerMode="dropdown"

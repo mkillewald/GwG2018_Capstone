@@ -11,6 +11,8 @@
             android:id="@+id/et_entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:hint="@string/add_item"
             android:inputType="textMultiLine"
             android:minLines="1"
