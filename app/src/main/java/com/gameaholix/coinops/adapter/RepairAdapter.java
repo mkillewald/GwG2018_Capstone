@@ -1,5 +1,6 @@
 package com.gameaholix.coinops.adapter;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import com.gameaholix.coinops.model.Item;
 import java.util.List;
 
 public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdapterViewHolder> {
+    private Context mContext;
     private List<Item> mRepairLogs;
     private final RepairAdapterOnClickHandler mClickHandler;
 
@@ -21,7 +23,8 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
         void onClick(Item repairLog);
     }
 
-    public RepairAdapter (RepairAdapterOnClickHandler clickHandler) {
+    public RepairAdapter (Context context, RepairAdapterOnClickHandler clickHandler) {
+        mContext = context;
         mClickHandler = clickHandler;
     }
 
@@ -58,6 +61,8 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
         Item repairLog = mRepairLogs.get(position);
 
         holder.mBinding.tvName.setText(repairLog.getName());
+        String details = mContext.getString(R.string.details);
+        holder.mBinding.ivShowMore.setContentDescription(repairLog.getName() + details);
     }
 
     @Override

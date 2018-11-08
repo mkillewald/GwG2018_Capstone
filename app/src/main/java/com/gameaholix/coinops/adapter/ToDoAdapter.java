@@ -1,5 +1,6 @@
 package com.gameaholix.coinops.adapter;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import com.gameaholix.coinops.model.ToDoItem;
 import java.util.List;
 
 public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoAdapterViewHolder> {
+    private Context mContext;
     private List<ToDoItem> mToDoItems;
     private final ToDoAdapterOnClickHandler mClickHandler;
 
@@ -21,7 +23,8 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoAdapterVie
         void onClick(ToDoItem toDoItem);
     }
 
-    public ToDoAdapter(ToDoAdapterOnClickHandler clickHandler) {
+    public ToDoAdapter(Context context, ToDoAdapterOnClickHandler clickHandler) {
+        mContext = context;
         mClickHandler = clickHandler;
     }
 
@@ -56,8 +59,9 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoAdapterVie
     @Override
     public void onBindViewHolder(@NonNull ToDoAdapterViewHolder holder, int position) {
         ToDoItem toDoItem = mToDoItems.get(position);
-
         holder.mBinding.tvName.setText(toDoItem.getName());
+        String details = mContext.getString(R.string.details);
+        holder.mBinding.ivShowMore.setContentDescription(toDoItem.getName() + details);
     }
 
     @Override

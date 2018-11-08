@@ -81,10 +81,11 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
 
         // Setup Repair Log RecyclerView
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
-        mRepairAdapter = new RepairAdapter( this);
+        mRepairAdapter = new RepairAdapter(mContext, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mRepairAdapter);
+        recyclerView.setHasFixedSize(true);
 
         if (mUser != null) {
             // user is signed in

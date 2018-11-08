@@ -19,7 +19,9 @@
             android:layout_height="wrap_content"
             app:tabMode="fixed"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="spread"/>
 
@@ -30,7 +32,9 @@
             android:layout_weight="1"
             android:background="@android:color/white"
             app:layout_constraintTop_toBottomOf="@id/sliding_tabs"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <com.google.android.gms.ads.AdView
@@ -42,7 +46,9 @@
             ads:adSize="BANNER"
             ads:adUnitId="@string/ad_banner_id"
             ads:layout_constraintBottom_toBottomOf="parent"
+            ads:layout_constraintLeft_toLeftOf="parent"
             ads:layout_constraintStart_toStartOf="parent"
+            ads:layout_constraintRight_toRightOf="parent"
             ads:layout_constraintEnd_toEndOf="parent"/>
 
     </android.support.constraint.ConstraintLayout>

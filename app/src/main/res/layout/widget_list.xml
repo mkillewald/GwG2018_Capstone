@@ -23,9 +23,9 @@
 
     <TextView
         android:id="@+id/tv_list_empty"
+        style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/TextAppearance.AppCompat.Subhead"
         android:gravity="center"
         android:textColor="@android:color/primary_text_light"
         android:visibility="gone" />

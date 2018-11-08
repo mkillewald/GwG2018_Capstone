@@ -99,6 +99,7 @@ public class ShoppingListFragment extends Fragment implements
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mShoppingAdapter);
+        recyclerView.setHasFixedSize(true);
 
         if (mUser != null) {
             // user is signed in

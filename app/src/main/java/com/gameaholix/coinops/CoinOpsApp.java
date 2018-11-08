@@ -11,6 +11,7 @@ public class CoinOpsApp extends android.app.Application {
         // below line is run only once and before any other Firebase calls.
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
+        // Initialize Firebase Ads (AdMob)
         MobileAds.initialize(this, "ca-app-pub-5476169458046094~8586198814");
     }
 }

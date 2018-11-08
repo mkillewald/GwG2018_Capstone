@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class InventoryListFragment extends Fragment implements InventoryAdapter.InventoryAdapterOnClickHandler {
     private static final String TAG = InventoryListFragment.class.getSimpleName();
 
+    private Context mContext;
     private FirebaseUser mUser;
     private InventoryAdapter mInventoryAdapter;
     private DatabaseReference mDatabaseReference;
@@ -57,10 +58,11 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
                 false);
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
-        mInventoryAdapter = new InventoryAdapter(this);
+        mInventoryAdapter = new InventoryAdapter(mContext, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mInventoryAdapter);
+        recyclerView.setHasFixedSize(true);
 
         if (mUser != null) {
             // user is signed in
@@ -116,6 +118,7 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {

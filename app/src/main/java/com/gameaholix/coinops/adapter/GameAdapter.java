@@ -1,5 +1,6 @@
 package com.gameaholix.coinops.adapter;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import com.gameaholix.coinops.model.Game;
 import java.util.List;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterViewHolder> {
+    private Context mContext;
     private List<Game> mGames;
     private final GameAdapterOnClickHandler mClickHandler;
 
@@ -21,7 +23,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
         void onClick(Game game);
     }
 
-    public GameAdapter (GameAdapterOnClickHandler clickHandler) {
+    public GameAdapter (Context context, GameAdapterOnClickHandler clickHandler) {
+        mContext = context;
         mClickHandler = clickHandler;
     }
 
@@ -58,6 +61,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
         Game game = mGames.get(position);
 
         holder.mBinding.tvName.setText(game.getName());
+        String details = mContext.getString(R.string.details);
+        holder.mBinding.ivShowMore.setContentDescription(game.getName() + details);
     }
 
     @Override

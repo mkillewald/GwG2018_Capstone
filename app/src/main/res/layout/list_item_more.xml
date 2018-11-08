@@ -8,23 +8,32 @@
 
         <TextView
             android:id="@+id/tv_name"
-            style="@style/TextAppearance.AppCompat.Subhead"
-            android:layout_width="wrap_content"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/primary_text_light"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:paddingTop="@dimen/text_separation"
+            android:paddingBottom="@dimen/text_separation"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/iv_show_more"
+            app:layout_constraintEnd_toStartOf="@id/iv_show_more"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <ImageView
-            android:id="@+id/ib_show_more"
+            android:id="@+id/iv_show_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:contentDescription="@string/next_arrow"
+            android:contentDescription="@string/details"
             android:src="@drawable/ic_navigate_next_24dp" />
 
     </android.support.constraint.ConstraintLayout>

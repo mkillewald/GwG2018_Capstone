@@ -114,6 +114,7 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
             mBind.rvRepairSteps.setLayoutManager(linearLayoutManager);
             mBind.rvRepairSteps.setAdapter(mStepAdapter);
+            mBind.rvRepairSteps.setHasFixedSize(true);
 
             // Setup event listeners
             mRepairListener = new ValueEventListener() {

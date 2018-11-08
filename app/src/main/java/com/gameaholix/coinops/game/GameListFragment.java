@@ -60,12 +60,11 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
                 false);
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
-        mGameAdapter = new GameAdapter(this);
+        mGameAdapter = new GameAdapter(mContext, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mGameAdapter);
-//        mGameAdapter.setGames(mGames);
-
+        recyclerView.setHasFixedSize(true);
 
         if (mUser != null) {
             // user is signed in
@@ -74,7 +73,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             mGameListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    mGames.clear();
                     ArrayList<Game> games = new ArrayList<>();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         String gameId = child.getKey();

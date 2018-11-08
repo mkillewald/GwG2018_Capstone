@@ -31,9 +31,11 @@
 
         <TextView
             android:id="@+id/tv_repair_steps_label"
+            style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TextAppearance.AppCompat.Small"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:paddingBottom="@dimen/text_separation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

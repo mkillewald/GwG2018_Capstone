@@ -20,9 +20,11 @@
 
         <TextView
             android:id="@+id/tv_type_label"
+            style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TextAppearance.AppCompat.Small"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -33,6 +35,8 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="@id/tv_type_label"
             app:layout_constraintLeft_toLeftOf="@id/tv_type_label"
             app:layout_constraintTop_toBottomOf="@id/tv_type_label"/>
@@ -42,6 +46,8 @@
             style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_center"
             app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"
             app:layout_constraintTop_toTopOf="@id/tv_type_label"
@@ -52,15 +58,19 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="@id/tv_cabinet_label"
             app:layout_constraintLeft_toLeftOf="@id/tv_cabinet_label"
             app:layout_constraintTop_toBottomOf="@id/tv_cabinet_label"/>
 
         <TextView
             android:id="@+id/tv_status_label"
+            style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TextAppearance.AppCompat.Small"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:layout_marginTop="@dimen/margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -72,6 +82,8 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="@id/tv_status_label"
             app:layout_constraintLeft_toLeftOf="@id/tv_status_label"
             app:layout_constraintTop_toBottomOf="@id/tv_status_label" />
@@ -81,6 +93,8 @@
             style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_center"
             app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"
             app:layout_constraintTop_toTopOf="@id/tv_status_label"
@@ -91,15 +105,19 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="@id/tv_ownership_label"
             app:layout_constraintLeft_toLeftOf="@id/tv_ownership_label"
             app:layout_constraintTop_toBottomOf="@id/tv_ownership_label"/>
 
         <TextView
             android:id="@+id/tv_monitor_label"
+            style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TextAppearance.AppCompat.Small"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:layout_marginTop="@dimen/margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -111,16 +129,19 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="@id/tv_monitor_label"
             app:layout_constraintLeft_toLeftOf="@id/tv_monitor_label"
-            app:layout_constraintTop_toBottomOf="@id/tv_monitor_label"
-             />
+            app:layout_constraintTop_toBottomOf="@id/tv_monitor_label" />
 
         <TextView
             android:id="@+id/tv_game_monitor_phospher"
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:layout_marginLeft="@dimen/text_margin"
             app:layout_constraintStart_toEndOf="@id/tv_game_monitor_size"
             app:layout_constraintLeft_toRightOf="@id/tv_game_monitor_size"
@@ -132,6 +153,8 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:layout_marginLeft="@dimen/text_margin"
             app:layout_constraintStart_toEndOf="@id/tv_game_monitor_phospher"
             app:layout_constraintLeft_toRightOf="@id/tv_game_monitor_phospher"
@@ -143,6 +166,8 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             android:layout_marginLeft="@dimen/text_margin"
             app:layout_constraintStart_toEndOf="@id/tv_game_monitor_type"
             app:layout_constraintLeft_toRightOf="@id/tv_game_monitor_type"
@@ -151,9 +176,11 @@
 
         <TextView
             android:id="@+id/tv_condition_label"
+            style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TextAppearance.AppCompat.Small"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_center"
             app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"
             app:layout_constraintTop_toTopOf="@id/tv_monitor_label"
@@ -164,6 +191,8 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="@id/tv_condition_label"
             app:layout_constraintLeft_toLeftOf="@id/tv_condition_label"
             app:layout_constraintTop_toBottomOf="@id/tv_condition_label" />
@@ -173,12 +202,14 @@
             style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/find_tech_info"
+            android:textDirection="locale"
+            android:textAlignment="viewStart"
             app:layout_constraintTop_toBottomOf="@id/tv_game_condition"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="@string/find_tech_info" />
 
     </android.support.constraint.ConstraintLayout>
 

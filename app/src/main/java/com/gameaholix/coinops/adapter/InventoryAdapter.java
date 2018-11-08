@@ -1,5 +1,6 @@
 package com.gameaholix.coinops.adapter;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import com.gameaholix.coinops.model.InventoryItem;
 import java.util.List;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.InventoryAdapterViewHolder> {
+    private Context mContext;
     private List<InventoryItem> mInventoryItems;
     private final InventoryAdapterOnClickHandler mClickHandler;
 
@@ -21,7 +23,8 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         void onClick(InventoryItem inventoryItem);
     }
 
-    public InventoryAdapter (InventoryAdapterOnClickHandler clickHandler) {
+    public InventoryAdapter (Context context, InventoryAdapterOnClickHandler clickHandler) {
+        mContext = context;
         mClickHandler = clickHandler;
     }
 
@@ -58,6 +61,8 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         InventoryItem inventoryItem = mInventoryItems.get(position);
 
         holder.mBinding.tvName.setText(inventoryItem.getName());
+        String details = mContext.getString(R.string.details);
+        holder.mBinding.ivShowMore.setContentDescription(inventoryItem.getName() + details);
     }
 
     @Override
