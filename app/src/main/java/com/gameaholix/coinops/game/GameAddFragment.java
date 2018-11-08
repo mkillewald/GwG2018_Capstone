@@ -258,7 +258,7 @@ public class GameAddFragment extends DialogFragment {
                 // get text from EditText
                 mNewGame.setName(bind.etGameName.getText().toString().trim());
                 addGame(mNewGame);
-            }
+                    }
         });
 
         return rootView;
@@ -325,12 +325,11 @@ public class GameAddFragment extends DialogFragment {
             PromptUser.displayAlert(mContext,
                     R.string.error_add_game_failed,
                     R.string.error_name_empty);
+            Log.d(TAG, "Failed to add game! Name field was blank.");
             return;
         }
 
         getDialog().dismiss();
-
-        // TODO: add checks for if game name already exists.
 
         // Add Game object to Firebase
         if (mUser != null) {

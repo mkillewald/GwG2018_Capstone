@@ -249,6 +249,7 @@ public class ToDoEditFragment extends Fragment {
 
         // TODO: possibly add more validation checks, and return false if any one of them fails.
         if (TextUtils.isEmpty(inputText)) {
+            Log.d(TAG, "User input was blank or empty.");
             result = false;
         }
 
@@ -262,7 +263,6 @@ public class ToDoEditFragment extends Fragment {
     }
 
     private void updateItem() {
-        // TODO: add checks for if game name already exists.
 
         // Update Firebase
         if (mUser != null) {

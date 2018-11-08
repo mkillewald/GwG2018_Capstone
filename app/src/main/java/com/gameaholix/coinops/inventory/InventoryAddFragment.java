@@ -187,12 +187,11 @@ public class InventoryAddFragment extends DialogFragment {
             PromptUser.displayAlert(mContext,
                     R.string.error_add_inventory_failed,
                     R.string.error_name_empty);
+            Log.d(TAG, "Failed to add part! Name field was blank.");
             return;
         }
 
         getDialog().dismiss();
-
-        // TODO: add checks for if item name already exists.
 
         // Add InventoryItem object to Firebase
         if (mUser != null) {

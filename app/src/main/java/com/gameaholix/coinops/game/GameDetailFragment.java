@@ -1,6 +1,5 @@
 package com.gameaholix.coinops.game;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;

@@ -94,7 +94,6 @@ public class RepairAddFragment extends DialogFragment {
                 // get text from EditText
                 mNewRepair.setName(bind.etRepairDescription.getText().toString().trim());
                 addLog(mNewRepair);
-                getDialog().dismiss();
             }
         });
 
@@ -140,10 +139,11 @@ public class RepairAddFragment extends DialogFragment {
             PromptUser.displayAlert(mContext,
                     R.string.error_add_repair_log_failed,
                     R.string.error_repair_log_description_empty);
+            Log.d(TAG, "Failed to add repair log! Trouble description field was blank.");
             return;
         }
 
-        // TODO: add checks for if game name already exists.
+        getDialog().dismiss();
 
         // Add Game object to Firebase
         if (mUser != null) {

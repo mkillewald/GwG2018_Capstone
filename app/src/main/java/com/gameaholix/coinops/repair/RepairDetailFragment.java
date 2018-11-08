@@ -263,8 +263,6 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
             return;
         }
 
-        // TODO: add checks for if item name already exists.
-
         // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in

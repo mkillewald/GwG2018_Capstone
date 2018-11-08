@@ -183,12 +183,11 @@ public class ToDoAddFragment extends DialogFragment {
             PromptUser.displayAlert(mContext,
                     R.string.error_add_item_failed,
                     R.string.error_item_name_empty);
+            Log.d(TAG, "Failed to add item! Name field was blank.");
             return;
         }
 
         getDialog().dismiss();
-
-        // TODO: add checks for if item name already exists.
 
         // Add Entry object to Firebase
         if (mUser != null) {
