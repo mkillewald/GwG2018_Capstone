@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements
                 Intent intent = new Intent(MainActivity.this, InventoryListActivity.class);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
+
                     startActivity(intent, bundle);
                 } else {
                     startActivity(intent);

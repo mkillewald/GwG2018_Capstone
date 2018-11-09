@@ -48,11 +48,8 @@ public class ToDoDetailActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionInflater inflater = TransitionInflater.from(this);
 
-            Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
-            getWindow().setEnterTransition(slideIn);
-
-            Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
-            getWindow().setExitTransition(slideOut);
+            Transition slideTop = inflater.inflateTransition(R.transition.slide_top);
+            getWindow().setEnterTransition(slideTop);
         }
 
         setContentView(R.layout.activity_fragment_host);

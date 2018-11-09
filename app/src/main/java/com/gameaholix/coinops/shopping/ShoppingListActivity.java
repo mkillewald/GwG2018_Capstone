@@ -33,8 +33,8 @@ public class ShoppingListActivity extends AppCompatActivity implements
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
             getWindow().setEnterTransition(slideIn);
 
-            Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
-            getWindow().setExitTransition(slideOut);
+            Transition slideDown = inflater.inflateTransition(R.transition.slide_bottom);
+            getWindow().setExitTransition(slideDown);
         }
 
         setContentView(R.layout.activity_fragment_host);

@@ -47,8 +47,8 @@ public class InventoryDetailActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionInflater inflater = TransitionInflater.from(this);
 
-            Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
-            getWindow().setEnterTransition(slideIn);
+            Transition slideTop = inflater.inflateTransition(R.transition.slide_top);
+            getWindow().setEnterTransition(slideTop);
 
             Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
             getWindow().setExitTransition(slideOut);
