@@ -267,33 +267,53 @@ public class ToDoEditFragment extends Fragment {
         // Update Firebase
         if (mUser != null) {
             // user is signed in
+
             String uid = mUser.getUid();
             String id = mToDoItem.getId();
             String gameId = mToDoItem.getParentId();
 
-            // Get database paths from helper class
-            String toDoPath = Db.getToDoPath(uid) + id;
-            String userToDoListPath = Db.getUserToDoListPath(uid) + id;
-            String gameToDoListPath = Db.getGameToDoListPath(uid, gameId) + id;
+            DatabaseReference toDoRef = mDatabaseReference
+                    .child(Db.TODO)
+                    .child(uid)
+                    .child(id);
+
+            DatabaseReference gameToDoListRef = mDatabaseReference
+                    .child(Db.GAME)
+                    .child(uid)
+                    .child(gameId)
+                    .child(Db.TODO_LIST)
+                    .child(id);
+
+            DatabaseReference userToDoListRef = mDatabaseReference
+                    .child(Db.USER)
+                    .child(uid)
+                    .child(Db.TODO_LIST)
+                    .child(id);
 
             // Convert values Bundle to HashMap for Firebase call to updateChildren()
             Map<String, Object> valuesToUpdate = new HashMap<>();
 
             for (String key : Db.TO_DO_STRINGS) {
                 if (mValuesBundle.containsKey(key)) {
-                    valuesToUpdate.put(toDoPath + "/" + key, mValuesBundle.getString(key));
+                    valuesToUpdate.put(toDoRef.child(key).getPath().toString(),
+                            mValuesBundle.getString(key));
                     if (key.equals(Db.NAME)) {
-                        valuesToUpdate.put(userToDoListPath, mValuesBundle.getString(key));
-                        valuesToUpdate.put(gameToDoListPath, mValuesBundle.getString(key));
+                        valuesToUpdate.put(userToDoListRef.getPath().toString(),
+                                mValuesBundle.getString(key));
+                        valuesToUpdate.put(gameToDoListRef.getPath().toString(),
+                                mValuesBundle.getString(key));
                     }
                 }
             }
 
             for (String key : Db.TO_DO_INTS) {
                 if (mValuesBundle.containsKey(key)) {
-                    valuesToUpdate.put(toDoPath + "/" + key, mValuesBundle.getInt(key));
+                    valuesToUpdate.put(toDoRef.child(key).getPath().toString(),
+                            mValuesBundle.getInt(key));
                 }
             }
+
+            Log.d(TAG, valuesToUpdate.toString());
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
                 @Override

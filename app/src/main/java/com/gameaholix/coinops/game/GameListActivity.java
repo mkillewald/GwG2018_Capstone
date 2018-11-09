@@ -14,10 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.gameaholix.coinops.MainActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Game;
-import com.gameaholix.coinops.todo.ToDoListActivity;
 import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
@@ -54,7 +52,7 @@ public class GameListActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        AdView adView = findViewById(R.id.adView);
+        AdView adView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 

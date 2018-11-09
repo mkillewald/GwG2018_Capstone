@@ -24,14 +24,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
     private Game mGame;
-    private DatabaseReference mGameRef;
     private FirebaseUser mUser;
+    private DatabaseReference mGameRef;
+    private StorageReference mStorageRef;
     private ValueEventListener mGameListener;
     private OnFragmentInteractionListener mListener;
 
@@ -55,7 +58,6 @@ public class GameDetailFragment extends Fragment {
             if (getArguments() != null) {
                 mGame = getArguments().getParcelable(EXTRA_GAME);
             }
-//            mRepairLogs = new ArrayList<>();
         } else {
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
         }
@@ -64,6 +66,10 @@ public class GameDetailFragment extends Fragment {
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference mStorageRef = storage.getReference();
+
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         mGameRef = databaseReference
                 .child(Db.GAME)

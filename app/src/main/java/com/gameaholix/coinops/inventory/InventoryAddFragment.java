@@ -196,30 +196,33 @@ public class InventoryAddFragment extends DialogFragment {
         // Add InventoryItem object to Firebase
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
+            String uid = mUser.getUid();
 
             final DatabaseReference inventoryRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
+            String id = inventoryRef.push().getKey();
 
-            final String id = inventoryRef.push().getKey();
+            if (!TextUtils.isEmpty(id)) {
+                DatabaseReference userInventoryListRef = mDatabaseReference
+                        .child(Db.USER)
+                        .child(uid)
+                        .child(Db.INVENTORY_LIST)
+                        .child(id);
 
-            // Get database paths from helper class
-            String inventoryPath = Db.getInventoryPath(uid) + id;
-            String userInventoryListPath = Db.getInventoryListPath(uid) + id;
+                Map<String, Object> valuesToAdd = new HashMap<>();
+                valuesToAdd.put(inventoryRef.child(id).getPath().toString(), item);
+                valuesToAdd.put(userInventoryListRef.getPath().toString(), item.getName());
 
-            Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(inventoryPath, item);
-            valuesToAdd.put(userInventoryListPath, item.getName());
-
-            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
+                mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                    " Code: " + databaseError.getCode() +
+                                    " Details: " + databaseError.getDetails());
+                        }
                     }
-                }
-            });
+                });
+            }
 //        } else {
 //            // user is not signed in
         }

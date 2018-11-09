@@ -3,6 +3,7 @@ package com.gameaholix.coinops.inventory;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -268,25 +269,35 @@ public class InventoryEditFragment extends Fragment {
             String uid = mUser.getUid();
             String id = mItem.getId();
 
-            // Get database paths from helper class
-            String inventoryPath = Db.getInventoryPath(uid) + id;
-            String userInventoryListPath = Db.getInventoryListPath(uid) + id;
+            DatabaseReference inventoryRef = mDatabaseReference
+                    .child(Db.INVENTORY)
+                    .child(uid)
+                    .child(id);
+
+            DatabaseReference userInventoryListRef = mDatabaseReference
+                    .child(Db.USER)
+                    .child(uid)
+                    .child(Db.INVENTORY_LIST)
+                    .child(id);
 
             // Convert values Bundle to HashMap for Firebase call to updateChildren()
             Map<String, Object> valuesToUpdate = new HashMap<>();
 
             for (String key : Db.INVENTORY_STRINGS) {
                 if (mValuesBundle.containsKey(key)) {
-                    valuesToUpdate.put(inventoryPath + "/" + key, mValuesBundle.getString(key));
+                    valuesToUpdate.put(inventoryRef.child(key).getPath().toString(),
+                            mValuesBundle.getString(key));
                     if (key.equals(Db.NAME)) {
-                        valuesToUpdate.put(userInventoryListPath, mValuesBundle.getString(key));
+                        valuesToUpdate.put(userInventoryListRef.getPath().toString(),
+                                mValuesBundle.getString(key));
                     }
                 }
             }
 
             for (String key : Db.INVENTORY_INTS) {
                 if (mValuesBundle.containsKey(key)) {
-                    valuesToUpdate.put(inventoryPath + "/" + key, mValuesBundle.getInt(key));
+                    valuesToUpdate.put(inventoryRef.child(key).getPath().toString(),
+                            mValuesBundle.getInt(key));
                 }
             }
 

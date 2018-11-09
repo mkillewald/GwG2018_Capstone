@@ -397,10 +397,16 @@ public class GameEditFragment extends Fragment {
             String uid = mUser.getUid();
             String gameId = mGame.getId();
 
-            // Get database paths from helper class
-            String gamePath = Db.getGamePath(uid) + gameId;
-            String userGameListPath = Db.getGameListPath(uid) + gameId;
+            DatabaseReference gameRef = mDatabaseReference
+                    .child(Db.GAME)
+                    .child(uid)
+                    .child(gameId);
 
+            DatabaseReference userGameListRef = mDatabaseReference
+                    .child(Db.USER)
+                    .child(uid)
+                    .child(Db.GAME_LIST)
+                    .child(gameId);
 
             // Convert mValuesBundle to HashMap for Firebase call to updateChildren()
             // used a bundle to catch values from the UI to preserve instance state,
@@ -409,16 +415,16 @@ public class GameEditFragment extends Fragment {
 
             for (String key : Db.GAME_STRINGS) {
                 if (mValuesBundle.containsKey(key)) {
-                    valuesToUpdate.put(gamePath + "/" + key, mValuesBundle.getString(key));
+                    valuesToUpdate.put(gameRef.child(key).getPath().toString(), mValuesBundle.getString(key));
                     if (key.equals(Db.NAME)) {
-                        valuesToUpdate.put(userGameListPath, mValuesBundle.getString(key));
+                        valuesToUpdate.put(userGameListRef.getPath().toString(), mValuesBundle.getString(key));
                     }
                 }
             }
 
             for (String key : Db.GAME_INTS) {
                 if (mValuesBundle.containsKey(key)) {
-                    valuesToUpdate.put(gamePath + "/" + key, mValuesBundle.getInt(key));
+                    valuesToUpdate.put(gameRef.child(key).getPath().toString(), mValuesBundle.getInt(key));
                 }
             }
 

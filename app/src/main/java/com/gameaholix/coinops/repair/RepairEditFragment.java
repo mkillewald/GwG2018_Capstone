@@ -200,13 +200,23 @@ public class RepairEditFragment extends DialogFragment {
             final String id = mRepairLog.getId();
             final String gameId = mRepairLog.getParentId();
 
-            // Get database paths from helper class
-            String repairPath = Db.getRepairPath(uid, gameId) + id;
-            String repairListPath = Db.getRepairListPath(uid, gameId) + id;
+            DatabaseReference repairRef = mDatabaseReference
+                    .child(Db.REPAIR)
+                    .child(uid)
+                    .child(gameId)
+                    .child(id)
+                    .child(Db.NAME);
+
+            DatabaseReference repairListRef = mDatabaseReference
+                    .child(Db.GAME)
+                    .child(uid)
+                    .child(gameId)
+                    .child(Db.REPAIR_LIST)
+                    .child(id);
 
             Map<String, Object> valuesToUpdate = new HashMap<>();
-            valuesToUpdate.put(repairPath + "/" + Db.NAME, mRepairLog.getName());
-            valuesToUpdate.put(repairListPath, mRepairLog.getName());
+            valuesToUpdate.put(repairRef.getPath().toString(), mRepairLog.getName());
+            valuesToUpdate.put(repairListRef.getPath().toString(), mRepairLog.getName());
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
                 @Override

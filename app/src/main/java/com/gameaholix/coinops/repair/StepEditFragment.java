@@ -43,6 +43,7 @@ public class StepEditFragment extends DialogFragment {
     private Item mRepairStep;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
+    private DatabaseReference mStepsRef;
 
     public StepEditFragment() {
         // Required empty public constructor
@@ -75,6 +76,13 @@ public class StepEditFragment extends DialogFragment {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mStepsRef = mDatabaseReference
+                .child(Db.REPAIR)
+                .child(mUser.getUid())
+                .child(mGameId)
+                .child(mRepairStep.getParentId())
+                .child(Db.STEPS)
+                .child(mRepairStep.getId());
     }
 
     @Override
@@ -213,15 +221,9 @@ public class StepEditFragment extends DialogFragment {
         // Update Firebase
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
-            final String id = mRepairStep.getId();
-            final String logId = mRepairStep.getParentId();
-
-            // Get database paths from helper class
-            String stepsPath = Db.getStepsPath(uid, mGameId, logId) + id;
 
             Map<String, Object> valuesToUpdate = new HashMap<>();
-            valuesToUpdate.put(stepsPath, mRepairStep);
+            valuesToUpdate.put(mStepsRef.child(Db.NAME).getPath().toString(), mRepairStep.getName());
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
                 @Override
@@ -272,13 +274,6 @@ public class StepEditFragment extends DialogFragment {
     private void deleteItemData() {
         // delete inventory item
 
-        mDatabaseReference
-                .child(Db.REPAIR)
-                .child(mUser.getUid())
-                .child(mGameId)
-                .child(mRepairStep.getParentId())
-                .child(Db.STEPS)
-                .child(mRepairStep.getId())
-                .removeValue();
+        mStepsRef.removeValue();
     }
 }

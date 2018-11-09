@@ -78,6 +78,7 @@ public class ShoppingEditFragment extends DialogFragment {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
         mShopRef = mDatabaseReference
                 .child(Db.SHOP)
                 .child(mUser.getUid())
@@ -119,7 +120,7 @@ public class ShoppingEditFragment extends DialogFragment {
 
                     }
                 };
-                mShopRef.addValueEventListener(mShopListener);
+                mShopRef.addListenerForSingleValueEvent(mShopListener);
             }
 
             // Setup EditText
@@ -177,7 +178,7 @@ public class ShoppingEditFragment extends DialogFragment {
                     } else {
                         PromptUser.displayAlert(mContext, R.string.error_edit_shopping_failed,
                                 R.string.error_please_try_again);
-                        Log.e(TAG, "ERROR: mShoppingItem.getParentId() is null");
+                        Log.e(TAG, "ERROR: parent id is null");
                     }
                 }
             });
@@ -202,9 +203,9 @@ public class ShoppingEditFragment extends DialogFragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (mShopListener != null) {
-            mShopRef.removeEventListener(mShopListener);
-        }
+//        if (mShopListener != null) {
+//            mShopRef.removeEventListener(mShopListener);
+//        }
     }
 
     @Override
@@ -262,19 +263,25 @@ public class ShoppingEditFragment extends DialogFragment {
         // Update Firebase
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
-            final String id = mShoppingItem.getId();
-            final String gameId = mShoppingItem.getParentId();
 
-            // Get database paths from helper class
-            String shopPath = Db.getShopPath(uid) + id;
-            String gameShopListPath = Db.getGameShopListPath(uid, gameId) + id;
-            String userShopListPath = Db.getUserShopListPath(uid) + id;
+            DatabaseReference gameShopListRef = mDatabaseReference
+                    .child(Db.GAME)
+                    .child(mUser.getUid())
+                    .child(mShoppingItem.getParentId())
+                    .child(Db.SHOP_LIST)
+                    .child(mShoppingItem.getId());
 
+            DatabaseReference userShopListRef = mDatabaseReference
+                    .child(Db.USER)
+                    .child(mUser.getUid())
+                    .child(Db.SHOP_LIST)
+                    .child(mShoppingItem.getId());
+
+            // use atomic writes to firebase
             Map<String, Object> valuesToUpdate = new HashMap<>();
-            valuesToUpdate.put(shopPath, mShoppingItem);
-            valuesToUpdate.put(gameShopListPath, mShoppingItem.getName());
-            valuesToUpdate.put(userShopListPath, mShoppingItem.getName());
+            valuesToUpdate.put(mShopRef.getPath().toString(), mShoppingItem);
+            valuesToUpdate.put(gameShopListRef.getPath().toString(), mShoppingItem.getName());
+            valuesToUpdate.put(userShopListRef.getPath().toString(), mShoppingItem.getName());
 
             mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
                 @Override
@@ -316,7 +323,7 @@ public class ShoppingEditFragment extends DialogFragment {
                             } else {
                                 PromptUser.displayAlert(mContext, R.string.error_delete_shopping_failed,
                                         R.string.error_please_try_again);
-                                Log.e(TAG, "ERROR: mShoppingItem.getParentId() is null");
+                                Log.e(TAG, "ERROR: parent id is null");
                             }
                         }
                     })

@@ -3,6 +3,7 @@ package com.gameaholix.coinops.repair;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -148,30 +149,40 @@ public class RepairAddFragment extends DialogFragment {
         // Add Game object to Firebase
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
+            String uid = mUser.getUid();
 
-            final DatabaseReference repairRef = mDatabaseReference.child(Db.REPAIR).child(uid);
+            DatabaseReference repairRef = mDatabaseReference
+                    .child(Db.REPAIR)
+                    .child(uid)
+                    .child(mGameId);
 
-            final String id = repairRef.push().getKey();
+            String id = repairRef.push().getKey();
 
-            // Get database paths from helper class
-            String repairPath = Db.getRepairPath(uid, mGameId) + id;
-            String repairListPath = Db.getRepairListPath(uid, mGameId) + id;
+            if (!TextUtils.isEmpty(id)) {
+                DatabaseReference repairListRef = mDatabaseReference
+                        .child(Db.GAME)
+                        .child(uid)
+                        .child(mGameId)
+                        .child(Db.REPAIR_LIST)
+                        .child(id);
 
-            Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(repairPath, repairLog);
-            valuesToAdd.put(repairListPath, repairLog.getName());
+                Map<String, Object> valuesToAdd = new HashMap<>();
+                valuesToAdd.put(repairRef.child(id).getPath().toString(), repairLog);
+                valuesToAdd.put(repairListRef.getPath().toString(), repairLog.getName());
 
-            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
+                mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                    " Code: " + databaseError.getCode() +
+                                    " Details: " + databaseError.getDetails());
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                Log.e(TAG, "Error: repair log id was null or empty");
+            }
 //        } else {
 //            // user is not signed in
         }

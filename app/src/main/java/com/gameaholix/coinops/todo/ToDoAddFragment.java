@@ -196,29 +196,44 @@ public class ToDoAddFragment extends DialogFragment {
             String uid = mUser.getUid();
             String id = mDatabaseReference.child(Db.TODO).child(uid).push().getKey();
 
-            // Get database paths from helper class
-            String toDoPath = Db.getToDoPath(uid) + id;
-            String gameToDoListPath = Db.getGameToDoListPath(uid, mGameId) + id;
-            String userToDoListPath = Db.getUserToDoListPath(uid) + id;
+            if (!TextUtils.isEmpty(id)) {
+                DatabaseReference toDoRef = mDatabaseReference
+                        .child(Db.TODO)
+                        .child(uid)
+                        .child(id);
 
-            Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(toDoPath, item);
-            valuesToAdd.put(gameToDoListPath, item.getName());
-            valuesToAdd.put(userToDoListPath, item.getName());
+                DatabaseReference gameToDoListRef = mDatabaseReference
+                        .child(Db.GAME)
+                        .child(uid)
+                        .child(mGameId)
+                        .child(Db.TODO_LIST)
+                        .child(id);
 
-            Log.d(TAG, valuesToAdd.toString());
+                DatabaseReference userToDoListRef = mDatabaseReference
+                        .child(Db.USER)
+                        .child(uid)
+                        .child(Db.TODO_LIST)
+                        .child(id);
 
-            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError,
-                                       @NonNull DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
+                Map<String, Object> valuesToAdd = new HashMap<>();
+                valuesToAdd.put(toDoRef.getPath().toString(), item);
+                valuesToAdd.put(gameToDoListRef.getPath().toString(), item.getName());
+                valuesToAdd.put(userToDoListRef.getPath().toString(), item.getName());
+
+                Log.d(TAG, valuesToAdd.toString());
+
+                mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError,
+                                           @NonNull DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                    " Code: " + databaseError.getCode() +
+                                    " Details: " + databaseError.getDetails());
+                        }
                     }
-                }
-            });
+                });
+            }
 
 //        } else {
 //            // user is not signed in

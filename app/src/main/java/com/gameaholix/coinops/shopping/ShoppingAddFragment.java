@@ -9,6 +9,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -147,32 +148,43 @@ public class ShoppingAddFragment extends DialogFragment {
         // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
+            String uid = mUser.getUid();
 
-            final DatabaseReference shopRef = mDatabaseReference.child(Db.SHOP).child(uid);
+            DatabaseReference shopRef = mDatabaseReference.child(Db.SHOP).child(uid);
             String id = shopRef.push().getKey();
 
-            // Get database paths from helper class
-            String shopPath = Db.getShopPath(uid) + id;
-            String gameShopListPath = Db.getGameShopListPath(uid, mGameId) + id;
-            String userShopListPath = Db.getUserShopListPath(uid) + id;
+            if (!TextUtils.isEmpty(id)) {
+                DatabaseReference gameShopListRef = mDatabaseReference
+                        .child(Db.GAME)
+                        .child(uid)
+                        .child(mGameId)
+                        .child(Db.SHOP_LIST)
+                        .child(id);
 
-            Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(shopPath, item);
-            valuesToAdd.put(gameShopListPath, item.getName());
-            valuesToAdd.put(userShopListPath, item.getName());
+                DatabaseReference userShopListRef = mDatabaseReference
+                        .child(Db.USER)
+                        .child(uid)
+                        .child(Db.SHOP_LIST)
+                        .child(id);
 
-            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError,
-                                       @NonNull DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
+                // use atomic writes to firebase
+                Map<String, Object> valuesToAdd = new HashMap<>();
+                valuesToAdd.put(shopRef.child(id).getPath().toString(), item);
+                valuesToAdd.put(gameShopListRef.getPath().toString(), item.getName());
+                valuesToAdd.put(userShopListRef.getPath().toString(), item.getName());
+
+                mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError,
+                                           @NonNull DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                    " Code: " + databaseError.getCode() +
+                                    " Details: " + databaseError.getDetails());
+                        }
                     }
-                }
-            });
+                });
+            }
 
 //        } else {
 //            // user is not signed in

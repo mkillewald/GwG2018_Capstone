@@ -337,27 +337,30 @@ public class GameAddFragment extends DialogFragment {
             final String uid = mUser.getUid();
 
             final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
-
             final String gameId = gameRef.push().getKey();
 
-            // Get database paths from helper class
-            String gamePath = Db.getGamePath(uid) + gameId;
-            String userGameListPath = Db.getGameListPath(uid) + gameId;
+            if (!TextUtils.isEmpty(gameId)) {
+                DatabaseReference userGameListRef = mDatabaseReference
+                        .child(Db.USER)
+                        .child(uid)
+                        .child(Db.GAME_LIST)
+                        .child(gameId);
 
-            Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(gamePath, game);
-            valuesToAdd.put(userGameListPath, game.getName());
+                Map<String, Object> valuesToAdd = new HashMap<>();
+                valuesToAdd.put(gameRef.child(gameId).getPath().toString(), mNewGame);
+                valuesToAdd.put(userGameListRef.getPath().toString(), game.getName());
 
-            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
+                mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                    " Code: " + databaseError.getCode() +
+                                    " Details: " + databaseError.getDetails());
+                        }
                     }
-                }
-            });
+                });
+            }
 
 //        } else {
 //            // user is not signed in

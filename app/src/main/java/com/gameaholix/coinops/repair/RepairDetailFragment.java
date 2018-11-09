@@ -266,30 +266,29 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
         // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in
-            String uid = mUser.getUid();
+
             String stepId = mStepRef.push().getKey();
 
-            // Get database paths from helper class
-            String stepPath = Db.getStepsPath(uid, mGameId, mRepairLog.getId()) + stepId;
+            if (!TextUtils.isEmpty(stepId)) {
+                Map<String, Object> valuesToAdd = new HashMap<>();
+                valuesToAdd.put(mStepRef.child(stepId).getPath().toString(), step);
 
-            Map<String, Object> valuesToAdd = new HashMap<>();
-            valuesToAdd.put(stepPath, step);
-
-            mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError,
-                                       @NonNull DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
+                mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError,
+                                           @NonNull DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                    " Code: " + databaseError.getCode() +
+                                    " Details: " + databaseError.getDetails());
+                        }
                     }
-                }
-            });
+                });
 
-            hideKeyboard(mBind.etAddStepEntry);
-            mBind.etAddStepEntry.setText(null);
-            mBind.etAddStepEntry.clearFocus();
+                hideKeyboard(mBind.etAddStepEntry);
+                mBind.etAddStepEntry.setText(null);
+                mBind.etAddStepEntry.clearFocus();
+            }
 
 //        } else {
 //            // user is not signed in
