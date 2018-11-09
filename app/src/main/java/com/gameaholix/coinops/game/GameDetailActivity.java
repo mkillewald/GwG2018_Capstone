@@ -1,5 +1,6 @@
 package com.gameaholix.coinops.game;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,11 +15,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -78,15 +83,29 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionInflater inflater = TransitionInflater.from(this);
+
+            Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
+            getWindow().setEnterTransition(slideIn);
+
+//            Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
+//            getWindow().setExitTransition(slideOut);
+        }
+
+
         setContentView(R.layout.activity_game_detail);
 
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         AdView adView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
 
         if (savedInstanceState == null) {
             mGame = getIntent().getParcelableExtra(EXTRA_GAME);
@@ -256,7 +275,12 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
         Intent intent = new Intent(this, RepairDetailActivity.class);
         intent.putExtra(EXTRA_REPAIR, repairLog);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
-        startActivity(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            startActivity(intent, bundle);
+        } else {
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -264,7 +288,12 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
         Intent intent = new Intent(this, ToDoDetailActivity.class);
         intent.putExtra(EXTRA_TODO, toDoItem);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
-        startActivity(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            startActivity(intent, bundle);
+        } else {
+            startActivity(intent);
+        }
     }
 
     @Override

@@ -45,7 +45,8 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_repair_steps_label"
-            app:layout_constraintBottom_toTopOf="@id/et_add_step_entry"/>
+            app:layout_constraintBottom_toTopOf="@id/et_add_step_entry"
+            android:layoutAnimation="@anim/layout_animation_from_right"/>
 
         <EditText
             android:id="@+id/et_add_step_entry"

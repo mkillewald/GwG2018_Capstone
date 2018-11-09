@@ -1,16 +1,23 @@
 package com.gameaholix.coinops.game;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.gameaholix.coinops.MainActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.todo.ToDoListActivity;
 import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
@@ -27,15 +34,29 @@ public class GameListActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionInflater inflater = TransitionInflater.from(this);
+
+            Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
+            getWindow().setEnterTransition(slideIn);
+
+            Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
+            getWindow().setExitTransition(slideOut);
+        }
+
         setContentView(R.layout.activity_fragment_host);
+
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         AdView adView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
 
         setTitle(R.string.game_list_title);
 
@@ -84,7 +105,12 @@ public class GameListActivity extends AppCompatActivity implements
     public void onGameSelected(Game game) {
         Intent intent = new Intent(this, GameDetailActivity.class);
         intent.putExtra(EXTRA_GAME, game);
-        startActivity(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            startActivity(intent, bundle);
+        } else {
+            startActivity(intent);
+        }
     }
 
     private void showAddGameDialog() {

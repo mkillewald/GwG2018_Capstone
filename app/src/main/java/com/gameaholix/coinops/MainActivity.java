@@ -1,11 +1,16 @@
 package com.gameaholix.coinops;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,7 +44,20 @@ public class MainActivity extends AppCompatActivity implements
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionInflater inflater = TransitionInflater.from(this);
+            Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
+            getWindow().setExitTransition(slideOut);
+        }
+
         setContentView(R.layout.activity_main);
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         AdView adView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -48,61 +66,70 @@ public class MainActivity extends AppCompatActivity implements
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
 
+        final Button gameButton = findViewById(R.id.btn_game_list);
+        gameButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GameListActivity.class);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
+                    startActivity(intent, bundle);
+                } else {
+                    startActivity(intent);
+                }
+            }
+        });
+
+        final Button inventoryButton = findViewById(R.id.btn_inventory_list);
+        inventoryButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, InventoryListActivity.class);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
+                    startActivity(intent, bundle);
+                } else {
+                    startActivity(intent);
+                }
+            }
+        });
+
+        final Button toDoButton = findViewById(R.id.btn_to_do_list);
+        toDoButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ToDoListActivity.class);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
+                    startActivity(intent, bundle);
+                } else {
+                    startActivity(intent);
+                }
+            }
+        });
+
+        final Button shoppingButton = findViewById(R.id.btn_shopping_list);
+        shoppingButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ShoppingListActivity.class);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
+                    startActivity(intent, bundle);
+                } else {
+                    startActivity(intent);
+                }
+            }
+        });
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // user is signed in
-
-                    // Check if user's email is verified
-//                    boolean emailVerified = user.isEmailVerified();
-
-                    // The user's ID, unique to the Firebase project. Do NOT use this value to
-                    // authenticate with your backend server, if you have one. Use
-                    // FirebaseUser.getIdToken() instead.
-//                    final String uid = user.getUid();
-
-                    final Button gameButton = findViewById(R.id.btn_game_list);
-                    gameButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            Intent intent = new Intent(MainActivity.this, GameListActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-
-                    final Button inventoryButton = findViewById(R.id.btn_inventory_list);
-                    inventoryButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            Intent intent = new Intent(MainActivity.this, InventoryListActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-
-                    final Button toDoButton = findViewById(R.id.btn_to_do_list);
-                    toDoButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            Intent intent = new Intent(MainActivity.this, ToDoListActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-
-                    final Button shoppingButton = findViewById(R.id.btn_shopping_list);
-                    shoppingButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            Intent intent = new Intent(MainActivity.this, ShoppingListActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-
-                } else {
+                if (user == null) {
                     // user is not signed in
                     startActivityForResult(
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false) // smartlock will save user credentials
                                     .setAvailableProviders(Arrays.asList(
-//                                                new AuthUI.IdpConfig.FacebookBuilder().build(),
+        //                                                new AuthUI.IdpConfig.FacebookBuilder().build(),
                                             new AuthUI.IdpConfig.GoogleBuilder().build(),
                                             new AuthUI.IdpConfig.EmailBuilder().build()))
                                     .build(),

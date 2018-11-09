@@ -71,4 +71,5 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
     }
 
     public void setGames(List<Game> games) { mGames = games; }
+
 }

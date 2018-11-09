@@ -55,9 +55,10 @@
                 android:layout_height="wrap_content"
                 android:textDirection="locale"
                 android:textAlignment="viewStart"
-                app:layout_constraintStart_toStartOf="@id/tv_type_label"
-                app:layout_constraintLeft_toLeftOf="@id/tv_type_label"
-                app:layout_constraintTop_toBottomOf="@id/tv_type_label"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_type_label"
+                android:text="@string/text_placeholder"/>
 
             <TextView
                 android:id="@+id/tv_condition_label"
@@ -78,9 +79,10 @@
                 android:layout_height="wrap_content"
                 android:textDirection="locale"
                 android:textAlignment="viewStart"
-                app:layout_constraintStart_toStartOf="@id/tv_condition_label"
-                app:layout_constraintLeft_toLeftOf="@id/tv_condition_label"
-                app:layout_constraintTop_toBottomOf="@id/tv_condition_label" />
+                app:layout_constraintStart_toStartOf="@id/gl_vertical_center"
+                app:layout_constraintLeft_toLeftOf="@id/gl_vertical_center"
+                app:layout_constraintTop_toBottomOf="@id/tv_condition_label"
+                android:text="@string/text_placeholder"/>
 
             <TextView
                 android:id="@+id/tv_description_label"

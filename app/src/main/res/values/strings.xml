@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">CoinOps</string>
     <string name="anonymous_username">Player 1</string>
+    <string name="text_placeholder">sample text</string>
 
     <!-- TODO: replace test id with real id in production -->
     <!-- test id -->
