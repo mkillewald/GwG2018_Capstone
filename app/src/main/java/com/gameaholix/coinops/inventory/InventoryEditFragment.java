@@ -3,7 +3,6 @@ package com.gameaholix.coinops.inventory;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -108,14 +107,15 @@ public class InventoryEditFragment extends Fragment {
             bind.etAddInventoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
+                    if (view.getId() == R.id.et_add_inventory_name && hasFocus) {
+                        mListener.hideBannerAd();
+                    } else if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
                         if (view instanceof EditText) {
                             EditText editText = (EditText) view;
                             String input = editText.getText().toString().trim();
                             if (!textInputIsValid(input)) {
                                 editText.setText(mItem.getName());
                             }
-                            hideKeyboard(editText);
                         }
                     }
                 }
@@ -139,14 +139,15 @@ public class InventoryEditFragment extends Fragment {
             bind.etAddInventoryDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
+                    if (view.getId() == R.id.et_add_inventory_description && hasFocus) {
+                        mListener.hideBannerAd();
+                    } else if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
                         if (view instanceof EditText) {
                             EditText editText = (EditText) view;
                             String input = editText.getText().toString().trim();
                             if (!textInputIsValid(input)) {
                                 editText.setText(mItem.getDescription());
                             }
-                            hideKeyboard(editText);
                         }
                     }
                 }
@@ -329,5 +330,6 @@ public class InventoryEditFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onEditCompletedOrCancelled();
+        void hideBannerAd();
     }
 }

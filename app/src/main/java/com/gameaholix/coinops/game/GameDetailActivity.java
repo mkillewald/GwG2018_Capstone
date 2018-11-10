@@ -4,25 +4,32 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -53,6 +60,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
         RepairListFragment.OnFragmentInteractionListener,
@@ -60,13 +72,15 @@ public class GameDetailActivity extends AppCompatActivity implements
         ShoppingListFragment.OnFragmentInteractionListener,
         GameEditFragment.OnFragmentInteractionListener,
 NetworkUtils.CheckInternetConnection.TaskCompleted {
-
-//    private static final String TAG = GameDetailActivity.class.getSimpleName();
+    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
+    private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    private String mCurrentPhotoPath;
     private Game mGame;
     private CoordinatorLayout mCoordinatorLayout;
     private ViewPager mViewPager;
@@ -78,6 +92,7 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
     private DatabaseReference mToDoRef;
     private ValueEventListener mDeleteTodoListener;
     private ValueEventListener mDeleteShopListener;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,13 +101,12 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionInflater inflater = TransitionInflater.from(this);
 
-            Transition slideTop = inflater.inflateTransition(R.transition.slide_top);
-            getWindow().setEnterTransition(slideTop);
+            Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
+            getWindow().setEnterTransition(slideIn);
 
             Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
             getWindow().setExitTransition(slideOut);
         }
-
 
         setContentView(R.layout.activity_game_detail);
 
@@ -102,9 +116,11 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        AdView adView = findViewById(R.id.av_banner);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        mAdView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        mAdView.loadAd(adRequest);
 
         if (savedInstanceState == null) {
             mGame = getIntent().getParcelableExtra(EXTRA_GAME);
@@ -126,6 +142,9 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
                 invalidateOptionsMenu();
+                if (mAdView.getVisibility() == View.GONE) {
+                    mAdView.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -188,18 +207,21 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
         switch (mViewPager.getCurrentItem()) {
             case 0:
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
+                menu.findItem(R.id.menu_add_photo).setVisible(true);
                 menu.findItem(R.id.menu_add_repair).setVisible(false);
                 menu.findItem(R.id.menu_add_todo).setVisible(false);
                 menu.findItem(R.id.menu_add_shopping).setVisible(false);
                 break;
             case 1:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
+                menu.findItem(R.id.menu_add_photo).setVisible(false);
                 menu.findItem(R.id.menu_add_repair).setVisible(true);
                 menu.findItem(R.id.menu_add_todo).setVisible(false);
                 menu.findItem(R.id.menu_add_shopping).setVisible(false);
                 break;
             case 2:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
+                menu.findItem(R.id.menu_add_photo).setVisible(false);
                 menu.findItem(R.id.menu_add_repair).setVisible(false);
                 menu.findItem(R.id.menu_add_todo).setVisible(true);
                 menu.findItem(R.id.menu_add_shopping).setVisible(false);
@@ -207,6 +229,7 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
             default:
             case 3:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
+                menu.findItem(R.id.menu_add_photo).setVisible(false);
                 menu.findItem(R.id.menu_add_repair).setVisible(false);
                 menu.findItem(R.id.menu_add_todo).setVisible(false);
                 menu.findItem(R.id.menu_add_shopping).setVisible(true);
@@ -234,6 +257,10 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
                 // handled by GameDetailFragment
+                return false;
+            case R.id.menu_add_photo:
+                // handled by GameDetailFragment
+//                onAddPhotoButtonPressed();
                 return false;
             case R.id.menu_add_repair:
                 showAddRepairDialog();
@@ -399,6 +426,7 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
                 .removeValue();
 
         // delete repair logs and steps
+
         mDatabaseReference
                 .child(Db.REPAIR)
                 .child(mUser.getUid())
@@ -459,5 +487,73 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
         ft.commit();
 
         invalidateOptionsMenu();
+        mAdView.setVisibility(View.VISIBLE);
     }
+
+    @Override
+    public void hideBannerAd() {
+        mAdView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showSnackbar(int stringResourceId) {
+        PromptUser.displaySnackbar(mCoordinatorLayout, stringResourceId);
+    }
+
+    //    private void onAddPhotoButtonPressed() {
+//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        // Ensure that there's a camera activity to handle the intent
+//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//            // Create the File where the photo should go
+//            File photoFile = null;
+//            try {
+//                photoFile = createImageFile();
+//            } catch (IOException ex) {
+//                // Error occurred while creating the File
+//                Log.e(TAG, "IOException: ", ex);
+//            }
+//            // Continue only if the File was successfully created
+//            if (photoFile != null) {
+//                Uri photoURI = FileProvider.getUriForFile(this,
+//                        "com.gameaholix.coinops.fileprovider",
+//                        photoFile);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+//            }
+//        }
+//    }
+
+//    private File createImageFile() throws IOException {
+//        // Create an image file name
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        String imageFileName = "JPEG_" + timeStamp + "_";
+//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+//
+//        // Save a file: path for use with ACTION_VIEW intents
+//        mCurrentPhotoPath = image.getAbsolutePath();
+//        Log.d(TAG, mCurrentPhotoPath);
+//        return image;
+//    }
+
+//    private void galleryAddPic() {
+//        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//        File f = new File(mCurrentPhotoPath);
+//        Uri contentUri = Uri.fromFile(f);
+//        mediaScanIntent.setData(contentUri);
+//        this.sendBroadcast(mediaScanIntent);
+//    }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//            Bundle extras = data.getExtras();
+//            Bitmap imageBitmap = (Bitmap) extras.get("data");
+//            mBind.ivPhoto.setImageBitmap(imageBitmap);
+//        }
+//    }
 }

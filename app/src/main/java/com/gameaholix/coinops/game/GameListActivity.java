@@ -13,11 +13,13 @@ import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -28,6 +30,7 @@ public class GameListActivity extends AppCompatActivity implements
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
     private CoordinatorLayout mCoordinatorLayout;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +42,8 @@ public class GameListActivity extends AppCompatActivity implements
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
             getWindow().setEnterTransition(slideIn);
 
-            Transition slideDown = inflater.inflateTransition(R.transition.slide_bottom);
-            getWindow().setExitTransition(slideDown);
+            Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
+            getWindow().setExitTransition(slideOut);
         }
 
         setContentView(R.layout.activity_fragment_host);
@@ -52,9 +55,9 @@ public class GameListActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        AdView adView = findViewById(R.id.av_banner);
+        mAdView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        mAdView.loadAd(adRequest);
 
         setTitle(R.string.game_list_title);
 
@@ -71,6 +74,14 @@ public class GameListActivity extends AppCompatActivity implements
             new NetworkUtils.CheckInternetConnection(this).execute();
         } else {
             PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAdView.getVisibility() == View.GONE) {
+            mAdView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -106,6 +117,7 @@ public class GameListActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
+            mAdView.setVisibility(View.GONE);
         } else {
             startActivity(intent);
         }

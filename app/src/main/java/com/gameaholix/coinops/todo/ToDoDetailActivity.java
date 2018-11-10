@@ -1,6 +1,8 @@
 package com.gameaholix.coinops.todo;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Rect;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -15,6 +17,10 @@ import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.ToDoItem;
@@ -40,6 +46,7 @@ public class ToDoDetailActivity extends AppCompatActivity implements
     private CoordinatorLayout mCoordinatorLayout;
     private FirebaseUser mUser;
     private String mGameName;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +54,8 @@ public class ToDoDetailActivity extends AppCompatActivity implements
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionInflater inflater = TransitionInflater.from(this);
-
-            Transition slideTop = inflater.inflateTransition(R.transition.slide_top);
-            getWindow().setEnterTransition(slideTop);
+            Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
+            getWindow().setEnterTransition(slideIn);
         }
 
         setContentView(R.layout.activity_fragment_host);
@@ -61,9 +67,9 @@ public class ToDoDetailActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        AdView adView = findViewById(R.id.av_banner);
+        mAdView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        mAdView.loadAd(adRequest);
 
         if (savedInstanceState == null) {
             mToDoItem = getIntent().getParcelableExtra(EXTRA_TODO);
@@ -144,6 +150,29 @@ public class ToDoDetailActivity extends AppCompatActivity implements
         }
     }
 
+    // Hide keyboard after touch event occurs outside of EditText
+    // Solution used from:
+    // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if ( view instanceof EditText) {
+                Rect outRect = new Rect();
+                view.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    view.clearFocus();
+                    InputMethodManager imm =
+                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
     @Override
     public void onEditButtonPressed(ToDoItem toDoItem) {
         // replace ToDoDetailFragment with ToDoEditFragment
@@ -162,6 +191,7 @@ public class ToDoDetailActivity extends AppCompatActivity implements
         ft.commit();
 
         invalidateOptionsMenu();
+        mAdView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -225,5 +255,10 @@ public class ToDoDetailActivity extends AppCompatActivity implements
                 .child(Db.TODO_LIST)
                 .child(toDoItem.getId())
                 .removeValue();
+    }
+
+    @Override
+    public void hideBannerAd() {
+        mAdView.setVisibility(View.GONE);
     }
 }

@@ -109,7 +109,9 @@ public class ToDoEditFragment extends Fragment {
             bind.etTodoName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_todo_name && !hasFocus) {
+                    if (view.getId() == R.id.et_todo_name && hasFocus) {
+                        mListener.hideBannerAd();
+                    } else if (view.getId() == R.id.et_todo_name && !hasFocus) {
                         if (view instanceof EditText) {
                             EditText editText = (EditText) view;
                             String input = editText.getText().toString().trim();
@@ -118,7 +120,6 @@ public class ToDoEditFragment extends Fragment {
                             } else {
                                 editText.setText(mToDoItem.getName());
                             }
-                            hideKeyboard(editText);
                         }
                     }
                 }
@@ -144,7 +145,9 @@ public class ToDoEditFragment extends Fragment {
             bind.etTodoDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_todo_description && !hasFocus) {
+                    if (view.getId() == R.id.et_todo_description && hasFocus) {
+                        mListener.hideBannerAd();
+                    } else if (view.getId() == R.id.et_todo_description && !hasFocus) {
                         if (view instanceof EditText) {
                             EditText editText = (EditText) view;
                             String input = editText.getText().toString().trim();
@@ -153,7 +156,6 @@ public class ToDoEditFragment extends Fragment {
                             } else {
                                 editText.setText(mToDoItem.getDescription());
                             }
-                            hideKeyboard(editText);
                         }
                     }
                 }
@@ -343,5 +345,6 @@ public class ToDoEditFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onEditCompletedOrCancelled();
         void onDeleteButtonPressed(ToDoItem toDoItem);
+        void hideBannerAd();
     }
 }

@@ -44,6 +44,7 @@
             android:layout_weight="1"
             android:background="@android:color/white"
             app:layout_constraintTop_toBottomOf="@id/sliding_tabs"
+            app:layout_constraintBottom_toTopOf="@id/av_banner"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintRight_toRightOf="parent"

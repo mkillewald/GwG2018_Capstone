@@ -59,7 +59,7 @@
     <string name="add_item">Add Item</string>
     <string name="delete_item">Delete Item</string>
     <string name="add_todo_item">Add To Do Item</string>
-    <string name="find_tech_info">Search Technical Documents</string>
+    <string name="find_tech_info">Technical Document Search</string>
 
     <!-- Labels -->
     <string name="type_label">Type:</string>
@@ -194,7 +194,7 @@
 
     <string name="really_delete_item">Delete Item?</string>
     <string name="item_will_be_deleted">Are you sure you want to delete this item. All data will be
-    erased.\n\n This is a permanent action and cannot be undonbe.</string>
+    erased.\n\n This is a permanent action and cannot be undone.</string>
 
     <!-- Error Messages -->
     <string name="error_add_game_failed">Failed to add game!</string>
@@ -233,8 +233,11 @@
     <string name="network_unavailable">Network connection not found!</string>
     <string name="network_not_connected">Not connected to the Internet!</string>
 
+    <string name="upload_failed">Image upload failed.</string>
+
     <!-- Content Descriptions -->
     <string name="details">&#032;details</string>
+    <string name="add_photo">Add Photo</string>
 
     <!-- Widget -->
     <string name="add_widget">Add widget</string>

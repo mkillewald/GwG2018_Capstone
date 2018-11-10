@@ -42,7 +42,6 @@ public class RepairDetailActivity extends AppCompatActivity implements
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionInflater inflater = TransitionInflater.from(this);
-
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
             getWindow().setEnterTransition(slideIn);
         }

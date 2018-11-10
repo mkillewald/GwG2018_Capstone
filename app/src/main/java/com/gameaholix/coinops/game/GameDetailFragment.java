@@ -3,8 +3,10 @@ package com.gameaholix.coinops.game;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,11 +14,14 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,10 +31,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+
+import static android.app.Activity.RESULT_OK;
+
 
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
+    private static final int REQUEST_IMAGE_CAPTURE = 343;
 
     private Game mGame;
     private FirebaseUser mUser;
@@ -37,6 +49,7 @@ public class GameDetailFragment extends Fragment {
     private StorageReference mStorageRef;
     private ValueEventListener mGameListener;
     private OnFragmentInteractionListener mListener;
+    private FragmentGameDetailBinding mBind;
 
     public GameDetailFragment() {
         // Required empty public constructor
@@ -68,7 +81,7 @@ public class GameDetailFragment extends Fragment {
         mUser = firebaseAuth.getCurrentUser();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference mStorageRef = storage.getReference();
+        mStorageRef = storage.getReference();
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         mGameRef = databaseReference
@@ -81,10 +94,10 @@ public class GameDetailFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentGameDetailBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_game_detail, container, false);
+        mBind = DataBindingUtil.inflate(inflater, R.layout.fragment_game_detail, container,
+                false);
 
-        final View rootView = bind.getRoot();
+        final View rootView = mBind.getRoot();
 
         if (mUser != null) {
             // user is signed in
@@ -127,16 +140,16 @@ public class GameDetailFragment extends Fragment {
                             mListener.onGameNameChanged(mGame.getName());
                         }
 
-                        bind.tvGameType.setText(typeArr[mGame.getType()]);
-                        bind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
-                        bind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
-                        bind.tvGameOwnership.setText(ownershipArr[mGame.getOwnership()]);
-                        bind.tvGameCondition.setText(conditionArr[mGame.getCondition()]);
-                        bind.tvGameMonitorPhospher
+                        mBind.tvGameType.setText(typeArr[mGame.getType()]);
+                        mBind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
+                        mBind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
+                        mBind.tvGameOwnership.setText(ownershipArr[mGame.getOwnership()]);
+                        mBind.tvGameCondition.setText(conditionArr[mGame.getCondition()]);
+                        mBind.tvGameMonitorPhospher
                                 .setText(monitorPhospherArr[mGame.getMonitorPhospher()]);
-                        bind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorBeam()]);
-                        bind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
-                        bind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
+                        mBind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorBeam()]);
+                        mBind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
+                        mBind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
 
                     }
                 }
@@ -149,8 +162,8 @@ public class GameDetailFragment extends Fragment {
             };
             mGameRef.addValueEventListener(mGameListener);
 
-            // Setup Button
-            bind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
+            // Setup Buttons
+            mBind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (getActivity() != null) {
@@ -213,9 +226,64 @@ public class GameDetailFragment extends Fragment {
             case R.id.menu_edit_game:
                 mListener.onEditButtonPressed(mGame);
                 return true;
+            case R.id.menu_add_photo:
+                onLaunchCamera();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void onLaunchCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            if (extras != null && extras.containsKey("data")) {
+                Bitmap bitmap = (Bitmap) extras.get("data");
+                mBind.ivPhoto.setVisibility(View.VISIBLE);
+                mBind.ivPhoto.setImageBitmap(bitmap);
+                saveBitmapToFirebase(bitmap);
+            }
+        }
+    }
+
+    private void saveBitmapToFirebase(Bitmap bitmap) {
+        // Compress bitmap to jpeg
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        // get reference to thubnail image file
+        StorageReference imageRef = mStorageRef
+                .child(mUser.getUid())
+                .child(mGame.getId())
+                .child(Db.THUMB)
+                .child("thumb.jpg");
+
+        //uploading the jpeg image
+        UploadTask uploadTask = imageRef.putBytes(data);
+
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                mListener.showSnackbar(R.string.upload_failed);
+                Toast.makeText(getActivity(), "Upload successful", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                mListener.showSnackbar(R.string.upload_failed);
+                Log.e(TAG, "Image upload failed -> ", e);
+                Toast.makeText(getActivity(), "Upload Failed -> " + e, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
@@ -231,6 +299,7 @@ public class GameDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onGameNameChanged(String name);
         void onEditButtonPressed(Game game);
+        void showSnackbar(int stringResourceId);
     }
 
 

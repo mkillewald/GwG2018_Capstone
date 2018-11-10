@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <slide xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="@integer/anim_duration_long"
+    android:duration="@integer/anim_duration_short"
     android:slideEdge="start"/>

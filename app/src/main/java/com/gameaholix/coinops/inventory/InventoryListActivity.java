@@ -40,8 +40,8 @@ public class InventoryListActivity extends AppCompatActivity implements
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
             getWindow().setEnterTransition(slideIn);
 
-            Transition slideDown = inflater.inflateTransition(R.transition.slide_bottom);
-            getWindow().setExitTransition(slideDown);
+            Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
+            getWindow().setExitTransition(slideOut);
         }
 
         setContentView(R.layout.activity_fragment_host);

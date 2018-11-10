@@ -8,6 +8,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_add_photo"
+        android:title="@string/add_photo"
+        android:icon="@drawable/ic_camera_alt_white_24dp"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_add_repair"
         android:title="@string/add_repair_log"
         android:icon="@drawable/ic_playlist_add_white_24dp"

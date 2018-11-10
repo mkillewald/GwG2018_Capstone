@@ -7,6 +7,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.gameaholix.coinops.R;
 
@@ -29,15 +30,27 @@ public class PromptUser {
                 .setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
-    public static void displaySnackbar(CoordinatorLayout coordinatorLayout, int message) {
-        final Snackbar snackbar = Snackbar
-                .make(coordinatorLayout, message, Snackbar.LENGTH_INDEFINITE);
+    public static void displaySnackbar(CoordinatorLayout layout, int resId) {
+        final Snackbar snackbar = Snackbar.make(layout, resId, Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         snackbar.dismiss();
                     }
                 });
+
+        // get snackbar layout params and add 2 to bottom margin
+        // this was needed to fully cover the AdMob banner when snackbar is displayed.
+        FrameLayout snackBarView = (FrameLayout) snackbar.getView();
+        FrameLayout.LayoutParams params =
+                (FrameLayout.LayoutParams) snackBarView.getChildAt(0).getLayoutParams();
+
+        params.setMargins(params.leftMargin,
+                params.topMargin,
+                params.rightMargin,
+                params.bottomMargin + 2);
+
+        snackBarView.getChildAt(0).setLayoutParams(params);
         snackbar.show();
     }
 

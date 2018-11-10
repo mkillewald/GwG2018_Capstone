@@ -14,7 +14,6 @@ public class Db {
     public static final String REPAIR_LIST = "repair_list";
 
     public static final String STEPS = "steps";
-//    public static final String STEP_LIST = "step_list";
 
     public static final String SHOP = "shop";
     public static final String SHOP_LIST = "shop_list";
@@ -36,6 +35,9 @@ public class Db {
     public static final String MONITOR_BEAM = "monitorBeam";
     public static final String DESCRIPTION = "description";
     public static final String PRIORITY = "priority";
+
+    // Cloud Storage Buckets
+    public static final String THUMB = "thumb";
 
     public static final String[] GAME_STRINGS = { Db.NAME };
     public static final String[] GAME_INTS = {
