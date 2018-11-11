@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,7 +73,7 @@ public class ShoppingListFragment extends Fragment implements
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        if (mGameId == null) {
+        if (TextUtils.isEmpty(mGameId)) {
             // use global list reference
             mShopListRef = databaseReference
                     .child(Db.USER)

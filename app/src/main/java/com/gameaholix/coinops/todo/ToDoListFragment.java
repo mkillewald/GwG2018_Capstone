@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,14 +26,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+// TODO: need to figure out a way to order the to do list by priority
+// The todo_list (game and global) in firebase will need to be modified to hold name and priority
+
 public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapterOnClickHandler {
     private static final String TAG = ToDoListFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-    private static final String EXTRA_SHOW_ADD_BUTTON = "CoinOpsShowAddButton";
 
     private Context mContext;
     private String mGameId;
-    private boolean mShowAddButton;
     private ToDoAdapter mToDoAdapter;
     private DatabaseReference mToDoListRef;
     private FirebaseUser mUser;
@@ -62,32 +64,30 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
-                mShowAddButton = true;
             } else {
                 mGameId = null;
-                mShowAddButton = false;
             }
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-            mShowAddButton = savedInstanceState.getBoolean(EXTRA_SHOW_ADD_BUTTON);
         }
 
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        if (mShowAddButton) {
+
+        if (TextUtils.isEmpty(mGameId)) {
+            // use global list reference
+            mToDoListRef = databaseReference
+                    .child(Db.USER)
+                    .child(mUser.getUid())
+                    .child(Db.TODO_LIST);
+        } else {
             // use game specific list reference
             mToDoListRef = databaseReference
                     .child(Db.GAME)
                     .child(mUser.getUid())
                     .child(mGameId)
-                    .child(Db.TODO_LIST);
-        } else {
-            // use global list reference
-            mToDoListRef = databaseReference
-                    .child(Db.USER)
-                    .child(mUser.getUid())
                     .child(Db.TODO_LIST);
         }
     }
@@ -151,7 +151,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_GAME_ID, mGameId);
-        outState.putBoolean(EXTRA_SHOW_ADD_BUTTON, mShowAddButton);
     }
 
     @Override

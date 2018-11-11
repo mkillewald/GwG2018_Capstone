@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.gameaholix.coinops.GlideApp;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
 import com.gameaholix.coinops.model.Game;
@@ -37,16 +40,21 @@ import java.io.ByteArrayOutputStream;
 
 import static android.app.Activity.RESULT_OK;
 
+// TODO: also store full image to firebase, and display full image when click on thumb.
+// TODO: add ability to store more than one image
+
 
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final int REQUEST_IMAGE_CAPTURE = 343;
 
+    private Context mContext;
     private Game mGame;
     private FirebaseUser mUser;
     private DatabaseReference mGameRef;
     private StorageReference mStorageRef;
+    private StorageReference mImageRef;
     private ValueEventListener mGameListener;
     private OnFragmentInteractionListener mListener;
     private FragmentGameDetailBinding mBind;
@@ -82,12 +90,19 @@ public class GameDetailFragment extends Fragment {
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         mStorageRef = storage.getReference();
+        mImageRef = mStorageRef
+                .child(mUser.getUid())
+                .child(mGame.getId())
+                .child(Db.THUMB)
+                .child("thumb.jpg");
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         mGameRef = databaseReference
                 .child(Db.GAME)
                 .child(mUser.getUid())
                 .child(mGame.getId());
+
+
     }
 
     @Override
@@ -162,6 +177,14 @@ public class GameDetailFragment extends Fragment {
             };
             mGameRef.addValueEventListener(mGameListener);
 
+            // Get thumbnails from firebase
+            GlideApp.with(mContext)
+                    .load(mImageRef)
+                    .placeholder(R.drawable.ic_classic_arcade_machine)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(mBind.ivPhoto);
+
             // Setup Buttons
             mBind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -206,6 +229,7 @@ public class GameDetailFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -247,8 +271,6 @@ public class GameDetailFragment extends Fragment {
             Bundle extras = data.getExtras();
             if (extras != null && extras.containsKey("data")) {
                 Bitmap bitmap = (Bitmap) extras.get("data");
-                mBind.ivPhoto.setVisibility(View.VISIBLE);
-                mBind.ivPhoto.setImageBitmap(bitmap);
                 saveBitmapToFirebase(bitmap);
             }
         }
@@ -260,20 +282,17 @@ public class GameDetailFragment extends Fragment {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        // get reference to thubnail image file
-        StorageReference imageRef = mStorageRef
-                .child(mUser.getUid())
-                .child(mGame.getId())
-                .child(Db.THUMB)
-                .child("thumb.jpg");
+        // Update ImageView with the new image
+        Glide.with(mContext)
+                .load(data)
+                .into(mBind.ivPhoto);
 
         //uploading the jpeg image
-        UploadTask uploadTask = imageRef.putBytes(data);
+        UploadTask uploadTask = mImageRef.putBytes(data);
 
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                mListener.showSnackbar(R.string.upload_failed);
                 Toast.makeText(getActivity(), "Upload successful", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -281,7 +300,6 @@ public class GameDetailFragment extends Fragment {
             public void onFailure(@NonNull Exception e) {
                 mListener.showSnackbar(R.string.upload_failed);
                 Log.e(TAG, "Image upload failed -> ", e);
-                Toast.makeText(getActivity(), "Upload Failed -> " + e, Toast.LENGTH_SHORT).show();
             }
         });
     }

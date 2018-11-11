@@ -407,7 +407,6 @@ public class GameDetailActivity extends AppCompatActivity implements
                 .removeValue();
 
         // delete repair logs and steps
-
         mDatabaseReference
                 .child(Db.REPAIR)
                 .child(mUser.getUid())

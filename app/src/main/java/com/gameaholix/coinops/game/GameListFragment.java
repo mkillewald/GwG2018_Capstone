@@ -91,7 +91,9 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
                 }
             };
 
-            mUserGameListRef.addValueEventListener(mGameListener);
+            mUserGameListRef
+                    .orderByValue()
+                    .addValueEventListener(mGameListener);
 
 
 //        } else {

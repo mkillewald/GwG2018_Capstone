@@ -92,7 +92,9 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
                     Log.d(TAG, "Failed to read from database.", databaseError.toException());
                 }
             };
-            mUserInventoryListRef.addValueEventListener(mInventoryListener);
+            mUserInventoryListRef
+                    .orderByValue()
+                    .addValueEventListener(mInventoryListener);
 
 //        } else {
 //            // user is not signed in
