@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:textDirection="locale"
             android:textAlignment="viewStart"
-            android:hint="@string/add_item"
+            android:hint="@string/item_name"
             android:inputType="textMultiLine"
             android:minLines="1"
             android:maxLines="5"

@@ -18,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -52,6 +53,7 @@ public class GameAddFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
         if (savedInstanceState == null) {
             mNewGame = new Game();
@@ -68,10 +70,15 @@ public class GameAddFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getShowsDialog()) {
+            getDialog().setTitle(R.string.add_game_title);
+        }
+
         // Inflate the layout for this fragment
         final FragmentGameAddBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_game_add, container, false);
         final View rootView = bind.getRoot();
+
 
         // Setup EditText
         bind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -88,8 +95,8 @@ public class GameAddFragment extends DialogFragment {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_game_name && !hasFocus) {
-                    if (view instanceof TextView) {
-                        hideKeyboard((TextView) view);
+                    if (view instanceof EditText) {
+                        hideKeyboard((EditText) view);
                     }
                 }
             }

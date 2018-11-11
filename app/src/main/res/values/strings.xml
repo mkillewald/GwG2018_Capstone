@@ -17,14 +17,15 @@
 
     <string name="inventory_list_title">Inventory</string>
     <string name="inventory_details_title">Part Details</string>
-    <string name="add_inventory_title">Add Part</string>
+    <string name="add_inventory_title">Add Part to Inventory</string>
     <string name="edit_inventory_title">Edit Part</string>
 
     <string name="repair_list_title">Repair Log</string>
     <string name="repair_details_title">Log Details</string>
-    <string name="add_repair_title">Add Log Entry</string>
-    <string name="edit_repair_title">Edit Log Entry</string>
+    <string name="add_repair_title">Add New Repair Log</string>
+    <string name="edit_repair_title">Edit Trouble Description</string>
     <string name="add_repair_step_title">Add Repair Step</string>
+    <string name="edit_repair_step_title">Edit Repair Step</string>
 
     <string name="to_do_list_title">Combined To Do List</string>
     <string name="to_do_details_title">Item Details</string>
@@ -33,6 +34,7 @@
 
     <string name="shopping_list_title">Combined Shopping List</string>
     <string name="shopping_details_title">Item Details</string>
+    <string name="add_shopping_title">Add Item</string>
     <string name="edit_shopping_title">Edit Item</string>
 
     <!-- Game Details Tab Titles -->
@@ -58,7 +60,7 @@
     <string name="delete_repair_step">Delete Step</string>
     <string name="add_item">Add Item</string>
     <string name="delete_item">Delete Item</string>
-    <string name="add_todo_item">Add To Do Item</string>
+    <string name="add_to_do_item">Add To Do Item</string>
     <string name="find_tech_info">Technical Document Search</string>
 
     <!-- Labels -->
@@ -81,7 +83,7 @@
     <string name="repair_step_name_hint">Repair Step Taken</string>
     <string name="to_do_name_hint">Title</string>
     <string name="to_do_description_hint">Notes</string>
-    <string name="shopping_name_hint">Needed Item</string>
+    <string name="item_name">Needed Item</string>
 
     <string name="save_changes">Save Changes</string>
     <string name="not_available">N/A</string>
@@ -213,9 +215,9 @@
     <string name="error_edit_repair_step_failed">Failed to save changes!</string>
     <string name="error_delete_repair_step_failed">Failed to delete name!</string>
 
-    <string name="error_add_todo_failed">Failed to add name!</string>
-    <string name="error_edit_todo_failed">Failed to save changes!</string>
-    <string name="error_delete_todo_failed">Failed to delete name!</string>
+    <string name="error_add_to_do_failed">Failed to add name!</string>
+    <string name="error_edit_to_do_failed">Failed to save changes!</string>
+    <string name="error_delete_to_do_failed">Failed to delete name!</string>
 
     <string name="error_add_item_failed">Failed to add item!</string>
     <string name="error_edit_shopping_failed">Failed to save changes!</string>

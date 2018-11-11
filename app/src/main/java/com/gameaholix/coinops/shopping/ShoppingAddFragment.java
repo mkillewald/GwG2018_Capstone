@@ -52,6 +52,7 @@ public class ShoppingAddFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -72,6 +73,10 @@ public class ShoppingAddFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getShowsDialog()) {
+            getDialog().setTitle(R.string.add_shopping_title);
+        }
+
         // Inflate the layout for this fragment
         final FragmentItemAddBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_item_add, container, false);

@@ -3,7 +3,6 @@ package com.gameaholix.coinops.repair;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -54,6 +53,7 @@ public class RepairAddFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -74,6 +74,10 @@ public class RepairAddFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getShowsDialog()) {
+            getDialog().setTitle(R.string.add_repair_title);
+        }
+
         // Inflate the layout for this fragment
         final FragmentRepairAddBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_repair_add, container, false);

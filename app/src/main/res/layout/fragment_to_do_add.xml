@@ -87,7 +87,7 @@
             android:gravity="top|start"
             android:inputType="textMultiLine"
             android:minLines="5"
-            android:maxLines="10"
+            android:maxLines="5"
             android:imeOptions="actionDone"
             android:layout_marginTop="@dimen/text_separation"
             android:layout_marginLeft="@dimen/edit_text_margin"

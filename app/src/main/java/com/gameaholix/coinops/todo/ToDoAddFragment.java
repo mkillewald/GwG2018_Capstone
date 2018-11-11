@@ -57,6 +57,7 @@ public class ToDoAddFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -78,6 +79,10 @@ public class ToDoAddFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getShowsDialog()) {
+            getDialog().setTitle(R.string.add_to_do_title);
+        }
+
         // Inflate the layout for this
         final FragmentToDoAddBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_to_do_add, container, false);

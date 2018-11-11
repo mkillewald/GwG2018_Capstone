@@ -44,6 +44,7 @@ public class InventoryAddFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
         if (savedInstanceState == null) {
             mNewItem = new InventoryItem();
@@ -60,6 +61,10 @@ public class InventoryAddFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getShowsDialog()) {
+            getDialog().setTitle(R.string.add_inventory_title);
+        }
+
         // Inflate the layout for this fragment
         final FragmentInventoryAddBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_inventory_add, container, false);

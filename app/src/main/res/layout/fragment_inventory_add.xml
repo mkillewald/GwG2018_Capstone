@@ -5,7 +5,7 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:padding="@dimen/margin"
             tools:mContext=".inventory.InventoryAddFragment">
 
@@ -113,7 +113,7 @@
                 android:inputType="textMultiLine"
                 android:gravity="top|start"
                 android:minLines="5"
-                android:maxLines="10"
+                android:maxLines="5"
                 android:imeOptions="actionDone"
                 android:paddingTop="@dimen/text_separation"
                 android:layout_marginLeft="@dimen/edit_text_margin"

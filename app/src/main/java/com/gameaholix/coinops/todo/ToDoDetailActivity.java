@@ -78,6 +78,7 @@ public class ToDoDetailActivity extends AppCompatActivity implements
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
+
         } else {
             mToDoItem = savedInstanceState.getParcelable(EXTRA_TODO);
             mGameName = savedInstanceState.getString(EXTRA_GAME_NAME);

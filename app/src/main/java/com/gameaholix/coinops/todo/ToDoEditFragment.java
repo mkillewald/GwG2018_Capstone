@@ -33,6 +33,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: figure out why AdMob banner does not slide up with soft input keyboard display,
+// this is my preferred behavior, but cannot figure out why this is working here and nowhere else.
+
 public class ToDoEditFragment extends Fragment {
     private static final String TAG = ToDoEditFragment.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
