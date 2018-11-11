@@ -10,13 +10,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -73,13 +74,22 @@ public class GameAddFragment extends DialogFragment {
         final View rootView = bind.getRoot();
 
         // Setup EditText
+        bind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    hideKeyboard(textView);
+                    return true;
+                }
+                return false;
+            }
+        });
         bind.etGameName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_game_name && !hasFocus) {
-                    if (view instanceof EditText) {
-                        EditText editText = (EditText) view;
-                        hideKeyboard(editText);
+                    if (view instanceof TextView) {
+                        hideKeyboard((TextView) view);
                     }
                 }
             }
@@ -258,16 +268,10 @@ public class GameAddFragment extends DialogFragment {
                 // get text from EditText
                 mNewGame.setName(bind.etGameName.getText().toString().trim());
                 addGame(mNewGame);
-                    }
+            }
         });
 
         return rootView;
-    }
-
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -365,5 +369,11 @@ public class GameAddFragment extends DialogFragment {
 //        } else {
 //            // user is not signed in
         }
+    }
+
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) view
+                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

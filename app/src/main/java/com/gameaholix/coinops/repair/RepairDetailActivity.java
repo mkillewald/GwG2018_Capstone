@@ -109,6 +109,27 @@ public class RepairDetailActivity extends AppCompatActivity implements
         outState.putParcelable(EXTRA_REPAIR, mRepairLog);
     }
 
+    @Override
+    public void onInternetCheckCompleted(boolean networkIsOnline) {
+        if (!networkIsOnline) {
+            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
+        }
+    }
+
+    @Override
+    public void onDescriptionSelected(Item repairLog) {
+        FragmentManager fm = getSupportFragmentManager();
+        RepairEditFragment fragment = RepairEditFragment.newInstance(mRepairLog);
+        fragment.show(fm, "fragment_step_edit");
+    }
+
+    @Override
+    public void onStepSelected(Item repairStep) {
+        FragmentManager fm = getSupportFragmentManager();
+        StepEditFragment fragment = StepEditFragment.newInstance(mRepairLog.getParentId(), repairStep);
+        fragment.show(fm, "fragment_step_edit");
+    }
+
     // Hide keyboard after touch event occurs outside of EditText
     // Solution used from:
     // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
@@ -130,26 +151,5 @@ public class RepairDetailActivity extends AppCompatActivity implements
             }
         }
         return super.dispatchTouchEvent(event);
-    }
-
-    @Override
-    public void onInternetCheckCompleted(boolean networkIsOnline) {
-        if (!networkIsOnline) {
-            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
-        }
-    }
-
-    @Override
-    public void onDescriptionSelected(Item repairLog) {
-        FragmentManager fm = getSupportFragmentManager();
-        RepairEditFragment fragment = RepairEditFragment.newInstance(mRepairLog);
-        fragment.show(fm, "fragment_step_edit");
-    }
-
-    @Override
-    public void onStepSelected(Item repairStep) {
-        FragmentManager fm = getSupportFragmentManager();
-        StepEditFragment fragment = StepEditFragment.newInstance(mRepairLog.getParentId(), repairStep);
-        fragment.show(fm, "fragment_step_edit");
     }
 }

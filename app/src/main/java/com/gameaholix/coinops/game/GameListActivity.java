@@ -1,7 +1,9 @@
 package com.gameaholix.coinops.game;
 
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
@@ -13,13 +15,15 @@ import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -78,14 +82,6 @@ public class GameListActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (mAdView.getVisibility() == View.GONE) {
-            mAdView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.game_list_menu, menu);
@@ -117,7 +113,6 @@ public class GameListActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
-            mAdView.setVisibility(View.GONE);
         } else {
             startActivity(intent);
         }
@@ -129,4 +124,26 @@ public class GameListActivity extends AppCompatActivity implements
         fragment.show(fm, "fragment_game_add");
     }
 
+    // Hide keyboard after touch event occurs outside of EditText
+    // Solution used from:
+    // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if ( view instanceof EditText) {
+                Rect outRect = new Rect();
+                view.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    view.clearFocus();
+                    InputMethodManager imm =
+                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
+    }
 }

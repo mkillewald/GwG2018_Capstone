@@ -107,14 +107,11 @@ public class InventoryEditFragment extends Fragment {
             bind.etAddInventoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_add_inventory_name && hasFocus) {
-                        mListener.hideBannerAd();
-                    } else if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
+                    if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
                         if (view instanceof EditText) {
-                            EditText editText = (EditText) view;
-                            String input = editText.getText().toString().trim();
+                            String input = ((EditText) view).getText().toString().trim();
                             if (!textInputIsValid(input)) {
-                                editText.setText(mItem.getName());
+                                ((EditText) view).setText(mItem.getName());
                             }
                         }
                     }
@@ -139,14 +136,11 @@ public class InventoryEditFragment extends Fragment {
             bind.etAddInventoryDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_add_inventory_description && hasFocus) {
-                        mListener.hideBannerAd();
-                    } else if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
+                    if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
                         if (view instanceof EditText) {
-                            EditText editText = (EditText) view;
-                            String input = editText.getText().toString().trim();
+                            String input = ((EditText) view).getText().toString().trim();
                             if (!textInputIsValid(input)) {
-                                editText.setText(mItem.getDescription());
+                                ((EditText) view).setText(mItem.getDescription());
                             }
                         }
                     }
@@ -330,6 +324,5 @@ public class InventoryEditFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onEditCompletedOrCancelled();
-        void hideBannerAd();
     }
 }

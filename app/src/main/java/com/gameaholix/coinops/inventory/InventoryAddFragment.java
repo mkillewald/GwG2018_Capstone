@@ -11,11 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryAddBinding;
@@ -68,31 +65,6 @@ public class InventoryAddFragment extends DialogFragment {
                 inflater, R.layout.fragment_inventory_add, container, false);
         final View rootView = bind.getRoot();
 
-        // Setup EditTexts
-        bind.etAddInventoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
-                    if (view instanceof EditText) {
-                        EditText editText = (EditText) view;
-                        hideKeyboard(editText);
-                    }
-                }
-            }
-        });
-
-        bind.etAddInventoryDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
-                    if (view instanceof EditText) {
-                        EditText editText = (EditText) view;
-                        hideKeyboard(editText);
-                    }
-                }
-            }
-        });
-        
         // Setup Spinners
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.inventory_type, android.R.layout.simple_spinner_item);
@@ -142,12 +114,6 @@ public class InventoryAddFragment extends DialogFragment {
         });
 
         return rootView;
-    }
-
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override

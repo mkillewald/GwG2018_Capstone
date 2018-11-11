@@ -4,32 +4,25 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -60,25 +53,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
+        GameEditFragment.OnFragmentInteractionListener,
         RepairListFragment.OnFragmentInteractionListener,
         ToDoListFragment.OnFragmentInteractionListener,
         ShoppingListFragment.OnFragmentInteractionListener,
-        GameEditFragment.OnFragmentInteractionListener,
-NetworkUtils.CheckInternetConnection.TaskCompleted {
+        NetworkUtils.CheckInternetConnection.TaskCompleted {
     private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
-    private static final int REQUEST_TAKE_PHOTO = 1;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private String mCurrentPhotoPath;
     private Game mGame;
@@ -92,7 +78,6 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
     private DatabaseReference mToDoRef;
     private ValueEventListener mDeleteTodoListener;
     private ValueEventListener mDeleteShopListener;
-    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,10 +102,9 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        mAdView = findViewById(R.id.av_banner);
+        AdView adView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        adView.loadAd(adRequest);
 
         if (savedInstanceState == null) {
             mGame = getIntent().getParcelableExtra(EXTRA_GAME);
@@ -142,9 +126,6 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
                 invalidateOptionsMenu();
-                if (mAdView.getVisibility() == View.GONE) {
-                    mAdView.setVisibility(View.VISIBLE);
-                }
             }
 
             @Override
@@ -444,6 +425,33 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
                 .addValueEventListener(mDeleteShopListener);
     }
 
+    @Override
+    public void onEditButtonPressed(Game game) {
+        // replace GameDetailFragment with GameEditFragment
+        Fragment editGameFragment = GameEditFragment.newInstance(game);
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_placeholder, editGameFragment);
+        ft.commit();
+
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onEditCompletedOrCancelled() {
+        // replace GameEditFragment with GameDetailFragment
+        Fragment gameDetailFragment = GameDetailFragment.newInstance(mGame);
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_placeholder, gameDetailFragment);
+        ft.commit();
+
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void showSnackbar(int stringResourceId) {
+        PromptUser.displaySnackbar(mCoordinatorLayout, stringResourceId);
+    }
+
     // Hide keyboard after touch event occurs outside of EditText
     // Solution used from:
     // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
@@ -465,39 +473,6 @@ NetworkUtils.CheckInternetConnection.TaskCompleted {
             }
         }
         return super.dispatchTouchEvent(event);
-    }
-
-    @Override
-    public void onEditButtonPressed(Game game) {
-        // replace GameDetailFragment with GameEditFragment
-        Fragment editGameFragment = GameEditFragment.newInstance(game);
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_placeholder, editGameFragment);
-        ft.commit();
-
-        invalidateOptionsMenu();
-    }
-
-    @Override
-    public void onEditCompletedOrCancelled() {
-        // replace GameEditFragment with GameDetailFragment
-        Fragment gameDetailFragment = GameDetailFragment.newInstance(mGame);
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_placeholder, gameDetailFragment);
-        ft.commit();
-
-        invalidateOptionsMenu();
-        mAdView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideBannerAd() {
-        mAdView.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showSnackbar(int stringResourceId) {
-        PromptUser.displaySnackbar(mCoordinatorLayout, stringResourceId);
     }
 
     //    private void onAddPhotoButtonPressed() {

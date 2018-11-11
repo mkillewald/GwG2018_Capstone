@@ -144,12 +144,10 @@ public class ShoppingEditFragment extends DialogFragment {
                 public void onFocusChange(View view, boolean hasFocus) {
                     if (view.getId() == R.id.et_entry && !hasFocus) {
                         if (view instanceof EditText) {
-                            EditText editText = (EditText) view;
-                            String input = editText.getText().toString().trim();
+                            String input = ((EditText) view).getText().toString().trim();
                             if (!textInputIsValid(input)) {
-                                editText.setText(mShoppingItem.getName());
+                                ((EditText) view).setText(mShoppingItem.getName());
                             }
-                            hideKeyboard(editText);
                         }
                     }
                 }
@@ -203,9 +201,9 @@ public class ShoppingEditFragment extends DialogFragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-//        if (mShopListener != null) {
-//            mShopRef.removeEventListener(mShopListener);
-//        }
+        if (mShopListener != null) {
+            mShopRef.removeEventListener(mShopListener);
+        }
     }
 
     @Override
@@ -250,12 +248,6 @@ public class ShoppingEditFragment extends DialogFragment {
         }
 
         return result;
-    }
-
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void updateItem() {
@@ -354,5 +346,11 @@ public class ShoppingEditFragment extends DialogFragment {
                 .child(Db.SHOP_LIST)
                 .child(mShoppingItem.getId())
                 .removeValue();
+    }
+
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) view
+                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

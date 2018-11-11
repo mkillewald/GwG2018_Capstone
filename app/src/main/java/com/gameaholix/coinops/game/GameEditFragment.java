@@ -14,7 +14,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -28,8 +27,6 @@ import com.gameaholix.coinops.databinding.DialogMonitorDetailsBinding;
 import com.gameaholix.coinops.databinding.FragmentGameAddBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -115,16 +112,13 @@ public class GameEditFragment extends Fragment {
             bind.etGameName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_game_name && hasFocus) {
-                        mListener.hideBannerAd();
-                    } else if (view.getId() == R.id.et_game_name && !hasFocus) {
+                    if (view.getId() == R.id.et_game_name && !hasFocus) {
                         if (view instanceof EditText) {
-                            EditText editText = (EditText) view;
-                            String input = editText.getText().toString().trim();
+                            String input = ((EditText) view).getText().toString().trim();
                             if (textInputIsValid(input)) {
                                 mValuesBundle.putString(Db.NAME, input);
                             } else {
-                                editText.setText(mGame.getName());
+                                ((EditText) view).setText(mGame.getName());
                             }
                         }
                     }
@@ -459,6 +453,5 @@ public class GameEditFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onEditCompletedOrCancelled();
-        void hideBannerAd();
     }
 }

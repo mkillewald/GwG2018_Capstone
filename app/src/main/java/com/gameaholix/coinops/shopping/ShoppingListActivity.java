@@ -1,5 +1,7 @@
 package com.gameaholix.coinops.shopping;
 
+import android.content.Context;
+import android.graphics.Rect;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
@@ -8,6 +10,10 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Item;
@@ -82,5 +88,26 @@ public class ShoppingListActivity extends AppCompatActivity implements
         }
     }
 
-
+    // Hide keyboard after touch event occurs outside of EditText
+    // Solution used from:
+    // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if ( view instanceof EditText) {
+                Rect outRect = new Rect();
+                view.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    view.clearFocus();
+                    InputMethodManager imm =
+                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
+    }
 }

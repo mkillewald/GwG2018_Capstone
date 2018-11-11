@@ -46,7 +46,6 @@ public class ToDoDetailActivity extends AppCompatActivity implements
     private CoordinatorLayout mCoordinatorLayout;
     private FirebaseUser mUser;
     private String mGameName;
-    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +66,9 @@ public class ToDoDetailActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mAdView = findViewById(R.id.av_banner);
+        AdView adView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        adView.loadAd(adRequest);
 
         if (savedInstanceState == null) {
             mToDoItem = getIntent().getParcelableExtra(EXTRA_TODO);
@@ -150,29 +149,6 @@ public class ToDoDetailActivity extends AppCompatActivity implements
         }
     }
 
-    // Hide keyboard after touch event occurs outside of EditText
-    // Solution used from:
-    // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View view = getCurrentFocus();
-            if ( view instanceof EditText) {
-                Rect outRect = new Rect();
-                view.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                    view.clearFocus();
-                    InputMethodManager imm =
-                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-                }
-            }
-        }
-        return super.dispatchTouchEvent(event);
-    }
-
     @Override
     public void onEditButtonPressed(ToDoItem toDoItem) {
         // replace ToDoDetailFragment with ToDoEditFragment
@@ -191,7 +167,6 @@ public class ToDoDetailActivity extends AppCompatActivity implements
         ft.commit();
 
         invalidateOptionsMenu();
-        mAdView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -257,8 +232,26 @@ public class ToDoDetailActivity extends AppCompatActivity implements
                 .removeValue();
     }
 
+    // Hide keyboard after touch event occurs outside of EditText
+    // Solution used from:
+    // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
     @Override
-    public void hideBannerAd() {
-        mAdView.setVisibility(View.GONE);
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if ( view instanceof EditText) {
+                Rect outRect = new Rect();
+                view.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    view.clearFocus();
+                    InputMethodManager imm =
+                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
     }
 }

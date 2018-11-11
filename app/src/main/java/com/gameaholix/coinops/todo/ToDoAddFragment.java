@@ -83,31 +83,6 @@ public class ToDoAddFragment extends DialogFragment {
                 inflater, R.layout.fragment_to_do_add, container, false);
         final View rootView = bind.getRoot();
 
-        //Setup EditTexts
-        bind.etTodoName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getId() == R.id.et_game_name && !hasFocus) {
-                    if (view instanceof EditText) {
-                        EditText editText = (EditText) view;
-                        hideKeyboard(editText);
-                    }
-                }
-            }
-        });
-
-        bind.etTodoDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getId() == R.id.et_game_name && !hasFocus) {
-                    if (view instanceof EditText) {
-                        EditText editText = (EditText) view;
-                        hideKeyboard(editText);
-                    }
-                }
-            }
-        });
-
         // Setup radio group
         bind.rgPriority.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -137,12 +112,6 @@ public class ToDoAddFragment extends DialogFragment {
         });
 
         return rootView;
-    }
-
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -239,5 +208,4 @@ public class ToDoAddFragment extends DialogFragment {
 //            // user is not signed in
         }
     }
-
 }

@@ -109,16 +109,13 @@ public class ToDoEditFragment extends Fragment {
             bind.etTodoName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_todo_name && hasFocus) {
-                        mListener.hideBannerAd();
-                    } else if (view.getId() == R.id.et_todo_name && !hasFocus) {
+                    if (view.getId() == R.id.et_todo_name && !hasFocus) {
                         if (view instanceof EditText) {
-                            EditText editText = (EditText) view;
-                            String input = editText.getText().toString().trim();
+                            String input = ((EditText) view).getText().toString().trim();
                             if (textInputIsValid(input)) {
                                 mValuesBundle.putString(Db.NAME, input);
                             } else {
-                                editText.setText(mToDoItem.getName());
+                                ((EditText) view).setText(mToDoItem.getName());
                             }
                         }
                     }
@@ -145,16 +142,13 @@ public class ToDoEditFragment extends Fragment {
             bind.etTodoDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (view.getId() == R.id.et_todo_description && hasFocus) {
-                        mListener.hideBannerAd();
-                    } else if (view.getId() == R.id.et_todo_description && !hasFocus) {
+                    if (view.getId() == R.id.et_todo_description && !hasFocus) {
                         if (view instanceof EditText) {
-                            EditText editText = (EditText) view;
-                            String input = editText.getText().toString().trim();
+                            String input = ((EditText) view).getText().toString().trim();
                             if (textInputIsValid(input)) {
                                 mValuesBundle.putString(Db.DESCRIPTION, input);
                             } else {
-                                editText.setText(mToDoItem.getDescription());
+                                ((EditText) view).setText(mToDoItem.getDescription());
                             }
                         }
                     }
@@ -345,6 +339,5 @@ public class ToDoEditFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onEditCompletedOrCancelled();
         void onDeleteButtonPressed(ToDoItem toDoItem);
-        void hideBannerAd();
     }
 }
