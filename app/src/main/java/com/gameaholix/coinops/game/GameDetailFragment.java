@@ -272,6 +272,9 @@ public class GameDetailFragment extends Fragment {
             case R.id.menu_add_photo:
                 onLaunchCamera();
                 return true;
+            case R.id.menu_delete_game:
+                mListener.onDeleteGameButtonPressed(mGame);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -467,6 +470,7 @@ public class GameDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onGameNameChanged(String name);
         void onEditButtonPressed(Game game);
+        void onDeleteGameButtonPressed(Game game);
         void showSnackbar(int stringResourceId);
         void onImageClicked(String imagePath);
     }

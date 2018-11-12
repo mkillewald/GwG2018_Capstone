@@ -16,8 +16,10 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,6 +47,7 @@ import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -52,6 +55,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class GameDetailActivity extends AppCompatActivity implements
@@ -67,8 +71,8 @@ public class GameDetailActivity extends AppCompatActivity implements
     private static final String EXTRA_IMAGE_PATH = "CoinOpsImagePath";
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
+    private static final String THUMB = "thumb_";
 
-    private String mCurrentPhotoPath;
     private Game mGame;
     private CoordinatorLayout mCoordinatorLayout;
     private ViewPager mViewPager;
@@ -78,6 +82,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     private DatabaseReference mUserRef;
     private DatabaseReference mShopRef;
     private DatabaseReference mToDoRef;
+    private StorageReference mImageRootRef;
     private ValueEventListener mDeleteTodoListener;
     private ValueEventListener mDeleteShopListener;
 
@@ -161,6 +166,12 @@ public class GameDetailActivity extends AppCompatActivity implements
                 .child(Db.SHOP)
                 .child(mUser.getUid());
 
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        mImageRootRef = storageRef
+                .child(mUser.getUid())
+                .child(mGame.getId());
+
         mCoordinatorLayout = findViewById(R.id.coordinator_layout);
 
         if (NetworkUtils.isNetworkEnabled(this)) {
@@ -201,6 +212,7 @@ public class GameDetailActivity extends AppCompatActivity implements
                 menu.findItem(R.id.menu_add_repair).setVisible(true);
                 menu.findItem(R.id.menu_add_todo).setVisible(false);
                 menu.findItem(R.id.menu_add_shopping).setVisible(false);
+                menu.findItem(R.id.menu_delete_game).setVisible(false);
                 break;
             case 2:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
@@ -208,6 +220,7 @@ public class GameDetailActivity extends AppCompatActivity implements
                 menu.findItem(R.id.menu_add_repair).setVisible(false);
                 menu.findItem(R.id.menu_add_todo).setVisible(true);
                 menu.findItem(R.id.menu_add_shopping).setVisible(false);
+                menu.findItem(R.id.menu_delete_game).setVisible(false);
                 break;
             default:
             case 3:
@@ -216,6 +229,7 @@ public class GameDetailActivity extends AppCompatActivity implements
                 menu.findItem(R.id.menu_add_repair).setVisible(false);
                 menu.findItem(R.id.menu_add_todo).setVisible(false);
                 menu.findItem(R.id.menu_add_shopping).setVisible(true);
+                menu.findItem(R.id.menu_delete_game).setVisible(false);
                 break;
         }
         return super.onCreateOptionsMenu(menu);
@@ -257,7 +271,8 @@ public class GameDetailActivity extends AppCompatActivity implements
                 showAddShoppingDialog();
                 return true;
             case R.id.menu_delete_game:
-                showDeleteAlert();
+                // handled by GameDetailFragment mListener callback
+                return false;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -333,6 +348,12 @@ public class GameDetailActivity extends AppCompatActivity implements
         fragment.show(fm, "fragment_item_add");
     }
 
+    @Override
+    public void onDeleteGameButtonPressed(Game game) {
+        mGame = game;
+        showDeleteAlert();
+    }
+
     private void showDeleteAlert() {
         if (mUser != null) {
             //user is signed in
@@ -402,10 +423,11 @@ public class GameDetailActivity extends AppCompatActivity implements
             }
         };
 
+        // delete images from Firebase Storage
+        deleteImagesFromFirebase();
+
         // delete game details
         mGameRef.removeValue();
-
-        // TODO: delete game images from Firebase Storage
 
         // remove user game_list entry
         mUserRef.child(Db.GAME_LIST)
@@ -428,6 +450,27 @@ public class GameDetailActivity extends AppCompatActivity implements
         mShopRef.orderByChild(Db.PARENT_ID)
                 .equalTo(mGame.getId())
                 .addValueEventListener(mDeleteShopListener);
+    }
+
+    private void deleteImagesFromFirebase() {
+        if (!TextUtils.isEmpty(mGame.getImage())) {
+            // Delete thumbnail image
+            Log.d(TAG, "image: " + mImageRootRef + "/" + mGame.getImage());
+            mImageRootRef.child(THUMB + mGame.getImage()).delete().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Failed to delete previous thumbnail image -> ", e);
+                }
+            });
+
+            // Delete full size  image
+            mImageRootRef.child(mGame.getImage()).delete().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Failed to delete previous full image -> ", e);
+                }
+            });
+        }
     }
 
     @Override
