@@ -41,6 +41,9 @@
             android:name=".game.GameDetailActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".game.GameListActivity" />
+        <activity android:name=".game.DisplayImageActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".game.GameDetailActivity" />
         <activity
             android:name=".inventory.InventoryListActivity"
             android:launchMode="singleTop"
@@ -103,8 +106,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <activity android:name=".game.DisplayImage"></activity>
     </application>
 
 </manifest>

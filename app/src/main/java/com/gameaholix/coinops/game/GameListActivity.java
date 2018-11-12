@@ -34,7 +34,6 @@ public class GameListActivity extends AppCompatActivity implements
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
     private CoordinatorLayout mCoordinatorLayout;
-    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +58,9 @@ public class GameListActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mAdView = findViewById(R.id.av_banner);
+        AdView adView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        adView.loadAd(adRequest);
 
         setTitle(R.string.game_list_title);
 

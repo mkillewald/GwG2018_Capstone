@@ -52,6 +52,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
@@ -63,6 +64,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
+    private static final String EXTRA_IMAGE_PATH = "CoinOpsImagePath";
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
@@ -448,6 +450,18 @@ public class GameDetailActivity extends AppCompatActivity implements
         ft.commit();
 
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onImageClicked(String imagePath) {
+        Intent intent = new Intent(this, DisplayImageActivity.class);
+        intent.putExtra(EXTRA_IMAGE_PATH, imagePath);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            startActivity(intent, bundle);
+        } else {
+            startActivity(intent);
+        }
     }
 
     @Override

@@ -46,15 +46,14 @@ import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
-// TODO: also store full image to firebase, and display full image when click on thumb.
 // TODO: add ability to store more than one image
-
 
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
-    private static final int REQUEST_IMAGE_CAPTURE = 343;
     private static final String CAPTURE_IMAGE_FILE_PROVIDER = "com.gameaholix.coinops.fileprovider";
+    private static final String THUMB = "thumb_";
+    private static final int REQUEST_IMAGE_CAPTURE = 343;
 
     private Context mContext;
     private Game mGame;
@@ -62,7 +61,6 @@ public class GameDetailFragment extends Fragment {
     private String mCurrentPhotoPath;
     private DatabaseReference mGameRef;
     private StorageReference mImageRootRef;
-    private StorageReference mThumbRootRef;
     private ValueEventListener mGameListener;
     private OnFragmentInteractionListener mListener;
     private FragmentGameDetailBinding mBind;
@@ -101,10 +99,6 @@ public class GameDetailFragment extends Fragment {
         mImageRootRef = storageRef
                 .child(mUser.getUid())
                 .child(mGame.getId());
-        mThumbRootRef = storageRef
-                .child(mUser.getUid())
-                .child(mGame.getId())
-                .child(Db.THUMB);
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         mGameRef = databaseReference
@@ -180,29 +174,14 @@ public class GameDetailFragment extends Fragment {
                         StorageReference thumbRef = null;
 
                         if (!TextUtils.isEmpty(mGame.getImage())) {
-                            thumbRef = mThumbRootRef.child(mGame.getImage());
-
-                            mImageRootRef.child(mGame.getImage()).getDownloadUrl()
-                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(final Uri uri) {
-                                    mBind.ivPhoto.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                                        }
-                                    });
-
-                                }
-                            });
-
-
+                            thumbRef = mImageRootRef.child(THUMB + mGame.getImage());
                         }
 
                         GlideApp.with(mContext)
                                 .load(thumbRef)
                                 .placeholder(R.drawable.ic_classic_arcade_machine)
                                 .into(mBind.ivPhoto);
+
                     }
                 }
 
@@ -214,6 +193,16 @@ public class GameDetailFragment extends Fragment {
             };
             mGameRef.addValueEventListener(mGameListener);
 
+            // Setup ImageView
+            mBind.ivPhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!TextUtils.isEmpty(mGame.getImage())) {
+                        String imagePath = mImageRootRef.child(mGame.getImage()).getPath();
+                        mListener.onImageClicked(imagePath);
+                    }
+                }
+            });
 
             // Setup Buttons
             mBind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
@@ -318,7 +307,8 @@ public class GameDetailFragment extends Fragment {
         // Code used from https://developer.android.com/training/camera/photobasics
 
         // Create an image name from current timestamp
-        String filename = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String filename = new SimpleDateFormat("yyyyMMdd_hhmmss", Locale.US).format(new Date());
+        Log.d(TAG, filename);
 
         File storageDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -334,10 +324,6 @@ public class GameDetailFragment extends Fragment {
     }
 
     private Bitmap scaleBitmap(String filePath, int targetW, int targetH) {
-        // Get the dimensions of the View
-//        int targetW = // mBind.ivPhoto.getWidth();
-//        int targetH = // mBind.ivPhoto.getHeight();
-
         // Get the dimensions of the full bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
@@ -348,7 +334,7 @@ public class GameDetailFragment extends Fragment {
         // Determine how much to scale down the image
         int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
 
-        // Decode the image file into a Bitmap sized to fill the View
+        // Decode the image file into a Bitmap sized to fill the target
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
         bmOptions.inPurgeable = true;
@@ -379,11 +365,9 @@ public class GameDetailFragment extends Fragment {
         }
     }
 
-    // TODO: need to combine compressBitmapAndUploadToFirebase and compressThumbBitmapAndUploadToFirebase
-
     private void compressBitmapAndUploadToFirebase(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
         byte[] data = baos.toByteArray();
 
         // Upload the image
@@ -395,15 +379,9 @@ public class GameDetailFragment extends Fragment {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d(TAG, "Full image successfully uploaded to firebase");
 
-                // delete file from external storage
-                File fdelete = new File(mCurrentPhotoPath);
-                if (fdelete.exists()) {
-                    if (fdelete.delete()) {
-                        Log.d(TAG,"file Deleted :" + mCurrentPhotoPath);
-                    } else {
-                        Log.e(TAG, "file not Deleted :" + mCurrentPhotoPath);
-                    }
-                }
+                // delete temp image file from external storage
+                deleteTemporaryImageFromDisk();
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -417,34 +395,20 @@ public class GameDetailFragment extends Fragment {
     private void compressThumbBitmapAndUploadToFirebase(Bitmap bitmap) {
         // Compress bitmap to jpeg
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
         // Upload the thumbnail image
         final String filename = mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf('/') + 1);
-        UploadTask uploadThumbnailTask = mThumbRootRef.child(filename).putBytes(data);
+        UploadTask uploadThumbnailTask = mImageRootRef.child(THUMB + filename).putBytes(data);
 
         uploadThumbnailTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d(TAG, "Thumbnail successfully uploaded to firebase.");
-                if (!TextUtils.isEmpty(mGame.getImage())) {
-                    // Delete previous thumbnail image
-                    mThumbRootRef.child(mGame.getImage()).delete().addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "Failed to delete previous thumbnail image -> ", e);
-                        }
-                    });
 
-                    // Delete previous full image
-                    mImageRootRef.child(mGame.getImage()).delete().addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "Failed to delete previous full image -> ", e);
-                        }
-                    });
-                }
+                // delete previous images from firebase
+                deleteImagesFromFirebase();
 
                 // Store new image filename in database, this will trigger the ImageView to be reloaded.
                 DatabaseReference filenameRef = mGameRef.child(Db.IMAGE);
@@ -462,6 +426,38 @@ public class GameDetailFragment extends Fragment {
         });
     }
 
+    private void deleteTemporaryImageFromDisk() {
+        // delete file from external storage
+        File fdelete = new File(mCurrentPhotoPath);
+        if (fdelete.exists()) {
+            if (fdelete.delete()) {
+                Log.d(TAG,"file Deleted :" + mCurrentPhotoPath);
+            } else {
+                Log.e(TAG, "file not Deleted :" + mCurrentPhotoPath);
+            }
+        }
+    }
+
+    private void deleteImagesFromFirebase() {
+        if (!TextUtils.isEmpty(mGame.getImage())) {
+            // Delete thumbnail image
+            mImageRootRef.child(THUMB + mGame.getImage()).delete().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Failed to delete previous thumbnail image -> ", e);
+                }
+            });
+
+            // Delete full size  image
+            mImageRootRef.child(mGame.getImage()).delete().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Failed to delete previous full image -> ", e);
+                }
+            });
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -472,6 +468,7 @@ public class GameDetailFragment extends Fragment {
         void onGameNameChanged(String name);
         void onEditButtonPressed(Game game);
         void showSnackbar(int stringResourceId);
+        void onImageClicked(String imagePath);
     }
 
 
