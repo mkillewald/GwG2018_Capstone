@@ -6,24 +6,20 @@ public class Db {
     public static final String USER = "user";
     public static final String GAME = "game";
     public static final String GAME_LIST = "game_list";
-
     public static final String INVENTORY = "inventory";
     public static final String INVENTORY_LIST = "inventory_list";
-
     public static final String REPAIR = "repair";
     public static final String REPAIR_LIST = "repair_list";
-
     public static final String STEPS = "steps";
-
     public static final String SHOP = "shop";
     public static final String SHOP_LIST = "shop_list";
-
     public static final String TODO = "todo";
     public static final String TODO_LIST = "todo_list";
 
     // Database keys
     public static final String PARENT_ID = "parentId";
     public static final String NAME = "name";
+    public static final String IMAGE = "image";
     public static final String TYPE = "type";
     public static final String CABINET = "cabinet";
     public static final String CONDITION = "condition";

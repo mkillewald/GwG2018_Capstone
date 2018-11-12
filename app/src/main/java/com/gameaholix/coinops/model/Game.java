@@ -26,6 +26,7 @@ public class Game implements Parcelable {
     private String highScore;
     private String comment;
     private String manufacturer;
+    private String image;
 
     private Boolean forSale;
 
@@ -253,6 +254,14 @@ public class Game implements Parcelable {
 
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Boolean getForSale() {

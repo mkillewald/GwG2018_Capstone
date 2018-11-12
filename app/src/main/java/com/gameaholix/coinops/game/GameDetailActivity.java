@@ -226,8 +226,11 @@ public class GameDetailActivity extends AppCompatActivity implements
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
             if (currentFragment instanceof GameEditFragment) {
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
+                menu.findItem(R.id.menu_add_photo).setVisible(false);
             } else {
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
+                menu.findItem(R.id.menu_add_photo).setVisible(true);
+
             }
         }
         return super.onPrepareOptionsMenu(menu);
@@ -241,7 +244,6 @@ public class GameDetailActivity extends AppCompatActivity implements
                 return false;
             case R.id.menu_add_photo:
                 // handled by GameDetailFragment
-//                onAddPhotoButtonPressed();
                 return false;
             case R.id.menu_add_repair:
                 showAddRepairDialog();
@@ -401,6 +403,8 @@ public class GameDetailActivity extends AppCompatActivity implements
         // delete game details
         mGameRef.removeValue();
 
+        // TODO: delete game images from Firebase Storage
+
         // remove user game_list entry
         mUserRef.child(Db.GAME_LIST)
                 .child(mGame.getId())
@@ -473,61 +477,4 @@ public class GameDetailActivity extends AppCompatActivity implements
         }
         return super.dispatchTouchEvent(event);
     }
-
-    //    private void onAddPhotoButtonPressed() {
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        // Ensure that there's a camera activity to handle the intent
-//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-//            // Create the File where the photo should go
-//            File photoFile = null;
-//            try {
-//                photoFile = createImageFile();
-//            } catch (IOException ex) {
-//                // Error occurred while creating the File
-//                Log.e(TAG, "IOException: ", ex);
-//            }
-//            // Continue only if the File was successfully created
-//            if (photoFile != null) {
-//                Uri photoURI = FileProvider.getUriForFile(this,
-//                        "com.gameaholix.coinops.fileprovider",
-//                        photoFile);
-//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-//            }
-//        }
-//    }
-
-//    private File createImageFile() throws IOException {
-//        // Create an image file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//        File image = File.createTempFile(
-//                imageFileName,  /* prefix */
-//                ".jpg",         /* suffix */
-//                storageDir      /* directory */
-//        );
-//
-//        // Save a file: path for use with ACTION_VIEW intents
-//        mCurrentPhotoPath = image.getAbsolutePath();
-//        Log.d(TAG, mCurrentPhotoPath);
-//        return image;
-//    }
-
-//    private void galleryAddPic() {
-//        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//        File f = new File(mCurrentPhotoPath);
-//        Uri contentUri = Uri.fromFile(f);
-//        mediaScanIntent.setData(contentUri);
-//        this.sendBroadcast(mediaScanIntent);
-//    }
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-//            mBind.ivPhoto.setImageBitmap(imageBitmap);
-//        }
-//    }
 }
