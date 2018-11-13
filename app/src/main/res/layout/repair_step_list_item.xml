@@ -39,9 +39,9 @@
             android:id="@+id/divider_line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
+            android:background="@color/mediumGrey"
             android:layout_marginTop="@dimen/margin"
-            android:layout_marginStart="@dimen/text_separation"
+            android:layout_marginStart="@dimen/margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_repair_step_created_at" />
