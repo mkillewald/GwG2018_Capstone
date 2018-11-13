@@ -1,21 +1,20 @@
 package com.gameaholix.coinops.adapter;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.ListItemMoreBinding;
+import com.gameaholix.coinops.databinding.ListItemBinding;
 import com.gameaholix.coinops.model.Item;
 
 import java.util.List;
 
 public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdapterViewHolder> {
-    private Context mContext;
     private List<Item> mRepairLogs;
     private final RepairAdapterOnClickHandler mClickHandler;
 
@@ -23,19 +22,18 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
         void onClick(Item repairLog);
     }
 
-    public RepairAdapter (Context context, RepairAdapterOnClickHandler clickHandler) {
-        mContext = context;
+    public RepairAdapter (RepairAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
     public class RepairAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        final ListItemMoreBinding mBinding;
+        final ListItemBinding mBinding;
 
-        RepairAdapterViewHolder(ListItemMoreBinding listItemMoreBinding) {
-            super(listItemMoreBinding.getRoot());
-            mBinding = listItemMoreBinding;
-            mBinding.tvName.setOnClickListener(this);
+        RepairAdapterViewHolder(ListItemBinding listItemBinding) {
+            super(listItemBinding.getRoot());
+            mBinding = listItemBinding;
+            mBinding.getRoot().setOnClickListener(this);
         }
 
         @Override
@@ -49,9 +47,9 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
     @NonNull
     @Override
     public RepairAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ListItemMoreBinding binding = DataBindingUtil.inflate(
+        ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.list_item_more, parent, false);
+                R.layout.list_item, parent, false);
 
         return new RepairAdapterViewHolder(binding);
     }
@@ -61,8 +59,8 @@ public class RepairAdapter extends RecyclerView.Adapter<RepairAdapter.RepairAdap
         Item repairLog = mRepairLogs.get(position);
 
         holder.mBinding.tvName.setText(repairLog.getName());
-        String details = mContext.getString(R.string.details);
-        holder.mBinding.ivShowMore.setContentDescription(repairLog.getName() + details);
+        holder.mBinding.tvName.setMaxLines(1);
+        holder.mBinding.tvName.setEllipsize(TextUtils.TruncateAt.END);
     }
 
     @Override

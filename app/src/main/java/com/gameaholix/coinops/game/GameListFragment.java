@@ -61,7 +61,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
                 false);
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
-        mGameAdapter = new GameAdapter(mContext, this);
+        mGameAdapter = new GameAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mGameAdapter);

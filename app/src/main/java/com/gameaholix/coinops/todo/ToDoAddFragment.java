@@ -10,11 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentToDoAddBinding;
@@ -133,8 +130,8 @@ public class ToDoAddFragment extends DialogFragment {
 
         // set width and height of this DialogFragment, code block used from
         // https://stackoverflow.com/questions/12478520/how-to-set-dialogfragments-width-and-height
-        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-        if (params != null) {
+        if (getShowsDialog() && getDialog().getWindow() != null) {
+            ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);

@@ -12,9 +12,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -35,13 +32,12 @@ public class InventoryListActivity extends AppCompatActivity implements
     private static final String EXTRA_INVENTORY = "com.gameaholix.coinops.model.InventoryItem";
 
     private CoordinatorLayout mCoordinatorLayout;
-    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             TransitionInflater inflater = TransitionInflater.from(this);
 
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
@@ -60,9 +56,9 @@ public class InventoryListActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mAdView = findViewById(R.id.av_banner);
+        AdView adView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        adView.loadAd(adRequest);
 
         setTitle(R.string.inventory_list_title);
 
@@ -98,7 +94,7 @@ public class InventoryListActivity extends AppCompatActivity implements
     public void onInventoryItemSelected(InventoryItem inventoryItem) {
         Intent intent = new Intent(this, InventoryDetailActivity.class);
         intent.putExtra(EXTRA_INVENTORY, inventoryItem);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
         } else {

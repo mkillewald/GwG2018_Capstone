@@ -1,21 +1,20 @@
 package com.gameaholix.coinops.adapter;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.ListItemMoreBinding;
+import com.gameaholix.coinops.databinding.ListItemBinding;
 import com.gameaholix.coinops.model.Game;
 
 import java.util.List;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterViewHolder> {
-    private Context mContext;
     private List<Game> mGames;
     private final GameAdapterOnClickHandler mClickHandler;
 
@@ -23,19 +22,18 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
         void onClick(Game game);
     }
 
-    public GameAdapter (Context context, GameAdapterOnClickHandler clickHandler) {
-        mContext = context;
+    public GameAdapter (GameAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
     public class GameAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        final ListItemMoreBinding mBinding;
+        final ListItemBinding mBinding;
 
-        GameAdapterViewHolder(ListItemMoreBinding listItemMoreBinding) {
-            super(listItemMoreBinding.getRoot());
-            mBinding = listItemMoreBinding;
-            mBinding.tvName.setOnClickListener(this);
+        GameAdapterViewHolder(ListItemBinding listItemBinding) {
+            super(listItemBinding.getRoot());
+            mBinding = listItemBinding;
+            mBinding.getRoot().setOnClickListener(this);
         }
 
         @Override
@@ -49,9 +47,9 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
     @NonNull
     @Override
     public GameAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ListItemMoreBinding binding = DataBindingUtil.inflate(
+        ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.list_item_more, parent, false);
+                R.layout.list_item, parent, false);
 
         return new GameAdapterViewHolder(binding);
     }
@@ -61,8 +59,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
         Game game = mGames.get(position);
 
         holder.mBinding.tvName.setText(game.getName());
-        String details = mContext.getString(R.string.details);
-        holder.mBinding.ivShowMore.setContentDescription(game.getName() + details);
+        holder.mBinding.tvName.setMaxLines(1);
+        holder.mBinding.tvName.setEllipsize(TextUtils.TruncateAt.END);
     }
 
     @Override

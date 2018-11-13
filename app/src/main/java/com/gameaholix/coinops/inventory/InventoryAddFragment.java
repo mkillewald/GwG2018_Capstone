@@ -134,8 +134,8 @@ public class InventoryAddFragment extends DialogFragment {
 
         // set width and height of this DialogFragment, code block used from
         // https://stackoverflow.com/questions/12478520/how-to-set-dialogfragments-width-and-height
-        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-        if (params != null) {
+        if (getShowsDialog() && getDialog().getWindow() != null) {
+            ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);

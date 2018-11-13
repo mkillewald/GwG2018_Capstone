@@ -36,7 +36,7 @@ public class GameListActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             TransitionInflater inflater = TransitionInflater.from(this);
 
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
@@ -93,7 +93,7 @@ public class GameListActivity extends AppCompatActivity implements
     public void onGameSelected(Game game) {
         Intent intent = new Intent(this, GameDetailActivity.class);
         intent.putExtra(EXTRA_GAME, game);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
         } else {

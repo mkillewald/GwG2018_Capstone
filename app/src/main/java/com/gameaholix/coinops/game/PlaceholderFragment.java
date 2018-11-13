@@ -14,7 +14,7 @@ import com.gameaholix.coinops.model.Game;
 
 
 public class PlaceholderFragment extends Fragment {
-    private static final String TAG = PlaceholderFragment.class.getSimpleName();
+//    private static final String TAG = PlaceholderFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
 
     private Game mGame;
@@ -33,7 +33,7 @@ public class PlaceholderFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
@@ -42,15 +42,15 @@ public class PlaceholderFragment extends Fragment {
             if (getArguments() != null) {
                 mGame = getArguments().getParcelable(EXTRA_GAME);
             }
+
+            // Show GameDetailFragmment when this fragment is first created
+            if (getActivity() != null) {
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.add(R.id.fragment_placeholder, GameDetailFragment.newInstance(mGame));
+                ft.commit();
+            }
         } else {
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
-        }
-
-        // Show GameDetailFragmment when this fragment is first created
-        if (getActivity() != null) {
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.fragment_placeholder, GameDetailFragment.newInstance(mGame));
-            ft.commit();
         }
 
         return rootView;

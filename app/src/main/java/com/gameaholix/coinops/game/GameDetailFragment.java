@@ -1,5 +1,6 @@
 package com.gameaholix.coinops.game;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,11 +22,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.gameaholix.coinops.GlideApp;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.utility.GlideApp;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -342,6 +343,13 @@ public class GameDetailFragment extends Fragment {
                         CAPTURE_IMAGE_FILE_PROVIDER,
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                // used from https://stackoverflow.com/questions/24467696/android-file-provider-permission-denial
+                if ( Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP ) {
+                    takePictureIntent.setClipData( ClipData.newRawUri( "", photoURI ) );
+                    takePictureIntent.addFlags( Intent.FLAG_GRANT_WRITE_URI_PERMISSION|Intent.FLAG_GRANT_READ_URI_PERMISSION );
+                }
+
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
         }

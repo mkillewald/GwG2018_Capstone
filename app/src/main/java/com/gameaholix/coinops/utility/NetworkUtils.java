@@ -7,28 +7,10 @@ import android.os.AsyncTask;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.URL;
 
 public class NetworkUtils {
-
-    /**
-     * Returns a URL object from a given url String
-     * * @param stringUrl the string url
-     * @return the URL object
-     */
-    public static URL getUrlFromString(String stringUrl) {
-        URL url = null;
-        try {
-            url = new URL(stringUrl);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        return url;
-    }
 
     /**
      * Checks if a network is available on the device

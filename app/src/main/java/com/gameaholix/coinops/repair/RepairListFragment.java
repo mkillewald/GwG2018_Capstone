@@ -3,12 +3,12 @@ package com.gameaholix.coinops.repair;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -82,7 +82,7 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
 
         // Setup Repair Log RecyclerView
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
-        mRepairAdapter = new RepairAdapter(mContext, this);
+        mRepairAdapter = new RepairAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mRepairAdapter);
@@ -115,6 +115,15 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
 
             // read list of repair logs
             mRepairListRef.addValueEventListener(mRepairListener);
+
+            // Setup FAB
+            FloatingActionButton fab = rootView.findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onRepairFabPressed();
+                }
+            });
 
 //        } else {
 //            // user is not signed in
@@ -176,5 +185,6 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
      */
     public interface OnFragmentInteractionListener {
         void onRepairLogSelected(Item repairLog);
+        void onRepairFabPressed();
     }
 }

@@ -15,19 +15,18 @@ import com.gameaholix.coinops.shopping.ShoppingListFragment;
 import com.gameaholix.coinops.todo.ToDoListFragment;
 
 public class GameDetailPagerAdapter extends FragmentPagerAdapter {
-    private final Game mGame;
+//    private static final String TAG = GameDetailPagerAdapter.class.getSimpleName();
     private final String[] mTabTitles;
     private final Fragment[] mFragments;
 
-    public GameDetailPagerAdapter(Context context, FragmentManager fm, Game game) {
-        super(fm);
-        mGame = game;
+    public GameDetailPagerAdapter(Context context, FragmentManager fragmentManager, Game game) {
+        super(fragmentManager);
         mTabTitles = context.getResources().getStringArray(R.array.game_details_tab_titles);
         mFragments = new Fragment[mTabTitles.length];
-        mFragments[0] = PlaceholderFragment.newInstance(mGame);
-        mFragments[1] = RepairListFragment.newInstance(mGame.getId());
-        mFragments[2] = ToDoListFragment.newInstance(mGame.getId());
-        mFragments[3] = ShoppingListFragment.newInstance(mGame.getId());
+        mFragments[0] = PlaceholderFragment.newInstance(game);
+        mFragments[1] = RepairListFragment.newInstance(game.getId());
+        mFragments[2] = ToDoListFragment.newInstance(game.getId());
+        mFragments[3] = ShoppingListFragment.newInstance(game.getId());
     }
 
     @Override

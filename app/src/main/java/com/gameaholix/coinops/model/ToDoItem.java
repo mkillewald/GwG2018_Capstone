@@ -7,9 +7,9 @@ public class ToDoItem extends Item implements Parcelable {
 
     private String description;
     private int priority;
-    private boolean reminder;
-    private boolean repeat;
-    private long remindAt;
+//    private boolean reminder;
+//    private boolean repeat;
+//    private long remindAt;
 
     public ToDoItem() {
         super();
@@ -28,9 +28,9 @@ public class ToDoItem extends Item implements Parcelable {
         super(in);
         this.description = in.readString();
         this.priority = in.readInt();
-        this.reminder = (boolean) in.readValue(getClass().getClassLoader());
-        this.repeat = (boolean) in.readValue(getClass().getClassLoader());
-        this.remindAt = in.readLong();
+//        this.reminder = (boolean) in.readValue(getClass().getClassLoader());
+//        this.repeat = (boolean) in.readValue(getClass().getClassLoader());
+//        this.remindAt = in.readLong();
     }
 
     @Override
@@ -43,9 +43,9 @@ public class ToDoItem extends Item implements Parcelable {
         super.writeToParcel(dest, i);
         dest.writeString(description);
         dest.writeInt(priority);
-        dest.writeValue(reminder);
-        dest.writeValue(repeat);
-        dest.writeLong(remindAt);
+//        dest.writeValue(reminder);
+//        dest.writeValue(repeat);
+//        dest.writeLong(remindAt);
     }
 
     public final static Parcelable.Creator<ToDoItem> CREATOR = new Parcelable.Creator<ToDoItem>() {
@@ -73,27 +73,27 @@ public class ToDoItem extends Item implements Parcelable {
         this.priority = priority;
     }
 
-    public boolean isReminder() {
-        return reminder;
-    }
-
-    public void setReminder(boolean reminder) {
-        this.reminder = reminder;
-    }
-
-    public boolean isRepeat() {
-        return repeat;
-    }
-
-    public void setRepeat(boolean repeat) {
-        this.repeat = repeat;
-    }
-
-    public long getRemindAt() {
-        return remindAt;
-    }
-
-    public void setRemindAt(long remindAt) {
-        this.remindAt = remindAt;
-    }
+//    public boolean isReminder() {
+//        return reminder;
+//    }
+//
+//    public void setReminder(boolean reminder) {
+//        this.reminder = reminder;
+//    }
+//
+//    public boolean isRepeat() {
+//        return repeat;
+//    }
+//
+//    public void setRepeat(boolean repeat) {
+//        this.repeat = repeat;
+//    }
+//
+//    public long getRemindAt() {
+//        return remindAt;
+//    }
+//
+//    public void setRemindAt(long remindAt) {
+//        this.remindAt = remindAt;
+//    }
 }

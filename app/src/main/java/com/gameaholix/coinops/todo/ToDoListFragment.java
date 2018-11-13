@@ -34,7 +34,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     private static final String TAG = ToDoListFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
-    private Context mContext;
     private String mGameId;
     private ToDoAdapter mToDoAdapter;
     private DatabaseReference mToDoListRef;
@@ -101,7 +100,7 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
-        mToDoAdapter = new ToDoAdapter(mContext, this);
+        mToDoAdapter = new ToDoAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mToDoAdapter);
@@ -180,7 +179,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {

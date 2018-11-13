@@ -30,13 +30,12 @@ public class ToDoListActivity extends AppCompatActivity implements
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
     private CoordinatorLayout mCoordinatorLayout;
-    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             TransitionInflater inflater = TransitionInflater.from(this);
 
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
@@ -55,9 +54,9 @@ public class ToDoListActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mAdView = findViewById(R.id.av_banner);
+        AdView adView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        adView.loadAd(adRequest);
 
         setTitle(R.string.to_do_list_title);
 
@@ -86,7 +85,7 @@ public class ToDoListActivity extends AppCompatActivity implements
     public void onToDoItemSelected(ToDoItem toDoItem) {
         Intent intent = new Intent(this, ToDoDetailActivity.class);
         intent.putExtra(EXTRA_TODO, toDoItem);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
         } else {

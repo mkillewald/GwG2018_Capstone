@@ -65,7 +65,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             TransitionInflater inflater = TransitionInflater.from(this);
 
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
@@ -209,7 +209,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, RepairDetailActivity.class);
         intent.putExtra(EXTRA_REPAIR, repairLog);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
         } else {
@@ -227,7 +227,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, ToDoDetailActivity.class);
         intent.putExtra(EXTRA_TODO, toDoItem);
         intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
         } else {
@@ -246,6 +246,11 @@ public class GameDetailActivity extends AppCompatActivity implements
         FragmentManager fm = getSupportFragmentManager();
         ShoppingEditFragment fragment = ShoppingEditFragment.newInstance(shoppingItem);
         fragment.show(fm, "fragment_edit_shopping");
+    }
+
+    @Override
+    public void onRepairFabPressed() {
+        showAddRepairDialog();
     }
 
     private void showAddRepairDialog() {
@@ -294,7 +299,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     public void onImageClicked(String imagePath) {
         Intent intent = new Intent(this, DisplayImageActivity.class);
         intent.putExtra(EXTRA_IMAGE_PATH, imagePath);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
         } else {

@@ -50,7 +50,7 @@ public class InventoryDetailActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             TransitionInflater inflater = TransitionInflater.from(this);
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
             getWindow().setEnterTransition(slideIn);

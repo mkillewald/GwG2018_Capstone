@@ -242,7 +242,9 @@
     <string name="upload_failed">Image upload failed.</string>
 
     <!-- Content Descriptions -->
-    <string name="details">&#032;details</string>
+    <string name="more">view more details</string>
+    <string name="section_icon">section image</string>
+    <string name="game_photo">game image</string>
 
     <!-- Widget -->
     <string name="add_widget">Add widget</string>

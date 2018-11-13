@@ -2,13 +2,12 @@ package com.gameaholix.coinops;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.Menu;
@@ -16,9 +15,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.gameaholix.coinops.databinding.ActivityMainBinding;
 import com.gameaholix.coinops.game.GameListActivity;
 import com.gameaholix.coinops.inventory.InventoryListActivity;
 import com.gameaholix.coinops.shopping.ShoppingListActivity;
@@ -26,7 +25,6 @@ import com.gameaholix.coinops.todo.ToDoListActivity;
 import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -45,32 +43,27 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             TransitionInflater inflater = TransitionInflater.from(this);
             Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
             getWindow().setExitTransition(slideOut);
         }
 
-        setContentView(R.layout.activity_main);
-        Toolbar myToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        ActivityMainBinding bind = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        setSupportActionBar(bind.toolbar);
 
-        AdView adView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        bind.avBanner.loadAd(adRequest);
 
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        Button gameButton = findViewById(R.id.btn_game_list);
-        gameButton.setOnClickListener(new View.OnClickListener() {
+        bind.gameList.tvCardTitle.setText(R.string.game_list_title);
+        bind.gameList.card.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, GameListActivity.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                     Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
                     startActivity(intent, bundle);
                 } else {
@@ -79,11 +72,11 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        Button inventoryButton = findViewById(R.id.btn_inventory_list);
-        inventoryButton.setOnClickListener(new View.OnClickListener() {
+        bind.inventoryList.tvCardTitle.setText(R.string.inventory_list_title);
+        bind.inventoryList.card.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, InventoryListActivity.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                     Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
 
                     startActivity(intent, bundle);
@@ -93,11 +86,12 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        Button toDoButton = findViewById(R.id.btn_to_do_list);
-        toDoButton.setOnClickListener(new View.OnClickListener() {
+
+        bind.globalToDoList.tvCardTitle.setText(R.string.to_do_list_title);
+        bind.globalToDoList.card.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ToDoListActivity.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                     Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
                     startActivity(intent, bundle);
                 } else {
@@ -106,11 +100,11 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        Button shoppingButton = findViewById(R.id.btn_shopping_list);
-        shoppingButton.setOnClickListener(new View.OnClickListener() {
+        bind.globalShoppingList.tvCardTitle.setText(R.string.shopping_list_title);
+        bind.globalShoppingList.card.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ShoppingListActivity.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                     Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
                     startActivity(intent, bundle);
                 } else {
@@ -153,19 +147,6 @@ public class MainActivity extends AppCompatActivity implements
             new NetworkUtils.CheckInternetConnection(this).execute();
         } else {
             PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
-                finish();
-            }
         }
     }
 

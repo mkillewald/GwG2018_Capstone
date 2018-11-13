@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.util.Log;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.utility.NetworkUtils;
@@ -17,7 +16,7 @@ import com.google.android.gms.ads.AdView;
 
 public class DisplayImageActivity extends AppCompatActivity implements
         NetworkUtils.CheckInternetConnection.TaskCompleted {
-    private static final String TAG = DisplayImageActivity.class.getSimpleName();
+//    private static final String TAG = DisplayImageActivity.class.getSimpleName();
     private static final String EXTRA_IMAGE_PATH = "CoinOpsImagePath";
 
     private String mImagePath;
@@ -27,7 +26,7 @@ public class DisplayImageActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             TransitionInflater inflater = TransitionInflater.from(this);
 
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);

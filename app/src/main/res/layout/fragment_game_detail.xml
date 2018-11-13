@@ -29,7 +29,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:contentDescription="@string/add_photo"/>
+                android:contentDescription="@string/game_photo"/>
 
             <Button
                 android:id="@+id/btn_take_photo"

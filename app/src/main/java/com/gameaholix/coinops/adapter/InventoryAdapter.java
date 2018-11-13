@@ -1,21 +1,20 @@
 package com.gameaholix.coinops.adapter;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.ListItemMoreBinding;
+import com.gameaholix.coinops.databinding.ListItemBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 
 import java.util.List;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.InventoryAdapterViewHolder> {
-    private Context mContext;
     private List<InventoryItem> mInventoryItems;
     private final InventoryAdapterOnClickHandler mClickHandler;
 
@@ -23,19 +22,18 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         void onClick(InventoryItem inventoryItem);
     }
 
-    public InventoryAdapter (Context context, InventoryAdapterOnClickHandler clickHandler) {
-        mContext = context;
+    public InventoryAdapter (InventoryAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
     public class InventoryAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        final ListItemMoreBinding mBinding;
+        final ListItemBinding mBinding;
 
-        InventoryAdapterViewHolder(ListItemMoreBinding listItemMoreBinding) {
-            super(listItemMoreBinding.getRoot());
-            mBinding = listItemMoreBinding;
-            mBinding.tvName.setOnClickListener(this);
+        InventoryAdapterViewHolder(ListItemBinding listItemBinding) {
+            super(listItemBinding.getRoot());
+            mBinding = listItemBinding;
+            mBinding.getRoot().setOnClickListener(this);
         }
 
         @Override
@@ -49,9 +47,9 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
     @NonNull
     @Override
     public InventoryAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ListItemMoreBinding binding = DataBindingUtil.inflate(
+        ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.list_item_more, parent, false);
+                R.layout.list_item, parent, false);
 
         return new InventoryAdapterViewHolder(binding);
     }
@@ -61,8 +59,8 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         InventoryItem inventoryItem = mInventoryItems.get(position);
 
         holder.mBinding.tvName.setText(inventoryItem.getName());
-        String details = mContext.getString(R.string.details);
-        holder.mBinding.ivShowMore.setContentDescription(inventoryItem.getName() + details);
+        holder.mBinding.tvName.setMaxLines(1);
+        holder.mBinding.tvName.setEllipsize(TextUtils.TruncateAt.END);
     }
 
     @Override

@@ -79,7 +79,6 @@ public class InventoryDetailFragment extends Fragment {
 
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
 
             // read inventory item details
             mInventoryListener = new ValueEventListener() {

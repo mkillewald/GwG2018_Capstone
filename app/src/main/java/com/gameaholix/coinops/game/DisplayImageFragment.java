@@ -1,7 +1,6 @@
 package com.gameaholix.coinops.game;
 
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,13 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.gameaholix.coinops.GlideApp;
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.utility.GlideApp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class DisplayImageFragment extends Fragment {
-    private static final String TAG = DisplayImageFragment.class.getSimpleName();
+//    private static final String TAG = DisplayImageFragment.class.getSimpleName();
     private static final String EXTRA_IMAGE_PATH = "CoinOpsImagePath";
 
     private Context mContext;

@@ -1,9 +1,11 @@
 package com.gameaholix.coinops;
 
+import android.support.multidex.MultiDexApplication;
+
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class CoinOpsApp extends android.app.Application {
+public class CoinOpsApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();

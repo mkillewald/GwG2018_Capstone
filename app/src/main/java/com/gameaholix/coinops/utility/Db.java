@@ -32,9 +32,6 @@ public class Db {
     public static final String DESCRIPTION = "description";
     public static final String PRIORITY = "priority";
 
-    // Cloud Storage Buckets
-    public static final String THUMB = "thumb";
-
     public static final String[] GAME_STRINGS = { Db.NAME };
     public static final String[] GAME_INTS = {
             Db.TYPE,
