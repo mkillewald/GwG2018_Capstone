@@ -75,6 +75,11 @@ public class ShoppingListActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onShoppingFabPressed() {
+       // no operation
+    }
+
+    @Override
     public void onShoppingItemSelected(Item shoppingItem) {
         FragmentManager fm = getSupportFragmentManager();
         ShoppingEditFragment fragment = ShoppingEditFragment.newInstance(shoppingItem);

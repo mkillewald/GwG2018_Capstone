@@ -3,6 +3,7 @@ package com.gameaholix.coinops.inventory;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,6 +64,15 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mInventoryAdapter);
         recyclerView.setHasFixedSize(true);
+
+        // Setup FAB
+        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onFabPressed();
+            }
+        });
 
         if (mUser != null) {
             // user is signed in
@@ -147,5 +157,6 @@ public class InventoryListFragment extends Fragment implements InventoryAdapter.
      */
     public interface OnFragmentInteractionListener {
         void onInventoryItemSelected(InventoryItem inventoryItem);
+        void onFabPressed();
     }
 }

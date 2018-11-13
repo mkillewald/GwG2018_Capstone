@@ -3,6 +3,7 @@ package com.gameaholix.coinops.shopping;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -102,6 +103,23 @@ public class ShoppingListFragment extends Fragment implements
         recyclerView.setAdapter(mShoppingAdapter);
         recyclerView.setHasFixedSize(true);
 
+        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+
+        if (TextUtils.isEmpty(mGameId)) {
+            // Global list, hide FAB
+            fab.setEnabled(false);
+            fab.setClickable(false);
+            fab.setAlpha(0.0f);
+        } else {
+            // Game specific list
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onShoppingFabPressed();
+                }
+            });
+        }
+
         if (mUser != null) {
             // user is signed in
 
@@ -187,5 +205,6 @@ public class ShoppingListFragment extends Fragment implements
      */
     public interface OnFragmentInteractionListener {
         void onShoppingItemSelected(Item shoppingItem);
+        void onShoppingFabPressed();
     }
 }

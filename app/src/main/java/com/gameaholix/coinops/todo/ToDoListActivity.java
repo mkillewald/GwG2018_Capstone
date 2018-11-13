@@ -78,6 +78,11 @@ public class ToDoListActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onToDoFabPressed() {
+        // no action
+    }
+
+    @Override
     public void onToDoItemSelected(ToDoItem toDoItem) {
         Intent intent = new Intent(this, ToDoDetailActivity.class);
         intent.putExtra(EXTRA_TODO, toDoItem);

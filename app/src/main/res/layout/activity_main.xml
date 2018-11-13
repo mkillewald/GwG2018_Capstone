@@ -64,6 +64,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:text="@string/shopping_list_title"/>
 
+        <Button
+            android:id="@+id/btn_sign_out"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            app:layout_constraintBottom_toTopOf="@+id/av_banner"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/sign_out"/>
+
         <com.google.android.gms.ads.AdView
             android:id="@+id/av_banner"
             android:layout_width="wrap_content"

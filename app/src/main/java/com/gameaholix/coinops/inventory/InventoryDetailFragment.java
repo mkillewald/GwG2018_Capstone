@@ -113,6 +113,21 @@ public class InventoryDetailFragment extends Fragment {
             };
             mInventoryRef.addValueEventListener(mInventoryListener);
 
+            // Setup Buttons
+            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onDeleteButtonPressed();
+                }
+            });
+
+            bind.btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onEditButtonPressed(mItem);
+                }
+            });
+
 //        } else {
 //            // user is not signed in
         }
@@ -175,5 +190,6 @@ public class InventoryDetailFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onEditButtonPressed(InventoryItem inventoryItem);
+        void onDeleteButtonPressed();
     }
 }

@@ -12,9 +12,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -81,28 +78,15 @@ public class GameListActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.game_list_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_add_game:
-                showAddGameDialog();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public void onInternetCheckCompleted(boolean networkIsOnline) {
         if (!networkIsOnline) {
             PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
         }
+    }
+
+    @Override
+    public void onFabPressed() {
+        showAddGameDialog();
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.gameaholix.coinops.game;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -65,6 +66,15 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(mGameAdapter);
         recyclerView.setHasFixedSize(true);
+
+        // Setup FAB
+        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onFabPressed();
+            }
+        });
 
         if (mUser != null) {
             // user is signed in
@@ -147,5 +157,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
      */
     public interface OnFragmentInteractionListener {
         void onGameSelected(Game game);
+        void onFabPressed();
     }
 }

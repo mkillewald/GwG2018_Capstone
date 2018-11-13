@@ -83,28 +83,15 @@ public class InventoryListActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.inventory_list_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_add_inventory_item:
-                showAddInventoryDialog();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public void onInternetCheckCompleted(boolean networkIsOnline) {
         if (!networkIsOnline) {
             PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
         }
+    }
+
+    @Override
+    public void onFabPressed() {
+        showAddInventoryDialog();
     }
 
     @Override

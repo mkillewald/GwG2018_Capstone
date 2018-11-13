@@ -108,6 +108,21 @@ public class ToDoDetailFragment extends Fragment {
             };
             mToDoRef.addValueEventListener(mToDoListener);
 
+            // Setup Buttons
+            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onDeleteButtonPressed(mToDoItem);
+                }
+            });
+
+            bind.btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onEditButtonPressed(mToDoItem);
+                }
+            });
+
 //        } else {
 //            // user is not signed in
         }

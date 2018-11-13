@@ -3,6 +3,7 @@ package com.gameaholix.coinops.todo;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -106,6 +107,22 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
         recyclerView.setAdapter(mToDoAdapter);
         recyclerView.setHasFixedSize(true);
 
+        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+        if (TextUtils.isEmpty(mGameId)) {
+            // Global list, hide FAB
+            fab.setEnabled(false);
+            fab.setClickable(false);
+            fab.setAlpha(0.0f);
+        } else {
+            // Game specific list
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onToDoFabPressed();
+                }
+            });
+        }
+
         if (mUser != null) {
             // user is signed in
 
@@ -190,5 +207,6 @@ public class ToDoListFragment extends Fragment implements ToDoAdapter.ToDoAdapte
      */
     public interface OnFragmentInteractionListener {
         void onToDoItemSelected(ToDoItem toDoItem);
+        void onToDoFabPressed();
     }
 }

@@ -48,7 +48,7 @@ import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
-// TODO: add ability to store more than one image
+// TODO: add ability to store more than one image per game
 
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
@@ -222,6 +222,13 @@ public class GameDetailFragment extends Fragment {
             });
 
             // Setup Buttons
+            mBind.btnTakePhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onLaunchCamera();
+                }
+            });
+
             mBind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -233,7 +240,19 @@ public class GameDetailFragment extends Fragment {
                 }
             });
 
+            mBind.btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onEditButtonPressed(mGame);
+                }
+            });
 
+            mBind.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDeleteAlert();
+                }
+            });
 //        } else {
 //            // user is not signed in
         }
@@ -293,9 +312,6 @@ public class GameDetailFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
                 mListener.onEditButtonPressed(mGame);
-                return true;
-            case R.id.menu_add_photo:
-                onLaunchCamera();
                 return true;
             case R.id.menu_delete_game:
                 showDeleteAlert();
@@ -364,7 +380,6 @@ public class GameDetailFragment extends Fragment {
         // Decode the image file into a Bitmap sized to fill the target
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
 
         // return the scaled bitmap
         return BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);

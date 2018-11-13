@@ -146,6 +146,11 @@ public class InventoryDetailActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onDeleteButtonPressed() {
+        showDeleteAlert();
+    }
+
+    @Override
     public void onEditButtonPressed(InventoryItem inventoryItem) {
         // replace InventoryDetailFragment with InventoryEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

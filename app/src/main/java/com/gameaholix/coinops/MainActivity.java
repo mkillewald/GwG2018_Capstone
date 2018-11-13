@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        final Button gameButton = findViewById(R.id.btn_game_list);
+        Button gameButton = findViewById(R.id.btn_game_list);
         gameButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, GameListActivity.class);
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        final Button inventoryButton = findViewById(R.id.btn_inventory_list);
+        Button inventoryButton = findViewById(R.id.btn_inventory_list);
         inventoryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, InventoryListActivity.class);
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        final Button toDoButton = findViewById(R.id.btn_to_do_list);
+        Button toDoButton = findViewById(R.id.btn_to_do_list);
         toDoButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ToDoListActivity.class);
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        final Button shoppingButton = findViewById(R.id.btn_shopping_list);
+        Button shoppingButton = findViewById(R.id.btn_shopping_list);
         shoppingButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ShoppingListActivity.class);
@@ -116,6 +116,14 @@ public class MainActivity extends AppCompatActivity implements
                 } else {
                     startActivity(intent);
                 }
+            }
+        });
+
+        Button signOut = findViewById(R.id.btn_sign_out);
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AuthUI.getInstance().signOut(MainActivity.this);
             }
         });
 

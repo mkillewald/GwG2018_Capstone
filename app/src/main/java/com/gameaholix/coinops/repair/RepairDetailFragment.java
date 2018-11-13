@@ -182,7 +182,14 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
                 }
             });
 
-            // Setup Button
+            // Setup Buttons
+            mBind.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDeleteAlert();
+                }
+            });
+
             mBind.btnAddStep.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

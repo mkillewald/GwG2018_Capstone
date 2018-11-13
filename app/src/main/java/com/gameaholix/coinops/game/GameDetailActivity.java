@@ -88,6 +88,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
+
         if (savedInstanceState == null) {
             mGame = getIntent().getParcelableExtra(EXTRA_GAME);
         } else {
@@ -137,34 +138,18 @@ public class GameDetailActivity extends AppCompatActivity implements
         switch (mViewPager.getCurrentItem()) {
             case 0:
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
-                menu.findItem(R.id.menu_add_photo).setVisible(true);
-                menu.findItem(R.id.menu_add_repair).setVisible(false);
-                menu.findItem(R.id.menu_add_todo).setVisible(false);
-                menu.findItem(R.id.menu_add_shopping).setVisible(false);
                 break;
             case 1:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
-                menu.findItem(R.id.menu_add_photo).setVisible(false);
-                menu.findItem(R.id.menu_add_repair).setVisible(true);
-                menu.findItem(R.id.menu_add_todo).setVisible(false);
-                menu.findItem(R.id.menu_add_shopping).setVisible(false);
                 menu.findItem(R.id.menu_delete_game).setVisible(false);
                 break;
             case 2:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
-                menu.findItem(R.id.menu_add_photo).setVisible(false);
-                menu.findItem(R.id.menu_add_repair).setVisible(false);
-                menu.findItem(R.id.menu_add_todo).setVisible(true);
-                menu.findItem(R.id.menu_add_shopping).setVisible(false);
                 menu.findItem(R.id.menu_delete_game).setVisible(false);
                 break;
             default:
             case 3:
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
-                menu.findItem(R.id.menu_add_photo).setVisible(false);
-                menu.findItem(R.id.menu_add_repair).setVisible(false);
-                menu.findItem(R.id.menu_add_todo).setVisible(false);
-                menu.findItem(R.id.menu_add_shopping).setVisible(true);
                 menu.findItem(R.id.menu_delete_game).setVisible(false);
                 break;
         }
@@ -178,11 +163,10 @@ public class GameDetailActivity extends AppCompatActivity implements
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
             if (currentFragment instanceof GameEditFragment) {
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
-                menu.findItem(R.id.menu_add_photo).setVisible(false);
+                menu.findItem(R.id.menu_delete_game).setVisible(false);
             } else {
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
-                menu.findItem(R.id.menu_add_photo).setVisible(true);
-
+                menu.findItem(R.id.menu_delete_game).setVisible(true);
             }
         }
         return super.onPrepareOptionsMenu(menu);
@@ -194,18 +178,6 @@ public class GameDetailActivity extends AppCompatActivity implements
             case R.id.menu_edit_game:
                 // handled by GameDetailFragment
                 return false;
-            case R.id.menu_add_photo:
-                // handled by GameDetailFragment
-                return false;
-            case R.id.menu_add_repair:
-                showAddRepairDialog();
-                return true;
-            case R.id.menu_add_todo:
-                showAddToDoDialog();
-                return true;
-            case R.id.menu_add_shopping:
-                showAddShoppingDialog();
-                return true;
             case R.id.menu_delete_game:
                 // handled by GameDetailFragment
                 return false;
@@ -246,6 +218,11 @@ public class GameDetailActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onToDoFabPressed() {
+        showAddToDoDialog();
+    }
+
+    @Override
     public void onToDoItemSelected(ToDoItem toDoItem) {
         Intent intent = new Intent(this, ToDoDetailActivity.class);
         intent.putExtra(EXTRA_TODO, toDoItem);
@@ -256,6 +233,11 @@ public class GameDetailActivity extends AppCompatActivity implements
         } else {
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onShoppingFabPressed() {
+        showAddShoppingDialog();
     }
 
     @Override
