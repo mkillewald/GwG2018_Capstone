@@ -1,11 +1,13 @@
 package com.gameaholix.coinops.game;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -59,9 +61,15 @@ public class GameDetailFragment extends Fragment {
     private Game mGame;
     private FirebaseUser mUser;
     private String mCurrentPhotoPath;
+    private DatabaseReference mDatabaseReference;
     private DatabaseReference mGameRef;
+    private DatabaseReference mUserRef;
+    private DatabaseReference mShopRef;
+    private DatabaseReference mToDoRef;
     private StorageReference mImageRootRef;
     private ValueEventListener mGameListener;
+    private ValueEventListener mDeleteTodoListener;
+    private ValueEventListener mDeleteShopListener;
     private OnFragmentInteractionListener mListener;
     private FragmentGameDetailBinding mBind;
 
@@ -100,11 +108,20 @@ public class GameDetailFragment extends Fragment {
                 .child(mUser.getUid())
                 .child(mGame.getId());
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        mGameRef = databaseReference
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mGameRef = mDatabaseReference
                 .child(Db.GAME)
                 .child(mUser.getUid())
                 .child(mGame.getId());
+        mUserRef = mDatabaseReference
+                .child(Db.USER)
+                .child(mUser.getUid());
+        mToDoRef = mDatabaseReference
+                .child(Db.TODO)
+                .child(mUser.getUid());
+        mShopRef = mDatabaseReference
+                .child(Db.SHOP)
+                .child(mUser.getUid());
 
 
     }
@@ -231,6 +248,14 @@ public class GameDetailFragment extends Fragment {
         if (mGameListener != null) {
             mGameRef.removeEventListener(mGameListener);
         }
+
+        if (mDeleteTodoListener != null) {
+            mToDoRef.removeEventListener(mDeleteTodoListener);
+        }
+
+        if (mDeleteShopListener != null) {
+            mShopRef.removeEventListener(mDeleteShopListener);
+        }
     }
 
     @Override
@@ -273,7 +298,7 @@ public class GameDetailFragment extends Fragment {
                 onLaunchCamera();
                 return true;
             case R.id.menu_delete_game:
-                mListener.onDeleteGameButtonPressed(mGame);
+                showDeleteAlert();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -310,8 +335,7 @@ public class GameDetailFragment extends Fragment {
         // Code used from https://developer.android.com/training/camera/photobasics
 
         // Create an image name from current timestamp
-        String filename = new SimpleDateFormat("yyyyMMdd_hhmmss", Locale.US).format(new Date());
-        Log.d(TAG, filename);
+        String filename = new SimpleDateFormat("yyyyMMdd_hhmmss_", Locale.US).format(new Date());
 
         File storageDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -441,9 +465,110 @@ public class GameDetailFragment extends Fragment {
         }
     }
 
+    private void showDeleteAlert() {
+        if (mUser != null) {
+            //user is signed in
+
+            android.support.v7.app.AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new android.support.v7.app.AlertDialog.Builder(mContext,
+                        android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new android.support.v7.app.AlertDialog.Builder(mContext);
+            }
+            builder.setTitle(R.string.really_delete_game)
+                    .setMessage(R.string.game_will_be_deleted)
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteAllGameData();
+                            if (getActivity() != null) {
+                                getActivity().finish();
+                            }
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+//        } else {
+//            // user is not signed in
+        }
+    }
+
+    private void deleteAllGameData() {
+        mDeleteTodoListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    if (child.getKey() != null) {
+                        String key = child.getKey();
+                        child.getRef().removeValue();
+                        mUserRef.child(Db.TODO_LIST).child(key).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        mDeleteShopListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    if (child.getKey() != null) {
+                        String key = child.getKey();
+                        child.getRef().removeValue();
+                        mUserRef.child(Db.SHOP_LIST).child(key).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        // delete images from Firebase Storage
+        deleteImagesFromFirebase();
+
+        // delete game details
+        mGameRef.removeValue();
+
+        // remove user game_list entry
+        mUserRef.child(Db.GAME_LIST)
+                .child(mGame.getId())
+                .removeValue();
+
+        // delete repair logs and steps
+        mDatabaseReference
+                .child(Db.REPAIR)
+                .child(mUser.getUid())
+                .child(mGame.getId())
+                .removeValue();
+
+        // delete to do items
+        mToDoRef.orderByChild(Db.PARENT_ID)
+                .equalTo(mGame.getId())
+                .addValueEventListener(mDeleteTodoListener);
+
+        // delete shopping list items
+        mShopRef.orderByChild(Db.PARENT_ID)
+                .equalTo(mGame.getId())
+                .addValueEventListener(mDeleteShopListener);
+    }
+
     private void deleteImagesFromFirebase() {
         if (!TextUtils.isEmpty(mGame.getImage())) {
             // Delete thumbnail image
+            Log.d(TAG, "image: " + mImageRootRef + "/" + mGame.getImage());
             mImageRootRef.child(THUMB + mGame.getImage()).delete().addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
@@ -470,7 +595,6 @@ public class GameDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onGameNameChanged(String name);
         void onEditButtonPressed(Game game);
-        void onDeleteGameButtonPressed(Game game);
         void showSnackbar(int stringResourceId);
         void onImageClicked(String imagePath);
     }

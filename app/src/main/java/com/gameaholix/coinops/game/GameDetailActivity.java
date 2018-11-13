@@ -2,11 +2,9 @@ package com.gameaholix.coinops.game;
 
 import android.app.ActivityOptions;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -16,10 +14,8 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,21 +38,10 @@ import com.gameaholix.coinops.shopping.ShoppingListFragment;
 import com.gameaholix.coinops.todo.ToDoAddFragment;
 import com.gameaholix.coinops.todo.ToDoDetailActivity;
 import com.gameaholix.coinops.todo.ToDoListFragment;
-import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 public class GameDetailActivity extends AppCompatActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
@@ -65,26 +50,16 @@ public class GameDetailActivity extends AppCompatActivity implements
         ToDoListFragment.OnFragmentInteractionListener,
         ShoppingListFragment.OnFragmentInteractionListener,
         NetworkUtils.CheckInternetConnection.TaskCompleted {
-    private static final String TAG = GameDetailActivity.class.getSimpleName();
+//    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
     private static final String EXTRA_IMAGE_PATH = "CoinOpsImagePath";
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
-    private static final String THUMB = "thumb_";
 
     private Game mGame;
     private CoordinatorLayout mCoordinatorLayout;
     private ViewPager mViewPager;
-    private FirebaseUser mUser;
-    private DatabaseReference mDatabaseReference;
-    private DatabaseReference mGameRef;
-    private DatabaseReference mUserRef;
-    private DatabaseReference mShopRef;
-    private DatabaseReference mToDoRef;
-    private StorageReference mImageRootRef;
-    private ValueEventListener mDeleteTodoListener;
-    private ValueEventListener mDeleteShopListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,8 +98,6 @@ public class GameDetailActivity extends AppCompatActivity implements
             setTitle(mGame.getName());
         }
 
-//        mShowEditMenu = true;
-
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager = findViewById(R.id.viewpager);
         mViewPager.setAdapter(new GameDetailPagerAdapter(this, getSupportFragmentManager(),
@@ -148,49 +121,12 @@ public class GameDetailActivity extends AppCompatActivity implements
         TabLayout tabLayout = findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
-        mUser = firebaseAuth.getCurrentUser();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mGameRef = mDatabaseReference
-                .child(Db.GAME)
-                .child(mUser.getUid())
-                .child(mGame.getId());
-        mUserRef = mDatabaseReference
-                .child(Db.USER)
-                .child(mUser.getUid());
-        mToDoRef = mDatabaseReference
-                .child(Db.TODO)
-                .child(mUser.getUid());
-        mShopRef = mDatabaseReference
-                .child(Db.SHOP)
-                .child(mUser.getUid());
-
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        mImageRootRef = storageRef
-                .child(mUser.getUid())
-                .child(mGame.getId());
-
         mCoordinatorLayout = findViewById(R.id.coordinator_layout);
 
         if (NetworkUtils.isNetworkEnabled(this)) {
             new NetworkUtils.CheckInternetConnection(this).execute();
         } else {
             PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (mDeleteTodoListener != null) {
-            mToDoRef.removeEventListener(mDeleteTodoListener);
-        }
-
-        if (mDeleteShopListener != null) {
-            mShopRef.removeEventListener(mDeleteShopListener);
         }
     }
 
@@ -271,7 +207,7 @@ public class GameDetailActivity extends AppCompatActivity implements
                 showAddShoppingDialog();
                 return true;
             case R.id.menu_delete_game:
-                // handled by GameDetailFragment mListener callback
+                // handled by GameDetailFragment
                 return false;
             default:
                 return super.onOptionsItemSelected(item);
@@ -348,130 +284,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         fragment.show(fm, "fragment_item_add");
     }
 
-    @Override
-    public void onDeleteGameButtonPressed(Game game) {
-        mGame = game;
-        showDeleteAlert();
-    }
 
-    private void showDeleteAlert() {
-        if (mUser != null) {
-            //user is signed in
-
-            android.support.v7.app.AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new android.support.v7.app.AlertDialog.Builder(this,
-                        android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new android.support.v7.app.AlertDialog.Builder(this);
-            }
-            builder.setTitle(R.string.really_delete_game)
-                    .setMessage(R.string.game_will_be_deleted)
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteAllGameData();
-                            finish();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-//        } else {
-//            // user is not signed in
-        }
-    }
-
-    private void deleteAllGameData() {
-        mDeleteTodoListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.getKey() != null) {
-                        String key = child.getKey();
-                        child.getRef().removeValue();
-                        mUserRef.child(Db.TODO_LIST).child(key).removeValue();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        mDeleteShopListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.getKey() != null) {
-                        String key = child.getKey();
-                        child.getRef().removeValue();
-                        mUserRef.child(Db.SHOP_LIST).child(key).removeValue();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        // delete images from Firebase Storage
-        deleteImagesFromFirebase();
-
-        // delete game details
-        mGameRef.removeValue();
-
-        // remove user game_list entry
-        mUserRef.child(Db.GAME_LIST)
-                .child(mGame.getId())
-                .removeValue();
-
-        // delete repair logs and steps
-        mDatabaseReference
-                .child(Db.REPAIR)
-                .child(mUser.getUid())
-                .child(mGame.getId())
-                .removeValue();
-
-        // delete to do items
-        mToDoRef.orderByChild(Db.PARENT_ID)
-                .equalTo(mGame.getId())
-                .addValueEventListener(mDeleteTodoListener);
-
-        // delete shopping list items
-        mShopRef.orderByChild(Db.PARENT_ID)
-                .equalTo(mGame.getId())
-                .addValueEventListener(mDeleteShopListener);
-    }
-
-    private void deleteImagesFromFirebase() {
-        if (!TextUtils.isEmpty(mGame.getImage())) {
-            // Delete thumbnail image
-            Log.d(TAG, "image: " + mImageRootRef + "/" + mGame.getImage());
-            mImageRootRef.child(THUMB + mGame.getImage()).delete().addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Failed to delete previous thumbnail image -> ", e);
-                }
-            });
-
-            // Delete full size  image
-            mImageRootRef.child(mGame.getImage()).delete().addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Failed to delete previous full image -> ", e);
-                }
-            });
-        }
-    }
 
     @Override
     public void onEditButtonPressed(Game game) {
