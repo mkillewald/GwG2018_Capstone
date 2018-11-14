@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">CoinOps</string>
-    <string name="anonymous_username">Player 1</string>
     <string name="text_placeholder">sample text</string>
 
     <!-- TODO: replace test id with real id in production -->
@@ -11,17 +10,12 @@
 
     <!-- Activity Titles -->
     <string name="game_list_title">Game Collection</string>
-    <string name="game_details_title">Game Details</string>
     <string name="add_game_title">Add New Game</string>
-    <string name="edit_game_title">Edit Game</string>
 
     <string name="inventory_list_title">Inventory</string>
     <string name="inventory_details_title">Part Details</string>
     <string name="add_inventory_title">Add Part to Inventory</string>
-    <string name="edit_inventory_title">Edit Part</string>
 
-    <string name="repair_list_title">Repair Log</string>
-    <string name="repair_details_title">Log Details</string>
     <string name="add_repair_title">Add New Repair Log</string>
     <string name="edit_repair_title">Edit Trouble Description</string>
     <string name="add_repair_step_title">Add Repair Step</string>
@@ -30,10 +24,8 @@
     <string name="to_do_list_title">Combined To Do List</string>
     <string name="to_do_details_title">Item Details</string>
     <string name="add_to_do_title">Add To Do Item</string>
-    <string name="edit_to_do_title">Edit To Do Item</string>
 
     <string name="shopping_list_title">Combined Shopping List</string>
-    <string name="shopping_details_title">Item Details</string>
     <string name="add_shopping_title">Add Item</string>
     <string name="edit_shopping_title">Edit Item</string>
 
@@ -45,26 +37,20 @@
 
     <!-- Actions -->
     <string name="sign_out">Sign Out</string>
-    <string name="add">Add</string>
     <string name="edit">Edit</string>
     <string name="edit_details">Edit Details</string>
     <string name="delete">Delete</string>
     <string name="dismiss">Dismiss</string>
     <string name="add_game">Add Game</string>
     <string name="delete_game">Delete Game</string>
-    <string name="add_photo">Add Photo</string>
-    <string name="new_photo">New Photo</string>
     <string name="change_photo">Change Photo</string>
     <string name="add_inventory_item">Add Part</string>
     <string name="delete_inventory_item">Delete Part</string>
-    <string name="new_trouble_report">New Trouble Report</string>
     <string name="add_repair_log">Add Log</string>
     <string name="delete_repair_log">Delete Log</string>
     <string name="add_repair_step">Add Step</string>
-    <string name="delete_repair_step">Delete Step</string>
     <string name="add_item">Add Item</string>
     <string name="delete_item">Delete Item</string>
-    <string name="add_to_do_item">Add To Do Item</string>
     <string name="find_tech_info">Technical Info</string>
 
     <!-- Labels -->
@@ -75,27 +61,19 @@
     <string name="condition_label">Condition:</string>
     <string name="monitor_label">Monitor:</string>
     <string name="description_label">Description:</string>
-    <string name="repair_created_at_label">Issue Reported On:"</string>
-    <string name="repair_description_label">Issue:</string>
     <string name="repair_steps_label">Repair Steps Taken:</string>
     <string name="priority_label">Priority:</string>
-    <string name="reminder_label">Reminder</string>
     <string name="title_label">Title</string>
 
     <!-- Form Input -->
     <string name="repair_description_hint">Trouble Description</string>
-    <string name="repair_step_name_hint">Repair Step Taken</string>
+    <string name="repair_step_name_hint">Description</string>
     <string name="to_do_name_hint">Title</string>
     <string name="to_do_description_hint">Notes</string>
     <string name="item_name">Needed Item</string>
 
     <string name="save_changes">Save Changes</string>
     <string name="not_available">N/A</string>
-    <string name="off">Off</string>
-    <string name="not_set">Not Set</string>
-    <string name="none">None</string>
-    <string name="blank" />
-    <string name="select">Select&#8230;</string>
     <string name="done">Done</string>
 
     <string name="game_name">Game Name</string>
@@ -132,14 +110,12 @@
 
     <string name="select_game_monitor">Select Monitor</string>
     <string name="select_game_monitor_details">Select Monitor Details</string>
-    <string name="select_game_monitor_size">Monitor Size</string>
     <string name="game_monitor_size1">13\"</string>
     <string name="game_monitor_size2">19\"</string>
     <string name="game_monitor_size3">23\"</string>
     <string name="game_monitor_size4">25\"</string>
     <string name="game_monitor_size5">27\"</string>
 
-    <string name="select_game_monitor_type">Monitor Type</string>
     <string name="game_monitor_crt">CRT</string>
     <string name="game_monitor_lcd">LCD</string>
     <string name="game_monitor_bw">B/W</string>
@@ -171,13 +147,9 @@
     <string name="inventory_condition2">Failed</string>
     <string name="inventory_condition3">Untested</string>
 
-    <string name="select_priority">Select Priority</string>
     <string name="priority_low">Low</string>
     <string name="priority_medium">Medium</string>
     <string name="priority_high">High</string>
-
-    <string name="select_date">Select Date</string>
-    <string name="select_time">Select Time</string>
 
     <!-- User Prompts -->
     <string name="really_delete_game">Delete Game?</string>
@@ -204,24 +176,12 @@
 
     <!-- Error Messages -->
     <string name="error_add_game_failed">Failed to add game!</string>
-    <string name="error_edit_game_failed">Failed to save changes!</string>
-    <string name="error_delete_game_failed">Failed to delete game!</string>
 
     <string name="error_add_inventory_failed">Failed to add part!</string>
-    <string name="error_edit_inventory_failed">Failed to save changes!</string>
-    <string name="error_delete_inventory_failed">Failed to delete part!</string>
 
     <string name="error_add_repair_log_failed">Failed to add repair log!</string>
-    <string name="error_edit_repair_log_failed">Failed to save changes!</string>
-    <string name="error_delete_repair_log_failed">Failed to delete repair log!</string>
 
     <string name="error_add_repair_step_failed">Failed to add repair step!</string>
-    <string name="error_edit_repair_step_failed">Failed to save changes!</string>
-    <string name="error_delete_repair_step_failed">Failed to delete name!</string>
-
-    <string name="error_add_to_do_failed">Failed to add name!</string>
-    <string name="error_edit_to_do_failed">Failed to save changes!</string>
-    <string name="error_delete_to_do_failed">Failed to delete name!</string>
 
     <string name="error_add_item_failed">Failed to add item!</string>
     <string name="error_edit_shopping_failed">Failed to save changes!</string>
@@ -244,17 +204,16 @@
     <!-- Content Descriptions -->
     <string name="more">view more details</string>
     <string name="section_icon">section image</string>
-    <string name="game_photo">game image</string>
+    <string name="game_thumbnail_image">game thumbnail image</string>
+    <string name="full_size_image">full size image</string>
 
     <!-- Widget -->
-    <string name="add_widget">Add widget</string>
     <string name="to_do_list_empty">To do List is empty</string>
     <string name="to_do_list_widget_title">CoinOps To Do List</string>
     <string name="shopping_list_empty">Shopping List is empty</string>
     <string name="shopping_list_widget_title">CoinOps Shopping List</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

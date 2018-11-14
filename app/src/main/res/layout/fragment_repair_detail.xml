@@ -44,28 +44,8 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_repair_steps_label"
-            app:layout_constraintBottom_toTopOf="@id/et_add_step_entry"
+            app:layout_constraintBottom_toTopOf="@id/btn_add_step"
             android:layoutAnimation="@anim/layout_animation_from_right"/>
-
-        <EditText
-            android:id="@+id/et_add_step_entry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textDirection="locale"
-            android:textAlignment="viewStart"
-            android:hint="@string/repair_step_name_hint"
-            android:minLines="1"
-            android:maxLines="5"
-            android:gravity="top|start"
-            android:imeOptions="actionDone"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
-            android:layout_marginEnd="@dimen/margin"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/btn_add_step"/>
 
         <Button
             android:id="@+id/btn_delete"

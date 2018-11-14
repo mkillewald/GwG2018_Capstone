@@ -9,7 +9,7 @@ import com.google.firebase.database.ServerValue;
 import java.util.Map;
 
 public class Item implements Parcelable {
-    protected String id;
+    private String id;
     private String parentId;
     protected String name;
     private long createdAt;

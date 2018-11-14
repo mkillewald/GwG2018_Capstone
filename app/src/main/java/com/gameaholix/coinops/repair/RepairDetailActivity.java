@@ -117,7 +117,7 @@ public class RepairDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onDescriptionSelected(Item repairLog) {
+    public void onDescriptionSelected() {
         FragmentManager fm = getSupportFragmentManager();
         RepairEditFragment fragment = RepairEditFragment.newInstance(mRepairLog);
         fragment.show(fm, "fragment_step_edit");
@@ -128,6 +128,13 @@ public class RepairDetailActivity extends AppCompatActivity implements
         FragmentManager fm = getSupportFragmentManager();
         StepEditFragment fragment = StepEditFragment.newInstance(mRepairLog.getParentId(), repairStep);
         fragment.show(fm, "fragment_step_edit");
+    }
+
+    @Override
+    public void onAddStepPressed(Item newStep) {
+        FragmentManager fm = getSupportFragmentManager();
+        StepAddFragment fragment = StepAddFragment.newInstance(mRepairLog.getParentId(), newStep);
+        fragment.show(fm, "fragment_step_add");
     }
 
     // Hide keyboard after touch event occurs outside of EditText

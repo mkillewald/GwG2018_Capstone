@@ -308,11 +308,6 @@ public class GameAddFragment extends DialogFragment {
         mContext = context;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     private void updateMonitorDetails(Game game, TextView monitorDetails) {
         String[] sizeArr = getResources().getStringArray(R.array.game_monitor_size);
         String[] phospherArr = getResources().getStringArray(R.array.game_monitor_phospher);

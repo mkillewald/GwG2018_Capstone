@@ -60,6 +60,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     private Game mGame;
     private CoordinatorLayout mCoordinatorLayout;
     private ViewPager mViewPager;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +85,9 @@ public class GameDetailActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        AdView adView = findViewById(R.id.av_banner);
+        mAdView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        mAdView.loadAd(adRequest);
 
 
         if (savedInstanceState == null) {
@@ -115,6 +116,7 @@ public class GameDetailActivity extends AppCompatActivity implements
 
             @Override
             public void onPageScrollStateChanged(int i) {
+
             }
         });
 
@@ -159,16 +161,22 @@ public class GameDetailActivity extends AppCompatActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (mViewPager.getCurrentItem() == 0) {
-
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
             if (currentFragment instanceof GameEditFragment) {
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
                 menu.findItem(R.id.menu_delete_game).setVisible(false);
+                mAdView.setVisibility(View.GONE);
             } else {
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
                 menu.findItem(R.id.menu_delete_game).setVisible(true);
+                mAdView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (mAdView.getVisibility() == View.GONE) {
+                mAdView.setVisibility(View.VISIBLE);
             }
         }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -275,6 +283,7 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditButtonPressed(Game game) {
+        mAdView.setVisibility(View.GONE);
         // replace GameDetailFragment with GameEditFragment
         Fragment editGameFragment = GameEditFragment.newInstance(game);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -293,6 +302,7 @@ public class GameDetailActivity extends AppCompatActivity implements
         ft.commit();
 
         invalidateOptionsMenu();
+        mAdView.setVisibility(View.VISIBLE);
     }
 
     @Override

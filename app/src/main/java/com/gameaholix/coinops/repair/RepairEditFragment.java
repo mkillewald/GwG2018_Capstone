@@ -167,17 +167,6 @@ public class RepairEditFragment extends DialogFragment {
         }
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     private boolean textInputIsValid(String inputText) {
         boolean result = true;
 

@@ -285,10 +285,6 @@ public class GameDetailFragment extends Fragment {
         outState.putParcelable(EXTRA_GAME, mGame);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Override
     public void onAttach(Context context) {

@@ -45,6 +45,7 @@ public class InventoryDetailActivity extends AppCompatActivity implements
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mInventoryRef;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +66,9 @@ public class InventoryDetailActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        AdView adView = findViewById(R.id.av_banner);
+        mAdView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        mAdView.loadAd(adRequest);
 
         if (savedInstanceState == null) {
             mInventoryItem = getIntent().getParcelableExtra(EXTRA_INVENTORY_ITEM);
@@ -152,6 +153,7 @@ public class InventoryDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditButtonPressed(InventoryItem inventoryItem) {
+        mAdView.setVisibility(View.GONE);
         // replace InventoryDetailFragment with InventoryEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, InventoryEditFragment.newInstance(inventoryItem));
@@ -162,12 +164,14 @@ public class InventoryDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onEditCompletedOrCancelled() {
+
         // replace InventoryEditFragment with InventoryDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance(mInventoryItem));
         ft.commit();
 
         invalidateOptionsMenu();
+        mAdView.setVisibility(View.VISIBLE);
     }
 
     private void showDeleteAlert() {

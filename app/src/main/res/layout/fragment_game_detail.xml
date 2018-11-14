@@ -29,7 +29,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:contentDescription="@string/game_photo"/>
+                android:contentDescription="@string/game_thumbnail_image"/>
 
             <Button
                 android:id="@+id/btn_take_photo"
@@ -182,7 +182,6 @@
                 android:layout_height="wrap_content"
                 android:textDirection="locale"
                 android:textAlignment="viewStart"
-                android:layout_marginLeft="@dimen/text_margin"
                 app:layout_constraintStart_toEndOf="@id/tv_game_monitor_size"
                 app:layout_constraintLeft_toRightOf="@id/tv_game_monitor_size"
                 app:layout_constraintTop_toBottomOf="@id/tv_monitor_label"
@@ -195,7 +194,6 @@
                 android:layout_height="wrap_content"
                 android:textDirection="locale"
                 android:textAlignment="viewStart"
-                android:layout_marginLeft="@dimen/text_margin"
                 app:layout_constraintStart_toEndOf="@id/tv_game_monitor_phospher"
                 app:layout_constraintLeft_toRightOf="@id/tv_game_monitor_phospher"
                 app:layout_constraintTop_toBottomOf="@id/tv_monitor_label"
@@ -208,7 +206,6 @@
                 android:layout_height="wrap_content"
                 android:textDirection="locale"
                 android:textAlignment="viewStart"
-                android:layout_marginLeft="@dimen/text_margin"
                 app:layout_constraintStart_toEndOf="@id/tv_game_monitor_type"
                 app:layout_constraintLeft_toRightOf="@id/tv_game_monitor_type"
                 app:layout_constraintTop_toBottomOf="@id/tv_monitor_label"

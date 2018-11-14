@@ -144,11 +144,6 @@ public class ToDoAddFragment extends DialogFragment {
         mContext = context;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     private void addItem(ToDoItem item) {
         if (TextUtils.isEmpty(item.getName())) {
             PromptUser.displayAlert(mContext,

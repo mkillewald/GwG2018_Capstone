@@ -6,27 +6,20 @@ import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.StepAdapter;
 import com.gameaholix.coinops.databinding.FragmentRepairDetailBinding;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
-import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,8 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class RepairDetailFragment extends Fragment implements StepAdapter.StepAdapterOnClickHandler {
     private static final String TAG = RepairDetailFragment.class.getSimpleName();
@@ -132,7 +123,7 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
                         mBind.tvRepairDescription.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                mListener.onDescriptionSelected(mRepairLog);
+                                mListener.onDescriptionSelected();
                             }
                         });
                     }
@@ -171,17 +162,6 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
             };
             mStepRef.addValueEventListener(mStepListener);
 
-            // Setup EditText
-            mBind.etAddStepEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                    if (i == EditorInfo.IME_ACTION_DONE) {
-                        hideKeyboard(textView);
-                    }
-                    return false;
-                }
-            });
-
             // Setup Buttons
             mBind.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -193,9 +173,8 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
             mBind.btnAddStep.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Item newStep = new Item();
-                    newStep.setName(mBind.etAddStepEntry.getText().toString().trim());
-                    addStep(newStep);
+                    Item newStep = new Item(mRepairLog.getId());
+                    mListener.onAddStepPressed(newStep);
                 }
             });
 //        } else {
@@ -253,52 +232,6 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
     public void onClick(Item repairStep) {
         if (mListener != null) {
             mListener.onStepSelected(repairStep);
-        }
-    }
-
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    private void addStep(Item step) {
-        if (TextUtils.isEmpty(step.getName())) {
-            PromptUser.displayAlert(mContext,
-                    R.string.error_add_repair_step_failed,
-                    R.string.error_repair_step_entry_empty);
-            return;
-        }
-
-        // Add Entry object to Firebase
-        if (mUser != null) {
-            // user is signed in
-
-            String stepId = mStepRef.push().getKey();
-
-            if (!TextUtils.isEmpty(stepId)) {
-                Map<String, Object> valuesToAdd = new HashMap<>();
-                valuesToAdd.put(mStepRef.child(stepId).getPath().toString(), step);
-
-                mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(@Nullable DatabaseError databaseError,
-                                           @NonNull DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                    " Code: " + databaseError.getCode() +
-                                    " Details: " + databaseError.getDetails());
-                        }
-                    }
-                });
-
-                hideKeyboard(mBind.etAddStepEntry);
-                mBind.etAddStepEntry.setText(null);
-                mBind.etAddStepEntry.clearFocus();
-            }
-
-//        } else {
-//            // user is not signed in
         }
     }
 
@@ -360,7 +293,8 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
+        void onDescriptionSelected();
         void onStepSelected(Item repairStep);
-        void onDescriptionSelected(Item repairLog);
+        void onAddStepPressed(Item newStep);
     }
 }

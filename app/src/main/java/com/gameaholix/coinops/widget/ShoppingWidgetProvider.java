@@ -17,8 +17,8 @@ import com.gameaholix.coinops.shopping.ShoppingListActivity;
  */
 public class ShoppingWidgetProvider extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
+    private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                        int appWidgetId) {
 
         // code here used from:
         // https://github.com/laaptu/appwidget-listview/tree/appwidget-listview1

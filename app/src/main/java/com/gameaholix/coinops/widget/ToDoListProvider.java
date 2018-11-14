@@ -26,8 +26,8 @@ public class ToDoListProvider implements RemoteViewsService.RemoteViewsFactory {
     private static final String TAG = ToDoListProvider.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
-    private Context mContext;
-    private ArrayList<ToDoItem> mToDoList = new ArrayList<>();
+    private final Context mContext;
+    private final ArrayList<ToDoItem> mToDoList = new ArrayList<>();
     private DatabaseReference mToDoListRef;
     private ValueEventListener mToDoListener;
     private int appWidgetId;

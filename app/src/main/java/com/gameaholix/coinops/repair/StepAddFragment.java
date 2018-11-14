@@ -13,8 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentRepairAddBinding;
-import com.gameaholix.coinops.game.GameAddFragment;
+import com.gameaholix.coinops.databinding.FragmentStepAddBinding;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
 import com.gameaholix.coinops.utility.PromptUser;
@@ -27,25 +26,27 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RepairAddFragment extends DialogFragment {
-    private static final String TAG = GameAddFragment.class.getSimpleName();
+
+public class StepAddFragment extends DialogFragment {
+    private static final String TAG = StepAddFragment.class.getSimpleName();
+    private static final String EXTRA_STEP = "CoinOpsRepairStep";
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-    private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
 
     private Context mContext;
     private String mGameId;
-    private Item mNewRepair;
+    private Item mNewStep;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
 
-    public RepairAddFragment() {
+    public StepAddFragment() {
         // Required empty public constructor
     }
 
-    public static RepairAddFragment newInstance(String gameId) {
+    public static StepAddFragment newInstance(String gameId, Item repairStep) {
+        StepAddFragment fragment = new StepAddFragment();
         Bundle args = new Bundle();
-        RepairAddFragment fragment = new RepairAddFragment();
         args.putString(EXTRA_GAME_ID, gameId);
+        args.putParcelable(EXTRA_STEP, repairStep);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,11 +59,11 @@ public class RepairAddFragment extends DialogFragment {
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
+                mNewStep = getArguments().getParcelable(EXTRA_STEP);
             }
-            mNewRepair = new Item();
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-            mNewRepair = savedInstanceState.getParcelable(EXTRA_REPAIR);
+            mNewStep = savedInstanceState.getParcelable(EXTRA_STEP);
         }
 
         // Initialize Firebase components
@@ -75,32 +76,46 @@ public class RepairAddFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (getShowsDialog()) {
-            getDialog().setTitle(R.string.add_repair_title);
+            getDialog().setTitle(R.string.add_repair_step_title);
         }
 
         // Inflate the layout for this fragment
-        final FragmentRepairAddBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_repair_add, container, false);
+        final FragmentStepAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_step_add, container, false);
         final View rootView = bind.getRoot();
 
-        // Setup EditText
+        if (mUser != null) {
+            // user is signed in
 
-        // Setup Buttons
-        bind.btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getDialog().dismiss();
-            }
-        });
+            // Setup Buttons
+            bind.btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getDialog().dismiss();
+                }
+            });
 
-        bind.btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // get text from EditText
-                mNewRepair.setName(bind.etRepairDescription.getText().toString().trim());
-                addLog(mNewRepair);
-            }
-        });
+            bind.btnSave.setText(R.string.save_changes);
+            bind.btnSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String input = bind.etEntry.getText().toString().trim();
+                    if (textInputIsValid(input)) {
+                        mNewStep.setName(input);
+                        addStep();
+                    } else {
+                        PromptUser.displayAlert(mContext,
+                                R.string.error_add_repair_step_failed,
+                                R.string.error_repair_step_entry_empty);
+                    }
+                    getDialog().dismiss();
+                }
+            });
+
+            bind.btnDelete.setVisibility(View.GONE);
+//        } else {
+//            // user is not signed in
+        }
 
         return rootView;
     }
@@ -110,7 +125,7 @@ public class RepairAddFragment extends DialogFragment {
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_GAME_ID, mGameId);
-        outState.putParcelable(EXTRA_REPAIR, mNewRepair);
+        outState.putParcelable(EXTRA_STEP, mNewStep);
     }
 
     @Override
@@ -127,50 +142,47 @@ public class RepairAddFragment extends DialogFragment {
         }
     }
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
     }
 
-    private void addLog(Item repairLog) {
-        if (TextUtils.isEmpty(repairLog.getName())) {
-            PromptUser.displayAlert(mContext,
-                    R.string.error_add_repair_log_failed,
-                    R.string.error_repair_log_description_empty);
-            Log.d(TAG, "Failed to add repair log! Trouble description field was blank.");
-            return;
+    private boolean textInputIsValid(String inputText) {
+        boolean result = true;
+
+        // TODO: possibly add more validation checks, and return false if any one of them fails.
+        if (TextUtils.isEmpty(inputText)) {
+            Log.d(TAG, "User input was blank or empty.");
+            result = false;
         }
 
-        getDialog().dismiss();
+        return result;
+    }
 
-        // Add Game object to Firebase
+    private void addStep() {
+        // Add Entry object to Firebase
         if (mUser != null) {
             // user is signed in
-            String uid = mUser.getUid();
 
-            DatabaseReference repairRef = mDatabaseReference
-                    .child(Db.REPAIR)
-                    .child(uid)
-                    .child(mGameId);
+            DatabaseReference stepListRef = mDatabaseReference
+                .child(Db.REPAIR)
+                .child(mUser.getUid())
+                .child(mGameId)
+                .child(mNewStep.getParentId())
+                .child(Db.STEPS);
 
-            String id = repairRef.push().getKey();
+            String stepId = stepListRef.push().getKey();
 
-            if (!TextUtils.isEmpty(id)) {
-                DatabaseReference repairListRef = mDatabaseReference
-                        .child(Db.GAME)
-                        .child(uid)
-                        .child(mGameId)
-                        .child(Db.REPAIR_LIST)
-                        .child(id);
-
+            if (!TextUtils.isEmpty(stepId)) {
                 Map<String, Object> valuesToAdd = new HashMap<>();
-                valuesToAdd.put(repairRef.child(id).getPath().toString(), repairLog);
-                valuesToAdd.put(repairListRef.getPath().toString(), repairLog.getName());
+                valuesToAdd.put(stepListRef.child(stepId).getPath().toString(), mNewStep);
 
                 mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
                     @Override
-                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    public void onComplete(@Nullable DatabaseError databaseError,
+                                           @NonNull DatabaseReference databaseReference) {
                         if (databaseError != null) {
                             Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                     " Code: " + databaseError.getCode() +
@@ -178,9 +190,8 @@ public class RepairAddFragment extends DialogFragment {
                         }
                     }
                 });
-            } else {
-                Log.e(TAG, "Error: repair log id was null or empty");
             }
+
 //        } else {
 //            // user is not signed in
         }

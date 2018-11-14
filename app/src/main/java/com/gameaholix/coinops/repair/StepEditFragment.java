@@ -20,7 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentItemAddBinding;
+import com.gameaholix.coinops.databinding.FragmentStepAddBinding;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.utility.Db;
 import com.google.firebase.auth.FirebaseAuth;
@@ -94,8 +94,8 @@ public class StepEditFragment extends DialogFragment {
         }
 
         // Inflate the layout for this fragment
-        final FragmentItemAddBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_item_add, container, false);
+        final FragmentStepAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_step_add, container, false);
         final View rootView = bind.getRoot();
 
         if (mUser != null) {
@@ -195,11 +195,6 @@ public class StepEditFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     private boolean textInputIsValid(String inputText) {

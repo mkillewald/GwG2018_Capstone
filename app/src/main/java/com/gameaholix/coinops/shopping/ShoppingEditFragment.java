@@ -237,11 +237,6 @@ public class ShoppingEditFragment extends DialogFragment {
         mContext = context;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     private boolean textInputIsValid(String inputText) {
         boolean result = true;
 

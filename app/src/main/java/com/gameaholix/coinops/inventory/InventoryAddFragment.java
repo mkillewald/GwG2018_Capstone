@@ -148,11 +148,6 @@ public class InventoryAddFragment extends DialogFragment {
         mContext = context;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     private void addItem(InventoryItem item) {
         if (TextUtils.isEmpty(item.getName())) {
             PromptUser.displayAlert(mContext,

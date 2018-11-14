@@ -22,11 +22,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ShoppingListProvider implements RemoteViewsService.RemoteViewsFactory {
+class ShoppingListProvider implements RemoteViewsService.RemoteViewsFactory {
     private static final String TAG = ShoppingListProvider.class.getSimpleName();
 
-    private Context mContext;
-    private ArrayList<Item> mShoppingList = new ArrayList<>();
+    private final Context mContext;
+    private final ArrayList<Item> mShoppingList = new ArrayList<>();
     private DatabaseReference mShopListRef;
     private ValueEventListener mShoppingListener;
     private int appWidgetId;

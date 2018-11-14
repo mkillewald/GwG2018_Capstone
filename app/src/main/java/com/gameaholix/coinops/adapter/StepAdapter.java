@@ -16,7 +16,7 @@ import com.gameaholix.coinops.utility.DateHelper;
 import java.util.List;
 
 public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepAdapterViewHolder> {
-    private Context mContext;
+    private final Context mContext;
     private List<Item> mRepairSteps;
     private final StepAdapterOnClickHandler mClickHandler;
 

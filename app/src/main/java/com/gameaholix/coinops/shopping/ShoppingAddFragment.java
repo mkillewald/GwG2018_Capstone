@@ -133,11 +133,6 @@ public class ShoppingAddFragment extends DialogFragment {
         mContext = context;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     private void addItem(Item item) {
         if (TextUtils.isEmpty(item.getName())) {
             PromptUser.displayAlert(mContext,
