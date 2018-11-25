@@ -17,7 +17,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-// Concepts used from https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
+// Concepts and code used from 3 part series:
+// https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
 public class GameListViewModel extends ViewModel {
     private static LiveData<List<Game>> gameListLiveData;
 
@@ -28,6 +29,10 @@ public class GameListViewModel extends ViewModel {
                 .child(Db.GAME_LIST);
         FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(gameListRef.orderByValue());
         gameListLiveData = Transformations.map(liveData, new Deserializer());
+        // Note: Transformations run synchronously on the main thread, if the total time it takes
+        // to perform this conversion is over 16 ms, "jank" will occur. A MediatorLiveData can be used
+        // instead off of the main thread. Ideally, following "best practice" threading behavior, we
+        // would want to use an Executor with a pool of reusable threads.
     }
 
     private class Deserializer implements Function<DataSnapshot, List<Game>> {
