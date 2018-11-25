@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
 import com.gameaholix.coinops.model.Game;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.GlideApp;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

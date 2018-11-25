@@ -17,7 +17,7 @@ import android.widget.ArrayAdapter;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryAddBinding;
 import com.gameaholix.coinops.model.InventoryItem;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

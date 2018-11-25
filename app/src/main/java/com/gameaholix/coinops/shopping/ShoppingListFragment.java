@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.ShoppingAdapter;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.firebase.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

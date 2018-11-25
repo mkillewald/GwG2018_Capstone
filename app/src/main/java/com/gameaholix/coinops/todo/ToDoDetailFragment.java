@@ -15,7 +15,7 @@ import android.widget.RadioButton;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentToDoDetailBinding;
 import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.firebase.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

@@ -26,7 +26,7 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.DialogMonitorDetailsBinding;
 import com.gameaholix.coinops.databinding.FragmentGameAddBinding;
 import com.gameaholix.coinops.model.Game;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.firebase.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;

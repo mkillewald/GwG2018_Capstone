@@ -1,4 +1,4 @@
-package com.gameaholix.coinops;
+package com.gameaholix.coinops.firebase;
 
 import android.arch.lifecycle.LiveData;
 import android.util.Log;

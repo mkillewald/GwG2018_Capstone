@@ -1,4 +1,4 @@
-package com.gameaholix.coinops.utility;
+package com.gameaholix.coinops.firebase;
 
 public class Db {
 

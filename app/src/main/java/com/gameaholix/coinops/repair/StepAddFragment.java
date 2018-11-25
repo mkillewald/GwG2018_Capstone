@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentStepAddBinding;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

@@ -16,7 +16,7 @@ import android.widget.RadioGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentToDoAddBinding;
 import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

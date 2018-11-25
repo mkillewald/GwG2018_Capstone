@@ -23,7 +23,7 @@ import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.InventoryItem;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;

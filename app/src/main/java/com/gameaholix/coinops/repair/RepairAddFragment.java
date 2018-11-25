@@ -16,7 +16,7 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentRepairAddBinding;
 import com.gameaholix.coinops.game.GameAddFragment;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
