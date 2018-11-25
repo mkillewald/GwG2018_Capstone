@@ -21,9 +21,8 @@ import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.viewModel.GameListViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class GameListFragment extends Fragment implements GameAdapter.GameAdapterOnClickHandler {
 //    private static final String TAG = GameListFragment.class.getSimpleName();
@@ -74,19 +73,14 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             // user is signed in
 
             // read list of games
-            GameListViewModel viewModel = ViewModelProviders.of(this).get(GameListViewModel.class);
-            LiveData<DataSnapshot> liveData = viewModel.getDataSnapshotLiveData(mUser.getUid());
-            liveData.observe(this, new Observer<DataSnapshot>() {
+            GameListViewModel gameListViewModel =
+                    ViewModelProviders.of(this).get(GameListViewModel.class);
+            gameListViewModel.init(mUser.getUid());
+            LiveData<List<Game>> gameListLiveData = gameListViewModel.getGameListLiveData();
+            gameListLiveData.observe(this, new Observer<List<Game>>() {
                 @Override
-                public void onChanged(@Nullable DataSnapshot dataSnapshot) {
-                    if (dataSnapshot != null) {
-                        ArrayList<Game> games = new ArrayList<>();
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            String gameId = child.getKey();
-                            String name = (String) child.getValue();
-                            Game game = new Game(gameId, name);
-                            games.add(game);
-                        }
+                public void onChanged(@Nullable List<Game> games) {
+                    if (games != null) {
                         mGameAdapter.setGames(games);
                         mGameAdapter.notifyDataSetChanged();
                     }
