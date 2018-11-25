@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.gameaholix.coinops.firebase.FirebaseQueryLiveData;
 import com.gameaholix.coinops.firebase.Db;
@@ -20,6 +21,7 @@ import java.util.List;
 // Concepts and code used from 3 part series:
 // https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
 public class GameListViewModel extends ViewModel {
+    private static final String TAG = GameListViewModel.class.getSimpleName();
     private static LiveData<List<Game>> gameListLiveData;
 
     public void init(@NonNull String uid) {
@@ -38,6 +40,7 @@ public class GameListViewModel extends ViewModel {
     private class Deserializer implements Function<DataSnapshot, List<Game>> {
         @Override
         public List<Game> apply(DataSnapshot dataSnapshot) {
+            long start = System.currentTimeMillis();
             ArrayList<Game> games = new ArrayList<>();
             for (DataSnapshot child : dataSnapshot.getChildren()) {
                 String gameId = child.getKey();
@@ -45,6 +48,8 @@ public class GameListViewModel extends ViewModel {
                 Game game = new Game(gameId, name);
                 games.add(game);
             }
+            long end = System.currentTimeMillis();
+            Log.d(TAG, "Transformation took: " + (end - start) + "ms");
             return games;
         }
     }
