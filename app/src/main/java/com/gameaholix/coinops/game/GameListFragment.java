@@ -1,13 +1,16 @@
 package com.gameaholix.coinops.game;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,25 +18,19 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameAdapter;
 import com.gameaholix.coinops.model.Game;
-import com.gameaholix.coinops.utility.Db;
+import com.gameaholix.coinops.viewModel.GameListViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class GameListFragment extends Fragment implements GameAdapter.GameAdapterOnClickHandler {
-    private static final String TAG = GameListFragment.class.getSimpleName();
+//    private static final String TAG = GameListFragment.class.getSimpleName();
 
     private Context mContext;
     private GameAdapter mGameAdapter;
     private FirebaseUser mUser;
-    private DatabaseReference mUserGameListRef;
-    private ValueEventListener mGameListener;
     private OnFragmentInteractionListener mListener;
 
     public GameListFragment() {
@@ -48,9 +45,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
 
-        // Setup database references
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        mUserGameListRef = databaseReference.child(Db.USER).child(mUser.getUid()).child(Db.GAME_LIST);
     }
 
     @Override
@@ -80,44 +74,30 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             // user is signed in
 
             // read list of games
-            mGameListener = new ValueEventListener() {
+            GameListViewModel viewModel = ViewModelProviders.of(this).get(GameListViewModel.class);
+            LiveData<DataSnapshot> liveData = viewModel.getDataSnapshotLiveData(mUser.getUid());
+            liveData.observe(this, new Observer<DataSnapshot>() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    ArrayList<Game> games = new ArrayList<>();
-                    for (DataSnapshot child : dataSnapshot.getChildren()) {
-                        String gameId = child.getKey();
-                        String name = (String) child.getValue();
-                        Game game = new Game(gameId, name);
-                        games.add(game);
+                public void onChanged(@Nullable DataSnapshot dataSnapshot) {
+                    if (dataSnapshot != null) {
+                        ArrayList<Game> games = new ArrayList<>();
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            String gameId = child.getKey();
+                            String name = (String) child.getValue();
+                            Game game = new Game(gameId, name);
+                            games.add(game);
+                        }
+                        mGameAdapter.setGames(games);
+                        mGameAdapter.notifyDataSetChanged();
                     }
-                    mGameAdapter.setGames(games);
-                    mGameAdapter.notifyDataSetChanged();
                 }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Failed to read value
-                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
-                }
-            };
-
-            mUserGameListRef
-                    .orderByValue()
-                    .addValueEventListener(mGameListener);
-
+            });
 
 //        } else {
 //            // user is not signed in
         }
 
         return rootView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        mUserGameListRef.removeEventListener(mGameListener);
     }
 
     @Override

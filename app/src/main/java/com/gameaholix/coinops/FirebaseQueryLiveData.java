@@ -10,7 +10,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 // Class used from https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
-
 public class FirebaseQueryLiveData extends LiveData<DataSnapshot> {
     private static final String TAG = FirebaseQueryLiveData.class.getSimpleName();
 
