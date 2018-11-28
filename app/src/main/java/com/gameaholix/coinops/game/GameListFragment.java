@@ -19,8 +19,6 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameAdapter;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.viewModel.GameListViewModel;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -29,7 +27,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
 
     private Context mContext;
     private GameAdapter mGameAdapter;
-    private FirebaseUser mUser;
     private OnFragmentInteractionListener mListener;
 
     public GameListFragment() {
@@ -39,11 +36,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mUser = firebaseAuth.getCurrentUser();
-
     }
 
     @Override
@@ -69,15 +61,12 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
             }
         });
 
-        if (mUser != null) {
-            // user is signed in
-
-            // read list of games
-            GameListViewModel gameListViewModel =
-                    ViewModelProviders.of(this).get(GameListViewModel.class);
-            gameListViewModel.init(mUser.getUid());
-            LiveData<List<Game>> gameListLiveData = gameListViewModel.getGameListLiveData();
-            gameListLiveData.observe(this, new Observer<List<Game>>() {
+        // read list of games
+        GameListViewModel gameListViewModel =
+                ViewModelProviders.of(this).get(GameListViewModel.class);
+        LiveData<List<Game>> gameListLiveData = gameListViewModel.getGameListLiveData();
+        if (getActivity() != null) {
+            gameListLiveData.observe(getActivity(), new Observer<List<Game>>() {
                 @Override
                 public void onChanged(@Nullable List<Game> games) {
                     if (games != null) {
@@ -86,9 +75,6 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
                     }
                 }
             });
-
-//        } else {
-//            // user is not signed in
         }
 
         return rootView;
