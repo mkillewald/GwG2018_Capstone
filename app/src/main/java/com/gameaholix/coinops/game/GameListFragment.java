@@ -4,18 +4,18 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.databinding.FragmentListBinding;
 import com.gameaholix.coinops.adapter.GameAdapter;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.viewModel.GameListViewModel;
@@ -42,19 +42,18 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_list, container,
-                false);
+        final FragmentListBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_list, container, false);
+        final View rootView = bind.getRoot();
 
-        RecyclerView recyclerView = rootView.findViewById(R.id.rv_list);
         mGameAdapter = new GameAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(mGameAdapter);
-        recyclerView.setHasFixedSize(true);
+        bind.rvList.setLayoutManager(linearLayoutManager);
+        bind.rvList.setAdapter(mGameAdapter);
+        bind.rvList.setHasFixedSize(true);
 
         // Setup FAB
-        FloatingActionButton fab = rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        bind.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mListener.onFabPressed();
