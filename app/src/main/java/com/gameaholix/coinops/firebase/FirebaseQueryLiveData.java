@@ -50,9 +50,9 @@ public class FirebaseQueryLiveData extends LiveData<DataSnapshot> {
 
     @Override
     protected void onInactive() {
-        // Listener removal is schedule on a two second delay to avoid listner removal and
+        // Listener removal is scheduled on a two second delay to avoid listener removal and
         // re-add during configuration changes (device rotation) since that would trigger an unnecessary
-        // download of data from the database.
+        // re-download of data from the database.
         handler.postDelayed(removeListener, 2000);
         listenerRemovePending = true;
     }
