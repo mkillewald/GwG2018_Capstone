@@ -1,6 +1,7 @@
 package com.gameaholix.coinops.game;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
@@ -12,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -65,6 +67,32 @@ public class GameAddFragment extends DialogFragment {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+
+        // Hide keyboard after touch event occurs outside of EditText in DialogFragment
+        // Solution used from:
+        // https://stackoverflow.com/questions/16024297/is-there-an-equivalent-for-dispatchtouchevent-from-activity-in-dialog-or-dialo
+        if (getActivity() != null) {
+            return new Dialog(getActivity(), getTheme()) {
+                @Override
+                public boolean dispatchTouchEvent(@NonNull MotionEvent motionEvent) {
+                    if (getCurrentFocus() != null) {
+                        InputMethodManager imm =
+                                (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                        }
+                    }
+                    return super.dispatchTouchEvent(motionEvent);
+                }
+            };
+        } else {
+            return super.onCreateDialog(savedInstanceState);
+        }
     }
 
     @Override
