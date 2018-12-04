@@ -53,12 +53,14 @@ import static android.app.Activity.RESULT_OK;
 
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String CAPTURE_IMAGE_FILE_PROVIDER = "com.gameaholix.coinops.fileprovider";
     private static final String THUMB = "thumb_";
     private static final int REQUEST_IMAGE_CAPTURE = 343;
 
     private Context mContext;
+    private String mGameId;
     private Game mGame;
     private FirebaseUser mUser;
     private String mCurrentPhotoPath;
@@ -78,10 +80,10 @@ public class GameDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static GameDetailFragment newInstance(Game game) {
+    public static GameDetailFragment newInstance(String gameId) {
         Bundle args = new Bundle();
         GameDetailFragment fragment = new GameDetailFragment();
-        args.putParcelable(EXTRA_GAME, game);
+        args.putString(EXTRA_GAME_ID, gameId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -92,9 +94,10 @@ public class GameDetailFragment extends Fragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                mGame = getArguments().getParcelable(EXTRA_GAME);
+                mGameId = getArguments().getString(EXTRA_GAME_ID);
             }
         } else {
+            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
         }
         setHasOptionsMenu(true);
@@ -107,13 +110,13 @@ public class GameDetailFragment extends Fragment {
         StorageReference storageRef = storage.getReference();
         mImageRootRef = storageRef
                 .child(mUser.getUid())
-                .child(mGame.getId());
+                .child(mGameId);
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mGameRef = mDatabaseReference
                 .child(Db.GAME)
                 .child(mUser.getUid())
-                .child(mGame.getId());
+                .child(mGameId);
         mUserRef = mDatabaseReference
                 .child(Db.USER)
                 .child(mUser.getUid());
@@ -143,13 +146,12 @@ public class GameDetailFragment extends Fragment {
             mGameListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String gameId = dataSnapshot.getKey();
 
                     mGame = dataSnapshot.getValue(Game.class);
                     if (mGame == null) {
                         Log.d(TAG, "Error: Game details not found");
                     } else {
-                        mGame.setId(gameId);
+                        mGame.setId(mGameId);
 
                         String noSelection = getString(R.string.not_available);
                         String[] typeArr = getResources().getStringArray(R.array.game_type);
@@ -283,6 +285,7 @@ public class GameDetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(EXTRA_GAME, mGame);
+        outState.putString(EXTRA_GAME_ID, mGameId);
     }
 
 

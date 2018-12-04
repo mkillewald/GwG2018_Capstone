@@ -51,13 +51,14 @@ public class GameDetailActivity extends AppCompatActivity implements
         ShoppingListFragment.OnFragmentInteractionListener,
         NetworkUtils.CheckInternetConnection.TaskCompleted {
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
     private static final String EXTRA_IMAGE_PATH = "CoinOpsImagePath";
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
 
-    private Game mGame;
+    private String mGameId;
+    private String mGameName;
     private CoordinatorLayout mCoordinatorLayout;
     private ViewPager mViewPager;
     private AdView mAdView;
@@ -91,19 +92,22 @@ public class GameDetailActivity extends AppCompatActivity implements
 
 
         if (savedInstanceState == null) {
-            mGame = getIntent().getParcelableExtra(EXTRA_GAME);
+            Intent intent = getIntent();
+            mGameId = intent.getStringExtra(EXTRA_GAME_ID);
+            mGameName = intent.getStringExtra(EXTRA_GAME_NAME);
         } else {
-            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
+            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
+            mGameName = savedInstanceState.getString(EXTRA_GAME_NAME);
         }
 
-        if (mGame != null) {
-            setTitle(mGame.getName());
+        if (mGameName != null) {
+            setTitle(mGameName);
         }
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager = findViewById(R.id.viewpager);
         mViewPager.setAdapter(new GameDetailPagerAdapter(this, getSupportFragmentManager(),
-                mGame));
+                mGameId));
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -197,7 +201,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_GAME, mGame);
+        outState.putString(EXTRA_GAME_ID, mGameId);
     }
 
     @Override
@@ -216,7 +220,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     public void onRepairLogSelected(Item repairLog) {
         Intent intent = new Intent(this, RepairDetailActivity.class);
         intent.putExtra(EXTRA_REPAIR, repairLog);
-        intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
+        intent.putExtra(EXTRA_GAME_NAME, mGameName);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
@@ -234,7 +238,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     public void onToDoItemSelected(ToDoItem toDoItem) {
         Intent intent = new Intent(this, ToDoDetailActivity.class);
         intent.putExtra(EXTRA_TODO, toDoItem);
-        intent.putExtra(EXTRA_GAME_NAME, mGame.getName());
+        intent.putExtra(EXTRA_GAME_NAME, mGameName);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
@@ -263,19 +267,19 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     private void showAddRepairDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        RepairAddFragment fragment = RepairAddFragment.newInstance(mGame.getId());
+        RepairAddFragment fragment = RepairAddFragment.newInstance(mGameId);
         fragment.show(fm, "fragment_repair_add");
     }
 
     private void showAddToDoDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ToDoAddFragment fragment = ToDoAddFragment.newInstance(mGame.getId());
+        ToDoAddFragment fragment = ToDoAddFragment.newInstance(mGameId);
         fragment.show(fm, "fragment_add_todo");
     }
 
     private void showAddShoppingDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ShoppingAddFragment fragment = ShoppingAddFragment.newInstance(mGame.getId());
+        ShoppingAddFragment fragment = ShoppingAddFragment.newInstance(mGameId);
         fragment.show(fm, "fragment_item_add");
     }
 
@@ -296,7 +300,7 @@ public class GameDetailActivity extends AppCompatActivity implements
     @Override
     public void onEditCompletedOrCancelled() {
         // replace GameEditFragment with GameDetailFragment
-        Fragment gameDetailFragment = GameDetailFragment.newInstance(mGame);
+        Fragment gameDetailFragment = GameDetailFragment.newInstance(mGameId);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, gameDetailFragment);
         ft.commit();

@@ -15,18 +15,18 @@ import com.gameaholix.coinops.model.Game;
 
 public class PlaceholderFragment extends Fragment {
 //    private static final String TAG = PlaceholderFragment.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
-    private Game mGame;
+    private String mGameId;
 
     public PlaceholderFragment() {
         // Required empty public constructor
     }
 
-    public static PlaceholderFragment newInstance(Game game) {
+    public static PlaceholderFragment newInstance(String gameId) {
         Bundle args = new Bundle();
         PlaceholderFragment fragment = new PlaceholderFragment();
-        args.putParcelable(EXTRA_GAME, game);
+        args.putString(EXTRA_GAME_ID, gameId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -40,17 +40,17 @@ public class PlaceholderFragment extends Fragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                mGame = getArguments().getParcelable(EXTRA_GAME);
+                mGameId = getArguments().getString(EXTRA_GAME_ID);
             }
 
             // Show GameDetailFragmment when this fragment is first created
             if (getActivity() != null) {
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.add(R.id.fragment_placeholder, GameDetailFragment.newInstance(mGame));
+                ft.add(R.id.fragment_placeholder, GameDetailFragment.newInstance(mGameId));
                 ft.commit();
             }
         } else {
-            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
+            mGameId = savedInstanceState.getParcelable(EXTRA_GAME_ID);
         }
 
         return rootView;
@@ -60,6 +60,6 @@ public class PlaceholderFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_GAME, mGame);
+        outState.putString(EXTRA_GAME_ID, mGameId);
     }
 }

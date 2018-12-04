@@ -18,6 +18,7 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentListBinding;
 import com.gameaholix.coinops.adapter.GameAdapter;
 import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.model.ListRow;
 import com.gameaholix.coinops.viewModel.GameListViewModel;
 
 import java.util.List;
@@ -63,14 +64,13 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         // read list of games
         GameListViewModel gameListViewModel =
                 ViewModelProviders.of(this).get(GameListViewModel.class);
-        LiveData<List<Game>> gameListLiveData = gameListViewModel.getGameListLiveData();
+        LiveData<List<ListRow>> gameListLiveData = gameListViewModel.getGameListLiveData();
         if (getActivity() != null) {
-            gameListLiveData.observe(getActivity(), new Observer<List<Game>>() {
+            gameListLiveData.observe(getActivity(), new Observer<List<ListRow>>() {
                 @Override
-                public void onChanged(@Nullable List<Game> games) {
+                public void onChanged(@Nullable List<ListRow> games) {
                     if (games != null) {
                         mGameAdapter.setGames(games);
-                        mGameAdapter.notifyDataSetChanged();
                     }
                 }
             });
@@ -80,7 +80,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     }
 
     @Override
-    public void onClick(Game game) {
+    public void onClick(ListRow game) {
         if (mListener != null) {
             mListener.onGameSelected(game);
         }
@@ -115,7 +115,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onGameSelected(Game game);
+        void onGameSelected(ListRow game);
         void onFabPressed();
     }
 }

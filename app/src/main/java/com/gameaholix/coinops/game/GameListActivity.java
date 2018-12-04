@@ -18,7 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.model.ListRow;
 import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
@@ -28,7 +28,7 @@ public class GameListActivity extends AppCompatActivity implements
         GameListFragment.OnFragmentInteractionListener,
         NetworkUtils.CheckInternetConnection.TaskCompleted {
 //    private static final String TAG = GameListActivity.class.getSimpleName();
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
     private CoordinatorLayout mCoordinatorLayout;
 
@@ -90,9 +90,9 @@ public class GameListActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onGameSelected(Game game) {
+    public void onGameSelected(ListRow game) {
         Intent intent = new Intent(this, GameDetailActivity.class);
-        intent.putExtra(EXTRA_GAME, game);
+        intent.putExtra(EXTRA_GAME_ID, game.getId());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);

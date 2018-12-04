@@ -11,15 +11,16 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.ListItemBinding;
 import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.model.ListRow;
 
 import java.util.List;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterViewHolder> {
-    private List<Game> mGames;
+    private List<ListRow> mGames;
     private final GameAdapterOnClickHandler mClickHandler;
 
     public interface GameAdapterOnClickHandler {
-        void onClick(Game game);
+        void onClick(ListRow game);
     }
 
     public GameAdapter (GameAdapterOnClickHandler clickHandler) {
@@ -39,7 +40,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
         @Override
         public void onClick(View view) {
             int adapterPosition  = getAdapterPosition();
-            Game game = mGames.get(adapterPosition);
+            ListRow game = mGames.get(adapterPosition);
             mClickHandler.onClick(game);
         }
     }
@@ -56,7 +57,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull GameAdapterViewHolder holder, int position) {
-        Game game = mGames.get(position);
+        ListRow game = mGames.get(position);
 
         holder.mBinding.tvName.setText(game.getName());
         holder.mBinding.tvName.setMaxLines(1);
@@ -68,6 +69,9 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
         return mGames == null ? 0 : mGames.size();
     }
 
-    public void setGames(List<Game> games) { mGames = games; }
+    public void setGames(List<ListRow> games) {
+        mGames = games;
+        notifyDataSetChanged();
+    }
 
 }
