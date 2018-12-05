@@ -1,14 +1,11 @@
 package com.gameaholix.coinops.todo;
 
-import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Rect;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -17,16 +14,11 @@ import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 
+import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.firebase.Db;
-import com.gameaholix.coinops.utility.NetworkUtils;
-import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,16 +26,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class ToDoDetailActivity extends AppCompatActivity implements
+public class ToDoDetailActivity extends BaseActivity implements
         ToDoDetailFragment.OnFragmentInteractionListener,
-        ToDoEditFragment.OnFragmentInteractionListener,
-        NetworkUtils.CheckInternetConnection.TaskCompleted{
+        ToDoEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = ToDoDetailActivity.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
 
     private ToDoItem mToDoItem;
-    private CoordinatorLayout mCoordinatorLayout;
     private FirebaseUser mUser;
     private String mGameName;
 
@@ -65,6 +55,10 @@ public class ToDoDetailActivity extends AppCompatActivity implements
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        // set CoordinatorLayout of BaseActivity for displaying Snackbar
+        CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinator_layout);
+        setCoordinatorLayout(coordinatorLayout);
 
         AdView adView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -93,14 +87,6 @@ public class ToDoDetailActivity extends AppCompatActivity implements
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
-
-        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
-
-        if (NetworkUtils.isNetworkEnabled(this)) {
-            new NetworkUtils.CheckInternetConnection(this).execute();
-        } else {
-            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
-        }
     }
 
     @Override
@@ -141,13 +127,6 @@ public class ToDoDetailActivity extends AppCompatActivity implements
 
         outState.putParcelable(EXTRA_TODO, mToDoItem);
         outState.putString(EXTRA_GAME_NAME, mGameName);
-    }
-
-    @Override
-    public void onInternetCheckCompleted(boolean networkIsOnline) {
-        if (!networkIsOnline) {
-            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
-        }
     }
 
     @Override
@@ -231,28 +210,5 @@ public class ToDoDetailActivity extends AppCompatActivity implements
                 .child(Db.TODO_LIST)
                 .child(toDoItem.getId())
                 .removeValue();
-    }
-
-    // Hide keyboard after touch event occurs outside of EditText
-    // Solution used from:
-    // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View view = getCurrentFocus();
-            if ( view instanceof EditText) {
-                Rect outRect = new Rect();
-                view.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                    view.clearFocus();
-                    InputMethodManager imm =
-                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-                }
-            }
-        }
-        return super.dispatchTouchEvent(event);
     }
 }

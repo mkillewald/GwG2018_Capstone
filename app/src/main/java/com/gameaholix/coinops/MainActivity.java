@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -22,21 +21,15 @@ import com.gameaholix.coinops.game.GameListActivity;
 import com.gameaholix.coinops.inventory.InventoryListActivity;
 import com.gameaholix.coinops.shopping.ShoppingListActivity;
 import com.gameaholix.coinops.todo.ToDoListActivity;
-import com.gameaholix.coinops.utility.NetworkUtils;
-import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity implements
-        NetworkUtils.CheckInternetConnection.TaskCompleted {
-
+public class MainActivity extends BaseActivity {
 //    private static final String TAG = MainActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 1;
-
-    private CoordinatorLayout mCoordinatorLayout;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
@@ -52,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements
         ActivityMainBinding bind = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         setSupportActionBar(bind.toolbar);
+
+        // set CoordinatorLayout of BaseActivity for displaying Snackbar
+        CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinator_layout);
+        setCoordinatorLayout(coordinatorLayout);
 
         AdRequest adRequest = new AdRequest.Builder().build();
         bind.avBanner.loadAd(adRequest);
@@ -85,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         });
-
 
         bind.globalToDoList.tvCardTitle.setText(R.string.to_do_list_title);
         bind.globalToDoList.card.setOnClickListener(new View.OnClickListener() {
@@ -140,14 +136,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         };
-
-        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
-
-        if (NetworkUtils.isNetworkEnabled(this)) {
-            new NetworkUtils.CheckInternetConnection(this).execute();
-        } else {
-            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
-        }
     }
 
     @Override
@@ -180,13 +168,6 @@ public class MainActivity extends AppCompatActivity implements
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onInternetCheckCompleted(boolean networkIsOnline) {
-        if (!networkIsOnline) {
-            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
         }
     }
 }

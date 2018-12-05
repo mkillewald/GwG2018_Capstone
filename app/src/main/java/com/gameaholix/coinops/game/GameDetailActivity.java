@@ -1,9 +1,7 @@
 package com.gameaholix.coinops.game;
 
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
@@ -12,18 +10,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 
+import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
 import com.gameaholix.coinops.model.Game;
@@ -38,18 +33,16 @@ import com.gameaholix.coinops.shopping.ShoppingListFragment;
 import com.gameaholix.coinops.todo.ToDoAddFragment;
 import com.gameaholix.coinops.todo.ToDoDetailActivity;
 import com.gameaholix.coinops.todo.ToDoListFragment;
-import com.gameaholix.coinops.utility.NetworkUtils;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-public class GameDetailActivity extends AppCompatActivity implements
+public class GameDetailActivity extends BaseActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
         GameEditFragment.OnFragmentInteractionListener,
         RepairListFragment.OnFragmentInteractionListener,
         ToDoListFragment.OnFragmentInteractionListener,
-        ShoppingListFragment.OnFragmentInteractionListener,
-        NetworkUtils.CheckInternetConnection.TaskCompleted {
+        ShoppingListFragment.OnFragmentInteractionListener {
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
@@ -59,7 +52,6 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     private String mGameId;
     private String mGameName;
-    private CoordinatorLayout mCoordinatorLayout;
     private ViewPager mViewPager;
     private AdView mAdView;
 
@@ -85,6 +77,10 @@ public class GameDetailActivity extends AppCompatActivity implements
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        // set CoordinatorLayout of BaseActivity for displaying Snackbar
+        CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinator_layout);
+        setCoordinatorLayout(coordinatorLayout);
 
         mAdView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -127,14 +123,6 @@ public class GameDetailActivity extends AppCompatActivity implements
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
-
-        if (NetworkUtils.isNetworkEnabled(this)) {
-            new NetworkUtils.CheckInternetConnection(this).execute();
-        } else {
-            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
-        }
     }
 
     @Override
@@ -202,13 +190,6 @@ public class GameDetailActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(EXTRA_GAME_ID, mGameId);
-    }
-
-    @Override
-    public void onInternetCheckCompleted(boolean networkIsOnline) {
-        if (!networkIsOnline) {
-            PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
-        }
     }
 
     @Override
@@ -323,29 +304,6 @@ public class GameDetailActivity extends AppCompatActivity implements
 
     @Override
     public void showSnackbar(int stringResourceId) {
-        PromptUser.displaySnackbar(mCoordinatorLayout, stringResourceId);
-    }
-
-    // Hide keyboard after touch event occurs outside of EditText
-    // Solution used from:
-    // https://stackoverflow.com/questions/4828636/edittext-clear-focus-on-touch-outside
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View view = getCurrentFocus();
-            if ( view instanceof EditText) {
-                Rect outRect = new Rect();
-                view.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                    view.clearFocus();
-                    InputMethodManager imm =
-                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-                }
-            }
-        }
-        return super.dispatchTouchEvent(event);
+        PromptUser.displaySnackbar(getCoordinatorLayout(), stringResourceId);
     }
 }
