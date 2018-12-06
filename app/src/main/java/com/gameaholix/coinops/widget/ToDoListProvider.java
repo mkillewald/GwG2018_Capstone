@@ -10,7 +10,7 @@ import android.widget.RemoteViewsService;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.todo.ToDoDetailActivity;
+import com.gameaholix.coinops.activity.ToDoDetailActivity;
 import com.gameaholix.coinops.firebase.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

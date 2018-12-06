@@ -34,7 +34,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             tools:replace="android:launchMode" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,40 +43,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".game.GameListActivity"
+            android:name=".activity.GameListActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".game.GameDetailActivity"
+            android:name=".activity.GameDetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".game.GameListActivity" />
-        <activity android:name=".game.DisplayImageActivity"
+            android:parentActivityName=".activity.GameListActivity" />
+        <activity android:name=".activity.DisplayImageActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity" />
+            android:parentActivityName=".activity.GameDetailActivity" />
         <activity
-            android:name=".inventory.InventoryListActivity"
+            android:name=".activity.InventoryListActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".inventory.InventoryDetailActivity"
+            android:name=".activity.InventoryDetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".inventory.InventoryListActivity" />
+            android:parentActivityName=".activity.InventoryListActivity" />
         <activity
-            android:name=".repair.RepairDetailActivity"
+            android:name=".activity.RepairDetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity" />
+            android:parentActivityName=".activity.GameDetailActivity" />
         <activity
-            android:name=".todo.ToDoListActivity"
+            android:name=".activity.ToDoListActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".todo.ToDoDetailActivity"
+            android:name=".activity.ToDoDetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".game.GameDetailActivity" />
+            android:parentActivityName=".activity.GameDetailActivity" />
         <activity
-            android:name=".shopping.ShoppingListActivity"
+            android:name=".activity.ShoppingListActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".activity.MainActivity" />
 
         <service
             android:name=".widget.ToDoWidgetService"

@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.widget.RemoteViews;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.shopping.ShoppingListActivity;
+import com.gameaholix.coinops.activity.ShoppingListActivity;
 
 /**
  * Implementation of App Widget functionality.
