@@ -134,7 +134,7 @@ public class GameAddEditFragment extends DialogFragment {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 // Verify input and hide keyboard if IME_ACTION_DONE
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    checkInputText(textView);
+                    checkInputName(textView);
                     hideKeyboard(textView);
                     return true;
                 }
@@ -147,7 +147,7 @@ public class GameAddEditFragment extends DialogFragment {
                 // Verify input if editText loses focus
                 if (view.getId() == R.id.et_game_name && !hasFocus) {
                     if (view instanceof EditText) {
-                        checkInputText((EditText) view);
+                        checkInputName((EditText) view);
                     }
                 }
             }
@@ -346,7 +346,7 @@ public class GameAddEditFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 // Verify EditText input if user taps on btnSave before onEditorAction or onFocusChange
-                checkInputText(bind.etGameName);
+                checkInputName(bind.etGameName);
                 if (TextUtils.isEmpty(bind.etGameName.getText())) {
                     PromptUser.displayAlert(mContext,
                             R.string.error_add_game_failed,
@@ -488,7 +488,7 @@ public class GameAddEditFragment extends DialogFragment {
         }
     }
 
-    private void checkInputText(TextView textView) {
+    private void checkInputName(TextView textView) {
         String input = textView.getText().toString().trim();
         if (textInputIsValid(input)) {
             // text input was valid, add the input to mValuesBundle.
