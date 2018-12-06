@@ -129,12 +129,11 @@ public class GameAddEditFragment extends DialogFragment {
 
         // Setup EditText
         if (mEdit) bind.etGameName.setText(mGame.getName());
-        // TODO: check/test if both listeners are needed
         bind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    checkInputText(textView, Db.NAME);
+                    checkInputText(textView);
                     hideKeyboard(textView);
                     return true;
                 }
@@ -146,7 +145,7 @@ public class GameAddEditFragment extends DialogFragment {
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_game_name && !hasFocus) {
                     if (view instanceof EditText) {
-                        checkInputText((EditText) view, Db.NAME);
+                        checkInputText((EditText) view);
                     }
                 }
             }
@@ -228,6 +227,9 @@ public class GameAddEditFragment extends DialogFragment {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
+        // Setup Monitor Detais TextView
+        updateMonitorDetails(mGame, bind.tvMonitorDetails);
+
         // Setup Monitor Details Dialog
         final AlertDialog.Builder monitorDialog = new AlertDialog.Builder(mContext);
         final DialogMonitorDetailsBinding dialogBind = DataBindingUtil.inflate(
@@ -238,6 +240,7 @@ public class GameAddEditFragment extends DialogFragment {
         monitorDialog.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                // this gets called if user taps on Done button
                 ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
                 updateMonitorDetails(mGame, bind.tvMonitorDetails);
                 dialogInterface.dismiss();
@@ -246,6 +249,7 @@ public class GameAddEditFragment extends DialogFragment {
         monitorDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
+                // this gets called if user taps outside of dialog
                 ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
                 updateMonitorDetails(mGame, bind.tvMonitorDetails);
                 dialogInterface.dismiss();
@@ -262,6 +266,7 @@ public class GameAddEditFragment extends DialogFragment {
         dialogBind.npGameMonitorSize.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                mGame.setMonitorSize(numberPicker.getValue());
                 mValuesBundle.putInt(Db.MONITOR_SIZE, numberPicker.getValue());
             }
         });
@@ -275,6 +280,7 @@ public class GameAddEditFragment extends DialogFragment {
         dialogBind.npGameMonitorPhospher.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                mGame.setMonitorPhospher(numberPicker.getValue());
                 mValuesBundle.putInt(Db.MONITOR_PHOSPHER, numberPicker.getValue());
             }
         });
@@ -288,6 +294,7 @@ public class GameAddEditFragment extends DialogFragment {
         dialogBind.npGameMonitorBeam.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                mGame.setMonitorBeam(numberPicker.getValue());
                 mValuesBundle.putInt(Db.MONITOR_BEAM, numberPicker.getValue());
             }
         });
@@ -301,6 +308,7 @@ public class GameAddEditFragment extends DialogFragment {
         dialogBind.npGameMonitorTech.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                mGame.setMonitorTech(numberPicker.getValue());
                 mValuesBundle.putInt(Db.MONITOR_TECH, numberPicker.getValue());
             }
         });
@@ -336,7 +344,7 @@ public class GameAddEditFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 // get text from EditText
-                checkInputText(bind.etGameName, Db.NAME);
+                checkInputText(bind.etGameName);
                 if (TextUtils.isEmpty(bind.etGameName.getText())) {
                     PromptUser.displayAlert(mContext,
                             R.string.error_add_game_failed,
@@ -446,8 +454,6 @@ public class GameAddEditFragment extends DialogFragment {
             }
 
             // Convert mValuesBundle to HashMap for Firebase call to updateChildren()
-            // used a bundle to catch values from the UI to preserve instance state,
-            // perhaps this is not necessary
             Map<String, Object> valuesToUpdate = new HashMap<>();
 
             for (String key : Db.GAME_STRINGS) {
@@ -475,17 +481,16 @@ public class GameAddEditFragment extends DialogFragment {
                     }
                 }
             });
-        } else {
-            // user is not signed in
+//        } else {
+//            // user is not signed in
         }
     }
 
-    private void checkInputText(TextView textView, String key) {
+    private void checkInputText(TextView textView) {
         String input = textView.getText().toString().trim();
         if (textInputIsValid(input)) {
             // text input was valid, add the input to mValuesBundle.
-            // TODO: check/test to see if this is necessary.
-            mValuesBundle.putString(key, input);
+            mValuesBundle.putString(Db.NAME, input);
         } else if (mEdit) {
             // text input was not valid, and we are editing an existing Game instance,
             // so restore the EditText text to the original text for the Game instance.
