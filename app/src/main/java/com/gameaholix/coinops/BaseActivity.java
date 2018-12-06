@@ -3,6 +3,8 @@ package com.gameaholix.coinops;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -18,19 +20,41 @@ import com.google.firebase.auth.FirebaseUser;
 
 public abstract class BaseActivity extends AppCompatActivity implements
     NetworkUtils.CheckInternetConnection.TaskCompleted {
-    private static final String EXTRA_NETWORK_MESSAGE = "CoinopsNetworkMessage";
+    private static final String EXTRA_NETWORK_DISABLED = "CoinOpsNetworkDisabledShown";
+    private static final String EXTRA_NETWORK_NOT_CONNECTED = "CoinOpsNetworkNotConnectedShown";
 
     private ProgressDialog mProgressDialog;
     private CoordinatorLayout mCoordinatorLayout;
+    private boolean mNetworkDisabledMessageShown;
+    private boolean mNetworkNotConnectedMessageShown;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mNetworkDisabledMessageShown = savedInstanceState.getBoolean(EXTRA_NETWORK_DISABLED);
+            mNetworkNotConnectedMessageShown =
+                    savedInstanceState.getBoolean(EXTRA_NETWORK_NOT_CONNECTED);
+        }
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (NetworkUtils.isNetworkEnabled(this) && mCoordinatorLayout != null) {
+        if (mCoordinatorLayout != null && NetworkUtils.isNetworkEnabled(this)) {
             new NetworkUtils.CheckInternetConnection(this).execute();
-        } else {
+        } else if (!mNetworkDisabledMessageShown) {
             PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_unavailable);
+            mNetworkDisabledMessageShown = true;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(EXTRA_NETWORK_DISABLED, mNetworkDisabledMessageShown);
+        outState.putBoolean(EXTRA_NETWORK_NOT_CONNECTED, mNetworkNotConnectedMessageShown);
     }
 
     public CoordinatorLayout getCoordinatorLayout() {
@@ -64,8 +88,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void onInternetCheckCompleted(boolean networkIsOnline) {
-        if (!networkIsOnline && mCoordinatorLayout != null) {
+        if (mCoordinatorLayout != null && !mNetworkNotConnectedMessageShown && !networkIsOnline) {
             PromptUser.displaySnackbar(mCoordinatorLayout, R.string.network_not_connected);
+            mNetworkNotConnectedMessageShown = true;
         }
     }
 
