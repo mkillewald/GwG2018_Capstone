@@ -454,7 +454,7 @@ public class GameAddEditFragment extends DialogFragment {
 
             // create new Map with full database paths as keys using values from mGame Map created above
             Map<String, Object> valuesWithPath = new HashMap<>();
-            for (String key : mGame.getMap().keySet()) {
+            for (String key : currentValues.keySet()) {
                 valuesWithPath.put(gameRef.child(key).getPath().toString(), currentValues.get(key));
                 if (key.equals(Db.NAME)) {
                     valuesWithPath.put(userGameListRef.getPath().toString(), currentValues.get(key));
