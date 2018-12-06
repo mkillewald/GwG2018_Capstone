@@ -132,6 +132,7 @@ public class GameAddEditFragment extends DialogFragment {
         bind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                // Verify input and hide keyboard if IME_ACTION_DONE
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     checkInputText(textView);
                     hideKeyboard(textView);
@@ -143,6 +144,7 @@ public class GameAddEditFragment extends DialogFragment {
         bind.etGameName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
+                // Verify input if editText loses focus
                 if (view.getId() == R.id.et_game_name && !hasFocus) {
                     if (view instanceof EditText) {
                         checkInputText((EditText) view);
@@ -343,7 +345,7 @@ public class GameAddEditFragment extends DialogFragment {
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // get text from EditText
+                // Verify EditText input if user taps on btnSave before onEditorAction or onFocusChange
                 checkInputText(bind.etGameName);
                 if (TextUtils.isEmpty(bind.etGameName.getText())) {
                     PromptUser.displayAlert(mContext,
