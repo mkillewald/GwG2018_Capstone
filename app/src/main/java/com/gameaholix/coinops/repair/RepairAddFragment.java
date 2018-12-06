@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentRepairAddBinding;
-import com.gameaholix.coinops.game.GameAddFragment;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.PromptUser;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RepairAddFragment extends DialogFragment {
-    private static final String TAG = GameAddFragment.class.getSimpleName();
+    private static final String TAG = RepairAddFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
 
