@@ -25,10 +25,10 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentGameAddBinding;
 import com.gameaholix.coinops.databinding.DialogMonitorDetailsBinding;
-import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.databinding.FragmentGameAddBinding;
 import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,17 +39,29 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameAddFragment extends DialogFragment {
-    private static final String TAG = GameAddFragment.class.getSimpleName();
+public class GameAddEditFragment extends DialogFragment {
+    private static final String TAG = GameAddEditFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
+    private static final String EXTRA_VALUES = "CoinOpsGameValuesToUpdate";
 
     private Context mContext;
-    private Game mNewGame;
+    private Game mGame;
     private FirebaseUser mUser;
+    private Bundle mValuesBundle;
     private DatabaseReference mDatabaseReference;
+    private OnFragmentInteractionListener mListener;
+    private boolean mEdit;
 
-    public GameAddFragment() {
+    public GameAddEditFragment() {
         // Required empty public constructor
+    }
+
+    public static GameAddEditFragment newInstance(Game game) {
+        Bundle args = new Bundle();
+        GameAddEditFragment fragment = new GameAddEditFragment();
+        args.putParcelable(EXTRA_GAME, game);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -58,9 +70,17 @@ public class GameAddFragment extends DialogFragment {
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
         if (savedInstanceState == null) {
-            mNewGame = new Game();
+            if (getArguments() != null) {
+                mEdit = true;
+                mGame = getArguments().getParcelable(EXTRA_GAME);
+            } else {
+                mEdit = false;
+                mGame = new Game();
+            }
+            mValuesBundle = new Bundle();
         } else {
-            mNewGame = savedInstanceState.getParcelable(EXTRA_GAME);
+            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
+            mValuesBundle = savedInstanceState.getBundle(EXTRA_VALUES);
         }
 
         // Initialize Firebase components
@@ -107,12 +127,14 @@ public class GameAddFragment extends DialogFragment {
                 inflater, R.layout.fragment_game_add, container, false);
         final View rootView = bind.getRoot();
 
-
         // Setup EditText
+        if (mEdit) bind.etGameName.setText(mGame.getName());
+        // TODO: check/test if both listeners are needed
         bind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
+                    checkInputText(textView, Db.NAME);
                     hideKeyboard(textView);
                     return true;
                 }
@@ -124,7 +146,7 @@ public class GameAddFragment extends DialogFragment {
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_game_name && !hasFocus) {
                     if (view instanceof EditText) {
-                        hideKeyboard((EditText) view);
+                        checkInputText((EditText) view, Db.NAME);
                     }
                 }
             }
@@ -135,10 +157,11 @@ public class GameAddFragment extends DialogFragment {
                 mContext, R.array.game_type, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerGameType.setAdapter(typeAdapter);
+        if (mEdit) bind.spinnerGameType.setSelection(mGame.getType());
         bind.spinnerGameType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mNewGame.setType(position);
+                mValuesBundle.putInt(Db.TYPE, position);
             }
 
             @Override
@@ -149,10 +172,11 @@ public class GameAddFragment extends DialogFragment {
                 mContext, R.array.game_cabinet, android.R.layout.simple_spinner_item);
         cabinetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerGameCabinet.setAdapter(cabinetAdapter);
+        if (mEdit) bind.spinnerGameCabinet.setSelection(mGame.getCabinet());
         bind.spinnerGameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mNewGame.setCabinet(position);
+                mValuesBundle.putInt(Db.CABINET, position);
             }
 
             @Override
@@ -163,10 +187,11 @@ public class GameAddFragment extends DialogFragment {
                 mContext, R.array.game_working, android.R.layout.simple_spinner_item);
         workingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerGameWorking.setAdapter(workingAdapter);
+        if (mEdit) bind.spinnerGameWorking.setSelection(mGame.getWorking());
         bind.spinnerGameWorking.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mNewGame.setWorking(position);
+                mValuesBundle.putInt(Db.WORKING, position);
             }
 
             @Override
@@ -177,10 +202,11 @@ public class GameAddFragment extends DialogFragment {
                 mContext, R.array.game_ownership, android.R.layout.simple_spinner_item);
         ownershipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerGameOwnership.setAdapter(ownershipAdapter);
+        if (mEdit) bind.spinnerGameOwnership.setSelection(mGame.getOwnership());
         bind.spinnerGameOwnership.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mNewGame.setOwnership(position);
+                mValuesBundle.putInt(Db.OWNERSHIP, position);
             }
 
             @Override
@@ -191,10 +217,11 @@ public class GameAddFragment extends DialogFragment {
                 mContext, R.array.game_condition, android.R.layout.simple_spinner_item);
         conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerGameCondition.setAdapter(conditionAdapter);
+        if (mEdit) bind.spinnerGameCondition.setSelection(mGame.getCondition());
         bind.spinnerGameCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mNewGame.setCondition(position);
+                mValuesBundle.putInt(Db.CONDITION, position);
             }
 
             @Override
@@ -211,16 +238,16 @@ public class GameAddFragment extends DialogFragment {
         monitorDialog.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                updateMonitorDetails(mNewGame, bind.tvMonitorDetails);
                 ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
+                updateMonitorDetails(mGame, bind.tvMonitorDetails);
                 dialogInterface.dismiss();
             }
         });
         monitorDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
-                updateMonitorDetails(mNewGame, bind.tvMonitorDetails);
                 ((ViewGroup) monitorDialogView.getParent()).removeView(monitorDialogView);
+                updateMonitorDetails(mGame, bind.tvMonitorDetails);
                 dialogInterface.dismiss();
             }
         });
@@ -231,11 +258,11 @@ public class GameAddFragment extends DialogFragment {
         dialogBind.npGameMonitorSize.setDisplayedValues(
                 getResources().getStringArray(R.array.game_monitor_size));
         dialogBind.npGameMonitorSize.setWrapSelectorWheel(false);
-        dialogBind.npGameMonitorSize.setValue(mNewGame.getMonitorSize());
+        dialogBind.npGameMonitorSize.setValue(mGame.getMonitorSize());
         dialogBind.npGameMonitorSize.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                mNewGame.setMonitorSize(numberPicker.getValue());
+                mValuesBundle.putInt(Db.MONITOR_SIZE, numberPicker.getValue());
             }
         });
 
@@ -244,11 +271,11 @@ public class GameAddFragment extends DialogFragment {
         dialogBind.npGameMonitorPhospher.setDisplayedValues(
                 getResources().getStringArray(R.array.game_monitor_phospher));
         dialogBind.npGameMonitorPhospher.setWrapSelectorWheel(false);
-        dialogBind.npGameMonitorPhospher.setValue(mNewGame.getMonitorPhospher());
+        dialogBind.npGameMonitorPhospher.setValue(mGame.getMonitorPhospher());
         dialogBind.npGameMonitorPhospher.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                mNewGame.setMonitorPhospher(numberPicker.getValue());
+                mValuesBundle.putInt(Db.MONITOR_PHOSPHER, numberPicker.getValue());
             }
         });
 
@@ -257,11 +284,11 @@ public class GameAddFragment extends DialogFragment {
         dialogBind.npGameMonitorBeam.setDisplayedValues(
                 getResources().getStringArray(R.array.game_monitor_beam));
         dialogBind.npGameMonitorBeam.setWrapSelectorWheel(false);
-        dialogBind.npGameMonitorBeam.setValue(mNewGame.getMonitorBeam());
+        dialogBind.npGameMonitorBeam.setValue(mGame.getMonitorBeam());
         dialogBind.npGameMonitorBeam.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                mNewGame.setMonitorBeam(numberPicker.getValue());
+                mValuesBundle.putInt(Db.MONITOR_BEAM, numberPicker.getValue());
             }
         });
 
@@ -270,11 +297,11 @@ public class GameAddFragment extends DialogFragment {
         dialogBind.npGameMonitorTech.setDisplayedValues(
                 getResources().getStringArray(R.array.game_monitor_tech));
         dialogBind.npGameMonitorTech.setWrapSelectorWheel(false);
-        dialogBind.npGameMonitorTech.setValue(mNewGame.getMonitorTech());
+        dialogBind.npGameMonitorTech.setValue(mGame.getMonitorTech());
         dialogBind.npGameMonitorTech.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                mNewGame.setMonitorTech(numberPicker.getValue());
+                mValuesBundle.putInt(Db.MONITOR_TECH, numberPicker.getValue());
             }
         });
 
@@ -292,17 +319,33 @@ public class GameAddFragment extends DialogFragment {
         bind.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getDialog().dismiss();
+                if (getShowsDialog()) {
+                    getDialog().dismiss();
+                } else {
+                    mListener.onEditCompletedOrCancelled();
+                }
             }
         });
 
-        bind.btnSave.setText(R.string.add_game);
+        if (mEdit) {
+            bind.btnSave.setText(R.string.save_changes);
+        } else {
+            bind.btnSave.setText(R.string.add_game);
+        }
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // get text from EditText
-                mNewGame.setName(bind.etGameName.getText().toString().trim());
-                addGame(mNewGame);
+                checkInputText(bind.etGameName, Db.NAME);
+                if (TextUtils.isEmpty(bind.etGameName.getText())) {
+                    PromptUser.displayAlert(mContext,
+                            R.string.error_add_game_failed,
+                            R.string.error_name_empty);
+                    Log.e(TAG, "Failed to add game! Name field was blank.");
+                } else {
+                    addEditGame();
+                    if (mEdit) mListener.onEditCompletedOrCancelled();
+                }
             }
         });
 
@@ -313,7 +356,8 @@ public class GameAddFragment extends DialogFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_GAME, mNewGame);
+        outState.putParcelable(EXTRA_GAME, mGame);
+        outState.putBundle(EXTRA_VALUES, mValuesBundle);
     }
 
     @Override
@@ -334,6 +378,18 @@ public class GameAddFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     private void updateMonitorDetails(Game game, TextView monitorDetails) {
@@ -354,56 +410,121 @@ public class GameAddFragment extends DialogFragment {
         }
     }
 
-    private void addGame(Game game) {
-        if (TextUtils.isEmpty(game.getName())) {
-            PromptUser.displayAlert(mContext,
-                    R.string.error_add_game_failed,
-                    R.string.error_name_empty);
-            Log.d(TAG, "Failed to add game! Name field was blank.");
-            return;
-        }
+    private void addEditGame() {
+        if (getShowsDialog()) getDialog().dismiss();
 
-        getDialog().dismiss();
-
-        // Add Game object to Firebase
+        // add new game or update existing game to firebase
         if (mUser != null) {
             // user is signed in
-            final String uid = mUser.getUid();
+            String uid = mUser.getUid();
 
-            final DatabaseReference gameRef = mDatabaseReference.child(Db.GAME).child(uid);
-            final String gameId = gameRef.push().getKey();
+            DatabaseReference gameRootRef = mDatabaseReference.child(Db.GAME).child(uid);
+
+            DatabaseReference gameRef;
+            DatabaseReference userGameListRef;
+            String gameId;
+
+            if (mEdit) {
+                gameId = mGame.getId();
+            } else {
+                gameId = gameRootRef.push().getKey();
+            }
 
             if (!TextUtils.isEmpty(gameId)) {
-                DatabaseReference userGameListRef = mDatabaseReference
+                gameRef = gameRootRef.child(gameId);
+                userGameListRef = mDatabaseReference
                         .child(Db.USER)
                         .child(uid)
                         .child(Db.GAME_LIST)
                         .child(gameId);
-
-                Map<String, Object> valuesToAdd = new HashMap<>();
-                valuesToAdd.put(gameRef.child(gameId).getPath().toString(), mNewGame);
-                valuesToAdd.put(userGameListRef.getPath().toString(), game.getName());
-
-                mDatabaseReference.updateChildren(valuesToAdd, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                    " Code: " + databaseError.getCode() +
-                                    " Details: " + databaseError.getDetails());
-                        }
-                    }
-                });
+            } else {
+                PromptUser.displayAlert(mContext,
+                        R.string.error_update_database_failed,
+                        R.string.error_game_id_empty);
+                Log.e(TAG, "Failed to add or update database! Game ID cannot be an empty string.");
+                return;
             }
 
-//        } else {
-//            // user is not signed in
+            // Convert mValuesBundle to HashMap for Firebase call to updateChildren()
+            // used a bundle to catch values from the UI to preserve instance state,
+            // perhaps this is not necessary
+            Map<String, Object> valuesToUpdate = new HashMap<>();
+
+            for (String key : Db.GAME_STRINGS) {
+                if (mValuesBundle.containsKey(key)) {
+                    valuesToUpdate.put(gameRef.child(key).getPath().toString(), mValuesBundle.getString(key));
+                    if (key.equals(Db.NAME)) {
+                        valuesToUpdate.put(userGameListRef.getPath().toString(), mValuesBundle.getString(key));
+                    }
+                }
+            }
+
+            for (String key : Db.GAME_INTS) {
+                if (mValuesBundle.containsKey(key)) {
+                    valuesToUpdate.put(gameRef.child(key).getPath().toString(), mValuesBundle.getInt(key));
+                }
+            }
+
+            mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError != null) {
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+        } else {
+            // user is not signed in
         }
+    }
+
+    private void checkInputText(TextView textView, String key) {
+        String input = textView.getText().toString().trim();
+        if (textInputIsValid(input)) {
+            // text input was valid, add the input to mValuesBundle.
+            // TODO: check/test to see if this is necessary.
+            mValuesBundle.putString(key, input);
+        } else if (mEdit) {
+            // text input was not valid, and we are editing an existing Game instance,
+            // so restore the EditText text to the original text for the Game instance.
+            textView.setText(mGame.getName());
+        } else {
+            // text input was not valid, and we are adding a game, so clear the text
+            textView.setText(null);
+        }
+    }
+
+    private boolean textInputIsValid(String inputText) {
+        boolean result = true;
+
+        // TODO: possibly add more validation checks, and return false if any one of them fails.
+        if (TextUtils.isEmpty(inputText)) {
+            Log.d(TAG, "User input was blank or empty.");
+            result = false;
+        }
+
+        return result;
     }
 
     private void hideKeyboard(TextView view) {
         InputMethodManager imm = (InputMethodManager) view
                 .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        void onEditCompletedOrCancelled();
     }
 }

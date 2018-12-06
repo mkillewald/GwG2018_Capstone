@@ -13,12 +13,12 @@ import android.transition.TransitionInflater;
 import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.ListRow;
-import com.gameaholix.coinops.utility.NetworkUtils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 public class GameListActivity extends BaseActivity implements
-        GameListFragment.OnFragmentInteractionListener {
+        GameListFragment.OnFragmentInteractionListener,
+        GameAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = GameListActivity.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
@@ -82,7 +82,13 @@ public class GameListActivity extends BaseActivity implements
 
     private void showAddGameDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        GameAddFragment fragment = new GameAddFragment();
-        fragment.show(fm, "fragment_game_add");
+        GameAddEditFragment fragment = new GameAddEditFragment();
+        fragment.show(fm, "fragment_game_add_edit");
+    }
+
+
+    @Override
+    public void onEditCompletedOrCancelled() {
+        // no operation
     }
 }

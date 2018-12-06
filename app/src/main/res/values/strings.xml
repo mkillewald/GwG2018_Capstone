@@ -175,6 +175,7 @@
     erased.\n\n This is a permanent action and cannot be undone.</string>
 
     <!-- Error Messages -->
+    <string name="error_update_database_failed">Failed to update database!</string>
     <string name="error_add_game_failed">Failed to add game!</string>
 
     <string name="error_add_inventory_failed">Failed to add part!</string>
@@ -189,6 +190,7 @@
 
     <string name="error_please_try_again">Please try again.</string>
     <string name="error_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
+    <string name="error_game_id_empty">Game ID is null or invalid. Please notify the developer of this error.</string>
     <string name="error_repair_log_description_empty">Trouble description cannot be blank. Please
         describe the problem that is occurring and try again.</string>
     <string name="error_repair_step_entry_empty">Repair step cannot be blank. Please
@@ -212,8 +214,5 @@
     <string name="to_do_list_widget_title">CoinOps To Do List</string>
     <string name="shopping_list_empty">Shopping List is empty</string>
     <string name="shopping_list_widget_title">CoinOps Shopping List</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-
 
 </resources>

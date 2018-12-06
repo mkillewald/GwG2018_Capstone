@@ -39,7 +39,7 @@ import com.google.android.gms.ads.AdView;
 
 public class GameDetailActivity extends BaseActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
-        GameEditFragment.OnFragmentInteractionListener,
+        GameAddEditFragment.OnFragmentInteractionListener,
         RepairListFragment.OnFragmentInteractionListener,
         ToDoListFragment.OnFragmentInteractionListener,
         ShoppingListFragment.OnFragmentInteractionListener {
@@ -154,7 +154,7 @@ public class GameDetailActivity extends BaseActivity implements
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (mViewPager.getCurrentItem() == 0) {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
-            if (currentFragment instanceof GameEditFragment) {
+            if (currentFragment instanceof GameAddEditFragment) {
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
                 menu.findItem(R.id.menu_delete_game).setVisible(false);
                 mAdView.setVisibility(View.GONE);
@@ -269,10 +269,10 @@ public class GameDetailActivity extends BaseActivity implements
     @Override
     public void onEditButtonPressed(Game game) {
         mAdView.setVisibility(View.GONE);
-        // replace GameDetailFragment with GameEditFragment
-        Fragment editGameFragment = GameEditFragment.newInstance(game);
+        // replace GameDetailFragment with GameAddEditFragment
+        Fragment addEditGameFragment = GameAddEditFragment.newInstance(game);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_placeholder, editGameFragment);
+        ft.replace(R.id.fragment_placeholder, addEditGameFragment);
         ft.commit();
 
         invalidateOptionsMenu();
@@ -280,7 +280,7 @@ public class GameDetailActivity extends BaseActivity implements
 
     @Override
     public void onEditCompletedOrCancelled() {
-        // replace GameEditFragment with GameDetailFragment
+        // replace GameAddEditFragment with GameDetailFragment
         Fragment gameDetailFragment = GameDetailFragment.newInstance(mGameId);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, gameDetailFragment);
