@@ -32,18 +32,6 @@ public class Db {
     public static final String DESCRIPTION = "description";
     public static final String PRIORITY = "priority";
 
-    public static final String[] GAME_STRINGS = { Db.NAME };
-    public static final String[] GAME_INTS = {
-            Db.TYPE,
-            Db.CABINET,
-            Db.WORKING,
-            Db.OWNERSHIP,
-            Db.CONDITION,
-            Db.MONITOR_SIZE,
-            Db.MONITOR_PHOSPHER,
-            Db.MONITOR_BEAM,
-            Db.MONITOR_TECH };
-
     public static final String[] INVENTORY_STRINGS = {Db.NAME, Db.DESCRIPTION};
     public static final String[] INVENTORY_INTS = {Db.TYPE, Db.CONDITION };
 

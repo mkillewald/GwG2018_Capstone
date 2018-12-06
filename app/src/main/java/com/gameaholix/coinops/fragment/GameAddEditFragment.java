@@ -42,12 +42,11 @@ import java.util.Map;
 public class GameAddEditFragment extends DialogFragment {
     private static final String TAG = GameAddEditFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
-    private static final String EXTRA_VALUES = "CoinOpsGameValuesToUpdate";
+    private static final String EXTRA_GAME_EDIT_FLAG = "CoinOpsGameEditFlag";
 
     private Context mContext;
     private Game mGame;
     private FirebaseUser mUser;
-    private Bundle mValuesBundle;
     private DatabaseReference mDatabaseReference;
     private OnFragmentInteractionListener mListener;
     private boolean mEdit;
@@ -77,10 +76,9 @@ public class GameAddEditFragment extends DialogFragment {
                 mEdit = false;
                 mGame = new Game();
             }
-            mValuesBundle = new Bundle();
         } else {
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
-            mValuesBundle = savedInstanceState.getBundle(EXTRA_VALUES);
+            mEdit = savedInstanceState.getBoolean(EXTRA_GAME_EDIT_FLAG);
         }
 
         // Initialize Firebase components
@@ -162,7 +160,7 @@ public class GameAddEditFragment extends DialogFragment {
         bind.spinnerGameType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mValuesBundle.putInt(Db.TYPE, position);
+                mGame.setType(position);
             }
 
             @Override
@@ -177,7 +175,7 @@ public class GameAddEditFragment extends DialogFragment {
         bind.spinnerGameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mValuesBundle.putInt(Db.CABINET, position);
+                mGame.setCabinet(position);
             }
 
             @Override
@@ -192,7 +190,7 @@ public class GameAddEditFragment extends DialogFragment {
         bind.spinnerGameWorking.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mValuesBundle.putInt(Db.WORKING, position);
+                mGame.setWorking(position);
             }
 
             @Override
@@ -207,7 +205,7 @@ public class GameAddEditFragment extends DialogFragment {
         bind.spinnerGameOwnership.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mValuesBundle.putInt(Db.OWNERSHIP, position);
+                mGame.setOwnership(position);
             }
 
             @Override
@@ -222,7 +220,7 @@ public class GameAddEditFragment extends DialogFragment {
         bind.spinnerGameCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mValuesBundle.putInt(Db.CONDITION, position);
+                mGame.setCondition(position);
             }
 
             @Override
@@ -269,7 +267,6 @@ public class GameAddEditFragment extends DialogFragment {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 mGame.setMonitorSize(numberPicker.getValue());
-                mValuesBundle.putInt(Db.MONITOR_SIZE, numberPicker.getValue());
             }
         });
 
@@ -283,7 +280,6 @@ public class GameAddEditFragment extends DialogFragment {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 mGame.setMonitorPhospher(numberPicker.getValue());
-                mValuesBundle.putInt(Db.MONITOR_PHOSPHER, numberPicker.getValue());
             }
         });
 
@@ -297,7 +293,6 @@ public class GameAddEditFragment extends DialogFragment {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 mGame.setMonitorBeam(numberPicker.getValue());
-                mValuesBundle.putInt(Db.MONITOR_BEAM, numberPicker.getValue());
             }
         });
 
@@ -311,7 +306,6 @@ public class GameAddEditFragment extends DialogFragment {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 mGame.setMonitorTech(numberPicker.getValue());
-                mValuesBundle.putInt(Db.MONITOR_TECH, numberPicker.getValue());
             }
         });
 
@@ -367,7 +361,7 @@ public class GameAddEditFragment extends DialogFragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(EXTRA_GAME, mGame);
-        outState.putBundle(EXTRA_VALUES, mValuesBundle);
+        outState.putBoolean(EXTRA_GAME_EDIT_FLAG, mEdit);
     }
 
     @Override
@@ -455,25 +449,20 @@ public class GameAddEditFragment extends DialogFragment {
                 return;
             }
 
-            // Convert mValuesBundle to HashMap for Firebase call to updateChildren()
-            Map<String, Object> valuesToUpdate = new HashMap<>();
+            // convert mGame instance to Map so it can be iterated
+            Map<String, Object> currentValues = mGame.getMap();
 
-            for (String key : Db.GAME_STRINGS) {
-                if (mValuesBundle.containsKey(key)) {
-                    valuesToUpdate.put(gameRef.child(key).getPath().toString(), mValuesBundle.getString(key));
-                    if (key.equals(Db.NAME)) {
-                        valuesToUpdate.put(userGameListRef.getPath().toString(), mValuesBundle.getString(key));
-                    }
+            // create new Map with full database paths as keys using values from mGame Map created above
+            Map<String, Object> valuesWithPath = new HashMap<>();
+            for (String key : mGame.getMap().keySet()) {
+                valuesWithPath.put(gameRef.child(key).getPath().toString(), currentValues.get(key));
+                if (key.equals(Db.NAME)) {
+                    valuesWithPath.put(userGameListRef.getPath().toString(), currentValues.get(key));
                 }
             }
 
-            for (String key : Db.GAME_INTS) {
-                if (mValuesBundle.containsKey(key)) {
-                    valuesToUpdate.put(gameRef.child(key).getPath().toString(), mValuesBundle.getInt(key));
-                }
-            }
-
-            mDatabaseReference.updateChildren(valuesToUpdate, new DatabaseReference.CompletionListener() {
+            // perform atomic update to firebase using Map with database paths as keys
+            mDatabaseReference.updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                     if (databaseError != null) {
@@ -492,7 +481,7 @@ public class GameAddEditFragment extends DialogFragment {
         String input = textView.getText().toString().trim();
         if (textInputIsValid(input)) {
             // text input was valid, add the input to mValuesBundle.
-            mValuesBundle.putString(Db.NAME, input);
+            mGame.setName(input);
         } else if (mEdit) {
             // text input was not valid, and we are editing an existing Game instance,
             // so restore the EditText text to the original text for the Game instance.

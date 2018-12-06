@@ -3,7 +3,11 @@ package com.gameaholix.coinops.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.gameaholix.coinops.firebase.Db;
 import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Game implements Parcelable {
 
@@ -105,6 +109,22 @@ public class Game implements Parcelable {
         @Override
         public Game[] newArray(int size) { return (new Game[size]); }
     };
+
+    public Map<String, Object> getMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(Db.NAME, getName());
+        map.put(Db.TYPE, getType());
+        map.put(Db.CABINET, getCabinet());
+        map.put(Db.CONDITION, getCondition());
+        map.put(Db.WORKING, getWorking());
+        map.put(Db.OWNERSHIP, getOwnership());
+        map.put(Db.MONITOR_SIZE, getMonitorSize());
+        map.put(Db.MONITOR_PHOSPHER, getMonitorPhospher());
+        map.put(Db.MONITOR_BEAM, getMonitorBeam());
+        map.put(Db.MONITOR_TECH, getMonitorTech());
+
+        return map;
+    }
 
     // Exclude id from being written to database as a field (id is already the parent node)
     @Exclude
