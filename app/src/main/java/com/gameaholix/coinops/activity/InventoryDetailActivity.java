@@ -16,8 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.fragment.InventoryAddEditFragment;
 import com.gameaholix.coinops.fragment.InventoryDetailFragment;
-import com.gameaholix.coinops.fragment.InventoryEditFragment;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.firebase.Db;
 import com.google.android.gms.ads.AdRequest;
@@ -29,7 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class InventoryDetailActivity extends BaseActivity implements
         InventoryDetailFragment.OnFragmentInteractionListener,
-        InventoryEditFragment.OnFragmentInteractionListener {
+        InventoryAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = InventoryDetailActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
 
@@ -99,7 +99,7 @@ public class InventoryDetailActivity extends BaseActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof InventoryEditFragment) {
+        if (currentFragment instanceof InventoryAddEditFragment) {
             menu.findItem(R.id.menu_edit_inventory).setVisible(false);
         } else {
             menu.findItem(R.id.menu_edit_inventory).setVisible(true);
@@ -135,18 +135,17 @@ public class InventoryDetailActivity extends BaseActivity implements
     @Override
     public void onEditButtonPressed(InventoryItem inventoryItem) {
         mAdView.setVisibility(View.GONE);
-        // replace InventoryDetailFragment with InventoryEditFragment
+        // replace InventoryDetailFragment with InventoryAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, InventoryEditFragment.newInstance(inventoryItem));
+        ft.replace(R.id.fragment_container, InventoryAddEditFragment.newInstance(inventoryItem));
         ft.commit();
 
         invalidateOptionsMenu();
     }
 
     @Override
-    public void onEditCompletedOrCancelled() {
-
-        // replace InventoryEditFragment with InventoryDetailFragment
+    public void onAddEditCompletedOrCancelled() {
+        // replace InventoryAddEditFragment with InventoryDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance(mInventoryItem));
         ft.commit();

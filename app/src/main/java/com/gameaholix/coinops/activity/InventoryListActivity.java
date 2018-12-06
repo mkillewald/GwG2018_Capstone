@@ -11,14 +11,15 @@ import android.transition.Transition;
 import android.transition.TransitionInflater;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.fragment.InventoryAddFragment;
+import com.gameaholix.coinops.fragment.InventoryAddEditFragment;
 import com.gameaholix.coinops.fragment.InventoryListFragment;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 public class InventoryListActivity extends BaseActivity implements
-        InventoryListFragment.OnFragmentInteractionListener {
+        InventoryListFragment.OnFragmentInteractionListener,
+        InventoryAddEditFragment.OnFragmentInteractionListener {
 
 //    private static final String TAG = InventoryListActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY = "com.gameaholix.coinops.model.InventoryItem";
@@ -83,7 +84,12 @@ public class InventoryListActivity extends BaseActivity implements
 
     private void showAddInventoryDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        InventoryAddFragment fragment = new InventoryAddFragment();
+        InventoryAddEditFragment fragment = new InventoryAddEditFragment();
         fragment.show(fm, "fragment_inventory_add");
+    }
+
+    @Override
+    public void onAddEditCompletedOrCancelled() {
+        // no operation
     }
 }

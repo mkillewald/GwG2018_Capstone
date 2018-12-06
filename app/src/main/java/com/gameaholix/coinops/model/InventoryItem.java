@@ -3,6 +3,11 @@ package com.gameaholix.coinops.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.gameaholix.coinops.firebase.Db;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class InventoryItem extends Item implements Parcelable {
 
     private String description;
@@ -46,6 +51,16 @@ public class InventoryItem extends Item implements Parcelable {
         @Override
         public InventoryItem[] newArray(int size) { return (new InventoryItem[size]); }
     };
+
+    public Map<String, Object> getMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(Db.NAME, getName());
+        map.put(Db.DESCRIPTION, getDescription());
+        map.put(Db.TYPE, getType());
+        map.put(Db.CONDITION, getCondition());
+
+        return map;
+    }
 
     public String getDescription() {
         return description;

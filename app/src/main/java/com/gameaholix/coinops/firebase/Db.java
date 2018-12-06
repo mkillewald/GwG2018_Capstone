@@ -32,9 +32,6 @@ public class Db {
     public static final String DESCRIPTION = "description";
     public static final String PRIORITY = "priority";
 
-    public static final String[] INVENTORY_STRINGS = {Db.NAME, Db.DESCRIPTION};
-    public static final String[] INVENTORY_INTS = {Db.TYPE, Db.CONDITION };
-
     public static final String[] TO_DO_STRINGS = {Db.NAME, Db.DESCRIPTION};
     public static final String[] TO_DO_INTS = {Db.PRIORITY};
 }
