@@ -25,7 +25,7 @@ import com.gameaholix.coinops.fragment.GameDetailFragment;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.fragment.RepairAddFragment;
+import com.gameaholix.coinops.fragment.RepairAddEditFragment;
 import com.gameaholix.coinops.fragment.RepairListFragment;
 import com.gameaholix.coinops.fragment.ShoppingAddFragment;
 import com.gameaholix.coinops.fragment.ShoppingEditFragment;
@@ -40,6 +40,7 @@ public class GameDetailActivity extends BaseActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
         GameAddEditFragment.OnFragmentInteractionListener,
         RepairListFragment.OnFragmentInteractionListener,
+        RepairAddEditFragment.OnFragmentInteractionListener,
         ToDoListFragment.OnFragmentInteractionListener,
         ShoppingListFragment.OnFragmentInteractionListener {
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
@@ -194,6 +195,7 @@ public class GameDetailActivity extends BaseActivity implements
     @Override
     public void onGameNameChanged(String name) {
         setTitle(name);
+        mGameName = name;
     }
 
     @Override
@@ -207,6 +209,11 @@ public class GameDetailActivity extends BaseActivity implements
         } else {
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onRepairAddEditCompletedOrCancelled() {
+        // no operation
     }
 
     @Override
@@ -247,7 +254,7 @@ public class GameDetailActivity extends BaseActivity implements
 
     private void showAddRepairDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        RepairAddFragment fragment = RepairAddFragment.newInstance(mGameId);
+        RepairAddEditFragment fragment = RepairAddEditFragment.newInstance(mGameId);
         fragment.show(fm, "fragment_repair_add");
     }
 
@@ -278,7 +285,7 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onAddEditCompletedOrCancelled() {
+    public void onGameAddEditCompletedOrCancelled() {
         // replace GameAddEditFragment with GameDetailFragment
         Fragment gameDetailFragment = GameDetailFragment.newInstance(mGameId);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

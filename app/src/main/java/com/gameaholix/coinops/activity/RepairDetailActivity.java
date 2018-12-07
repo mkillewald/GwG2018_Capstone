@@ -12,16 +12,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.fragment.RepairAddEditFragment;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.fragment.RepairDetailFragment;
-import com.gameaholix.coinops.fragment.RepairEditFragment;
 import com.gameaholix.coinops.fragment.StepAddFragment;
 import com.gameaholix.coinops.fragment.StepEditFragment;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 public class RepairDetailActivity extends BaseActivity implements
-        RepairDetailFragment.OnFragmentInteractionListener {
+        RepairDetailFragment.OnFragmentInteractionListener,
+        RepairAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = RepairDetailActivity.class.getSimpleName();
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
@@ -101,8 +102,13 @@ public class RepairDetailActivity extends BaseActivity implements
     @Override
     public void onDescriptionSelected() {
         FragmentManager fm = getSupportFragmentManager();
-        RepairEditFragment fragment = RepairEditFragment.newInstance(mRepairLog);
-        fragment.show(fm, "fragment_step_edit");
+        RepairAddEditFragment fragment = RepairAddEditFragment.newInstance(mRepairLog);
+        fragment.show(fm, "fragment_repair_add_edit");
+    }
+
+    @Override
+    public void onRepairAddEditCompletedOrCancelled() {
+        // no operation
     }
 
     @Override

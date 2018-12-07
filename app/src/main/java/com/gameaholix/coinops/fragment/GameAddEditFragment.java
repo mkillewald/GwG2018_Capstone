@@ -307,7 +307,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 if (getShowsDialog()) {
                     getDialog().dismiss();
                 } else {
-                    mListener.onAddEditCompletedOrCancelled();
+                    mListener.onGameAddEditCompletedOrCancelled();
                 }
             }
         });
@@ -325,7 +325,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 }
 
                 addEditGame();
-                mListener.onAddEditCompletedOrCancelled();
+                mListener.onGameAddEditCompletedOrCancelled();
             }
         });
 
@@ -458,6 +458,6 @@ public class GameAddEditFragment extends BaseDialogFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onAddEditCompletedOrCancelled();
+        void onGameAddEditCompletedOrCancelled();
     }
 }

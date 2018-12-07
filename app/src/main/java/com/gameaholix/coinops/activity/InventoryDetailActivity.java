@@ -144,7 +144,7 @@ public class InventoryDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onAddEditCompletedOrCancelled() {
+    public void onInventoryAddEditCompletedOrCancelled() {
         // replace InventoryAddEditFragment with InventoryDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance(mInventoryItem));

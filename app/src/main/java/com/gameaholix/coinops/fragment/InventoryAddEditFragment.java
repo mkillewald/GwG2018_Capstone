@@ -197,7 +197,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 if (getShowsDialog()) {
                     getDialog().dismiss();
                 } else {
-                    mListener.onAddEditCompletedOrCancelled();
+                    mListener.onInventoryAddEditCompletedOrCancelled();
                 }
             }
         });
@@ -222,7 +222,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 }
 
                 addEditItem();
-                mListener.onAddEditCompletedOrCancelled();
+                mListener.onInventoryAddEditCompletedOrCancelled();
             }
         });
 
@@ -337,6 +337,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onAddEditCompletedOrCancelled();
+        void onInventoryAddEditCompletedOrCancelled();
     }
 }

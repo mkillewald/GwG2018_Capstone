@@ -3,9 +3,11 @@ package com.gameaholix.coinops.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.gameaholix.coinops.firebase.Db;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Item implements Parcelable {
@@ -64,6 +66,14 @@ public class Item implements Parcelable {
         @Override
         public Item[] newArray(int size) { return (new Item[size]); }
     };
+
+    public Map<String, Object> getMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(Db.NAME, getName());
+        map.put(Db.PARENT_ID, getParentId());
+
+        return map;
+    }
 
     @Exclude
     public String getId() {

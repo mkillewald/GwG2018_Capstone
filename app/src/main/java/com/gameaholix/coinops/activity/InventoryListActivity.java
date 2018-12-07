@@ -89,7 +89,7 @@ public class InventoryListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onAddEditCompletedOrCancelled() {
+    public void onInventoryAddEditCompletedOrCancelled() {
         // no operation
     }
 }

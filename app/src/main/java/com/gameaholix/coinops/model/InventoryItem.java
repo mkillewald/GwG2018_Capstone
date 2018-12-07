@@ -52,6 +52,7 @@ public class InventoryItem extends Item implements Parcelable {
         public InventoryItem[] newArray(int size) { return (new InventoryItem[size]); }
     };
 
+    @Override
     public Map<String, Object> getMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(Db.NAME, getName());

@@ -89,7 +89,7 @@ public class GameListActivity extends BaseActivity implements
 
 
     @Override
-    public void onAddEditCompletedOrCancelled() {
+    public void onGameAddEditCompletedOrCancelled() {
         // no operation
     }
 }
