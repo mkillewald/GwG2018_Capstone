@@ -202,11 +202,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
             }
         });
 
-        if (mEdit) {
-            bind.btnSave.setText(R.string.save_changes);
-        } else {
-            bind.btnSave.setText(R.string.add_inventory_item);
-        }
+        if (mEdit) bind.btnSave.setText(R.string.save_changes);
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -239,20 +235,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
 
         outState.putParcelable(EXTRA_INVENTORY_ITEM, mItem);
         outState.putBoolean(EXTRA_EDIT_FLAG, mEdit);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // set width and height of this DialogFragment, code block used from
-        // https://stackoverflow.com/questions/12478520/how-to-set-dialogfragments-width-and-height
-        if (getShowsDialog() && getDialog().getWindow() != null) {
-            ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
-        }
     }
 
     @Override
