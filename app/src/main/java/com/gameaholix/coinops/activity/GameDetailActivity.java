@@ -278,7 +278,7 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onEditCompletedOrCancelled() {
+    public void onAddEditCompletedOrCancelled() {
         // replace GameAddEditFragment with GameDetailFragment
         Fragment gameDetailFragment = GameDetailFragment.newInstance(mGameId);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

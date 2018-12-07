@@ -1,7 +1,6 @@
 package com.gameaholix.coinops.fragment;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
@@ -13,11 +12,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -39,7 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameAddEditFragment extends DialogFragment {
+public class GameAddEditFragment extends BaseDialogFragment {
     private static final String TAG = GameAddEditFragment.class.getSimpleName();
     private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String EXTRA_GAME_EDIT_FLAG = "CoinOpsGameEditFlag";
@@ -87,32 +84,6 @@ public class GameAddEditFragment extends DialogFragment {
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-
-        // Hide keyboard after touch event occurs outside of EditText in DialogFragment
-        // Solution used from:
-        // https://stackoverflow.com/questions/16024297/is-there-an-equivalent-for-dispatchtouchevent-from-activity-in-dialog-or-dialo
-        if (getActivity() != null) {
-            return new Dialog(getActivity(), getTheme()) {
-                @Override
-                public boolean dispatchTouchEvent(@NonNull MotionEvent motionEvent) {
-                    if (getCurrentFocus() != null) {
-                        InputMethodManager imm =
-                                (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                        }
-                    }
-                    return super.dispatchTouchEvent(motionEvent);
-                }
-            };
-        } else {
-            return super.onCreateDialog(savedInstanceState);
-        }
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -132,7 +103,12 @@ public class GameAddEditFragment extends DialogFragment {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 // Verify input and hide keyboard if IME_ACTION_DONE
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    checkInputName(textView);
+                    String input = textView.getText().toString().trim();
+                    if (textInputIsValid(input)) {
+                        mGame.setName(input);
+                    } else {
+                        textView.setText(mGame.getName());
+                    }
                     hideKeyboard(textView);
                     return true;
                 }
@@ -145,7 +121,12 @@ public class GameAddEditFragment extends DialogFragment {
                 // Verify input if editText loses focus
                 if (view.getId() == R.id.et_game_name && !hasFocus) {
                     if (view instanceof EditText) {
-                        checkInputName((EditText) view);
+                        String input = ((EditText) view).getText().toString().trim();
+                        if (textInputIsValid(input)) {
+                            mGame.setName(input);
+                        } else {
+                            ((EditText) view).setText(mGame.getName());
+                        }
                     }
                 }
             }
@@ -326,7 +307,7 @@ public class GameAddEditFragment extends DialogFragment {
                 if (getShowsDialog()) {
                     getDialog().dismiss();
                 } else {
-                    mListener.onEditCompletedOrCancelled();
+                    mListener.onAddEditCompletedOrCancelled();
                 }
             }
         });
@@ -340,16 +321,15 @@ public class GameAddEditFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 // Verify EditText input if user taps on btnSave before onEditorAction or onFocusChange
-                checkInputName(bind.etGameName);
-                if (TextUtils.isEmpty(bind.etGameName.getText())) {
-                    PromptUser.displayAlert(mContext,
-                            R.string.error_add_game_failed,
-                            R.string.error_name_empty);
-                    Log.e(TAG, "Failed to add game! Name field was blank.");
+                String input = bind.etGameName.getText().toString().trim();
+                if (textInputIsValid(input)) {
+                    mGame.setName(input);
                 } else {
-                    addEditGame();
-                    if (mEdit) mListener.onEditCompletedOrCancelled();
+                    bind.etGameName.setText(mGame.getName());
                 }
+
+                addEditGame();
+                mListener.onAddEditCompletedOrCancelled();
             }
         });
 
@@ -415,6 +395,14 @@ public class GameAddEditFragment extends DialogFragment {
     }
 
     private void addEditGame() {
+        if (TextUtils.isEmpty(mGame.getName())) {
+            PromptUser.displayAlert(mContext,
+                    R.string.error_add_game_failed,
+                    R.string.error_name_empty);
+            Log.e(TAG, "Failed to add game! Name field was blank.");
+            return;
+        }
+
         if (getShowsDialog()) getDialog().dismiss();
 
         // add new game or update existing game to firebase
@@ -477,39 +465,6 @@ public class GameAddEditFragment extends DialogFragment {
         }
     }
 
-    private void checkInputName(TextView textView) {
-        String input = textView.getText().toString().trim();
-        if (textInputIsValid(input)) {
-            // text input was valid, add the input to mValuesBundle.
-            mGame.setName(input);
-        } else if (mEdit) {
-            // text input was not valid, and we are editing an existing Game instance,
-            // so restore the EditText text to the original text for the Game instance.
-            textView.setText(mGame.getName());
-        } else {
-            // text input was not valid, and we are adding a game, so clear the text
-            textView.setText(null);
-        }
-    }
-
-    private boolean textInputIsValid(String inputText) {
-        boolean result = true;
-
-        // TODO: possibly add more validation checks, and return false if any one of them fails.
-        if (TextUtils.isEmpty(inputText)) {
-            Log.d(TAG, "User input was blank or empty.");
-            result = false;
-        }
-
-        return result;
-    }
-
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -521,6 +476,6 @@ public class GameAddEditFragment extends DialogFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onEditCompletedOrCancelled();
+        void onAddEditCompletedOrCancelled();
     }
 }

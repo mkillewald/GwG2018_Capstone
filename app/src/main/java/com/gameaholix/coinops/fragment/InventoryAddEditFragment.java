@@ -1,6 +1,5 @@
 package com.gameaholix.coinops.fragment;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -11,11 +10,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -35,7 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InventoryAddEditFragment extends DialogFragment {
+public class InventoryAddEditFragment extends BaseDialogFragment {
     private static final String TAG = InventoryAddEditFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
     private static final String EXTRA_EDIT_FLAG = "CoinOpsInventoryEditFlag";
@@ -83,32 +80,6 @@ public class InventoryAddEditFragment extends DialogFragment {
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-
-        // Hide keyboard after touch event occurs outside of EditText in DialogFragment
-        // Solution used from:
-        // https://stackoverflow.com/questions/16024297/is-there-an-equivalent-for-dispatchtouchevent-from-activity-in-dialog-or-dialo
-        if (getActivity() != null) {
-            return new Dialog(getActivity(), getTheme()) {
-                @Override
-                public boolean dispatchTouchEvent(@NonNull MotionEvent motionEvent) {
-                    if (getCurrentFocus() != null) {
-                        InputMethodManager imm =
-                                (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                        }
-                    }
-                    return super.dispatchTouchEvent(motionEvent);
-                }
-            };
-        } else {
-            return super.onCreateDialog(savedInstanceState);
-        }
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -128,9 +99,11 @@ public class InventoryAddEditFragment extends DialogFragment {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     String input = textView.getText().toString().trim();
-                    String validated = checkInputText(input, mItem.getName());
-                    textView.setText(validated);
-                    mItem.setName(validated);
+                    if (textInputIsValid(input)) {
+                        mItem.setName(input);
+                    } else {
+                        textView.setText(mItem.getName());
+                    }
                     hideKeyboard(textView);
                     return true;
                 }
@@ -143,9 +116,11 @@ public class InventoryAddEditFragment extends DialogFragment {
                 if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
                     if (view instanceof EditText) {
                         String input = ((EditText) view).getText().toString().trim();
-                        String validated = checkInputText(input, mItem.getName());
-                        ((EditText) view).setText(validated);
-                        mItem.setName(validated);
+                        if (textInputIsValid(input)) {
+                            mItem.setName(input);
+                        } else {
+                            ((EditText) view).setText(mItem.getName());
+                        }
                     }
                 }
             }
@@ -157,9 +132,11 @@ public class InventoryAddEditFragment extends DialogFragment {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     String input = textView.getText().toString().trim();
-                    String validated = checkInputText(input, mItem.getDescription());
-                    textView.setText(validated);
-                    mItem.setDescription(validated);
+                    if (textInputIsValid(input)) {
+                        mItem.setDescription(input);
+                    } else {
+                        textView.setText(mItem.getDescription());
+                    }
                     hideKeyboard(textView);
                     return true;
                 }
@@ -172,9 +149,11 @@ public class InventoryAddEditFragment extends DialogFragment {
                 if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
                     if (view instanceof EditText) {
                         String input = ((EditText) view).getText().toString().trim();
-                        String validated = checkInputText(input, mItem.getDescription());
-                        ((EditText) view).setText(validated);
-                        mItem.setDescription(validated);
+                        if (textInputIsValid(input)) {
+                            mItem.setDescription(input);
+                        } else {
+                            ((EditText) view).setText(mItem.getDescription());
+                        }
                     }
                 }
             }
@@ -233,22 +212,18 @@ public class InventoryAddEditFragment extends DialogFragment {
             public void onClick(View view) {
                 // Validate EditText input if user taps on btnSave before onEditorAction or onFocusChange
                 String input = bind.etAddInventoryName.getText().toString().trim();
-                String validated = checkInputText(input, mItem.getName());
-                bind.etAddInventoryName.setText(validated);
-                if (TextUtils.isEmpty(validated)) {
-                    PromptUser.displayAlert(mContext,
-                            R.string.error_add_inventory_failed,
-                            R.string.error_name_empty);
-                    Log.d(TAG, "Failed to add part! Name field was blank.");
-                    return;
+                if (textInputIsValid(input)) {
+                    mItem.setName(input);
                 } else {
-                    mItem.setName(validated);
+                    bind.etAddInventoryName.setText(mItem.getName());
                 }
 
                 input = bind.etAddInventoryDescription.getText().toString().trim();
-                validated = checkInputText(input, mItem.getDescription());
-                bind.etAddInventoryDescription.setText(validated);
-                mItem.setDescription(validated);
+                if (textInputIsValid(input)) {
+                    mItem.setDescription(input);
+                } else {
+                    bind.etAddInventoryDescription.setText(mItem.getDescription());
+                }
 
                 addEditItem();
                 mListener.onAddEditCompletedOrCancelled();
@@ -299,6 +274,14 @@ public class InventoryAddEditFragment extends DialogFragment {
     }
 
     private void addEditItem() {
+        if (TextUtils.isEmpty(mItem.getName())) {
+            PromptUser.displayAlert(mContext,
+                    R.string.error_add_inventory_failed,
+                    R.string.error_name_empty);
+            Log.d(TAG, "Failed to add part! Name field was blank.");
+            return;
+        }
+
         if (getShowsDialog()) getDialog().dismiss();
 
         // Add or update InventoryItem object to Firebase
@@ -359,34 +342,6 @@ public class InventoryAddEditFragment extends DialogFragment {
 //        } else {
 //            // user is not signed in
         }
-    }
-
-    private String checkInputText(String inputText, String originalText) {
-        if (textInputIsValid(inputText)) {
-            // text input was valid, return the input text.
-            return inputText;
-        } else {
-            // text input was not valid, so return the original text.
-            return originalText;
-        }
-    }
-
-    private boolean textInputIsValid(String inputText) {
-        boolean result = true;
-
-        // TODO: possibly add more validation checks, and return false if any one of them fails.
-        if (TextUtils.isEmpty(inputText)) {
-            Log.d(TAG, "User input was blank or empty.");
-            result = false;
-        }
-
-        return result;
-    }
-
-    private void hideKeyboard(TextView view) {
-        InputMethodManager imm = (InputMethodManager) view
-                .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     /**
