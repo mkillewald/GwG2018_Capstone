@@ -67,6 +67,7 @@ public class Item implements Parcelable {
         public Item[] newArray(int size) { return (new Item[size]); }
     };
 
+    @Exclude
     public Map<String, Object> getMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(Db.NAME, getName());

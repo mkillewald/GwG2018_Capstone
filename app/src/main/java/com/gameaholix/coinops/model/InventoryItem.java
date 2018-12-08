@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.gameaholix.coinops.firebase.Db;
+import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class InventoryItem extends Item implements Parcelable {
         public InventoryItem[] newArray(int size) { return (new InventoryItem[size]); }
     };
 
-    @Override
+    @Exclude
     public Map<String, Object> getMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(Db.NAME, getName());

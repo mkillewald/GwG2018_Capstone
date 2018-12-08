@@ -110,6 +110,7 @@ public class Game implements Parcelable {
         public Game[] newArray(int size) { return (new Game[size]); }
     };
 
+    @Exclude
     public Map<String, Object> getMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(Db.NAME, getName());

@@ -30,6 +30,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: determine if we really want to set parent ID (the gamne ID).
+
 public class RepairAddEditFragment extends BaseDialogFragment {
     private static final String TAG = RepairAddEditFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
@@ -58,10 +60,10 @@ public class RepairAddEditFragment extends BaseDialogFragment {
     }
 
     // Edit an existing repair log
-    public static RepairAddEditFragment newInstance(Item repairStep) {
+    public static RepairAddEditFragment newInstance(Item repairLog) {
         RepairAddEditFragment fragment = new RepairAddEditFragment();
         Bundle args = new Bundle();
-        args.putParcelable(EXTRA_REPAIR, repairStep);
+        args.putParcelable(EXTRA_REPAIR, repairLog);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,13 +77,14 @@ public class RepairAddEditFragment extends BaseDialogFragment {
             if (getArguments() != null) {
                 if (getArguments().containsKey(EXTRA_GAME_ID)) {
                     mGameId = getArguments().getString(EXTRA_GAME_ID);
+                    mRepairLog = new Item(mGameId);
                     mEdit = false;
                 } else if (getArguments().containsKey(EXTRA_REPAIR)) {
                     mRepairLog = getArguments().getParcelable(EXTRA_REPAIR);
+                    mGameId = mRepairLog.getParentId();
                     mEdit = true;
                 }
             }
-            mRepairLog = new Item();
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
             mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
@@ -218,8 +221,6 @@ public class RepairAddEditFragment extends BaseDialogFragment {
             // user is signed in
             String uid = mUser.getUid();
 
-            if (mEdit) mGameId = mRepairLog.getParentId();
-
             DatabaseReference repairRootRef;
             if (!TextUtils.isEmpty(mGameId)) {
                 repairRootRef = mDatabaseReference
@@ -234,7 +235,12 @@ public class RepairAddEditFragment extends BaseDialogFragment {
                 return;
             }
 
-            String logId = repairRootRef.push().getKey();
+            String logId;
+            if (mEdit) {
+                logId = mRepairLog.getId();
+            } else {
+                logId = repairRootRef.push().getKey();
+            }
 
             DatabaseReference repairRef;
             DatabaseReference repairListRef;
@@ -255,16 +261,22 @@ public class RepairAddEditFragment extends BaseDialogFragment {
                 return;
             }
 
-            // convert mRepairLog instance to Map so it can be iterated
-            Map<String, Object> currentValues = mRepairLog.getMap();
-
-            // create new Map with full database paths as keys using values from the Map created above
             Map<String, Object> valuesWithPath = new HashMap<>();
-            for (String key: currentValues.keySet()) {
-                valuesWithPath.put(repairRef.child(key).getPath().toString(), currentValues.get(key));
-                if (key.equals(Db.NAME)) {
-                    valuesWithPath.put(repairListRef.getPath().toString(), currentValues.get(key));
+            if (mEdit) {
+                // convert mRepairLog instance to Map so it can be iterated
+                Map<String, Object> currentValues = mRepairLog.getMap();
+
+                // create new Map with full database paths as keys using values from the Map created above
+                for (String key : currentValues.keySet()) {
+                    valuesWithPath.put(repairRef.child(key).getPath().toString(), currentValues.get(key));
+                    if (key.equals(Db.NAME)) {
+                        valuesWithPath.put(repairListRef.getPath().toString(), currentValues.get(key));
+                    }
                 }
+            } else {
+                // we are adding a new entry to the database
+                valuesWithPath.put(repairRef.getPath().toString(), mRepairLog);
+                valuesWithPath.put(repairListRef.getPath().toString(), mRepairLog.getName());
             }
 
             // perform atomic update to firebase using Map with database paths as keys

@@ -107,6 +107,13 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
             mBind.rvRepairSteps.setAdapter(mStepAdapter);
             mBind.rvRepairSteps.setHasFixedSize(true);
 
+            mBind.tvRepairDescription.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onDescriptionSelected();
+                }
+            });
+
             // Setup event listeners
             mRepairListener = new ValueEventListener() {
                 @Override
@@ -118,14 +125,7 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
                     } else {
                         mRepairLog.setId(id);
                         mRepairLog.setParentId(mGameId);
-
                         mBind.tvRepairDescription.setText(mRepairLog.getName());
-                        mBind.tvRepairDescription.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                mListener.onDescriptionSelected();
-                            }
-                        });
                     }
                 }
 
