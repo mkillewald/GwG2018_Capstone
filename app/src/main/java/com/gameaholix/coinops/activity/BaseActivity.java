@@ -1,6 +1,5 @@
 package com.gameaholix.coinops.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -24,7 +23,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private static final String EXTRA_NETWORK_DISABLED = "CoinOpsNetworkDisabledShown";
     private static final String EXTRA_NETWORK_NOT_CONNECTED = "CoinOpsNetworkNotConnectedShown";
 
-    private ProgressDialog mProgressDialog;
+//    private ProgressDialog mProgressDialog;
     private CoordinatorLayout mCoordinatorLayout;
     private boolean mNetworkDisabledMessageShown;
     private boolean mNetworkNotConnectedMessageShown;
@@ -66,21 +65,21 @@ public abstract class BaseActivity extends AppCompatActivity implements
         mCoordinatorLayout = coordinatorLayout;
     }
 
-    public void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setMessage("Loading...");
-        }
-
-        mProgressDialog.show();
-    }
-
-    public void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
-    }
+//    public void showProgressDialog() {
+//        if (mProgressDialog == null) {
+//            mProgressDialog = new ProgressDialog(this);
+//            mProgressDialog.setCancelable(false);
+//            mProgressDialog.setMessage("Loading...");
+//        }
+//
+//        mProgressDialog.show();
+//    }
+//
+//    public void hideProgressDialog() {
+//        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+//            mProgressDialog.dismiss();
+//        }
+//    }
 
     public String getUid() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

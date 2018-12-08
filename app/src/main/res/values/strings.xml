@@ -175,6 +175,7 @@
     erased.\n\n This is a permanent action and cannot be undone.</string>
 
     <!-- Error Messages -->
+    <string name="error_read_database_failed">Failed to fetch item from database!</string>
     <string name="error_update_database_failed">Failed to update database!</string>
     <string name="error_add_game_failed">Failed to add game!</string>
 

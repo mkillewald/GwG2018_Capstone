@@ -27,8 +27,7 @@ import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.fragment.RepairAddEditFragment;
 import com.gameaholix.coinops.fragment.RepairListFragment;
-import com.gameaholix.coinops.fragment.ShoppingAddFragment;
-import com.gameaholix.coinops.fragment.ShoppingEditFragment;
+import com.gameaholix.coinops.fragment.ShoppingAddEditFragment;
 import com.gameaholix.coinops.fragment.ShoppingListFragment;
 import com.gameaholix.coinops.fragment.ToDoAddFragment;
 import com.gameaholix.coinops.fragment.ToDoListFragment;
@@ -42,7 +41,8 @@ public class GameDetailActivity extends BaseActivity implements
         RepairListFragment.OnFragmentInteractionListener,
         RepairAddEditFragment.OnFragmentInteractionListener,
         ToDoListFragment.OnFragmentInteractionListener,
-        ShoppingListFragment.OnFragmentInteractionListener {
+        ShoppingListFragment.OnFragmentInteractionListener,
+        ShoppingAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
@@ -243,7 +243,7 @@ public class GameDetailActivity extends BaseActivity implements
     public void onShoppingItemSelected(Item shoppingItem) {
         // show edit shopping dialog
         FragmentManager fm = getSupportFragmentManager();
-        ShoppingEditFragment fragment = ShoppingEditFragment.newInstance(shoppingItem);
+        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(shoppingItem);
         fragment.show(fm, "fragment_edit_shopping");
     }
 
@@ -266,11 +266,14 @@ public class GameDetailActivity extends BaseActivity implements
 
     private void showAddShoppingDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ShoppingAddFragment fragment = ShoppingAddFragment.newInstance(mGameId);
-        fragment.show(fm, "fragment_item_add");
+        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(mGameId);
+        fragment.show(fm, "fragment_add_edit_shopping");
     }
 
-
+    @Override
+    public void onShoppingAddEditCompletedOrCancelled() {
+        // TODO: finish this
+    }
 
     @Override
     public void onEditButtonPressed(Game game) {

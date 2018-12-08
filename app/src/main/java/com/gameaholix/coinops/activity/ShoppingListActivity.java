@@ -10,13 +10,14 @@ import android.transition.TransitionInflater;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.fragment.ShoppingEditFragment;
+import com.gameaholix.coinops.fragment.ShoppingAddEditFragment;
 import com.gameaholix.coinops.fragment.ShoppingListFragment;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 public class ShoppingListActivity extends BaseActivity implements
-        ShoppingListFragment.OnFragmentInteractionListener {
+        ShoppingListFragment.OnFragmentInteractionListener,
+        ShoppingAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = ShoppingListActivity.class.getSimpleName();
 
     @Override
@@ -68,7 +69,12 @@ public class ShoppingListActivity extends BaseActivity implements
     @Override
     public void onShoppingItemSelected(Item shoppingItem) {
         FragmentManager fm = getSupportFragmentManager();
-        ShoppingEditFragment fragment = ShoppingEditFragment.newInstance(shoppingItem);
-        fragment.show(fm, "fragment_edit_shopping");
+        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(shoppingItem);
+        fragment.show(fm, "fragment_add_edit_shopping");
+    }
+
+    @Override
+    public void onShoppingAddEditCompletedOrCancelled() {
+        // TODO: finish this
     }
 }
