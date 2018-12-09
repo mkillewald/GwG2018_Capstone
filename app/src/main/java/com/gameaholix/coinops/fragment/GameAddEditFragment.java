@@ -88,7 +88,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (getShowsDialog()) {
-            getDialog().setTitle(R.string.add_game_title);
+            if (!mEdit) getDialog().setTitle(R.string.add_game_title);
         }
 
         // Inflate the layout for this fragment

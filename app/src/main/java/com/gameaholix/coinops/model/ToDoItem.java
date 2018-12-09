@@ -3,6 +3,11 @@ package com.gameaholix.coinops.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.gameaholix.coinops.firebase.Db;
+import com.google.firebase.database.Exclude;
+
+import java.util.Map;
+
 public class ToDoItem extends Item implements Parcelable {
 
     private String description;
@@ -56,6 +61,15 @@ public class ToDoItem extends Item implements Parcelable {
         @Override
         public ToDoItem[] newArray(int size) { return (new ToDoItem[size]); }
     };
+
+    @Exclude
+    public Map<String, Object> getMap() {
+        Map<String, Object> map = super.getMap();
+        map.put(Db.DESCRIPTION, getDescription());
+        map.put(Db.PRIORITY, getPriority());
+
+        return map;
+    }
 
     public String getDescription() {
         return description;

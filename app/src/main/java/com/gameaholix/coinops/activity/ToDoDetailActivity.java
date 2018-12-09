@@ -16,10 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.fragment.ToDoAddEditFragment;
 import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.fragment.ToDoDetailFragment;
-import com.gameaholix.coinops.fragment.ToDoEditFragment;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class ToDoDetailActivity extends BaseActivity implements
         ToDoDetailFragment.OnFragmentInteractionListener,
-        ToDoEditFragment.OnFragmentInteractionListener {
+        ToDoAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = ToDoDetailActivity.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
@@ -100,7 +100,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof ToDoEditFragment) {
+        if (currentFragment instanceof ToDoAddEditFragment) {
             menu.findItem(R.id.menu_edit_todo).setVisible(false);
         } else {
             menu.findItem(R.id.menu_edit_todo).setVisible(true);
@@ -131,17 +131,17 @@ public class ToDoDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onEditButtonPressed(ToDoItem toDoItem) {
-        // replace ToDoDetailFragment with ToDoEditFragment
+    public void onToDoEditButtonPressed(ToDoItem toDoItem) {
+        // replace ToDoDetailFragment with ToDoAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, ToDoEditFragment.newInstance(toDoItem));
+        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newInstance(toDoItem));
         ft.commit();
 
         invalidateOptionsMenu();
     }
 
     @Override
-    public void onEditCompletedOrCancelled() {
+    public void onToDoEditCompletedOrCancelled() {
         // replace ToDoEditFragment with ToDoDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mToDoItem));
@@ -151,7 +151,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onDeleteButtonPressed(ToDoItem toDoItem) {
+    public void onToDoDeleteButtonPressed(ToDoItem toDoItem) {
         showDeleteAlert(toDoItem);
     }
 

@@ -61,6 +61,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
         Bundle args = new Bundle();
         ShoppingAddEditFragment fragment = new ShoppingAddEditFragment();
         args.putString(EXTRA_GAME_ID, gameId);
+        args.putBoolean(EXTRA_EDIT_FLAG, false);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,6 +75,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
         Bundle args = new Bundle();
         ShoppingAddEditFragment fragment = new ShoppingAddEditFragment();
         args.putParcelable(EXTRA_SHOPPING, shoppingItem);
+        args.putBoolean(EXTRA_EDIT_FLAG, true);
         fragment.setArguments(args);
         return fragment;
     }
@@ -88,15 +90,13 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
                 if (getArguments().containsKey(EXTRA_GAME_ID)) {
                     mGameId = getArguments().getString(EXTRA_GAME_ID);
                     mShoppingItem = new Item(mGameId);
-                    mEdit = false;
                 } else if (getArguments().containsKey(EXTRA_SHOPPING)) {
                     mShoppingItem = getArguments().getParcelable(EXTRA_SHOPPING);
                     if (mShoppingItem != null) {
                         mGameId = mShoppingItem.getParentId();
-                        Log.d(TAG, "onCreate: mGameId: " + mGameId);
                     }
-                    mEdit = true;
                 }
+                mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
             }
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
@@ -344,7 +344,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
 
             Map<String, Object> valuesWithPath = new HashMap<>();
             if (mEdit) {
-                // convert mShoppingItem instance to Map so it can be itereated
+                // convert mShoppingItem instance to Map so it can be iterated
                 Map<String, Object> currentValues = mShoppingItem.getMap();
 
                 // create new Map with full database paths as keys using values from the Map created above
@@ -356,7 +356,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
                     }
                 }
             } else {
-                // we are adding  new entry to the database
+                // we are adding a new item to the database
                 valuesWithPath.put(shopRootRef.child(itemId).getPath().toString(), mShoppingItem);
                 valuesWithPath.put(gameShopListRef.getPath().toString(), mShoppingItem.getName());
                 valuesWithPath.put(userShopListRef.getPath().toString(), mShoppingItem.getName());

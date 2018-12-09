@@ -29,7 +29,7 @@ import com.gameaholix.coinops.fragment.RepairAddEditFragment;
 import com.gameaholix.coinops.fragment.RepairListFragment;
 import com.gameaholix.coinops.fragment.ShoppingAddEditFragment;
 import com.gameaholix.coinops.fragment.ShoppingListFragment;
-import com.gameaholix.coinops.fragment.ToDoAddFragment;
+import com.gameaholix.coinops.fragment.ToDoAddEditFragment;
 import com.gameaholix.coinops.fragment.ToDoListFragment;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
@@ -41,6 +41,7 @@ public class GameDetailActivity extends BaseActivity implements
         RepairListFragment.OnFragmentInteractionListener,
         RepairAddEditFragment.OnFragmentInteractionListener,
         ToDoListFragment.OnFragmentInteractionListener,
+        ToDoAddEditFragment.OnFragmentInteractionListener,
         ShoppingListFragment.OnFragmentInteractionListener,
         ShoppingAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = GameDetailActivity.class.getSimpleName();
@@ -235,6 +236,16 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
+    public void onToDoEditCompletedOrCancelled() {
+        // TODO: finish this
+    }
+
+    @Override
+    public void onToDoDeleteButtonPressed(ToDoItem toDoItem) {
+        // TODO: finish this
+    }
+
+    @Override
     public void onShoppingFabPressed() {
         showAddShoppingDialog();
     }
@@ -260,7 +271,7 @@ public class GameDetailActivity extends BaseActivity implements
 
     private void showAddToDoDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ToDoAddFragment fragment = ToDoAddFragment.newInstance(mGameId);
+        ToDoAddEditFragment fragment = ToDoAddEditFragment.newInstance(mGameId);
         fragment.show(fm, "fragment_add_todo");
     }
 

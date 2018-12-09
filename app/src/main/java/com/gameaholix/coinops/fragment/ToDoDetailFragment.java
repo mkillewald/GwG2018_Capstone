@@ -112,14 +112,14 @@ public class ToDoDetailFragment extends Fragment {
             bind.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onDeleteButtonPressed(mToDoItem);
+                    mListener.onToDoDeleteButtonPressed(mToDoItem);
                 }
             });
 
             bind.btnEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onEditButtonPressed(mToDoItem);
+                    mListener.onToDoEditButtonPressed(mToDoItem);
                 }
             });
 
@@ -141,12 +141,12 @@ public class ToDoDetailFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_edit_todo:
                 if (mListener != null) {
-                    mListener.onEditButtonPressed(mToDoItem);
+                    mListener.onToDoEditButtonPressed(mToDoItem);
                 }
                 return true;
             case R.id.menu_delete_todo:
                 if (mListener != null) {
-                    mListener.onDeleteButtonPressed(mToDoItem);
+                    mListener.onToDoDeleteButtonPressed(mToDoItem);
                 }
                 return true;
             default:
@@ -188,7 +188,7 @@ public class ToDoDetailFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onEditButtonPressed(ToDoItem toDoItem);
-        void onDeleteButtonPressed(ToDoItem toDoItem);
+        void onToDoEditButtonPressed(ToDoItem toDoItem);
+        void onToDoDeleteButtonPressed(ToDoItem toDoItem);
     }
 }
