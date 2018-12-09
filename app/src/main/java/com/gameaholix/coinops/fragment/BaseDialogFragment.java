@@ -33,6 +33,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
                         if (imm != null) {
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                         }
+                        getCurrentFocus().clearFocus();
                     }
                     return super.dispatchTouchEvent(motionEvent);
                 }

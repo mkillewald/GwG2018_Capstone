@@ -15,14 +15,14 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.fragment.RepairAddEditFragment;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.fragment.RepairDetailFragment;
-import com.gameaholix.coinops.fragment.StepAddFragment;
-import com.gameaholix.coinops.fragment.StepEditFragment;
+import com.gameaholix.coinops.fragment.StepAddEditFragment;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 public class RepairDetailActivity extends BaseActivity implements
         RepairDetailFragment.OnFragmentInteractionListener,
-        RepairAddEditFragment.OnFragmentInteractionListener {
+        RepairAddEditFragment.OnFragmentInteractionListener,
+        StepAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = RepairDetailActivity.class.getSimpleName();
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
@@ -108,20 +108,25 @@ public class RepairDetailActivity extends BaseActivity implements
 
     @Override
     public void onRepairAddEditCompletedOrCancelled() {
-        // no operation
+        // TODO: finish this
+    }
+
+    @Override
+    public void onStepAddEditCompletedOrCancelled() {
+        // TODO: finish this
     }
 
     @Override
     public void onStepSelected(Item repairStep) {
         FragmentManager fm = getSupportFragmentManager();
-        StepEditFragment fragment = StepEditFragment.newInstance(mRepairLog.getParentId(), repairStep);
+        StepAddEditFragment fragment = StepAddEditFragment.newInstance(mRepairLog.getParentId(), repairStep);
         fragment.show(fm, "fragment_step_edit");
     }
 
     @Override
     public void onAddStepPressed(Item newStep) {
         FragmentManager fm = getSupportFragmentManager();
-        StepAddFragment fragment = StepAddFragment.newInstance(mRepairLog.getParentId(), newStep);
+        StepAddEditFragment fragment = StepAddEditFragment.newInstance(mRepairLog.getParentId(), newStep);
         fragment.show(fm, "fragment_step_add");
     }
 }

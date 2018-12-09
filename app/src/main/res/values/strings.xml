@@ -192,8 +192,9 @@
     <string name="error_please_try_again">Please try again.</string>
     <string name="error_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
     <string name="error_game_id_empty">Game ID is null or invalid. Please notify the developer of this error.</string>
-    <string name="error_log_id_empty">Repair ID is null or invalid. Please notify the developer of this error.</string>
     <string name="error_item_id_empty">Item ID is null or invalid. Please notify the developer of this error.</string>
+    <string name="error_log_id_empty">Repair ID is null or invalid. Please notify the developer of this error.</string>
+    <string name="error_step_id_empty">Repair step ID is null or invalid. Please notify the developer of this error.</string>
     <string name="error_repair_log_description_empty">Trouble description cannot be blank. Please
         describe the problem that is occurring and try again.</string>
     <string name="error_repair_step_entry_empty">Repair step cannot be blank. Please

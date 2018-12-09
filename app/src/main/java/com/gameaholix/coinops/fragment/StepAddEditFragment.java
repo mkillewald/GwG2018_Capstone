@@ -1,11 +1,14 @@
 package com.gameaholix.coinops.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -17,7 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.databinding.FragmentRepairAddBinding;
+import com.gameaholix.coinops.databinding.FragmentStepAddBinding;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.PromptUser;
@@ -30,40 +33,30 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: determine if we really want to set parent ID (the gamne ID).
 
-public class RepairAddEditFragment extends BaseDialogFragment {
-    private static final String TAG = RepairAddEditFragment.class.getSimpleName();
+public class StepAddEditFragment extends BaseDialogFragment {
+    private static final String TAG = StepAddEditFragment.class.getSimpleName();
+    private static final String EXTRA_STEP = "CoinOpsRepairStep";
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-    private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
-    private static final String EXTRA_EDIT_FLAG = "CoinOpsRepairEditFlag";
+    private static final String EXTRA_EDIT_FLAG = "CoinOpsStepEditFlag";
 
     private Context mContext;
     private String mGameId;
-    private Item mRepairLog;
+    private Item mRepairStep;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
     private OnFragmentInteractionListener mListener;
     private boolean mEdit;
 
-    public RepairAddEditFragment() {
+    public StepAddEditFragment() {
         // Required empty public constructor
     }
 
-    // Add a new repair log
-    public static RepairAddEditFragment newInstance(String gameId) {
+    public static StepAddEditFragment newInstance(String gameId, Item repairStep) {
+        StepAddEditFragment fragment = new StepAddEditFragment();
         Bundle args = new Bundle();
-        RepairAddEditFragment fragment = new RepairAddEditFragment();
         args.putString(EXTRA_GAME_ID, gameId);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    // Edit an existing repair log
-    public static RepairAddEditFragment newInstance(Item repairLog) {
-        RepairAddEditFragment fragment = new RepairAddEditFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_REPAIR, repairLog);
+        args.putParcelable(EXTRA_STEP, repairStep);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,19 +68,17 @@ public class RepairAddEditFragment extends BaseDialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                if (getArguments().containsKey(EXTRA_GAME_ID)) {
-                    mGameId = getArguments().getString(EXTRA_GAME_ID);
-                    mRepairLog = new Item(mGameId);
+                mGameId = getArguments().getString(EXTRA_GAME_ID);
+                mRepairStep = getArguments().getParcelable(EXTRA_STEP);
+                if (TextUtils.isEmpty(mRepairStep.getName())) {
                     mEdit = false;
-                } else if (getArguments().containsKey(EXTRA_REPAIR)) {
-                    mRepairLog = getArguments().getParcelable(EXTRA_REPAIR);
-                    mGameId = mRepairLog.getParentId();
+                } else {
                     mEdit = true;
                 }
             }
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-            mRepairLog = savedInstanceState.getParcelable(EXTRA_REPAIR);
+            mRepairStep = savedInstanceState.getParcelable(EXTRA_STEP);
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
 
@@ -102,29 +93,28 @@ public class RepairAddEditFragment extends BaseDialogFragment {
                              Bundle savedInstanceState) {
         if (getShowsDialog()) {
             if (mEdit) {
-                getDialog().setTitle(R.string.edit_repair_title);
+                getDialog().setTitle(R.string.edit_repair_step_title);
             } else {
-                getDialog().setTitle(R.string.add_repair_title);
+                getDialog().setTitle(R.string.add_repair_step_title);
             }
         }
 
         // Inflate the layout for this fragment
-        final FragmentRepairAddBinding bind = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_repair_add, container, false);
+        final FragmentStepAddBinding bind = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_step_add, container, false);
         final View rootView = bind.getRoot();
 
         // Setup EditText
-        if (mEdit) bind.etRepairDescription.setText(mRepairLog.getName());
-        bind.etRepairDescription.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        if (mEdit) bind.etEntry.setText(mRepairStep.getName());
+        bind.etEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                // Verify input and hide keyboard if IME_ACTION_DONE
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     String input = textView.getText().toString().trim();
                     if (textInputIsValid(input)) {
-                        mRepairLog.setName(input);
+                        mRepairStep.setName(input);
                     } else {
-                        textView.setText(mRepairLog.getName());
+                        textView.setText(mRepairStep.getName());
                     }
                     hideKeyboard(textView);
                     return true;
@@ -132,18 +122,17 @@ public class RepairAddEditFragment extends BaseDialogFragment {
                 return false;
             }
         });
-        bind.etRepairDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        bind.etEntry.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getId() == R.id.et_repair_description && !hasFocus) {
-                    // Verify input if editText loses focus
+                if (view.getId() == R.id.et_entry && !hasFocus) {
                     if (view instanceof EditText) {
                         EditText editText = (EditText) view;
                         String input = editText.getText().toString().trim();
                         if (textInputIsValid(input)) {
-                            mRepairLog.setName(input);
+                            mRepairStep.setName(input);
                         } else {
-                            editText.setText(mRepairLog.getName());
+                            editText.setText(mRepairStep.getName());
                         }
                     }
                 }
@@ -154,27 +143,42 @@ public class RepairAddEditFragment extends BaseDialogFragment {
         bind.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getDialog().dismiss();
+                if (getShowsDialog()) getDialog().dismiss();
+                mListener.onStepAddEditCompletedOrCancelled();
             }
         });
 
-        if (mEdit) bind.btnSave.setText(R.string.save_changes);
+        if (mEdit) {
+            bind.btnSave.setText(R.string.save_changes);
+            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (getShowsDialog()) getDialog().dismiss();
+                    showDeleteAlert();
+//                    mListener.onStepAddEditCompletedOrCancelled();
+                }
+            });
+        } else {
+            bind.btnSave.setText(R.string.add_repair_step);
+            bind.btnDelete.setVisibility(View.GONE);
+        }
+
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Verify EditText input if user taps on btnSave before onEditorAction or onFocusChange
-                String input = bind.etRepairDescription.getText().toString().trim();
+                String input = bind.etEntry.getText().toString().trim();
                 if (textInputIsValid(input)) {
-                    mRepairLog.setName(input);
+                    mRepairStep.setName(input);
                 } else {
-                    bind.etRepairDescription.setText(mRepairLog.getName());
+                    bind.etEntry.setText(mRepairStep.getName());
                 }
 
-                addEditLog();
-                mListener.onRepairAddEditCompletedOrCancelled();
+                addEditStep();
+                mListener.onStepAddEditCompletedOrCancelled();
             }
         });
-
+        
         return rootView;
     }
 
@@ -183,7 +187,7 @@ public class RepairAddEditFragment extends BaseDialogFragment {
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_GAME_ID, mGameId);
-        outState.putParcelable(EXTRA_REPAIR, mRepairLog);
+        outState.putParcelable(EXTRA_STEP, mRepairStep);
         outState.putBoolean(EXTRA_EDIT_FLAG, mEdit);
     }
 
@@ -205,29 +209,22 @@ public class RepairAddEditFragment extends BaseDialogFragment {
         mListener = null;
     }
 
-    private void addEditLog() {
-        if (TextUtils.isEmpty(mRepairLog.getName())) {
+    private void addEditStep() {
+        if (TextUtils.isEmpty(mRepairStep.getName())) {
             PromptUser.displayAlert(mContext,
-                    R.string.error_add_repair_log_failed,
-                    R.string.error_repair_log_description_empty);
-            Log.d(TAG, "Failed to add repair log! Trouble description field was blank.");
+                    R.string.error_add_repair_step_failed,
+                    R.string.error_repair_step_entry_empty);
+            Log.e(TAG, "Failed to add repair step! Name field was blank.");
             return;
         }
 
         if (getShowsDialog()) getDialog().dismiss();
 
-        // Add new repair log or update existing repair log to Firebase
+        // add new repair step or update existing repair step to Firebase
         if (mUser != null) {
             // user is signed in
-            String uid = mUser.getUid();
 
-            DatabaseReference repairRootRef;
-            if (!TextUtils.isEmpty(mGameId)) {
-                repairRootRef = mDatabaseReference
-                        .child(Db.REPAIR)
-                        .child(uid)
-                        .child(mGameId);
-            } else {
+            if (TextUtils.isEmpty(mGameId)) {
                 PromptUser.displayAlert(mContext,
                         R.string.error_update_database_failed,
                         R.string.error_game_id_empty);
@@ -235,54 +232,54 @@ public class RepairAddEditFragment extends BaseDialogFragment {
                 return;
             }
 
-            String logId;
-            if (mEdit) {
-                logId = mRepairLog.getId();
-            } else {
-                logId = repairRootRef.push().getKey();
-            }
-
-            DatabaseReference repairRef;
-            DatabaseReference repairListRef;
-
-            if (!TextUtils.isEmpty(logId)) {
-                repairRef = repairRootRef.child(logId);
-                repairListRef = mDatabaseReference
-                        .child(Db.GAME)
-                        .child(uid)
-                        .child(mGameId)
-                        .child(Db.REPAIR_LIST)
-                        .child(logId);
-            } else {
+            if (TextUtils.isEmpty(mRepairStep.getParentId())) {
                 PromptUser.displayAlert(mContext,
                         R.string.error_update_database_failed,
                         R.string.error_log_id_empty);
-                Log.e(TAG, "Failed to add or update database! Repair Log ID cannot be an empty string.");
+                Log.e(TAG, "Failed to add or update database! Repair ID cannot be an empty string.");
+                return;
+            }
+
+            DatabaseReference stepRootRef = mDatabaseReference
+                .child(Db.REPAIR)
+                .child(mUser.getUid())
+                .child(mGameId)
+                .child(mRepairStep.getParentId())
+                .child(Db.STEPS);
+
+            String stepId;
+            if (mEdit) {
+                stepId = mRepairStep.getId();
+            } else {
+                stepId = stepRootRef.push().getKey();
+            }
+
+            if (TextUtils.isEmpty(stepId)) {
+                PromptUser.displayAlert(mContext,
+                        R.string.error_update_database_failed,
+                        R.string.error_step_id_empty);
+                Log.e(TAG, "Failed to add or update database! Repair step ID cannot be an empty string.");
                 return;
             }
 
             Map<String, Object> valuesWithPath = new HashMap<>();
             if (mEdit) {
-                // convert mRepairLog instance to Map so it can be iterated
-                Map<String, Object> currentValues = mRepairLog.getMap();
+                // convert mRepairStep instance to Map so it can be iterated
+                Map<String, Object> currentValues = mRepairStep.getMap();
 
-                // create new Map with full database paths as keys using values from the Map created above
+                // create new Map with full database paths as keys using values from Map created above
                 for (String key : currentValues.keySet()) {
-                    valuesWithPath.put(repairRef.child(key).getPath().toString(), currentValues.get(key));
-                    if (key.equals(Db.NAME)) {
-                        valuesWithPath.put(repairListRef.getPath().toString(), currentValues.get(key));
-                    }
+                    valuesWithPath.put(stepRootRef.child(stepId).child(key).getPath().toString(),
+                            currentValues.get(key));
                 }
             } else {
-                // we are adding a new entry to the database
-                valuesWithPath.put(repairRef.getPath().toString(), mRepairLog);
-                valuesWithPath.put(repairListRef.getPath().toString(), mRepairLog.getName());
+                valuesWithPath.put(stepRootRef.child(stepId).getPath().toString(), mRepairStep);
             }
 
-            // perform atomic update to firebase using Map with database paths as keys
             mDatabaseReference.updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
                 @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                public void onComplete(@Nullable DatabaseError databaseError,
+                                       @NonNull DatabaseReference databaseReference) {
                     if (databaseError != null) {
                         Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
                                 " Code: " + databaseError.getCode() +
@@ -290,9 +287,53 @@ public class RepairAddEditFragment extends BaseDialogFragment {
                     }
                 }
             });
+
 //        } else {
 //            // user is not signed in
         }
+    }
+
+    private void showDeleteAlert() {
+        if (mUser != null) {
+            // user is signed in
+
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(mContext);
+            }
+            builder.setTitle(R.string.really_delete_repair_step)
+                    .setMessage(R.string.repair_step_will_be_deleted)
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteItemData();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+//        } else {
+//            // user is not signed in
+        }
+    }
+
+    private void deleteItemData() {
+        DatabaseReference stepRef = mDatabaseReference
+                .child(Db.REPAIR)
+                .child(mUser.getUid())
+                .child(mGameId)
+                .child(mRepairStep.getParentId())
+                .child(Db.STEPS)
+                .child(mRepairStep.getId());
+
+        // delete repair step item
+        stepRef.removeValue();
     }
 
     /**
@@ -306,7 +347,6 @@ public class RepairAddEditFragment extends BaseDialogFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onRepairAddEditCompletedOrCancelled();
+        void onStepAddEditCompletedOrCancelled();
     }
-
 }
