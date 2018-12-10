@@ -52,11 +52,24 @@ public class StepAddEditFragment extends BaseDialogFragment {
         // Required empty public constructor
     }
 
+    // add a new repair step
+    public static StepAddEditFragment newInstance(String gameId, String logId) {
+        StepAddEditFragment fragment = new StepAddEditFragment();
+        Bundle args = new Bundle();
+        args.putString(EXTRA_GAME_ID, gameId);
+        args.putParcelable(EXTRA_STEP, new Item(logId));
+        args.putBoolean(EXTRA_EDIT_FLAG, false);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    // edit an existing repair step
     public static StepAddEditFragment newInstance(String gameId, Item repairStep) {
         StepAddEditFragment fragment = new StepAddEditFragment();
         Bundle args = new Bundle();
         args.putString(EXTRA_GAME_ID, gameId);
         args.putParcelable(EXTRA_STEP, repairStep);
+        args.putBoolean(EXTRA_EDIT_FLAG, true);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,12 +82,8 @@ public class StepAddEditFragment extends BaseDialogFragment {
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
+                mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
                 mRepairStep = getArguments().getParcelable(EXTRA_STEP);
-                if (TextUtils.isEmpty(mRepairStep.getName())) {
-                    mEdit = false;
-                } else {
-                    mEdit = true;
-                }
             }
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);

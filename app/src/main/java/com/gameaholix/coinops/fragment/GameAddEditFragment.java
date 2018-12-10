@@ -52,10 +52,12 @@ public class GameAddEditFragment extends BaseDialogFragment {
         // Required empty public constructor
     }
 
+    // edit an existing Game in the database
     public static GameAddEditFragment newInstance(Game game) {
         Bundle args = new Bundle();
         GameAddEditFragment fragment = new GameAddEditFragment();
         args.putParcelable(EXTRA_GAME, game);
+        args.putBoolean(EXTRA_GAME_EDIT_FLAG, true);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,7 +69,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                mEdit = true;
+                mEdit = getArguments().getBoolean(EXTRA_GAME_EDIT_FLAG);
                 mGame = getArguments().getParcelable(EXTRA_GAME);
             } else {
                 mEdit = false;
@@ -394,30 +396,28 @@ public class GameAddEditFragment extends BaseDialogFragment {
 
             DatabaseReference gameRootRef = mDatabaseReference.child(Db.GAME).child(uid);
 
-            DatabaseReference gameRef;
-            DatabaseReference userGameListRef;
-            String gameId;
 
+            String gameId;
             if (mEdit) {
                 gameId = mGame.getId();
             } else {
                 gameId = gameRootRef.push().getKey();
             }
 
-            if (!TextUtils.isEmpty(gameId)) {
-                gameRef = gameRootRef.child(gameId);
-                userGameListRef = mDatabaseReference
-                        .child(Db.USER)
-                        .child(uid)
-                        .child(Db.GAME_LIST)
-                        .child(gameId);
-            } else {
+            if (TextUtils.isEmpty(gameId)) {
                 PromptUser.displayAlert(mContext,
                         R.string.error_update_database_failed,
                         R.string.error_game_id_empty);
                 Log.e(TAG, "Failed to add or update database! Game ID cannot be an empty string.");
                 return;
             }
+
+            DatabaseReference gameRef = gameRootRef.child(gameId);
+            DatabaseReference userGameListRef = mDatabaseReference
+                    .child(Db.USER)
+                    .child(uid)
+                    .child(Db.GAME_LIST)
+                    .child(gameId);
 
             // convert mGame instance to Map so it can be iterated
             Map<String, Object> currentValues = mGame.getMap();

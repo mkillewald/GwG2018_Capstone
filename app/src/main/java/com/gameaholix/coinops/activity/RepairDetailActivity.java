@@ -119,14 +119,16 @@ public class RepairDetailActivity extends BaseActivity implements
     @Override
     public void onStepSelected(Item repairStep) {
         FragmentManager fm = getSupportFragmentManager();
-        StepAddEditFragment fragment = StepAddEditFragment.newInstance(mRepairLog.getParentId(), repairStep);
+        StepAddEditFragment fragment =
+                StepAddEditFragment.newInstance(mRepairLog.getParentId(), repairStep);
         fragment.show(fm, "fragment_step_edit");
     }
 
     @Override
-    public void onAddStepPressed(Item newStep) {
+    public void onAddStepPressed() {
         FragmentManager fm = getSupportFragmentManager();
-        StepAddEditFragment fragment = StepAddEditFragment.newInstance(mRepairLog.getParentId(), newStep);
+        StepAddEditFragment fragment =
+                StepAddEditFragment.newInstance(mRepairLog.getParentId(), mRepairLog.getId());
         fragment.show(fm, "fragment_step_add");
     }
 }

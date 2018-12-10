@@ -173,8 +173,7 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
             mBind.btnAddStep.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Item newStep = new Item(mRepairLog.getId());
-                    mListener.onAddStepPressed(newStep);
+                    mListener.onAddStepPressed();
                 }
             });
 //        } else {
@@ -295,6 +294,6 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
     public interface OnFragmentInteractionListener {
         void onDescriptionSelected();
         void onStepSelected(Item repairStep);
-        void onAddStepPressed(Item newStep);
+        void onAddStepPressed();
     }
 }

@@ -48,10 +48,12 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         // Required empty public constructor
     }
 
+    // edit an existing InventoryItem
     public static InventoryAddEditFragment newInstance(InventoryItem item) {
         Bundle args = new Bundle();
         InventoryAddEditFragment fragment = new InventoryAddEditFragment();
         args.putParcelable(EXTRA_INVENTORY_ITEM, item);
+        args.putBoolean(EXTRA_EDIT_FLAG, true);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,7 +66,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mItem = getArguments().getParcelable(EXTRA_INVENTORY_ITEM);
-                mEdit = true;
+                mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
             } else {
                 mItem = new InventoryItem();
                 mEdit = false;
@@ -273,30 +275,27 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
 
             final DatabaseReference inventoryRootRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
 
-            DatabaseReference inventoryRef;
-            DatabaseReference userInventoryListRef;
             String itemId;
-
             if (mEdit) {
                 itemId = mItem.getId();
             } else {
                 itemId = inventoryRootRef.push().getKey();
             }
 
-            if (!TextUtils.isEmpty(itemId)) {
-                inventoryRef = inventoryRootRef.child(itemId);
-                userInventoryListRef = mDatabaseReference
-                        .child(Db.USER)
-                        .child(uid)
-                        .child(Db.INVENTORY_LIST)
-                        .child(itemId);
-            } else {
+            if (TextUtils.isEmpty(itemId)) {
                 PromptUser.displayAlert(mContext,
                         R.string.error_update_database_failed,
                         R.string.error_item_id_empty);
                 Log.e(TAG, "Failed to add or update database! Item ID cannot be an empty string.");
                 return;
             }
+
+            DatabaseReference inventoryRef = inventoryRootRef.child(itemId);
+            DatabaseReference userInventoryListRef = mDatabaseReference
+                    .child(Db.USER)
+                    .child(uid)
+                    .child(Db.INVENTORY_LIST)
+                    .child(itemId);
 
             // convert mItem instance to Map so it can be iterated
             Map<String, Object> currentValues = mItem.getMap();

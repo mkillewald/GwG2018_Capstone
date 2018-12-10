@@ -87,16 +87,16 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                if (getArguments().containsKey(EXTRA_GAME_ID)) {
-                    mGameId = getArguments().getString(EXTRA_GAME_ID);
-                    mShoppingItem = new Item(mGameId);
-                } else if (getArguments().containsKey(EXTRA_SHOPPING)) {
+                mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
+                if (mEdit) {
                     mShoppingItem = getArguments().getParcelable(EXTRA_SHOPPING);
                     if (mShoppingItem != null) {
                         mGameId = mShoppingItem.getParentId();
                     }
+                } else {
+                    mGameId = getArguments().getString(EXTRA_GAME_ID);
+                    mShoppingItem = new Item(mGameId);
                 }
-                mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
             }
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
@@ -129,13 +129,13 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
         if (mUser != null && mEdit) {
             // user is signed in
 
+            // TODO: should be able to find way to not do this.
             if (!TextUtils.isEmpty(mShoppingItem.getId())) {
                 mShopRef = mDatabaseReference
                         .child(Db.SHOP)
                         .child(mUser.getUid())
                         .child(mShoppingItem.getId());
 
-                // TODO: should be able to find way to not do this.
                 if (mShoppingItem.getParentId() == null) {
                     // Setup event listener
                     // This is needed to retrieve the parentId from the database

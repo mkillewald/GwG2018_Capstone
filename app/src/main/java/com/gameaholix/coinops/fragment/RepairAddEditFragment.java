@@ -55,6 +55,7 @@ public class RepairAddEditFragment extends BaseDialogFragment {
         Bundle args = new Bundle();
         RepairAddEditFragment fragment = new RepairAddEditFragment();
         args.putString(EXTRA_GAME_ID, gameId);
+        args.putBoolean(EXTRA_EDIT_FLAG, false);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,6 +65,7 @@ public class RepairAddEditFragment extends BaseDialogFragment {
         RepairAddEditFragment fragment = new RepairAddEditFragment();
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_REPAIR, repairLog);
+        args.putBoolean(EXTRA_EDIT_FLAG, false);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,14 +77,15 @@ public class RepairAddEditFragment extends BaseDialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                if (getArguments().containsKey(EXTRA_GAME_ID)) {
+                mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
+                if (mEdit) {
+                    mRepairLog = getArguments().getParcelable(EXTRA_REPAIR);
+                    if (mRepairLog != null) {
+                        mGameId = mRepairLog.getParentId();
+                    }
+                } else {
                     mGameId = getArguments().getString(EXTRA_GAME_ID);
                     mRepairLog = new Item(mGameId);
-                    mEdit = false;
-                } else if (getArguments().containsKey(EXTRA_REPAIR)) {
-                    mRepairLog = getArguments().getParcelable(EXTRA_REPAIR);
-                    mGameId = mRepairLog.getParentId();
-                    mEdit = true;
                 }
             }
         } else {
@@ -221,19 +224,18 @@ public class RepairAddEditFragment extends BaseDialogFragment {
             // user is signed in
             String uid = mUser.getUid();
 
-            DatabaseReference repairRootRef;
-            if (!TextUtils.isEmpty(mGameId)) {
-                repairRootRef = mDatabaseReference
-                        .child(Db.REPAIR)
-                        .child(uid)
-                        .child(mGameId);
-            } else {
+            if (TextUtils.isEmpty(mGameId)) {
                 PromptUser.displayAlert(mContext,
                         R.string.error_update_database_failed,
                         R.string.error_game_id_empty);
                 Log.e(TAG, "Failed to add or update database! Game ID cannot be an empty string.");
                 return;
             }
+
+            DatabaseReference repairRootRef = mDatabaseReference
+                    .child(Db.REPAIR)
+                    .child(uid)
+                    .child(mGameId);
 
             String logId;
             if (mEdit) {
@@ -242,24 +244,21 @@ public class RepairAddEditFragment extends BaseDialogFragment {
                 logId = repairRootRef.push().getKey();
             }
 
-            DatabaseReference repairRef;
-            DatabaseReference repairListRef;
-
-            if (!TextUtils.isEmpty(logId)) {
-                repairRef = repairRootRef.child(logId);
-                repairListRef = mDatabaseReference
-                        .child(Db.GAME)
-                        .child(uid)
-                        .child(mGameId)
-                        .child(Db.REPAIR_LIST)
-                        .child(logId);
-            } else {
+            if (TextUtils.isEmpty(logId)) {
                 PromptUser.displayAlert(mContext,
                         R.string.error_update_database_failed,
                         R.string.error_log_id_empty);
                 Log.e(TAG, "Failed to add or update database! Repair Log ID cannot be an empty string.");
                 return;
             }
+
+            DatabaseReference repairRef = repairRootRef.child(logId);
+            DatabaseReference repairListRef = mDatabaseReference
+                    .child(Db.GAME)
+                    .child(uid)
+                    .child(mGameId)
+                    .child(Db.REPAIR_LIST)
+                    .child(logId);
 
             Map<String, Object> valuesWithPath = new HashMap<>();
             if (mEdit) {
