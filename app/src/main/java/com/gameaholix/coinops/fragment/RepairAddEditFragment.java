@@ -65,7 +65,7 @@ public class RepairAddEditFragment extends BaseDialogFragment {
         RepairAddEditFragment fragment = new RepairAddEditFragment();
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_REPAIR, repairLog);
-        args.putBoolean(EXTRA_EDIT_FLAG, false);
+        args.putBoolean(EXTRA_EDIT_FLAG, true);
         fragment.setArguments(args);
         return fragment;
     }
