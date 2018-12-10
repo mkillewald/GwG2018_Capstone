@@ -26,7 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 public class InventoryDetailFragment extends Fragment {
     private static final String TAG = InventoryDetailFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
+    private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
 
+    private String mItemId;
     private InventoryItem mItem;
     private FirebaseUser mUser;
     private DatabaseReference mInventoryRef;
@@ -44,9 +46,10 @@ public class InventoryDetailFragment extends Fragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                mItem = getArguments().getParcelable(EXTRA_INVENTORY_ITEM);
+                mItemId = getArguments().getString(EXTRA_INVENTORY_ID);
             }
         } else {
+            mItemId = savedInstanceState.getString(EXTRA_INVENTORY_ID);
             mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
         }
 
@@ -60,10 +63,10 @@ public class InventoryDetailFragment extends Fragment {
                 .child(mItem.getId());
     }
 
-    public static InventoryDetailFragment newInstance(InventoryItem item) {
+    public static InventoryDetailFragment newInstance(String itemId) {
         Bundle args = new Bundle();
         InventoryDetailFragment fragment = new InventoryDetailFragment();
-        args.putParcelable(EXTRA_INVENTORY_ITEM, item);
+        args.putString(EXTRA_INVENTORY_ITEM, itemId);
         fragment.setArguments(args);
         return fragment;
     }

@@ -22,6 +22,7 @@ public class GameListActivity extends BaseActivity implements
         GameAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = GameListActivity.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
+    private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +71,10 @@ public class GameListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onGameSelected(ListRow game) {
+    public void onGameSelected(ListRow row) {
         Intent intent = new Intent(this, GameDetailActivity.class);
-        intent.putExtra(EXTRA_GAME_ID, game.getId());
+        intent.putExtra(EXTRA_GAME_ID, row.getId());
+        intent.putExtra(EXTRA_GAME_NAME, row.getName());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);

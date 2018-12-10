@@ -52,7 +52,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
         // Required empty public constructor
     }
 
-    // add a new Game to the database
+    // add a new Game
     public static GameAddEditFragment newInstance() {
         Bundle args = new Bundle();
         GameAddEditFragment fragment = new GameAddEditFragment();
@@ -62,7 +62,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
         return fragment;
     }
 
-    // edit an existing Game in the database
+    // edit an existing Game
     public static GameAddEditFragment newInstance(Game game) {
         Bundle args = new Bundle();
         GameAddEditFragment fragment = new GameAddEditFragment();

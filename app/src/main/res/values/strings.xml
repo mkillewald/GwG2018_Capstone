@@ -63,7 +63,7 @@
     <string name="description_label">Description:</string>
     <string name="repair_steps_label">Repair Steps Taken:</string>
     <string name="priority_label">Priority:</string>
-    <string name="title_label">Title</string>
+    <string name="title_label">Title:</string>
 
     <!-- Form Input -->
     <string name="repair_description_hint">Trouble Description</string>

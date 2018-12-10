@@ -15,19 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.adapter.CoinOpsListAdapter;
 import com.gameaholix.coinops.databinding.FragmentListBinding;
-import com.gameaholix.coinops.adapter.GameAdapter;
-import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.ListRow;
 import com.gameaholix.coinops.viewModel.GameListViewModel;
 
 import java.util.List;
 
-public class GameListFragment extends Fragment implements GameAdapter.GameAdapterOnClickHandler {
+public class GameListFragment extends Fragment implements CoinOpsListAdapter.ListAdapterOnClickHandler {
 //    private static final String TAG = GameListFragment.class.getSimpleName();
 
     private Context mContext;
-    private GameAdapter mGameAdapter;
+    private CoinOpsListAdapter mGameAdapter;
     private OnFragmentInteractionListener mListener;
 
     public GameListFragment() {
@@ -47,7 +46,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
                 inflater, R.layout.fragment_list, container, false);
         final View rootView = bind.getRoot();
 
-        mGameAdapter = new GameAdapter(this);
+        mGameAdapter = new CoinOpsListAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         bind.rvList.setLayoutManager(linearLayoutManager);
         bind.rvList.setAdapter(mGameAdapter);
@@ -62,15 +61,15 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
         });
 
         // read list of games
-        GameListViewModel gameListViewModel =
-                ViewModelProviders.of(this).get(GameListViewModel.class);
-        LiveData<List<ListRow>> gameListLiveData = gameListViewModel.getGameListLiveData();
         if (getActivity() != null) {
+            GameListViewModel gameListViewModel =
+                    ViewModelProviders.of(getActivity()).get(GameListViewModel.class);
+            LiveData<List<ListRow>> gameListLiveData = gameListViewModel.getGameListLiveData();
             gameListLiveData.observe(getActivity(), new Observer<List<ListRow>>() {
                 @Override
-                public void onChanged(@Nullable List<ListRow> games) {
-                    if (games != null) {
-                        mGameAdapter.setGames(games);
+                public void onChanged(@Nullable List<ListRow> list) {
+                    if (list != null) {
+                        mGameAdapter.setList(list);
                     }
                 }
             });
@@ -80,9 +79,9 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
     }
 
     @Override
-    public void onClick(ListRow game) {
+    public void onClick(ListRow row) {
         if (mListener != null) {
-            mListener.onGameSelected(game);
+            mListener.onGameSelected(row);
         }
     }
 
@@ -115,7 +114,7 @@ public class GameListFragment extends Fragment implements GameAdapter.GameAdapte
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onGameSelected(ListRow game);
+        void onGameSelected(ListRow row);
         void onFabPressed();
     }
 }

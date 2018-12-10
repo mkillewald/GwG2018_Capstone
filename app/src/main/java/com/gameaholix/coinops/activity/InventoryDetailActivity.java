@@ -1,11 +1,10 @@
 package com.gameaholix.coinops.activity;
 
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
@@ -19,24 +18,18 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.fragment.InventoryAddEditFragment;
 import com.gameaholix.coinops.fragment.InventoryDetailFragment;
 import com.gameaholix.coinops.model.InventoryItem;
-import com.gameaholix.coinops.firebase.Db;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class InventoryDetailActivity extends BaseActivity implements
         InventoryDetailFragment.OnFragmentInteractionListener,
         InventoryAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = InventoryDetailActivity.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
+    private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
+    private static final String EXTRA_INVENTORY_NAME = "CoinOpsInventoryName";
 
-    private InventoryItem mInventoryItem;
-    private FirebaseUser mUser;
-    private DatabaseReference mDatabaseReference;
-    private DatabaseReference mInventoryRef;
+    private String mItemId;
+    private String mItemName;
     private AdView mAdView;
 
     @Override
@@ -45,8 +38,12 @@ public class InventoryDetailActivity extends BaseActivity implements
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             TransitionInflater inflater = TransitionInflater.from(this);
+
             Transition slideIn = inflater.inflateTransition(R.transition.slide_in);
             getWindow().setEnterTransition(slideIn);
+
+            Transition slideOut = inflater.inflateTransition(R.transition.slide_out);
+            getWindow().setExitTransition(slideOut);
         }
 
         setContentView(R.layout.activity_fragment_host);
@@ -67,26 +64,20 @@ public class InventoryDetailActivity extends BaseActivity implements
         mAdView.loadAd(adRequest);
 
         if (savedInstanceState == null) {
-            mInventoryItem = getIntent().getParcelableExtra(EXTRA_INVENTORY_ITEM);
+            Intent intent = getIntent();
+            mItemId = intent.getStringExtra(EXTRA_INVENTORY_ID);
+            mItemName = intent.getStringExtra(EXTRA_INVENTORY_NAME);
 
-            InventoryDetailFragment fragment = InventoryDetailFragment.newInstance(mInventoryItem);
+            InventoryDetailFragment fragment = InventoryDetailFragment.newInstance(mItemId);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
         } else {
-            mInventoryItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
+            mItemId = savedInstanceState.getString(EXTRA_INVENTORY_ID);
+            mItemName = savedInstanceState.getString(EXTRA_INVENTORY_NAME);
         }
 
         setTitle(R.string.inventory_details_title);
-
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mUser = firebaseAuth.getCurrentUser();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mInventoryRef = mDatabaseReference
-                .child(Db.INVENTORY)
-                .child(mUser.getUid())
-                .child(mInventoryItem.getId());
     }
 
     @Override
@@ -124,7 +115,9 @@ public class InventoryDetailActivity extends BaseActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_INVENTORY_ITEM, mInventoryItem);
+
+        outState.putString(EXTRA_INVENTORY_ID, mItemId);
+        outState.putString(EXTRA_INVENTORY_NAME, mItemName);
     }
 
     @Override
@@ -147,7 +140,7 @@ public class InventoryDetailActivity extends BaseActivity implements
     public void onInventoryAddEditCompletedOrCancelled() {
         // replace InventoryAddEditFragment with InventoryDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance(mInventoryItem));
+        ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance(mItemId));
         ft.commit();
 
         invalidateOptionsMenu();
@@ -155,46 +148,46 @@ public class InventoryDetailActivity extends BaseActivity implements
     }
 
     private void showDeleteAlert() {
-        if (mUser != null) {
-            // user is signed in
-
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new AlertDialog.Builder(this);
-            }
-            builder.setTitle(R.string.really_delete_inventory_item)
-                    .setMessage(R.string.inventory_item_will_be_deleted)
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        }
-                    })
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                        deleteItemData();
-                        finish();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-//        } else {
-//            // user is not signed in
-        }
+//        if (mUser != null) {
+//            // user is signed in
+//
+//            AlertDialog.Builder builder;
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+//            } else {
+//                builder = new AlertDialog.Builder(this);
+//            }
+//            builder.setTitle(R.string.really_delete_inventory_item)
+//                    .setMessage(R.string.inventory_item_will_be_deleted)
+//                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                        dialogInterface.dismiss();
+//                        }
+//                    })
+//                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                        deleteItemData();
+//                        finish();
+//                        }
+//                    })
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .show();
+////        } else {
+////            // user is not signed in
+//        }
     }
 
     private void deleteItemData() {
-        // delete inventory item
-        mInventoryRef.removeValue();
-
-        // delete inventory list entry
-        mDatabaseReference
-                .child(Db.USER)
-                .child(mUser.getUid())
-                .child(Db.INVENTORY_LIST)
-                .child(mInventoryItem.getId())
-                .removeValue();
+//        // delete inventory item
+//        mInventoryRef.removeValue();
+//
+//        // delete inventory list entry
+//        mDatabaseReference
+//                .child(Db.USER)
+//                .child(mUser.getUid())
+//                .child(Db.INVENTORY_LIST)
+//                .child(mInventoryItem.getId())
+//                .removeValue();
     }
 }

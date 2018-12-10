@@ -87,7 +87,6 @@ public class GameDetailActivity extends BaseActivity implements
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
-
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             mGameId = intent.getStringExtra(EXTRA_GAME_ID);

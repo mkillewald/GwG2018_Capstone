@@ -10,28 +10,27 @@ import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.ListItemBinding;
-import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.ListRow;
 
 import java.util.List;
 
-public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterViewHolder> {
-    private List<ListRow> mGames;
-    private final GameAdapterOnClickHandler mClickHandler;
+public class CoinOpsListAdapter extends RecyclerView.Adapter<CoinOpsListAdapter.ListAdapterViewHolder> {
+    private List<ListRow> mList;
+    private final ListAdapterOnClickHandler mClickHandler;
 
-    public interface GameAdapterOnClickHandler {
-        void onClick(ListRow game);
+    public interface ListAdapterOnClickHandler {
+        void onClick(ListRow row);
     }
 
-    public GameAdapter (GameAdapterOnClickHandler clickHandler) {
+    public CoinOpsListAdapter(ListAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
-    public class GameAdapterViewHolder extends RecyclerView.ViewHolder implements
+    public class ListAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
         final ListItemBinding mBinding;
 
-        GameAdapterViewHolder(ListItemBinding listItemBinding) {
+        ListAdapterViewHolder(ListItemBinding listItemBinding) {
             super(listItemBinding.getRoot());
             mBinding = listItemBinding;
             mBinding.getRoot().setOnClickListener(this);
@@ -40,38 +39,37 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameAdapterVie
         @Override
         public void onClick(View view) {
             int adapterPosition  = getAdapterPosition();
-            ListRow game = mGames.get(adapterPosition);
-            mClickHandler.onClick(game);
+            ListRow row = mList.get(adapterPosition);
+            mClickHandler.onClick(row);
         }
     }
 
     @NonNull
     @Override
-    public GameAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ListAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.list_item, parent, false);
 
-        return new GameAdapterViewHolder(binding);
+        return new ListAdapterViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GameAdapterViewHolder holder, int position) {
-        ListRow game = mGames.get(position);
+    public void onBindViewHolder(@NonNull ListAdapterViewHolder holder, int position) {
+        ListRow row = mList.get(position);
 
-        holder.mBinding.tvName.setText(game.getName());
+        holder.mBinding.tvName.setText(row.getName());
         holder.mBinding.tvName.setMaxLines(1);
         holder.mBinding.tvName.setEllipsize(TextUtils.TruncateAt.END);
     }
 
     @Override
     public int getItemCount() {
-        return mGames == null ? 0 : mGames.size();
+        return mList == null ? 0 : mList.size();
     }
 
-    public void setGames(List<ListRow> games) {
-        mGames = games;
+    public void setList(List<ListRow> list) {
+        mList = list;
         notifyDataSetChanged();
     }
-
 }

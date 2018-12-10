@@ -14,30 +14,30 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
-public class GameListViewModel extends ViewModel {
-    private LiveData<List<ListRow>> mGameListLiveData;
+public class InventoryListViewModel extends ViewModel {
+    private LiveData<List<ListRow>> mInventoryListLiveData;
     private ListRepository mRepository;
 
-    public GameListViewModel() {
+    public InventoryListViewModel() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             // user is signed in
-            DatabaseReference gameListRef = FirebaseDatabase.getInstance().getReference()
+            DatabaseReference inventoryListRef = FirebaseDatabase.getInstance().getReference()
                     .child(Db.USER)
                     .child(user.getUid())
-                    .child(Db.GAME_LIST);
+                    .child(Db.INVENTORY_LIST);
 
-            mRepository = new ListRepository(gameListRef, gameListRef.orderByValue());
-            mGameListLiveData = mRepository.getListLiveData();
+            mRepository = new ListRepository(inventoryListRef, inventoryListRef.orderByValue());
+            mInventoryListLiveData = mRepository.getListLiveData();
         } else {
             // user is not signed in
         }
     }
 
     @NonNull
-    public LiveData<List<ListRow>> getGameListLiveData() {
-        return mGameListLiveData;
+    public LiveData<List<ListRow>> getInventoryListLiveData() {
+        return mInventoryListLiveData;
     }
 
 }
