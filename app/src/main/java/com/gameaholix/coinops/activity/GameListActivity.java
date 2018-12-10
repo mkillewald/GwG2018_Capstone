@@ -83,7 +83,7 @@ public class GameListActivity extends BaseActivity implements
 
     private void showAddGameDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        GameAddEditFragment fragment = new GameAddEditFragment();
+        GameAddEditFragment fragment = GameAddEditFragment.newInstance();
         fragment.show(fm, "fragment_game_add_edit");
     }
 

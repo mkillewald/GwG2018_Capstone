@@ -52,6 +52,16 @@ public class GameAddEditFragment extends BaseDialogFragment {
         // Required empty public constructor
     }
 
+    // add a new Game to the database
+    public static GameAddEditFragment newInstance() {
+        Bundle args = new Bundle();
+        GameAddEditFragment fragment = new GameAddEditFragment();
+        args.putParcelable(EXTRA_GAME, new Game());
+        args.putBoolean(EXTRA_GAME_EDIT_FLAG, false);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     // edit an existing Game in the database
     public static GameAddEditFragment newInstance(Game game) {
         Bundle args = new Bundle();
@@ -71,9 +81,6 @@ public class GameAddEditFragment extends BaseDialogFragment {
             if (getArguments() != null) {
                 mEdit = getArguments().getBoolean(EXTRA_GAME_EDIT_FLAG);
                 mGame = getArguments().getParcelable(EXTRA_GAME);
-            } else {
-                mEdit = false;
-                mGame = new Game();
             }
         } else {
             mGame = savedInstanceState.getParcelable(EXTRA_GAME);
@@ -395,7 +402,6 @@ public class GameAddEditFragment extends BaseDialogFragment {
             String uid = mUser.getUid();
 
             DatabaseReference gameRootRef = mDatabaseReference.child(Db.GAME).child(uid);
-
 
             String gameId;
             if (mEdit) {
