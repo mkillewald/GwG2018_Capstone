@@ -9,9 +9,9 @@ import android.transition.Transition;
 import android.transition.TransitionInflater;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.fragment.ShoppingAddEditFragment;
 import com.gameaholix.coinops.fragment.ShoppingListFragment;
+import com.gameaholix.coinops.model.ListRow;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -67,9 +67,9 @@ public class ShoppingListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onShoppingItemSelected(Item shoppingItem) {
+    public void onShoppingItemSelected(ListRow item) {
         FragmentManager fm = getSupportFragmentManager();
-        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(shoppingItem);
+        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(null, item.getId());
         fragment.show(fm, "fragment_add_edit_shopping");
     }
 

@@ -39,10 +39,12 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
     private static final String TAG = ShoppingAddEditFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_SHOPPING = "CoinOpsShoppingItem";
+    private static final String EXTRA_SHOPPING_ID = "CoinOpsShoppingId";
     private static final String EXTRA_EDIT_FLAG = "CoinOpsShoppingEditFlag";
 
     private Context mContext;
     private String mGameId;
+    private String mShoppingId;
     private Item mShoppingItem;
     private FirebaseUser mUser;
     private DatabaseReference mDatabaseReference;
@@ -67,14 +69,11 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
     }
 
     // edit an existing shopping item
-    public static ShoppingAddEditFragment newInstance(Item shoppingItem) {
-        // TODO: fix this!
-        // When this factory method is called from the combined (global) shopping list,
-        // the shopping list item that is passed in will not have a parentId set.
-        // We will need to obtain the parentId from the database.
+    public static ShoppingAddEditFragment newInstance(@Nullable String gameId, String itemId) {
         Bundle args = new Bundle();
         ShoppingAddEditFragment fragment = new ShoppingAddEditFragment();
-        args.putParcelable(EXTRA_SHOPPING, shoppingItem);
+        args.putString(EXTRA_GAME_ID, gameId);
+        args.putString(EXTRA_SHOPPING_ID, itemId);
         args.putBoolean(EXTRA_EDIT_FLAG, true);
         fragment.setArguments(args);
         return fragment;
@@ -89,17 +88,16 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
             if (getArguments() != null) {
                 mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
                 if (mEdit) {
-                    mShoppingItem = getArguments().getParcelable(EXTRA_SHOPPING);
-                    if (mShoppingItem != null) {
-                        mGameId = mShoppingItem.getParentId();
-                    }
+                    mGameId = getArguments().getString(EXTRA_GAME_ID);
+                    mShoppingId = getArguments().getString(EXTRA_SHOPPING_ID);
                 } else {
                     mGameId = getArguments().getString(EXTRA_GAME_ID);
-                    mShoppingItem = new Item(mGameId);
                 }
+                mShoppingItem = new Item(mGameId);
             }
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
+            mShoppingId = savedInstanceState.getString(EXTRA_SHOPPING_ID);
             mShoppingItem = savedInstanceState.getParcelable(EXTRA_SHOPPING);
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
@@ -129,41 +127,30 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
         if (mUser != null && mEdit) {
             // user is signed in
 
-            // TODO: should be able to find way to not do this.
-            if (!TextUtils.isEmpty(mShoppingItem.getId())) {
+            // TODO: want to find better way to do this.
+            if (!TextUtils.isEmpty(mShoppingId)) {
                 mShopRef = mDatabaseReference
                         .child(Db.SHOP)
                         .child(mUser.getUid())
-                        .child(mShoppingItem.getId());
+                        .child(mShoppingId);
 
-                if (mShoppingItem.getParentId() == null) {
-                    // Setup event listener
-                    // This is needed to retrieve the parentId from the database
-                    mShopListener = new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            String id = dataSnapshot.getKey();
 
-                            mShoppingItem = dataSnapshot.getValue(Item.class);
+                // Setup event listener
+                // This is needed to retrieve the parentId from the database
+                mShopListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mShoppingItem = dataSnapshot.getValue(Item.class);
+                        bind.etEntry.setText(mShoppingItem.getName());
+                        if (TextUtils.isEmpty(mGameId)) mGameId = mShoppingItem.getParentId();
+                    }
 
-                            // mShoppingItem should now have a parentId set
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            if (mShoppingItem == null) {
-                                Log.d(TAG, "Error: To do item details not found");
-                            } else {
-                                mShoppingItem.setId(id);
-                                mGameId = mShoppingItem.getParentId();
-                                Log.d(TAG, "onDataChange: mGameId: " + mShoppingItem.getParentId());
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    };
-                    mShopRef.addListenerForSingleValueEvent(mShopListener);
-                }
+                    }
+                };
+                mShopRef.addListenerForSingleValueEvent(mShopListener);
             } else {
                 PromptUser.displayAlert(mContext,
                         R.string.error_read_database_failed,
@@ -266,6 +253,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_GAME_ID, mGameId);
+        outState.putString(EXTRA_SHOPPING_ID, mShoppingId);
         outState.putParcelable(EXTRA_SHOPPING, mShoppingItem);
         outState.putBoolean(EXTRA_EDIT_FLAG, mEdit);
     }
@@ -306,14 +294,11 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
 
             DatabaseReference shopRootRef = mDatabaseReference.child(Db.SHOP).child(uid);
 
-            String itemId;
-            if (mEdit) {
-                itemId = mShoppingItem.getId();
-            } else {
-                itemId = shopRootRef.push().getKey();
+            if (!mEdit) {
+                mShoppingId = shopRootRef.push().getKey();
             }
 
-            if (TextUtils.isEmpty(itemId)) {
+            if (TextUtils.isEmpty(mShoppingId)) {
                 PromptUser.displayAlert(mContext,
                         R.string.error_update_database_failed,
                         R.string.error_log_id_empty);
@@ -334,13 +319,13 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
                     .child(uid)
                     .child(mGameId)
                     .child(Db.SHOP_LIST)
-                    .child(itemId);
+                    .child(mShoppingId);
 
             DatabaseReference userShopListRef = mDatabaseReference
                     .child(Db.USER)
                     .child(uid)
                     .child(Db.SHOP_LIST)
-                    .child(itemId);
+                    .child(mShoppingId);
 
             Map<String, Object> valuesWithPath = new HashMap<>();
             if (mEdit) {
@@ -357,7 +342,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
                 }
             } else {
                 // we are adding a new item to the database
-                valuesWithPath.put(shopRootRef.child(itemId).getPath().toString(), mShoppingItem);
+                valuesWithPath.put(shopRootRef.child(mShoppingId).getPath().toString(), mShoppingItem);
                 valuesWithPath.put(gameShopListRef.getPath().toString(), mShoppingItem.getName());
                 valuesWithPath.put(userShopListRef.getPath().toString(), mShoppingItem.getName());
             }
@@ -426,7 +411,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
                 .child(mUser.getUid())
                 .child(mShoppingItem.getParentId())
                 .child(Db.SHOP_LIST)
-                .child(mShoppingItem.getId())
+                .child(mShoppingId)
                 .removeValue();
 
         // delete user shopping entry (global list)
@@ -434,7 +419,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
                 .child(Db.USER)
                 .child(mUser.getUid())
                 .child(Db.SHOP_LIST)
-                .child(mShoppingItem.getId())
+                .child(mShoppingId)
                 .removeValue();
     }
 

@@ -24,6 +24,7 @@ import com.gameaholix.coinops.fragment.GameAddEditFragment;
 import com.gameaholix.coinops.fragment.GameDetailFragment;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.Item;
+import com.gameaholix.coinops.model.ListRow;
 import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.fragment.RepairAddEditFragment;
 import com.gameaholix.coinops.fragment.RepairListFragment;
@@ -250,11 +251,11 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onShoppingItemSelected(Item shoppingItem) {
+    public void onShoppingItemSelected(ListRow item) {
         // show edit shopping dialog
         FragmentManager fm = getSupportFragmentManager();
-        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(shoppingItem);
-        fragment.show(fm, "fragment_edit_shopping");
+        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(mGameId, item.getId());
+        fragment.show(fm, "fragment_add_edit_shopping");
     }
 
     @Override
