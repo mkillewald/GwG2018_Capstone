@@ -1,11 +1,13 @@
 package com.gameaholix.coinops.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -15,11 +17,16 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.fragment.InventoryAddEditFragment;
 import com.gameaholix.coinops.fragment.InventoryDetailFragment;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class InventoryDetailActivity extends BaseActivity implements
         InventoryDetailFragment.OnFragmentInteractionListener,
@@ -147,47 +154,60 @@ public class InventoryDetailActivity extends BaseActivity implements
         mAdView.setVisibility(View.VISIBLE);
     }
 
+    // TODO: move this to viewModel
     private void showDeleteAlert() {
-//        if (mUser != null) {
-//            // user is signed in
-//
-//            AlertDialog.Builder builder;
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-//            } else {
-//                builder = new AlertDialog.Builder(this);
-//            }
-//            builder.setTitle(R.string.really_delete_inventory_item)
-//                    .setMessage(R.string.inventory_item_will_be_deleted)
-//                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                        dialogInterface.dismiss();
-//                        }
-//                    })
-//                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                        deleteItemData();
-//                        finish();
-//                        }
-//                    })
-//                    .setIcon(android.R.drawable.ic_dialog_alert)
-//                    .show();
-////        } else {
-////            // user is not signed in
-//        }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // user is signed in
+
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(this);
+            }
+            builder.setTitle(R.string.really_delete_inventory_item)
+                    .setMessage(R.string.inventory_item_will_be_deleted)
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        }
+                    })
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        deleteItemData();
+                        finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+//        } else {
+//            // user is not signed in
+        }
     }
 
+    // TODO: move this to viewModel
     private void deleteItemData() {
-//        // delete inventory item
-//        mInventoryRef.removeValue();
-//
-//        // delete inventory list entry
-//        mDatabaseReference
-//                .child(Db.USER)
-//                .child(mUser.getUid())
-//                .child(Db.INVENTORY_LIST)
-//                .child(mInventoryItem.getId())
-//                .removeValue();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        if (user != null) {
+            DatabaseReference inventoryRef = databaseReference
+                    .child(Db.INVENTORY)
+                    .child(user.getUid())
+                    .child(mItemId);
+
+            // delete inventory item
+            inventoryRef.removeValue();
+
+            // delete inventory list entry
+            databaseReference
+                    .child(Db.USER)
+                    .child(user.getUid())
+                    .child(Db.INVENTORY_LIST)
+                    .child(mItemId)
+                    .removeValue();
+        }
     }
 }

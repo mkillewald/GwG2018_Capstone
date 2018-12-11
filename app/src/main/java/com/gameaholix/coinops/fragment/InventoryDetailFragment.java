@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -39,6 +40,14 @@ public class InventoryDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static InventoryDetailFragment newInstance(String itemId) {
+        Bundle args = new Bundle();
+        InventoryDetailFragment fragment = new InventoryDetailFragment();
+        args.putString(EXTRA_INVENTORY_ID, itemId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +62,10 @@ public class InventoryDetailFragment extends Fragment {
             mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
         }
 
+        if (TextUtils.isEmpty(mItemId)) {
+            // TODO: finish this
+        }
+
         // Initialize Firebase components
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
@@ -60,15 +73,7 @@ public class InventoryDetailFragment extends Fragment {
         mInventoryRef = databaseReference
                 .child(Db.INVENTORY)
                 .child(mUser.getUid())
-                .child(mItem.getId());
-    }
-
-    public static InventoryDetailFragment newInstance(String itemId) {
-        Bundle args = new Bundle();
-        InventoryDetailFragment fragment = new InventoryDetailFragment();
-        args.putString(EXTRA_INVENTORY_ITEM, itemId);
-        fragment.setArguments(args);
-        return fragment;
+                .child(mItemId);
     }
 
     @Override
@@ -160,6 +165,7 @@ public class InventoryDetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(EXTRA_INVENTORY_ITEM, mItem);
+        outState.putString(EXTRA_INVENTORY_ID, mItemId);
     }
 
     @Override
