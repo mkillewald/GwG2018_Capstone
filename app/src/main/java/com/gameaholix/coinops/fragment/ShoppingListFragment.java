@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.adapter.CoinOpsListAdapter;
+import com.gameaholix.coinops.adapter.ListRowAdapter;
 import com.gameaholix.coinops.databinding.FragmentListBinding;
 import com.gameaholix.coinops.model.ListRow;
 import com.gameaholix.coinops.viewModel.GameShoppingListViewModel;
@@ -25,12 +25,12 @@ import com.gameaholix.coinops.viewModel.GlobalShoppingListViewModel;
 import java.util.List;
 
 public class ShoppingListFragment extends Fragment implements
-        CoinOpsListAdapter.ListAdapterOnClickHandler {
+        ListRowAdapter.ListAdapterOnClickHandler {
 //    private static final String TAG = ShoppingListFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
     private String mGameId;
-    private CoinOpsListAdapter mShoppingAdapter;
+    private ListRowAdapter mShoppingAdapter;
     private OnFragmentInteractionListener mListener;
 
     public ShoppingListFragment() {
@@ -72,7 +72,7 @@ public class ShoppingListFragment extends Fragment implements
                 inflater, R.layout.fragment_list, container, false);
         final View rootView = bind.getRoot();
 
-        mShoppingAdapter = new CoinOpsListAdapter(this);
+        mShoppingAdapter = new ListRowAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         bind.rvList.setLayoutManager(linearLayoutManager);
         bind.rvList.setAdapter(mShoppingAdapter);
@@ -107,7 +107,7 @@ public class ShoppingListFragment extends Fragment implements
                 GameShoppingListViewModel shoppingListViewModel =
                         ViewModelProviders.of(getActivity()).get(GameShoppingListViewModel.class);
                 shoppingListViewModel.init(mGameId);
-                 shoppingListLiveData =
+                shoppingListLiveData =
                         shoppingListViewModel.getShoppingListLiveData();
             }
             shoppingListLiveData.observe(getActivity(), new Observer<List<ListRow>>() {

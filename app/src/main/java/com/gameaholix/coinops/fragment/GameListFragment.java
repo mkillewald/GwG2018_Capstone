@@ -15,18 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.adapter.CoinOpsListAdapter;
+import com.gameaholix.coinops.adapter.ListRowAdapter;
 import com.gameaholix.coinops.databinding.FragmentListBinding;
 import com.gameaholix.coinops.model.ListRow;
 import com.gameaholix.coinops.viewModel.GameListViewModel;
 
 import java.util.List;
 
-public class GameListFragment extends Fragment implements CoinOpsListAdapter.ListAdapterOnClickHandler {
+public class GameListFragment extends Fragment implements ListRowAdapter.ListAdapterOnClickHandler {
 //    private static final String TAG = GameListFragment.class.getSimpleName();
 
     private Context mContext;
-    private CoinOpsListAdapter mGameAdapter;
+    private ListRowAdapter mGameAdapter;
     private OnFragmentInteractionListener mListener;
 
     public GameListFragment() {
@@ -46,7 +46,7 @@ public class GameListFragment extends Fragment implements CoinOpsListAdapter.Lis
                 inflater, R.layout.fragment_list, container, false);
         final View rootView = bind.getRoot();
 
-        mGameAdapter = new CoinOpsListAdapter(this);
+        mGameAdapter = new ListRowAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         bind.rvList.setLayoutManager(linearLayoutManager);
         bind.rvList.setAdapter(mGameAdapter);

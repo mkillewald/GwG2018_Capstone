@@ -146,7 +146,9 @@ public class InventoryDetailFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        mInventoryRef.removeEventListener(mInventoryListener);
+        if (mInventoryListener != null) {
+            mInventoryRef.removeEventListener(mInventoryListener);
+        }
     }
 
     @Override
@@ -183,7 +185,6 @@ public class InventoryDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        mInventoryRef.removeEventListener(mInventoryListener);
     }
 
     /**

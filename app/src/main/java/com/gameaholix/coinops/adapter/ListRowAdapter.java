@@ -14,7 +14,7 @@ import com.gameaholix.coinops.model.ListRow;
 
 import java.util.List;
 
-public class CoinOpsListAdapter extends RecyclerView.Adapter<CoinOpsListAdapter.ListAdapterViewHolder> {
+public class ListRowAdapter extends RecyclerView.Adapter<ListRowAdapter.ListRowAdapterViewHolder> {
     private List<ListRow> mList;
     private final ListAdapterOnClickHandler mClickHandler;
 
@@ -22,15 +22,15 @@ public class CoinOpsListAdapter extends RecyclerView.Adapter<CoinOpsListAdapter.
         void onClick(ListRow row);
     }
 
-    public CoinOpsListAdapter(ListAdapterOnClickHandler clickHandler) {
+    public ListRowAdapter(ListAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
-    public class ListAdapterViewHolder extends RecyclerView.ViewHolder implements
+    public class ListRowAdapterViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
         final ListItemBinding mBinding;
 
-        ListAdapterViewHolder(ListItemBinding listItemBinding) {
+        ListRowAdapterViewHolder(ListItemBinding listItemBinding) {
             super(listItemBinding.getRoot());
             mBinding = listItemBinding;
             mBinding.getRoot().setOnClickListener(this);
@@ -46,16 +46,16 @@ public class CoinOpsListAdapter extends RecyclerView.Adapter<CoinOpsListAdapter.
 
     @NonNull
     @Override
-    public ListAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ListRowAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ListItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.list_item, parent, false);
 
-        return new ListAdapterViewHolder(binding);
+        return new ListRowAdapterViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ListAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ListRowAdapterViewHolder holder, int position) {
         ListRow row = mList.get(position);
 
         holder.mBinding.tvName.setText(row.getName());

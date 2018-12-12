@@ -15,17 +15,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.adapter.CoinOpsListAdapter;
+import com.gameaholix.coinops.adapter.ListRowAdapter;
 import com.gameaholix.coinops.databinding.FragmentListBinding;
 import com.gameaholix.coinops.model.ListRow;
 import com.gameaholix.coinops.viewModel.InventoryListViewModel;
 
 import java.util.List;
 
-public class InventoryListFragment extends Fragment implements CoinOpsListAdapter.ListAdapterOnClickHandler {
+public class InventoryListFragment extends Fragment implements ListRowAdapter.ListAdapterOnClickHandler {
 //    private static final String TAG = InventoryListFragment.class.getSimpleName();
 
-    private CoinOpsListAdapter mInventoryAdapter;
+    private ListRowAdapter mInventoryAdapter;
     private OnFragmentInteractionListener mListener;
 
     public InventoryListFragment() {
@@ -45,7 +45,7 @@ public class InventoryListFragment extends Fragment implements CoinOpsListAdapte
                 inflater, R.layout.fragment_list, container, false);
         final View rootView = bind.getRoot();
 
-        mInventoryAdapter = new CoinOpsListAdapter(this);
+        mInventoryAdapter = new ListRowAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         bind.rvList.setLayoutManager(linearLayoutManager);
         bind.rvList.setAdapter(mInventoryAdapter);

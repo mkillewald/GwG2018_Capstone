@@ -31,12 +31,12 @@ public class ToDoDetailActivity extends BaseActivity implements
         ToDoDetailFragment.OnFragmentInteractionListener,
         ToDoAddEditFragment.OnFragmentInteractionListener {
 //    private static final String TAG = ToDoDetailActivity.class.getSimpleName();
-    private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
+    private static final String EXTRA_TODO_ID = "CoinOpsToDoId";
 
-    private ToDoItem mToDoItem;
-    private FirebaseUser mUser;
     private String mGameName;
+    private String mItemId;
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,17 +66,17 @@ public class ToDoDetailActivity extends BaseActivity implements
         adView.loadAd(adRequest);
 
         if (savedInstanceState == null) {
-            mToDoItem = getIntent().getParcelableExtra(EXTRA_TODO);
             mGameName = getIntent().getStringExtra(EXTRA_GAME_NAME);
+            mItemId = getIntent().getStringExtra(EXTRA_TODO_ID);
 
-            ToDoDetailFragment fragment = ToDoDetailFragment.newInstance(mToDoItem);
+            ToDoDetailFragment fragment = ToDoDetailFragment.newInstance(mItemId);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
 
         } else {
-            mToDoItem = savedInstanceState.getParcelable(EXTRA_TODO);
             mGameName = savedInstanceState.getString(EXTRA_GAME_NAME);
+            mItemId = savedInstanceState.getString(EXTRA_TODO_ID);
         }
 
         if (!TextUtils.isEmpty(mGameName)) {
@@ -126,7 +126,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_TODO, mToDoItem);
+        outState.putString(EXTRA_TODO_ID, mItemId);
         outState.putString(EXTRA_GAME_NAME, mGameName);
     }
 
@@ -144,7 +144,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     public void onToDoEditCompletedOrCancelled() {
         // replace ToDoEditFragment with ToDoDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mToDoItem));
+        ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mItemId));
         ft.commit();
 
         invalidateOptionsMenu();

@@ -10,7 +10,7 @@ import android.transition.Transition;
 import android.transition.TransitionInflater;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.ToDoItem;
+import com.gameaholix.coinops.model.ListRow;
 import com.gameaholix.coinops.fragment.ToDoListFragment;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -18,7 +18,7 @@ import com.google.android.gms.ads.AdView;
 public class ToDoListActivity extends BaseActivity implements
         ToDoListFragment.OnFragmentInteractionListener {
 //    private static final String TAG = ToDoListActivity.class.getSimpleName();
-    private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
+    private static final String EXTRA_TODO_ID = "CoinOpsToDoId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +67,9 @@ public class ToDoListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onToDoItemSelected(ToDoItem toDoItem) {
+    public void onToDoItemSelected(ListRow item) {
         Intent intent = new Intent(this, ToDoDetailActivity.class);
-        intent.putExtra(EXTRA_TODO, toDoItem);
+        intent.putExtra(EXTRA_TODO_ID, item.getId());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);

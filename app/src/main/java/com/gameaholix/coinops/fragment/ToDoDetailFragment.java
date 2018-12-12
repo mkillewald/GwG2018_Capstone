@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,8 +28,10 @@ import com.google.firebase.database.ValueEventListener;
 public class ToDoDetailFragment extends Fragment {
     private static final String TAG = ToDoDetailFragment.class.getSimpleName();
     private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
+    private static final String EXTRA_TODO_ID = "CoinOpsToDoId";
 
-    private ToDoItem mToDoItem;
+    private String mItemId;
+    private ToDoItem mItem;
     private FirebaseUser mUser;
     private DatabaseReference mToDoRef;
     private ValueEventListener mToDoListener;
@@ -38,10 +41,10 @@ public class ToDoDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ToDoDetailFragment newInstance(ToDoItem toDoItem) {
+    public static ToDoDetailFragment newInstance(String itemId) {
         Bundle args = new Bundle();
         ToDoDetailFragment fragment = new ToDoDetailFragment();
-        args.putParcelable(EXTRA_TODO, toDoItem);
+        args.putString(EXTRA_TODO_ID, itemId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,11 +55,16 @@ public class ToDoDetailFragment extends Fragment {
         setHasOptionsMenu(true);
 
         if (savedInstanceState == null) {
-            if (getActivity() != null) {
-                mToDoItem = getActivity().getIntent().getParcelableExtra(EXTRA_TODO);
+            if (getArguments() != null) {
+                mItemId = getArguments().getString(EXTRA_TODO_ID);
             }
         } else {
-            mToDoItem = savedInstanceState.getParcelable(EXTRA_TODO);
+            mItemId = savedInstanceState.getString(EXTRA_TODO_ID);
+            mItem = savedInstanceState.getParcelable(EXTRA_TODO);
+        }
+
+        if (TextUtils.isEmpty(mItemId)) {
+            // TODO: finish this
         }
 
         // Initialize Firebase components
@@ -66,7 +74,7 @@ public class ToDoDetailFragment extends Fragment {
         mToDoRef = databaseReference
                 .child(Db.TODO)
                 .child(mUser.getUid())
-                .child(mToDoItem.getId());
+                .child(mItemId);
     }
 
     @Override
@@ -87,17 +95,17 @@ public class ToDoDetailFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String id = dataSnapshot.getKey();
 
-                    mToDoItem = dataSnapshot.getValue(ToDoItem.class);
-                    if (mToDoItem == null) {
+                    mItem = dataSnapshot.getValue(ToDoItem.class);
+                    if (mItem == null) {
                         Log.d(TAG, "Error: To do item details not found");
                     } else {
-                        mToDoItem.setId(id);
+                        mItem.setId(id);
 
-                        bind.tvTodoName.setText(mToDoItem.getName());
+                        bind.tvTodoName.setText(mItem.getName());
                         RadioButton priorityButton =
-                                (RadioButton) bind.rgPriority.getChildAt(mToDoItem.getPriority());
+                                (RadioButton) bind.rgPriority.getChildAt(mItem.getPriority());
                         priorityButton.setChecked(true);
-                        bind.tvTodoDescription.setText(mToDoItem.getDescription());
+                        bind.tvTodoDescription.setText(mItem.getDescription());
                     }
                 }
 
@@ -112,14 +120,14 @@ public class ToDoDetailFragment extends Fragment {
             bind.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onToDoDeleteButtonPressed(mToDoItem);
+                    mListener.onToDoDeleteButtonPressed(mItem);
                 }
             });
 
             bind.btnEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onToDoEditButtonPressed(mToDoItem);
+                    mListener.onToDoEditButtonPressed(mItem);
                 }
             });
 
@@ -133,7 +141,9 @@ public class ToDoDetailFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mToDoRef.removeEventListener(mToDoListener);
+        if (mToDoListener != null) {
+            mToDoRef.removeEventListener(mToDoListener);
+        }
     }
 
     @Override
@@ -141,12 +151,12 @@ public class ToDoDetailFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_edit_todo:
                 if (mListener != null) {
-                    mListener.onToDoEditButtonPressed(mToDoItem);
+                    mListener.onToDoEditButtonPressed(mItem);
                 }
                 return true;
             case R.id.menu_delete_todo:
                 if (mListener != null) {
-                    mListener.onToDoDeleteButtonPressed(mToDoItem);
+                    mListener.onToDoDeleteButtonPressed(mItem);
                 }
                 return true;
             default:
@@ -157,7 +167,8 @@ public class ToDoDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_TODO, mToDoItem);
+        outState.putParcelable(EXTRA_TODO, mItem);
+        outState.putString(EXTRA_TODO_ID, mItemId);
     }
 
     @Override

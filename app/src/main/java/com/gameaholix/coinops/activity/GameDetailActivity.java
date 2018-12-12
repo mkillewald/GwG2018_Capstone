@@ -50,7 +50,7 @@ public class GameDetailActivity extends BaseActivity implements
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
     private static final String EXTRA_IMAGE_PATH = "CoinOpsImagePath";
     private static final String EXTRA_REPAIR = "CoinOpsRepairLog";
-    private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
+    private static final String EXTRA_TODO_ID = "CoinOpsToDoId";
 
     private String mGameId;
     private String mGameName;
@@ -223,9 +223,9 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onToDoItemSelected(ToDoItem toDoItem) {
+    public void onToDoItemSelected(ListRow item) {
         Intent intent = new Intent(this, ToDoDetailActivity.class);
-        intent.putExtra(EXTRA_TODO, toDoItem);
+        intent.putExtra(EXTRA_TODO_ID, item.getId());
         intent.putExtra(EXTRA_GAME_NAME, mGameName);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
