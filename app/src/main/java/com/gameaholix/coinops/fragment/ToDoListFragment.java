@@ -19,8 +19,8 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.ListRowAdapter;
 import com.gameaholix.coinops.databinding.FragmentListBinding;
 import com.gameaholix.coinops.model.ListRow;
-import com.gameaholix.coinops.viewModel.GameToDoListViewModel;
-import com.gameaholix.coinops.viewModel.GlobalToDoListViewModel;
+import com.gameaholix.coinops.viewModel.ToDoListGameViewModel;
+import com.gameaholix.coinops.viewModel.ToDoListGlobalViewModel;
 
 import java.util.List;
 
@@ -102,16 +102,16 @@ public class ToDoListFragment extends Fragment implements ListRowAdapter.ListAda
             LiveData<List<ListRow>> toDoListLiveData;
             if (TextUtils.isEmpty(mGameId)) {
                 // Global to do list
-                GlobalToDoListViewModel toDoListViewModel =
-                        ViewModelProviders.of(getActivity()).get(GlobalToDoListViewModel.class);
+                ToDoListGlobalViewModel toDoListViewModel =
+                        ViewModelProviders.of(getActivity()).get(ToDoListGlobalViewModel.class);
                 toDoListLiveData =
-                        toDoListViewModel.getToDoListLiveData();
+                        toDoListViewModel.getListLiveData();
             } else {
                 // Game specific to do list
-                GameToDoListViewModel toDoListViewModel =
-                        ViewModelProviders.of(getActivity()).get(GameToDoListViewModel.class);
+                ToDoListGameViewModel toDoListViewModel =
+                        ViewModelProviders.of(getActivity()).get(ToDoListGameViewModel.class);
                 toDoListViewModel.init(mGameId);
-                toDoListLiveData = toDoListViewModel.getToDoListLiveData();
+                toDoListLiveData = toDoListViewModel.getListLiveData();
             }
             toDoListLiveData.observe(getActivity(), new Observer<List<ListRow>>() {
                 @Override

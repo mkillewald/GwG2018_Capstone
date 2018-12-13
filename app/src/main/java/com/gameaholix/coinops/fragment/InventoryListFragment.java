@@ -63,7 +63,7 @@ public class InventoryListFragment extends Fragment implements ListRowAdapter.Li
         if (getActivity() != null) {
             InventoryListViewModel inventoryListViewModel =
                     ViewModelProviders.of(getActivity()).get(InventoryListViewModel.class);
-            LiveData<List<ListRow>> inventoryListLiveData = inventoryListViewModel.getInventoryListLiveData();
+            LiveData<List<ListRow>> inventoryListLiveData = inventoryListViewModel.getListLiveData();
             inventoryListLiveData.observe(getActivity(), new Observer<List<ListRow>>() {
                 @Override
                 public void onChanged(@Nullable List<ListRow> list) {

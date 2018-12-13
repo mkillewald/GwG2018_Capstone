@@ -19,8 +19,8 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.ListRowAdapter;
 import com.gameaholix.coinops.databinding.FragmentListBinding;
 import com.gameaholix.coinops.model.ListRow;
-import com.gameaholix.coinops.viewModel.GameShoppingListViewModel;
-import com.gameaholix.coinops.viewModel.GlobalShoppingListViewModel;
+import com.gameaholix.coinops.viewModel.ShoppingListGameViewModel;
+import com.gameaholix.coinops.viewModel.ShoppingListGlobalViewModel;
 
 import java.util.List;
 
@@ -98,17 +98,17 @@ public class ShoppingListFragment extends Fragment implements
             LiveData<List<ListRow>> shoppingListLiveData;
             if (TextUtils.isEmpty(mGameId)) {
                 // Global shopping list
-                GlobalShoppingListViewModel shoppingListViewModel =
-                        ViewModelProviders.of(getActivity()).get(GlobalShoppingListViewModel.class);
+                ShoppingListGlobalViewModel shoppingListViewModel =
+                        ViewModelProviders.of(getActivity()).get(ShoppingListGlobalViewModel.class);
                 shoppingListLiveData =
-                        shoppingListViewModel.getShoppingListLiveData();
+                        shoppingListViewModel.getListLiveData();
             } else {
                 // Game specific shopping list
-                GameShoppingListViewModel shoppingListViewModel =
-                        ViewModelProviders.of(getActivity()).get(GameShoppingListViewModel.class);
+                ShoppingListGameViewModel shoppingListViewModel =
+                        ViewModelProviders.of(getActivity()).get(ShoppingListGameViewModel.class);
                 shoppingListViewModel.init(mGameId);
                 shoppingListLiveData =
-                        shoppingListViewModel.getShoppingListLiveData();
+                        shoppingListViewModel.getListLiveData();
             }
             shoppingListLiveData.observe(getActivity(), new Observer<List<ListRow>>() {
                 @Override

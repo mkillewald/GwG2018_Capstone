@@ -64,7 +64,7 @@ public class GameListFragment extends Fragment implements ListRowAdapter.ListAda
         if (getActivity() != null) {
             GameListViewModel gameListViewModel =
                     ViewModelProviders.of(getActivity()).get(GameListViewModel.class);
-            LiveData<List<ListRow>> gameListLiveData = gameListViewModel.getGameListLiveData();
+            LiveData<List<ListRow>> gameListLiveData = gameListViewModel.getListLiveData();
             gameListLiveData.observe(getActivity(), new Observer<List<ListRow>>() {
                 @Override
                 public void onChanged(@Nullable List<ListRow> list) {
