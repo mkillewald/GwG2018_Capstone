@@ -19,8 +19,8 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.ListRowAdapter;
 import com.gameaholix.coinops.databinding.FragmentListBinding;
 import com.gameaholix.coinops.model.ListRow;
-import com.gameaholix.coinops.viewModel.ToDoListGameViewModel;
-import com.gameaholix.coinops.viewModel.ToDoListGlobalViewModel;
+import com.gameaholix.coinops.viewModel.ToDoListViewModel;
+import com.gameaholix.coinops.viewModel.ToDoListViewModelFactory;
 
 import java.util.List;
 
@@ -99,24 +99,16 @@ public class ToDoListFragment extends Fragment implements ListRowAdapter.ListAda
 
         // read list of to do items
         if (getActivity() != null) {
-            LiveData<List<ListRow>> toDoListLiveData;
-            if (TextUtils.isEmpty(mGameId)) {
-                // Global to do list
-                ToDoListGlobalViewModel toDoListViewModel =
-                        ViewModelProviders.of(getActivity()).get(ToDoListGlobalViewModel.class);
-                toDoListLiveData =
-                        toDoListViewModel.getListLiveData();
-            } else {
-                // Game specific to do list
-                ToDoListGameViewModel toDoListViewModel =
-                        ViewModelProviders.of(getActivity()).get(ToDoListGameViewModel.class);
-                toDoListViewModel.init(mGameId);
-                toDoListLiveData = toDoListViewModel.getListLiveData();
-            }
+            ToDoListViewModel toDoListViewModel = ViewModelProviders
+                    .of(getActivity(), new ToDoListViewModelFactory(mGameId))
+                    .get(ToDoListViewModel.class);
+            LiveData<List<ListRow>> toDoListLiveData = toDoListViewModel.getListLiveData();
             toDoListLiveData.observe(getActivity(), new Observer<List<ListRow>>() {
                 @Override
                 public void onChanged(@Nullable List<ListRow> list) {
-                    mToDoAdapter.setList(list);
+                    if (list != null) {
+                        mToDoAdapter.setList(list);
+                    }
                 }
             });
         }
