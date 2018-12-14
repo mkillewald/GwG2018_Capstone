@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.gameaholix.coinops.model.ListRow;
+import com.gameaholix.coinops.repository.BaseListRepository;
 import com.gameaholix.coinops.repository.ShoppingListGameRepository;
 import com.gameaholix.coinops.repository.ShoppingListGlobalRepository;
 
@@ -16,15 +17,15 @@ public class ShoppingListViewModel extends ViewModel {
     private LiveData<List<ListRow>> mListLiveData;
 
     ShoppingListViewModel(@Nullable String gameId) {
+        BaseListRepository listRepository;
         if (TextUtils.isEmpty(gameId)) {
             // use global repository
-            ShoppingListGlobalRepository globalRepository = new ShoppingListGlobalRepository();
-            mListLiveData = globalRepository.getListLiveData();
+            listRepository = new ShoppingListGlobalRepository();
         } else {
             // use game specific repository
-            ShoppingListGameRepository gameRepository = new ShoppingListGameRepository(gameId);
-            mListLiveData = gameRepository.getListLiveData();
+            listRepository = new ShoppingListGameRepository(gameId);
         }
+        mListLiveData = listRepository.getListLiveData();
     }
 
     @NonNull

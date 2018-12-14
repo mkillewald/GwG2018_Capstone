@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.gameaholix.coinops.model.ListRow;
+import com.gameaholix.coinops.repository.BaseListRepository;
 import com.gameaholix.coinops.repository.ToDoListGameRepository;
 import com.gameaholix.coinops.repository.ToDoListGlobalRepository;
 
@@ -16,15 +17,15 @@ public class ToDoListViewModel extends ViewModel {
     private LiveData<List<ListRow>> mListLiveData;
 
     ToDoListViewModel(@Nullable String gameId) {
+        BaseListRepository listRepository;
         if (TextUtils.isEmpty(gameId)) {
             // use global repository
-            ToDoListGlobalRepository globalRepository = new ToDoListGlobalRepository();
-            mListLiveData = globalRepository.getListLiveData();
+            listRepository = new ToDoListGlobalRepository();
         } else {
             // use game specific repository
-            ToDoListGameRepository gameRepository = new ToDoListGameRepository(gameId);
-            mListLiveData = gameRepository.getListLiveData();
+            listRepository = new ToDoListGameRepository(gameId);
         }
+        mListLiveData = listRepository.getListLiveData();
     }
 
     @NonNull
