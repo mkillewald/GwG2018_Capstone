@@ -1,5 +1,8 @@
 package com.gameaholix.coinops.fragment;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
@@ -27,6 +31,8 @@ import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.GlideApp;
+import com.gameaholix.coinops.viewModel.GameViewModel;
+import com.gameaholix.coinops.viewModel.GameViewModelFactory;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -70,7 +76,7 @@ public class GameDetailFragment extends Fragment {
     private DatabaseReference mShopRef;
     private DatabaseReference mToDoRef;
     private StorageReference mImageRootRef;
-    private ValueEventListener mGameListener;
+//    private ValueEventListener mGameListener;
     private ValueEventListener mDeleteTodoListener;
     private ValueEventListener mDeleteShopListener;
     private OnFragmentInteractionListener mListener;
@@ -139,126 +145,183 @@ public class GameDetailFragment extends Fragment {
 
         final View rootView = mBind.getRoot();
 
-        if (mUser != null) {
-            // user is signed in
+        String noSelection = getString(R.string.not_available);
+        final String[] typeArr = getResources().getStringArray(R.array.game_type);
+        typeArr[0] = noSelection;
+        final String[] cabinetArr = getResources().getStringArray(R.array.game_cabinet);
+        cabinetArr[0] = noSelection;
+        final String[] workingArr = getResources().getStringArray(R.array.game_working);
+        workingArr[0] = noSelection;
+        final String[] ownershipArr =
+                getResources().getStringArray(R.array.game_ownership);
+        ownershipArr[0] = noSelection;
+        final String[] conditionArr =
+                getResources().getStringArray(R.array.game_condition);
+        conditionArr[0] = noSelection;
+        final String[] monitorPhospherArr =
+                getResources().getStringArray(R.array.game_monitor_phospher);
+        final String[] monitorTypeArr =
+                getResources().getStringArray(R.array.game_monitor_beam);
+        final String[] monitorTechArr =
+                getResources().getStringArray(R.array.game_monitor_tech);
+        final String[] monitorSizeArr =
+                getResources().getStringArray(R.array.game_monitor_size);
 
-            // Setup event listener
-            mGameListener = new ValueEventListener() {
+        // read game details
+        if (getActivity() != null) {
+            GameViewModel viewModel = ViewModelProviders
+                    .of(getActivity(), new GameViewModelFactory(mGameId))
+                    .get(GameViewModel.class);
+            LiveData<Game> gameLiveData = viewModel.getGameLiveData();
+            gameLiveData.observe(getActivity(), new Observer<Game>() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    mGame = dataSnapshot.getValue(Game.class);
-                    if (mGame == null) {
-                        Log.d(TAG, "Error: Game details not found");
-                    } else {
-                        mGame.setId(mGameId);
-
-                        String noSelection = getString(R.string.not_available);
-                        String[] typeArr = getResources().getStringArray(R.array.game_type);
-                        typeArr[0] = noSelection;
-                        String[] cabinetArr = getResources().getStringArray(R.array.game_cabinet);
-                        cabinetArr[0] = noSelection;
-                        String[] workingArr = getResources().getStringArray(R.array.game_working);
-                        workingArr[0] = noSelection;
-                        String[] ownershipArr =
-                                getResources().getStringArray(R.array.game_ownership);
-                        ownershipArr[0] = noSelection;
-                        String[] conditionArr =
-                                getResources().getStringArray(R.array.game_condition);
-                        conditionArr[0] = noSelection;
-                        String[] monitorPhospherArr =
-                                getResources().getStringArray(R.array.game_monitor_phospher);
-                        String[] monitorTypeArr =
-                                getResources().getStringArray(R.array.game_monitor_beam);
-                        String[] monitorTechArr =
-                                getResources().getStringArray(R.array.game_monitor_tech);
-                        String[] monitorSizeArr =
-                                getResources().getStringArray(R.array.game_monitor_size);
+                public void onChanged(@Nullable Game game) {
+                    if (game != null) {
+                        game.setId(mGameId);
 
                         if (mListener != null) {
-                            mListener.onGameNameChanged(mGame.getName());
+                            mListener.onGameNameChanged(game.getName());
                         }
 
-                        mBind.tvGameType.setText(typeArr[mGame.getType()]);
-                        mBind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
-                        mBind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
-                        mBind.tvGameOwnership.setText(ownershipArr[mGame.getOwnership()]);
-                        mBind.tvGameCondition.setText(conditionArr[mGame.getCondition()]);
+                        mBind.tvGameType.setText(typeArr[game.getType()]);
+                        mBind.tvGameCabinet.setText(cabinetArr[game.getCabinet()]);
+                        mBind.tvGameWorking.setText(workingArr[game.getWorking()]);
+                        mBind.tvGameOwnership.setText(ownershipArr[game.getOwnership()]);
+                        mBind.tvGameCondition.setText(conditionArr[game.getCondition()]);
                         mBind.tvGameMonitorPhospher
-                                .setText(monitorPhospherArr[mGame.getMonitorPhospher()]);
-                        mBind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorBeam()]);
-                        mBind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
-                        mBind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
+                                .setText(monitorPhospherArr[game.getMonitorPhospher()]);
+                        mBind.tvGameMonitorType.setText(monitorTypeArr[game.getMonitorBeam()]);
+                        mBind.tvGameMonitorTech.setText(monitorTechArr[game.getMonitorTech()]);
+                        mBind.tvGameMonitorSize.setText(monitorSizeArr[game.getMonitorSize()]);
 
                         // Get thumbnail from firebase
                         StorageReference thumbRef = null;
 
-                        if (!TextUtils.isEmpty(mGame.getImage())) {
-                            thumbRef = mImageRootRef.child(THUMB + mGame.getImage());
+                        if (!TextUtils.isEmpty(game.getImage())) {
+                            thumbRef = mImageRootRef.child(THUMB + game.getImage());
                         }
 
                         GlideApp.with(mContext)
                                 .load(thumbRef)
                                 .placeholder(R.drawable.ic_classic_arcade_machine)
                                 .into(mBind.ivPhoto);
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Failed to read value
-                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
-                }
-            };
-            mGameRef.addValueEventListener(mGameListener);
-
-            // Setup ImageView
-            mBind.ivPhoto.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (!TextUtils.isEmpty(mGame.getImage())) {
-                        String imagePath = mImageRootRef.child(mGame.getImage()).getPath();
-                        mListener.onImageClicked(imagePath);
                     }
                 }
             });
-
-            // Setup Buttons
-            mBind.btnTakePhoto.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    onLaunchCamera();
-                }
-            });
-
-            mBind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (getActivity() != null) {
-                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://sark.atomized.org/?s=" + mGame.getName()));
-                        getActivity().startActivity(webIntent);
-                    }
-                }
-            });
-
-            mBind.btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mListener.onEditButtonPressed(mGame);
-                }
-            });
-
-            mBind.btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showDeleteAlert();
-                }
-            });
-//        } else {
-//            // user is not signed in
         }
+//        mGameListener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                mGame = dataSnapshot.getValue(Game.class);
+//                if (mGame == null) {
+//                    Log.d(TAG, "Error: Game details not found");
+//                } else {
+//                    mGame.setId(mGameId);
+//
+//                    String noSelection = getString(R.string.not_available);
+//                    String[] typeArr = getResources().getStringArray(R.array.game_type);
+//                    typeArr[0] = noSelection;
+//                    String[] cabinetArr = getResources().getStringArray(R.array.game_cabinet);
+//                    cabinetArr[0] = noSelection;
+//                    String[] workingArr = getResources().getStringArray(R.array.game_working);
+//                    workingArr[0] = noSelection;
+//                    String[] ownershipArr =
+//                            getResources().getStringArray(R.array.game_ownership);
+//                    ownershipArr[0] = noSelection;
+//                    String[] conditionArr =
+//                            getResources().getStringArray(R.array.game_condition);
+//                    conditionArr[0] = noSelection;
+//                    String[] monitorPhospherArr =
+//                            getResources().getStringArray(R.array.game_monitor_phospher);
+//                    String[] monitorTypeArr =
+//                            getResources().getStringArray(R.array.game_monitor_beam);
+//                    String[] monitorTechArr =
+//                            getResources().getStringArray(R.array.game_monitor_tech);
+//                    String[] monitorSizeArr =
+//                            getResources().getStringArray(R.array.game_monitor_size);
+//
+//                    if (mListener != null) {
+//                        mListener.onGameNameChanged(mGame.getName());
+//                    }
+//
+//                    mBind.tvGameType.setText(typeArr[mGame.getType()]);
+//                    mBind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
+//                    mBind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
+//                    mBind.tvGameOwnership.setText(ownershipArr[mGame.getOwnership()]);
+//                    mBind.tvGameCondition.setText(conditionArr[mGame.getCondition()]);
+//                    mBind.tvGameMonitorPhospher
+//                            .setText(monitorPhospherArr[mGame.getMonitorPhospher()]);
+//                    mBind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorBeam()]);
+//                    mBind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
+//                    mBind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
+//
+//                    // Get thumbnail from firebase
+//                    StorageReference thumbRef = null;
+//
+//                    if (!TextUtils.isEmpty(mGame.getImage())) {
+//                        thumbRef = mImageRootRef.child(THUMB + mGame.getImage());
+//                    }
+//
+//                    GlideApp.with(mContext)
+//                            .load(thumbRef)
+//                            .placeholder(R.drawable.ic_classic_arcade_machine)
+//                            .into(mBind.ivPhoto);
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                // Failed to read value
+//                Log.d(TAG, "Failed to read from database.", databaseError.toException());
+//            }
+//        };
+//        mGameRef.addValueEventListener(mGameListener);
+
+        // Setup ImageView
+        mBind.ivPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(mGame.getImage())) {
+                    String imagePath = mImageRootRef.child(mGame.getImage()).getPath();
+                    mListener.onImageClicked(imagePath);
+                }
+            }
+        });
+
+        // Setup Buttons
+        mBind.btnTakePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onLaunchCamera();
+            }
+        });
+
+        mBind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getActivity() != null) {
+                    Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://sark.atomized.org/?s=" + mGame.getName()));
+                    getActivity().startActivity(webIntent);
+                }
+            }
+        });
+
+        mBind.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onEditButtonPressed(mGame);
+            }
+        });
+
+        mBind.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDeleteAlert();
+            }
+        });
 
         return rootView;
     }
@@ -267,9 +330,9 @@ public class GameDetailFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (mGameListener != null) {
-            mGameRef.removeEventListener(mGameListener);
-        }
+//        if (mGameListener != null) {
+//            mGameRef.removeEventListener(mGameListener);
+//        }
 
         if (mDeleteTodoListener != null) {
             mToDoRef.removeEventListener(mDeleteTodoListener);
@@ -435,7 +498,7 @@ public class GameDetailFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                mListener.showSnackbar(R.string.upload_failed);
+                mListener.showSnackbar(R.string.error_upload_failed);
                 Log.e(TAG, "Image upload failed -> ", e);
             }
         });
@@ -469,7 +532,7 @@ public class GameDetailFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                mListener.showSnackbar(R.string.upload_failed);
+                mListener.showSnackbar(R.string.error_upload_failed);
                 Log.e(TAG, "Image upload failed -> ", e);
             }
         });
