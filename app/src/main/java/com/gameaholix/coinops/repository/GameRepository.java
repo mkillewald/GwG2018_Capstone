@@ -18,7 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 // https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
 
 public class GameRepository {
-    private static LiveData<Game> sGameLiveData;
+    private LiveData<Game> mGameLiveData;
 
     public GameRepository(String gameId) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -36,7 +36,7 @@ public class GameRepository {
             // to perform this conversion is over 16 ms, "jank" will occur. A MediatorLiveData can be used
             // instead to execute off of the main thread.
 
-            sGameLiveData = Transformations.map(liveData, new Deserializer());
+            mGameLiveData = Transformations.map(liveData, new Deserializer());
         } else {
             // user not signed in
         }
@@ -52,6 +52,6 @@ public class GameRepository {
 
     @NonNull
     public LiveData<Game> getItemLiveData() {
-        return sGameLiveData;
+        return mGameLiveData;
     }
 }
