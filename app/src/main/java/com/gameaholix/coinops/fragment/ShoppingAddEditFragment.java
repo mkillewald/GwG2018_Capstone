@@ -388,7 +388,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
                             if (mShoppingItem.getParentId() != null) {
                                 deleteItemData();
                             } else {
-                                PromptUser.displayAlert(mContext, R.string.error_delete_shopping_failed,
+                                PromptUser.displayAlert(mContext, R.string.error_delete_item_failed,
                                         R.string.error_please_try_again);
                                 Log.e(TAG, "ERROR: parent id is null");
                             }
