@@ -14,8 +14,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+// Concepts and code used from 3 part series:
+// https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
+
 public class InventoryItemRepository {
-    private static LiveData<InventoryItem> mItemLiveData;
+    private static LiveData<InventoryItem> sItemLiveData;
 
     public InventoryItemRepository(String itemId) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -29,7 +32,11 @@ public class InventoryItemRepository {
 
             FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(inventoryRef.orderByValue());
 
-            mItemLiveData = Transformations.map(liveData, new Deserializer());
+            // NOTE: Transformations run synchronously on the main thread, if the total time it takes
+            // to perform this conversion is over 16 ms, "jank" will occur. A MediatorLiveData can be used
+            // instead to execute off of the main thread.
+
+            sItemLiveData = Transformations.map(liveData, new Deserializer());
         } else {
             // user not signed in
         }
@@ -45,6 +52,6 @@ public class InventoryItemRepository {
 
     @NonNull
     public LiveData<InventoryItem> getItemLiveData() {
-        return mItemLiveData;
+        return sItemLiveData;
     }
 }

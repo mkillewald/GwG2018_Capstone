@@ -22,7 +22,7 @@ import com.gameaholix.coinops.viewModel.InventoryItemViewModel;
 import com.gameaholix.coinops.viewModel.InventoryItemViewModelFactory;
 
 public class InventoryDetailFragment extends Fragment {
-    private static final String TAG = InventoryDetailFragment.class.getSimpleName();
+//    private static final String TAG = InventoryDetailFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
 
     private String mItemId;
@@ -64,16 +64,17 @@ public class InventoryDetailFragment extends Fragment {
 
         final View rootView = bind.getRoot();
 
-        if (TextUtils.isEmpty(mItemId)) {
-            // TODO: finish this
-        }
-
         String noSelection = getString(R.string.not_available);
         final String[] typeArr = getResources().getStringArray(R.array.inventory_type);
         typeArr[0] = noSelection;
         final String[] conditionArr =
                 getResources().getStringArray(R.array.inventory_condition);
         conditionArr[0] = noSelection;
+
+        if (TextUtils.isEmpty(mItemId)) {
+            mListener.onItemIdInvalid();
+            return rootView;
+        }
 
         // read inventory item details
         if (getActivity() != null) {
@@ -118,7 +119,7 @@ public class InventoryDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_inventory:
-                mListener.onEditButtonPressed(mItem);
+                if (mItem != null) mListener.onEditButtonPressed(mItem);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -160,6 +161,7 @@ public class InventoryDetailFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
+        void onItemIdInvalid();
         void onEditButtonPressed(InventoryItem inventoryItem);
         void onDeleteButtonPressed();
     }

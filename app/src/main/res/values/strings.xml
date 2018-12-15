@@ -175,19 +175,17 @@
     erased.\n\n This is a permanent action and cannot be undone.</string>
 
     <!-- Error Messages -->
+    <string name="error_unable_to_load">Unable to load details!</string>
     <string name="error_read_database_failed">Failed to fetch item from database!</string>
     <string name="error_update_database_failed">Failed to update database!</string>
     <string name="error_add_game_failed">Failed to add game!</string>
-
     <string name="error_add_inventory_failed">Failed to add part!</string>
-
     <string name="error_add_repair_log_failed">Failed to add repair log!</string>
-
     <string name="error_add_repair_step_failed">Failed to add repair step!</string>
-
     <string name="error_add_item_failed">Failed to add item!</string>
-    <string name="error_edit_shopping_failed">Failed to save changes!</string>
-    <string name="error_delete_shopping_failed">Failed to delete item!</string>
+    <string name="error_edit_failed">Failed to save changes!</string>
+    <string name="error_delete_item_failed">Failed to delete item!</string>
+    <string name="error_upload_failed">Image upload failed.</string>
 
     <string name="error_please_try_again">Please try again.</string>
     <string name="error_name_empty">Name field cannot be blank. Please enter a name and try again.</string>
@@ -204,8 +202,6 @@
 
     <string name="network_unavailable">Network connection not found!</string>
     <string name="network_not_connected">Not connected to the Internet!</string>
-
-    <string name="upload_failed">Image upload failed.</string>
 
     <!-- Content Descriptions -->
     <string name="more">view more details</string>

@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.fragment.InventoryAddEditFragment;
 import com.gameaholix.coinops.fragment.InventoryDetailFragment;
 import com.gameaholix.coinops.model.InventoryItem;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,7 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class InventoryDetailActivity extends BaseActivity implements
         InventoryDetailFragment.OnFragmentInteractionListener,
         InventoryAddEditFragment.OnFragmentInteractionListener {
-//    private static final String TAG = InventoryDetailActivity.class.getSimpleName();
+    private static final String TAG = InventoryDetailActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
     private static final String EXTRA_INVENTORY_NAME = "CoinOpsInventoryName";
 
@@ -125,6 +127,21 @@ public class InventoryDetailActivity extends BaseActivity implements
 
         outState.putString(EXTRA_INVENTORY_ID, mItemId);
         outState.putString(EXTRA_INVENTORY_NAME, mItemName);
+    }
+
+    @Override
+    public void onItemIdInvalid() {
+        Log.e(TAG, "Failed to instantiate fragment! Item ID cannot be an empty string.");
+        PromptUser.displayAlert(this,
+                R.string.error_unable_to_load,
+                R.string.error_item_id_empty,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
     }
 
     @Override

@@ -30,6 +30,21 @@ public class PromptUser {
                 .setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
+    public static void displayAlert(Context context, int title, int message,
+                                    DialogInterface.OnClickListener clickListener) {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, clickListener)
+                .setCancelable(false)
+                .setIcon(android.R.drawable.ic_dialog_alert).show();
+    }
+
     public static void displaySnackbar(CoordinatorLayout layout, int resId) {
         final Snackbar snackbar = Snackbar.make(layout, resId, Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
