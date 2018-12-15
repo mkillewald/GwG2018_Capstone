@@ -184,7 +184,7 @@ public class InventoryDetailFragment extends Fragment {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
-}
+    }
 
     private void deleteItemData() {
         mViewModel.delete();
