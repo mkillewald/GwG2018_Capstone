@@ -36,7 +36,7 @@ public abstract class BaseListRepository {
         // important distinction to make, because postValue() is the thread-safe way of
         // performing the update, whereas setValue() may only be called on the main thread.
 
-        // Set up the MediatorLiveData to convert DataSnapshot object into List<Game>
+        // Set up the MediatorLiveData to convert DataSnapshot object into List<ListRow>
         mListLiveData.addSource(liveData, new Observer<DataSnapshot>() {
             @Override
             public void onChanged(@Nullable final DataSnapshot dataSnapshot) {

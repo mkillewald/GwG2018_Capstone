@@ -1,12 +1,15 @@
 package com.gameaholix.coinops.fragment;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,25 +18,15 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryDetailBinding;
 import com.gameaholix.coinops.model.InventoryItem;
-import com.gameaholix.coinops.firebase.Db;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.gameaholix.coinops.viewModel.InventoryItemViewModel;
+import com.gameaholix.coinops.viewModel.InventoryItemViewModelFactory;
 
 public class InventoryDetailFragment extends Fragment {
     private static final String TAG = InventoryDetailFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
     private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
 
     private String mItemId;
     private InventoryItem mItem;
-    private FirebaseUser mUser;
-    private DatabaseReference mInventoryRef;
-    private ValueEventListener mInventoryListener;
     private OnFragmentInteractionListener mListener;
 
     public InventoryDetailFragment() {
@@ -59,21 +52,7 @@ public class InventoryDetailFragment extends Fragment {
             }
         } else {
             mItemId = savedInstanceState.getString(EXTRA_INVENTORY_ID);
-            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
         }
-
-        if (TextUtils.isEmpty(mItemId)) {
-            // TODO: finish this
-        }
-
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mUser = firebaseAuth.getCurrentUser();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        mInventoryRef = databaseReference
-                .child(Db.INVENTORY)
-                .child(mUser.getUid())
-                .child(mItemId);
     }
 
     @Override
@@ -85,70 +64,54 @@ public class InventoryDetailFragment extends Fragment {
 
         final View rootView = bind.getRoot();
 
-        if (mUser != null) {
-            // user is signed in
+        if (TextUtils.isEmpty(mItemId)) {
+            // TODO: finish this
+        }
 
-            // read inventory item details
-            mInventoryListener = new ValueEventListener() {
+        String noSelection = getString(R.string.not_available);
+        final String[] typeArr = getResources().getStringArray(R.array.inventory_type);
+        typeArr[0] = noSelection;
+        final String[] conditionArr =
+                getResources().getStringArray(R.array.inventory_condition);
+        conditionArr[0] = noSelection;
+
+        // read inventory item details
+        if (getActivity() != null) {
+            InventoryItemViewModel viewModel = ViewModelProviders
+                    .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
+                    .get(InventoryItemViewModel.class);
+            LiveData<InventoryItem> inventoryItemLiveData = viewModel.getItemLiveData();
+            inventoryItemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String id = dataSnapshot.getKey();
-
-                    mItem = dataSnapshot.getValue(InventoryItem.class);
-                    if (mItem == null) {
-                        Log.d(TAG, "Error: Item details not found");
-                    } else {
-                        mItem.setId(id);
-                        String noSelection = getString(R.string.not_available);
-                        String[] typeArr = getResources().getStringArray(R.array.inventory_type);
-                        typeArr[0] = noSelection;
-                        String[] conditionArr =
-                                getResources().getStringArray(R.array.inventory_condition);
-                        conditionArr[0] = noSelection;
-                        bind.tvInventoryName.setText(mItem.getName());
-                        bind.tvInventoryType.setText(typeArr[mItem.getType()]);
-                        bind.tvInventoryCondition.setText(conditionArr[mItem.getCondition()]);
-                        bind.tvInventoryDescription.setText(mItem.getDescription());
+                public void onChanged(@Nullable InventoryItem item) {
+                    if (item != null) {
+                        item.setId(mItemId);
+                        bind.tvInventoryName.setText(item.getName());
+                        bind.tvInventoryType.setText(typeArr[item.getType()]);
+                        bind.tvInventoryCondition.setText(conditionArr[item.getCondition()]);
+                        bind.tvInventoryDescription.setText(item.getDescription());
+                        mItem = item;
                     }
                 }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Failed to read value
-                    Log.d(TAG, "Failed to read from database.", databaseError.toException());
-                }
-            };
-            mInventoryRef.addValueEventListener(mInventoryListener);
-
-            // Setup Buttons
-            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mListener.onDeleteButtonPressed();
-                }
             });
-
-            bind.btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mListener.onEditButtonPressed(mItem);
-                }
-            });
-
-//        } else {
-//            // user is not signed in
         }
+
+        // Setup Buttons
+        bind.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onDeleteButtonPressed();
+            }
+        });
+
+        bind.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onEditButtonPressed(mItem);
+            }
+        });
 
         return rootView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        if (mInventoryListener != null) {
-            mInventoryRef.removeEventListener(mInventoryListener);
-        }
     }
 
     @Override
@@ -166,7 +129,6 @@ public class InventoryDetailFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_INVENTORY_ITEM, mItem);
         outState.putString(EXTRA_INVENTORY_ID, mItemId);
     }
 
