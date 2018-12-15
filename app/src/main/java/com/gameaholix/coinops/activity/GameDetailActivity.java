@@ -1,6 +1,7 @@
 package com.gameaholix.coinops.activity;
 
 import android.app.ActivityOptions;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,7 +47,7 @@ public class GameDetailActivity extends BaseActivity implements
         ToDoAddEditFragment.OnFragmentInteractionListener,
         ShoppingListFragment.OnFragmentInteractionListener,
         ShoppingAddEditFragment.OnFragmentInteractionListener {
-//    private static final String TAG = GameDetailActivity.class.getSimpleName();
+    private static final String TAG = GameDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
     private static final String EXTRA_IMAGE_PATH = "CoinOpsImagePath";
@@ -191,6 +193,21 @@ public class GameDetailActivity extends BaseActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(EXTRA_GAME_ID, mGameId);
+    }
+
+    @Override
+    public void onGameIdInvalid() {
+        Log.e(TAG, "Failed to instantiate fragment! Game ID cannot be an empty string.");
+        PromptUser.displayAlert(this,
+                R.string.error_unable_to_load,
+                R.string.error_game_id_empty,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
     }
 
     @Override

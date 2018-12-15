@@ -60,7 +60,6 @@ import static android.app.Activity.RESULT_OK;
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-    private static final String EXTRA_GAME = "com.gameaholix.coinops.model.Game";
     private static final String CAPTURE_IMAGE_FILE_PROVIDER = "com.gameaholix.coinops.fileprovider";
     private static final String THUMB = "thumb_";
     private static final int REQUEST_IMAGE_CAPTURE = 343;
@@ -76,7 +75,6 @@ public class GameDetailFragment extends Fragment {
     private DatabaseReference mShopRef;
     private DatabaseReference mToDoRef;
     private StorageReference mImageRootRef;
-//    private ValueEventListener mGameListener;
     private ValueEventListener mDeleteTodoListener;
     private ValueEventListener mDeleteShopListener;
     private OnFragmentInteractionListener mListener;
@@ -104,7 +102,6 @@ public class GameDetailFragment extends Fragment {
             }
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-            mGame = savedInstanceState.getParcelable(EXTRA_GAME);
         }
         setHasOptionsMenu(true);
 
@@ -167,6 +164,11 @@ public class GameDetailFragment extends Fragment {
         final String[] monitorSizeArr =
                 getResources().getStringArray(R.array.game_monitor_size);
 
+        if (TextUtils.isEmpty(mGameId)) {
+            mListener.onGameIdInvalid();
+            return rootView;
+        }
+
         // read game details
         if (getActivity() != null) {
             GameViewModel viewModel = ViewModelProviders
@@ -178,6 +180,7 @@ public class GameDetailFragment extends Fragment {
                 public void onChanged(@Nullable Game game) {
                     if (game != null) {
                         game.setId(mGameId);
+                        mGame = game;
 
                         if (mListener != null) {
                             mListener.onGameNameChanged(game.getName());
@@ -209,75 +212,6 @@ public class GameDetailFragment extends Fragment {
                 }
             });
         }
-//        mGameListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                mGame = dataSnapshot.getValue(Game.class);
-//                if (mGame == null) {
-//                    Log.d(TAG, "Error: Game details not found");
-//                } else {
-//                    mGame.setId(mGameId);
-//
-//                    String noSelection = getString(R.string.not_available);
-//                    String[] typeArr = getResources().getStringArray(R.array.game_type);
-//                    typeArr[0] = noSelection;
-//                    String[] cabinetArr = getResources().getStringArray(R.array.game_cabinet);
-//                    cabinetArr[0] = noSelection;
-//                    String[] workingArr = getResources().getStringArray(R.array.game_working);
-//                    workingArr[0] = noSelection;
-//                    String[] ownershipArr =
-//                            getResources().getStringArray(R.array.game_ownership);
-//                    ownershipArr[0] = noSelection;
-//                    String[] conditionArr =
-//                            getResources().getStringArray(R.array.game_condition);
-//                    conditionArr[0] = noSelection;
-//                    String[] monitorPhospherArr =
-//                            getResources().getStringArray(R.array.game_monitor_phospher);
-//                    String[] monitorTypeArr =
-//                            getResources().getStringArray(R.array.game_monitor_beam);
-//                    String[] monitorTechArr =
-//                            getResources().getStringArray(R.array.game_monitor_tech);
-//                    String[] monitorSizeArr =
-//                            getResources().getStringArray(R.array.game_monitor_size);
-//
-//                    if (mListener != null) {
-//                        mListener.onGameNameChanged(mGame.getName());
-//                    }
-//
-//                    mBind.tvGameType.setText(typeArr[mGame.getType()]);
-//                    mBind.tvGameCabinet.setText(cabinetArr[mGame.getCabinet()]);
-//                    mBind.tvGameWorking.setText(workingArr[mGame.getWorking()]);
-//                    mBind.tvGameOwnership.setText(ownershipArr[mGame.getOwnership()]);
-//                    mBind.tvGameCondition.setText(conditionArr[mGame.getCondition()]);
-//                    mBind.tvGameMonitorPhospher
-//                            .setText(monitorPhospherArr[mGame.getMonitorPhospher()]);
-//                    mBind.tvGameMonitorType.setText(monitorTypeArr[mGame.getMonitorBeam()]);
-//                    mBind.tvGameMonitorTech.setText(monitorTechArr[mGame.getMonitorTech()]);
-//                    mBind.tvGameMonitorSize.setText(monitorSizeArr[mGame.getMonitorSize()]);
-//
-//                    // Get thumbnail from firebase
-//                    StorageReference thumbRef = null;
-//
-//                    if (!TextUtils.isEmpty(mGame.getImage())) {
-//                        thumbRef = mImageRootRef.child(THUMB + mGame.getImage());
-//                    }
-//
-//                    GlideApp.with(mContext)
-//                            .load(thumbRef)
-//                            .placeholder(R.drawable.ic_classic_arcade_machine)
-//                            .into(mBind.ivPhoto);
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                // Failed to read value
-//                Log.d(TAG, "Failed to read from database.", databaseError.toException());
-//            }
-//        };
-//        mGameRef.addValueEventListener(mGameListener);
 
         // Setup ImageView
         mBind.ivPhoto.setOnClickListener(new View.OnClickListener() {
@@ -330,10 +264,6 @@ public class GameDetailFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-//        if (mGameListener != null) {
-//            mGameRef.removeEventListener(mGameListener);
-//        }
-
         if (mDeleteTodoListener != null) {
             mToDoRef.removeEventListener(mDeleteTodoListener);
         }
@@ -347,7 +277,6 @@ public class GameDetailFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_GAME, mGame);
         outState.putString(EXTRA_GAME_ID, mGameId);
     }
 
@@ -678,6 +607,7 @@ public class GameDetailFragment extends Fragment {
      * activity.
      */
     public interface OnFragmentInteractionListener {
+        void onGameIdInvalid();
         void onGameNameChanged(String name);
         void onEditButtonPressed(Game game);
         void showSnackbar(int stringResourceId);
