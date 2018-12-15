@@ -9,14 +9,23 @@ import com.gameaholix.coinops.repository.InventoryItemRepository;
 
 public class InventoryItemViewModel extends ViewModel {
     private LiveData<InventoryItem> mItemLiveData;
+    private InventoryItemRepository mRepository;
 
     public InventoryItemViewModel(String itemId) {
-        InventoryItemRepository repository = new InventoryItemRepository(itemId);
-        mItemLiveData = repository.getItemLiveData();
+        mRepository = new InventoryItemRepository(itemId);
+        mItemLiveData = mRepository.getItemLiveData();
     }
 
     @NonNull
     public LiveData<InventoryItem> getItemLiveData() {
         return mItemLiveData;
+    }
+
+    public boolean addUpdate() {
+        return mRepository.addUpdate();
+    }
+
+    public boolean delete() {
+        return mRepository.delete();
     }
 }

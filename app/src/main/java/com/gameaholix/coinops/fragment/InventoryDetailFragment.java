@@ -4,11 +4,14 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,13 +23,17 @@ import com.gameaholix.coinops.databinding.FragmentInventoryDetailBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.viewModel.InventoryItemViewModel;
 import com.gameaholix.coinops.viewModel.InventoryItemViewModelFactory;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class InventoryDetailFragment extends Fragment {
 //    private static final String TAG = InventoryDetailFragment.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
 
+    private Context mContext;
     private String mItemId;
     private InventoryItem mItem;
+    private InventoryItemViewModel mViewModel;
     private OnFragmentInteractionListener mListener;
 
     public InventoryDetailFragment() {
@@ -78,10 +85,10 @@ public class InventoryDetailFragment extends Fragment {
 
         // read inventory item details
         if (getActivity() != null) {
-            InventoryItemViewModel viewModel = ViewModelProviders
+            mViewModel = ViewModelProviders
                     .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
                     .get(InventoryItemViewModel.class);
-            LiveData<InventoryItem> inventoryItemLiveData = viewModel.getItemLiveData();
+            LiveData<InventoryItem> inventoryItemLiveData = mViewModel.getItemLiveData();
             inventoryItemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
                 @Override
                 public void onChanged(@Nullable InventoryItem item) {
@@ -101,7 +108,7 @@ public class InventoryDetailFragment extends Fragment {
         bind.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onDeleteButtonPressed();
+                showDeleteAlert();
             }
         });
 
@@ -121,6 +128,9 @@ public class InventoryDetailFragment extends Fragment {
             case R.id.menu_edit_inventory:
                 if (mItem != null) mListener.onEditButtonPressed(mItem);
                 return true;
+            case R.id.menu_delete_inventory:
+                if (mItem != null) showDeleteAlert();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -136,6 +146,7 @@ public class InventoryDetailFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -148,6 +159,42 @@ public class InventoryDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void showDeleteAlert() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // user is signed in
+
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(mContext);
+            }
+            builder.setTitle(R.string.really_delete_inventory_item)
+                    .setMessage(R.string.inventory_item_will_be_deleted)
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteItemData();
+                            mListener.onDeleteCompleted();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+//        } else {
+//            // user is not signed in
+        }
+    }
+
+    private void deleteItemData() {
+        mViewModel.delete();
     }
 
     /**
@@ -163,6 +210,6 @@ public class InventoryDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onItemIdInvalid();
         void onEditButtonPressed(InventoryItem inventoryItem);
-        void onDeleteButtonPressed();
+        void onDeleteCompleted();
     }
 }
