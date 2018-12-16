@@ -1,7 +1,5 @@
 package com.gameaholix.coinops.activity;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -9,7 +7,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -20,19 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.fragment.InventoryAddEditFragment;
 import com.gameaholix.coinops.fragment.InventoryDetailFragment;
-import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.PromptUser;
-import com.gameaholix.coinops.viewModel.InventoryItemViewModel;
-import com.gameaholix.coinops.viewModel.InventoryItemViewModelFactory;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class InventoryDetailActivity extends BaseActivity implements
         InventoryDetailFragment.OnFragmentInteractionListener,
@@ -154,11 +143,11 @@ public class InventoryDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onEditButtonPressed(InventoryItem inventoryItem) {
+    public void onEditButtonPressed() {
         mAdView.setVisibility(View.GONE);
         // replace InventoryDetailFragment with InventoryAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, InventoryAddEditFragment.newInstance(inventoryItem));
+        ft.replace(R.id.fragment_container, InventoryAddEditFragment.newEditInstance());
         ft.commit();
 
         invalidateOptionsMenu();
@@ -174,6 +163,4 @@ public class InventoryDetailActivity extends BaseActivity implements
         invalidateOptionsMenu();
         mAdView.setVisibility(View.VISIBLE);
     }
-
-
 }

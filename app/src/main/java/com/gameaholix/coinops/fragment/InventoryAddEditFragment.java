@@ -1,10 +1,11 @@
 package com.gameaholix.coinops.fragment;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,38 +21,26 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryAddBinding;
 import com.gameaholix.coinops.model.InventoryItem;
-import com.gameaholix.coinops.firebase.Db;
 import com.gameaholix.coinops.utility.PromptUser;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.gameaholix.coinops.viewModel.InventoryItemViewModel;
 
 public class InventoryAddEditFragment extends BaseDialogFragment {
     private static final String TAG = InventoryAddEditFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ITEM = "com.gameaholix.coinops.model.InventoryItem";
     private static final String EXTRA_EDIT_FLAG = "CoinOpsInventoryEditFlag";
 
     private Context mContext;
     private InventoryItem mItem;
-    private FirebaseUser mUser;
-    private DatabaseReference mDatabaseReference;
+    private InventoryItemViewModel mViewModel;
     private OnFragmentInteractionListener mListener;
-    private boolean mEdit;
+    private boolean mEdit = false;
 
     public InventoryAddEditFragment() {
         // Required empty public constructor
     }
 
-    // edit an existing InventoryItem
-    public static InventoryAddEditFragment newInstance(InventoryItem item) {
+    public static InventoryAddEditFragment newEditInstance() {
         Bundle args = new Bundle();
         InventoryAddEditFragment fragment = new InventoryAddEditFragment();
-        args.putParcelable(EXTRA_INVENTORY_ITEM, item);
         args.putBoolean(EXTRA_EDIT_FLAG, true);
         fragment.setArguments(args);
         return fragment;
@@ -65,21 +53,25 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                mItem = getArguments().getParcelable(EXTRA_INVENTORY_ITEM);
                 mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
-            } else {
-                mItem = new InventoryItem();
-                mEdit = false;
             }
         } else {
-            mItem = savedInstanceState.getParcelable(EXTRA_INVENTORY_ITEM);
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mUser = firebaseAuth.getCurrentUser();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        if (getActivity() != null) {
+            mViewModel = ViewModelProviders
+                    .of(getActivity())
+                    .get(InventoryItemViewModel.class);
+
+            LiveData<InventoryItem> itemLiveData = mViewModel.getItemLiveData();
+
+            if (itemLiveData != null) {
+                mItem = itemLiveData.getValue();
+            } else {
+                mItem = new InventoryItem();
+            }
+        }
     }
 
     @Override
@@ -101,9 +93,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     String input = textView.getText().toString().trim();
-                    if (textInputIsValid(input)) {
-                        mItem.setName(input);
-                    } else {
+                    if (!textInputIsValid(input)) {
                         textView.setText(mItem.getName());
                     }
                     hideKeyboard(textView);
@@ -118,9 +108,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
                     if (view instanceof EditText) {
                         String input = ((EditText) view).getText().toString().trim();
-                        if (textInputIsValid(input)) {
-                            mItem.setName(input);
-                        } else {
+                        if (!textInputIsValid(input)) {
                             ((EditText) view).setText(mItem.getName());
                         }
                     }
@@ -134,9 +122,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     String input = textView.getText().toString().trim();
-                    if (textInputIsValid(input)) {
-                        mItem.setDescription(input);
-                    } else {
+                    if (!textInputIsValid(input)) {
                         textView.setText(mItem.getDescription());
                     }
                     hideKeyboard(textView);
@@ -151,9 +137,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 if (view.getId() == R.id.et_add_inventory_description && !hasFocus) {
                     if (view instanceof EditText) {
                         String input = ((EditText) view).getText().toString().trim();
-                        if (textInputIsValid(input)) {
-                            mItem.setDescription(input);
-                        } else {
+                        if (!textInputIsValid(input)) {
                             ((EditText) view).setText(mItem.getDescription());
                         }
                     }
@@ -167,30 +151,12 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerInventoryType.setAdapter(typeAdapter);
         if (mEdit) bind.spinnerInventoryType.setSelection(mItem.getType());
-        bind.spinnerInventoryType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mItem.setType(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
-        });
 
         ArrayAdapter<CharSequence> conditionAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.inventory_condition, android.R.layout.simple_spinner_item);
         conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bind.spinnerInventoryCondition.setAdapter(conditionAdapter);
         if (mEdit) bind.spinnerInventoryCondition.setSelection(mItem.getCondition());
-        bind.spinnerInventoryCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                mItem.setCondition(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
-        });
 
         // Setup Buttons
         bind.btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -208,7 +174,16 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Validate EditText input if user taps on btnSave before onEditorAction or onFocusChange
+                if (TextUtils.isEmpty(bind.etAddInventoryName.getText())) {
+                    PromptUser.displayAlert(mContext,
+                            R.string.error_add_inventory_failed,
+                            R.string.error_name_empty);
+                    Log.d(TAG, "Failed to add part! Name field was blank.");
+                    return;
+                }
+
+                if (getShowsDialog()) getDialog().dismiss();
+
                 String input = bind.etAddInventoryName.getText().toString().trim();
                 if (textInputIsValid(input)) {
                     mItem.setName(input);
@@ -223,7 +198,15 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                     bind.etAddInventoryDescription.setText(mItem.getDescription());
                 }
 
-                addEditItem();
+                mItem.setType(bind.spinnerInventoryType.getSelectedItemPosition());
+                mItem.setCondition(bind.spinnerInventoryCondition.getSelectedItemPosition());
+
+                if (mEdit) {
+                    mViewModel.edit();
+                } else {
+                    mViewModel.add(mItem);
+                }
+
                 mListener.onInventoryAddEditCompletedOrCancelled();
             }
         });
@@ -235,7 +218,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(EXTRA_INVENTORY_ITEM, mItem);
         outState.putBoolean(EXTRA_EDIT_FLAG, mEdit);
     }
 
@@ -255,74 +237,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    private void addEditItem() {
-        if (TextUtils.isEmpty(mItem.getName())) {
-            PromptUser.displayAlert(mContext,
-                    R.string.error_add_inventory_failed,
-                    R.string.error_name_empty);
-            Log.d(TAG, "Failed to add part! Name field was blank.");
-            return;
-        }
-
-        if (getShowsDialog()) getDialog().dismiss();
-
-        // Add or update InventoryItem object to Firebase
-        if (mUser != null) {
-            // user is signed in
-            String uid = mUser.getUid();
-
-            final DatabaseReference inventoryRootRef = mDatabaseReference.child(Db.INVENTORY).child(uid);
-
-            String itemId;
-            if (mEdit) {
-                itemId = mItem.getId();
-            } else {
-                itemId = inventoryRootRef.push().getKey();
-            }
-
-            if (TextUtils.isEmpty(itemId)) {
-                PromptUser.displayAlert(mContext,
-                        R.string.error_update_database_failed,
-                        R.string.error_item_id_empty);
-                Log.e(TAG, "Failed to add or update database! Item ID cannot be an empty string.");
-                return;
-            }
-
-            DatabaseReference inventoryRef = inventoryRootRef.child(itemId);
-            DatabaseReference userInventoryListRef = mDatabaseReference
-                    .child(Db.USER)
-                    .child(uid)
-                    .child(Db.INVENTORY_LIST)
-                    .child(itemId);
-
-            // convert mItem instance to Map so it can be iterated
-            Map<String, Object> currentValues = mItem.getMap();
-
-            // create new Map with full database paths as keys using values from mItem Map created above
-            Map<String, Object> valuesWithPath = new HashMap<>();
-            for (String key : currentValues.keySet()) {
-                valuesWithPath.put(inventoryRef.child(key).getPath().toString(), currentValues.get(key));
-                if (key.equals(Db.NAME)) {
-                    valuesWithPath.put(userInventoryListRef.getPath().toString(), currentValues.get(key));
-                }
-            }
-
-            // perform atomic update to firebase using Map with database paths as keys
-            mDatabaseReference.updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-                                " Code: " + databaseError.getCode() +
-                                " Details: " + databaseError.getDetails());
-                    }
-                }
-            });
-//        } else {
-//            // user is not signed in
-        }
     }
 
     /**

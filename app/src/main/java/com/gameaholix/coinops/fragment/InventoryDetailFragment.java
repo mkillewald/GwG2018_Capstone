@@ -23,8 +23,6 @@ import com.gameaholix.coinops.databinding.FragmentInventoryDetailBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.viewModel.InventoryItemViewModel;
 import com.gameaholix.coinops.viewModel.InventoryItemViewModelFactory;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class InventoryDetailFragment extends Fragment {
 //    private static final String TAG = InventoryDetailFragment.class.getSimpleName();
@@ -32,8 +30,8 @@ public class InventoryDetailFragment extends Fragment {
 
     private Context mContext;
     private String mItemId;
-    private InventoryItem mItem;
     private InventoryItemViewModel mViewModel;
+    private LiveData<InventoryItem> mItemLiveData;
     private OnFragmentInteractionListener mListener;
 
     public InventoryDetailFragment() {
@@ -60,6 +58,18 @@ public class InventoryDetailFragment extends Fragment {
         } else {
             mItemId = savedInstanceState.getString(EXTRA_INVENTORY_ID);
         }
+
+        if (TextUtils.isEmpty(mItemId)) {
+            mListener.onItemIdInvalid();
+            return;
+        }
+
+        if (getActivity() != null) {
+            mViewModel = ViewModelProviders
+                    .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
+                    .get(InventoryItemViewModel.class);
+            mItemLiveData = mViewModel.getItemLiveData();
+        }
     }
 
     @Override
@@ -78,30 +88,19 @@ public class InventoryDetailFragment extends Fragment {
                 getResources().getStringArray(R.array.inventory_condition);
         conditionArr[0] = noSelection;
 
-        if (TextUtils.isEmpty(mItemId)) {
-            mListener.onItemIdInvalid();
-            return rootView;
-        }
-
-        // read inventory item details
         if (getActivity() != null) {
-            mViewModel = ViewModelProviders
-                    .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
-                    .get(InventoryItemViewModel.class);
-            LiveData<InventoryItem> inventoryItemLiveData = mViewModel.getItemLiveData();
-            inventoryItemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
+            mItemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
                 @Override
                 public void onChanged(@Nullable InventoryItem item) {
                     if (item != null) {
-                        item.setId(mItemId);
                         bind.tvInventoryName.setText(item.getName());
                         bind.tvInventoryType.setText(typeArr[item.getType()]);
                         bind.tvInventoryCondition.setText(conditionArr[item.getCondition()]);
                         bind.tvInventoryDescription.setText(item.getDescription());
-                        mItem = item;
                     }
                 }
             });
+
         }
 
         // Setup Buttons
@@ -115,7 +114,7 @@ public class InventoryDetailFragment extends Fragment {
         bind.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onEditButtonPressed(mItem);
+                mListener.onEditButtonPressed();
             }
         });
 
@@ -123,16 +122,17 @@ public class InventoryDetailFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        InventoryItem inventoryItem = mItemLiveData.getValue();
+        switch (menuItem.getItemId()) {
             case R.id.menu_edit_inventory:
-                if (mItem != null) mListener.onEditButtonPressed(mItem);
+                if (inventoryItem != null) mListener.onEditButtonPressed();
                 return true;
             case R.id.menu_delete_inventory:
-                if (mItem != null) showDeleteAlert();
+                if (inventoryItem != null) showDeleteAlert();
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(menuItem);
         }
     }
 
@@ -202,7 +202,7 @@ public class InventoryDetailFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onItemIdInvalid();
-        void onEditButtonPressed(InventoryItem inventoryItem);
+        void onEditButtonPressed();
         void onDeleteCompleted();
     }
 }

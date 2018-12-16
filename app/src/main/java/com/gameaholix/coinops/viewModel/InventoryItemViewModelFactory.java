@@ -4,12 +4,13 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 public class InventoryItemViewModelFactory implements ViewModelProvider.Factory {
     private String mItemId;
 
     public InventoryItemViewModelFactory(@Nullable String itemId) {
-        mItemId = itemId;
+        if (!TextUtils.isEmpty(itemId)) mItemId = itemId;
     }
 
     @Override
