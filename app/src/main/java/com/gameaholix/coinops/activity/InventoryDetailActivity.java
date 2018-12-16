@@ -147,7 +147,7 @@ public class InventoryDetailActivity extends BaseActivity implements
         mAdView.setVisibility(View.GONE);
         // replace InventoryDetailFragment with InventoryAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, InventoryAddEditFragment.newEditInstance());
+        ft.replace(R.id.fragment_container, InventoryAddEditFragment.newEditInstance(mItemId));
         ft.commit();
 
         invalidateOptionsMenu();

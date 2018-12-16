@@ -23,12 +23,15 @@ import com.gameaholix.coinops.databinding.FragmentInventoryAddBinding;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.gameaholix.coinops.viewModel.InventoryItemViewModel;
+import com.gameaholix.coinops.viewModel.InventoryItemViewModelFactory;
 
 public class InventoryAddEditFragment extends BaseDialogFragment {
     private static final String TAG = InventoryAddEditFragment.class.getSimpleName();
+    private static final String EXTRA_IVENTORY_ID = "CoinOpsInventoryId";
     private static final String EXTRA_EDIT_FLAG = "CoinOpsInventoryEditFlag";
 
     private Context mContext;
+    private String mItemId;
     private InventoryItem mItem;
     private InventoryItemViewModel mViewModel;
     private OnFragmentInteractionListener mListener;
@@ -38,9 +41,10 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         // Required empty public constructor
     }
 
-    public static InventoryAddEditFragment newEditInstance() {
+    public static InventoryAddEditFragment newEditInstance(String itemId) {
         Bundle args = new Bundle();
         InventoryAddEditFragment fragment = new InventoryAddEditFragment();
+        args.putString(EXTRA_IVENTORY_ID, itemId);
         args.putBoolean(EXTRA_EDIT_FLAG, true);
         fragment.setArguments(args);
         return fragment;
@@ -53,15 +57,22 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
+                mItemId = getArguments().getString(EXTRA_IVENTORY_ID);
                 mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
             }
         } else {
+            mItemId = savedInstanceState.getString(EXTRA_IVENTORY_ID);
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
 
         if (getActivity() != null) {
+            // If we are editing, this should get the existing view model that was created by
+            // InventoryDetailFragment with InventoryDetailActivity as its lifecycle owner.
+
+            // If we are adding, this should create a new view model with InventoryListActivity as
+            // its lifecycle owner.
             mViewModel = ViewModelProviders
-                    .of(getActivity())
+                    .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
                     .get(InventoryItemViewModel.class);
 
             LiveData<InventoryItem> itemLiveData = mViewModel.getItemLiveData();
@@ -218,6 +229,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putString(EXTRA_IVENTORY_ID, mItemId);
         outState.putBoolean(EXTRA_EDIT_FLAG, mEdit);
     }
 
