@@ -11,7 +11,6 @@ public class InventoryItemViewModel extends ViewModel {
     private LiveData<InventoryItem> mItemLiveData;
     private InventoryItemRepository mRepository;
 
-    // used for detail view and editing
     InventoryItemViewModel(String itemId) {
         if (TextUtils.isEmpty(itemId)) {
             // used to add a new inventory item

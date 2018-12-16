@@ -70,7 +70,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
             // InventoryDetailFragment with InventoryDetailActivity as its lifecycle owner.
 
             // If we are adding, this should create a new view model with InventoryListActivity as
-            // its lifecycle owner.
+            // its lifecycle owner. (mItemId will be null)
             mViewModel = ViewModelProviders
                     .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
                     .get(InventoryItemViewModel.class);
