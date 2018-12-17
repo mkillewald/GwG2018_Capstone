@@ -2,9 +2,11 @@ package com.gameaholix.coinops.repository;
 
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.gameaholix.coinops.firebase.Db;
@@ -30,15 +32,18 @@ public class InventoryItemRepository {
     private String mItemId;
     private DatabaseReference mDatabaseReference;
 
-    public InventoryItemRepository() {
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-    }
-
     public InventoryItemRepository(String itemId) {
-        mItemId = itemId;
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        mItemLiveData = fetchLiveData();
+        if (TextUtils.isEmpty(itemId)) {
+            // we are adding a new InventoryItem
+            mItemLiveData = new MutableLiveData<>();
+            ((MutableLiveData<InventoryItem>) mItemLiveData).setValue(new InventoryItem());
+        } else {
+            // we are retrieving an existing InventoryItem
+            mItemId = itemId;
+            mItemLiveData = fetchData();
+        }
     }
 
     private DatabaseReference getInventoryRootRef(String uid) {
@@ -48,17 +53,7 @@ public class InventoryItemRepository {
     }
 
     private DatabaseReference getInventoryRef(String uid) {
-        return mDatabaseReference
-                .child(Db.INVENTORY)
-                .child(uid)
-                .child(mItemId);
-    }
-
-    private DatabaseReference getInventoryListRef(String uid) {
-        return mDatabaseReference
-                .child(Db.USER)
-                .child(uid)
-                .child(Db.INVENTORY_LIST)
+        return getInventoryRootRef(uid)
                 .child(mItemId);
     }
 
@@ -70,14 +65,11 @@ public class InventoryItemRepository {
     }
 
     private DatabaseReference getUserInventoryListRef(String uid) {
-        return mDatabaseReference
-                .child(Db.USER)
-                .child(uid)
-                .child(Db.INVENTORY_LIST)
+        return getUserInventoryListRootRef(uid)
                 .child(mItemId);
     }
 
-    private LiveData<InventoryItem> fetchLiveData() {
+    private LiveData<InventoryItem> fetchData() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
@@ -117,7 +109,7 @@ public class InventoryItemRepository {
         return mItemLiveData;
     }
 
-    public boolean add(@NonNull InventoryItem newItem) {
+    public boolean add(InventoryItem newItem) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
@@ -154,7 +146,7 @@ public class InventoryItemRepository {
         }
     }
 
-    public boolean edit(InventoryItem item) {
+    public boolean update(InventoryItem item) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
@@ -191,7 +183,7 @@ public class InventoryItemRepository {
             return true;
         } else {
             // user not signed in
-            Log.e(TAG, "Failed to edit inventory item, user was not signed in!");
+            Log.e(TAG, "Failed to update inventory item, user was not signed in!");
             return false;
         }
     }
@@ -201,12 +193,13 @@ public class InventoryItemRepository {
 
         if (user != null) {
             // user signed in
+            String uid = user.getUid();
 
             // delete inventory item
-            getInventoryRef(user.getUid()).removeValue();
+            getInventoryRef(uid).removeValue();
 
             // delete inventory list entry
-            getInventoryListRef(user.getUid()).removeValue();
+            getUserInventoryListRef(uid).removeValue();
 
             return true;
         } else {

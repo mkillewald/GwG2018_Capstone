@@ -1,11 +1,13 @@
 package com.gameaholix.coinops.fragment;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -76,12 +78,13 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                     .get(InventoryItemViewModel.class);
 
             LiveData<InventoryItem> itemLiveData = mViewModel.getItemLiveData();
-
-            if (itemLiveData != null) {
-                mItem = itemLiveData.getValue();
-            } else {
-                mItem = new InventoryItem();
-            }
+            itemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
+                @Override
+                public void onChanged(@Nullable InventoryItem inventoryItem) {
+                    mItem = inventoryItem;
+                    Log.d(TAG, "recieved mItem from view model");
+                }
+            });
         }
     }
 
@@ -212,13 +215,14 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 mItem.setType(bind.spinnerInventoryType.getSelectedItemPosition());
                 mItem.setCondition(bind.spinnerInventoryCondition.getSelectedItemPosition());
 
+                boolean resultOk;
                 if (mEdit) {
-                    mViewModel.edit();
+                    resultOk = mViewModel.update();
                 } else {
-                    mViewModel.add(mItem);
+                    resultOk = mViewModel.add();
                 }
 
-                mListener.onInventoryAddEditCompletedOrCancelled();
+                if (resultOk) mListener.onInventoryAddEditCompletedOrCancelled();
             }
         });
 
