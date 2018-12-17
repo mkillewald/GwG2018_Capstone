@@ -63,7 +63,7 @@ public class StepAddEditFragment extends BaseDialogFragment {
         return fragment;
     }
 
-    // edit an existing repair step
+    // update an existing repair step
     public static StepAddEditFragment newInstance(String gameId, Item repairStep) {
         StepAddEditFragment fragment = new StepAddEditFragment();
         Bundle args = new Bundle();

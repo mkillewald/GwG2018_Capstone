@@ -62,7 +62,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
         return fragment;
     }
 
-    // edit an existing Game
+    // update an existing Game
     public static GameAddEditFragment newInstance(Game game) {
         Bundle args = new Bundle();
         GameAddEditFragment fragment = new GameAddEditFragment();

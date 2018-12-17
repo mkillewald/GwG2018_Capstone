@@ -61,7 +61,7 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         return fragment;
     }
 
-    // edit an existing to do item
+    // update an existing to do item
     public static ToDoAddEditFragment newInstance(ToDoItem item) {
         Bundle args = new Bundle();
         ToDoAddEditFragment fragment = new ToDoAddEditFragment();

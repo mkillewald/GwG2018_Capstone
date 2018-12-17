@@ -68,7 +68,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
         return fragment;
     }
 
-    // edit an existing shopping item
+    // update an existing shopping item
     public static ShoppingAddEditFragment newInstance(@Nullable String gameId, String itemId) {
         Bundle args = new Bundle();
         ShoppingAddEditFragment fragment = new ShoppingAddEditFragment();

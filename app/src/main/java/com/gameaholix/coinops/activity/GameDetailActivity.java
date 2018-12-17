@@ -269,7 +269,7 @@ public class GameDetailActivity extends BaseActivity implements
 
     @Override
     public void onShoppingItemSelected(ListRow item) {
-        // show edit shopping dialog
+        // show update shopping dialog
         FragmentManager fm = getSupportFragmentManager();
         ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(mGameId, item.getId());
         fragment.show(fm, "fragment_add_edit_shopping");
