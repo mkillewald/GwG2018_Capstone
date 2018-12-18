@@ -5,7 +5,6 @@ import com.gameaholix.coinops.firebase.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class ShoppingListGlobalRepository extends BaseListRepository {
 
@@ -14,14 +13,16 @@ public class ShoppingListGlobalRepository extends BaseListRepository {
 
         if (user != null) {
             // user is signed in
-            DatabaseReference listRef = FirebaseDatabase.getInstance().getReference()
-                    .child(Db.USER)
-                    .child(user.getUid())
-                    .child(Db.SHOP_LIST);
-
-            fetchList(listRef.orderByValue());
+            super.fetchList(getListRef(user.getUid()).orderByValue());
 //        } else {
 //            // user is not signed in
         }
+    }
+
+    private DatabaseReference getListRef(String uid) {
+        return super.getDatabaseReference()
+                .child(Db.USER)
+                .child(uid)
+                .child(Db.SHOP_LIST);
     }
 }

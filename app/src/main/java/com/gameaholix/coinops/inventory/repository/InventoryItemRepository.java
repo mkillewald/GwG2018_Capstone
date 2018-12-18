@@ -28,13 +28,11 @@ import java.util.Map;
 
 public class InventoryItemRepository {
     private static final String TAG = InventoryItemRepository.class.getSimpleName();
+    private final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     private LiveData<InventoryItem> mItemLiveData;
     private String mItemId;
-    private DatabaseReference mDatabaseReference;
 
     public InventoryItemRepository(String itemId) {
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
         if (TextUtils.isEmpty(itemId)) {
             // we are adding a new InventoryItem
             mItemLiveData = new MutableLiveData<>();
