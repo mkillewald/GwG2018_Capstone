@@ -10,7 +10,7 @@ import android.widget.RemoteViewsService;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.activity.ShoppingListActivity;
+import com.gameaholix.coinops.shopping.ShoppingListActivity;
 import com.gameaholix.coinops.firebase.Db;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

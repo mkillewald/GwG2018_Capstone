@@ -8,10 +8,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.fragment.PlaceholderFragment;
-import com.gameaholix.coinops.fragment.RepairListFragment;
-import com.gameaholix.coinops.fragment.ShoppingListFragment;
-import com.gameaholix.coinops.fragment.ToDoListFragment;
+import com.gameaholix.coinops.game.PlaceholderFragment;
+import com.gameaholix.coinops.repair.RepairListFragment;
+import com.gameaholix.coinops.shopping.ShoppingListFragment;
+import com.gameaholix.coinops.toDo.ToDoListFragment;
 
 public class GameDetailPagerAdapter extends FragmentPagerAdapter {
 //    private static final String TAG = GameDetailPagerAdapter.class.getSimpleName();
