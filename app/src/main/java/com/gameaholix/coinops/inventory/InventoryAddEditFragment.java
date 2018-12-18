@@ -248,7 +248,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
             return;
         }
 
-
         boolean resultOk;
         if (mEdit) {
             resultOk = mViewModel.update();
@@ -259,6 +258,8 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         if (resultOk) {
             if (getShowsDialog()) getDialog().dismiss();
             mListener.onInventoryAddEditCompletedOrCancelled();
+        } else {
+            Log.d(TAG, "Result of add or edit operation was not OK!");
         }
     }
 
@@ -267,10 +268,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
         void onInventoryAddEditCompletedOrCancelled();

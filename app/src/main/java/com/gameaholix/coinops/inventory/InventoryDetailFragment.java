@@ -61,14 +61,6 @@ public class InventoryDetailFragment extends Fragment {
 
         if (TextUtils.isEmpty(mItemId)) {
             mListener.onItemIdInvalid();
-            return;
-        }
-
-        if (getActivity() != null) {
-            mViewModel = ViewModelProviders
-                    .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
-                    .get(InventoryItemViewModel.class);
-            mItemLiveData = mViewModel.getItemLiveData();
         }
     }
 
@@ -81,26 +73,31 @@ public class InventoryDetailFragment extends Fragment {
 
         final View rootView = bind.getRoot();
 
+        bind.setLifecycleOwner(getActivity());
+
         String noSelection = getString(R.string.not_available);
-        final String[] typeArr = getResources().getStringArray(R.array.inventory_type);
-        typeArr[0] = noSelection;
-        final String[] conditionArr =
+        final String[] typeArray = getResources().getStringArray(R.array.inventory_type);
+        typeArray[0] = noSelection;
+        bind.setTypeArray(typeArray);
+
+        final String[] conditionArray =
                 getResources().getStringArray(R.array.inventory_condition);
-        conditionArr[0] = noSelection;
+        conditionArray[0] = noSelection;
+        bind.setConditionArray(conditionArray);
 
         if (getActivity() != null) {
+            mViewModel = ViewModelProviders
+                    .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
+                    .get(InventoryItemViewModel.class);
+            mItemLiveData = mViewModel.getItemLiveData();
             mItemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
                 @Override
                 public void onChanged(@Nullable InventoryItem item) {
                     if (item != null) {
-                        bind.tvInventoryName.setText(item.getName());
-                        bind.tvInventoryType.setText(typeArr[item.getType()]);
-                        bind.tvInventoryCondition.setText(conditionArr[item.getCondition()]);
-                        bind.tvInventoryDescription.setText(item.getDescription());
+                        bind.setItem(item);
                     }
                 }
             });
-
         }
 
         // Setup Buttons
@@ -195,10 +192,6 @@ public class InventoryDetailFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
         void onItemIdInvalid();
