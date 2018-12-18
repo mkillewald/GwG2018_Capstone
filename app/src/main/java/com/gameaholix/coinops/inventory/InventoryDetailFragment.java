@@ -1,7 +1,6 @@
 package com.gameaholix.coinops.inventory;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,7 +8,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -61,6 +59,14 @@ public class InventoryDetailFragment extends Fragment {
 
         if (TextUtils.isEmpty(mItemId)) {
             mListener.onItemIdInvalid();
+            return;
+        }
+
+        if (getActivity() != null) {
+            mViewModel = ViewModelProviders
+                    .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
+                    .get(InventoryItemViewModel.class);
+            mItemLiveData = mViewModel.getItemLiveData();
         }
     }
 
@@ -71,11 +77,11 @@ public class InventoryDetailFragment extends Fragment {
         final FragmentInventoryDetailBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_inventory_detail, container, false);
 
-        final View rootView = bind.getRoot();
-
         bind.setLifecycleOwner(getActivity());
+        bind.setItem(mItemLiveData);
 
         String noSelection = getString(R.string.not_available);
+
         final String[] typeArray = getResources().getStringArray(R.array.inventory_type);
         typeArray[0] = noSelection;
         bind.setTypeArray(typeArray);
@@ -84,21 +90,6 @@ public class InventoryDetailFragment extends Fragment {
                 getResources().getStringArray(R.array.inventory_condition);
         conditionArray[0] = noSelection;
         bind.setConditionArray(conditionArray);
-
-        if (getActivity() != null) {
-            mViewModel = ViewModelProviders
-                    .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
-                    .get(InventoryItemViewModel.class);
-            mItemLiveData = mViewModel.getItemLiveData();
-            mItemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
-                @Override
-                public void onChanged(@Nullable InventoryItem item) {
-                    if (item != null) {
-                        bind.setItem(item);
-                    }
-                }
-            });
-        }
 
         // Setup Buttons
         bind.btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +106,7 @@ public class InventoryDetailFragment extends Fragment {
             }
         });
 
-        return rootView;
+        return bind.getRoot();
     }
 
     @Override
