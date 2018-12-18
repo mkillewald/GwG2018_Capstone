@@ -189,16 +189,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         bind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (TextUtils.isEmpty(bind.etAddInventoryName.getText())) {
-                    PromptUser.displayAlert(mContext,
-                            R.string.error_add_inventory_failed,
-                            R.string.error_name_empty);
-                    Log.d(TAG, "Failed to add part! Name field was blank.");
-                    return;
-                }
-
-                if (getShowsDialog()) getDialog().dismiss();
-
                 String input = bind.etAddInventoryName.getText().toString().trim();
                 if (textInputIsValid(input)) {
                     mItem.setName(input);
@@ -216,14 +206,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 mItem.setType(bind.spinnerInventoryType.getSelectedItemPosition());
                 mItem.setCondition(bind.spinnerInventoryCondition.getSelectedItemPosition());
 
-                boolean resultOk;
-                if (mEdit) {
-                    resultOk = mViewModel.update();
-                } else {
-                    resultOk = mViewModel.add();
-                }
-
-                if (resultOk) mListener.onInventoryAddEditCompletedOrCancelled();
+                addUpdate();
             }
         });
 
@@ -254,6 +237,29 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void addUpdate() {
+        if (TextUtils.isEmpty(mItem.getName())) {
+            PromptUser.displayAlert(mContext,
+                    R.string.error_add_inventory_failed,
+                    R.string.error_name_empty);
+            Log.d(TAG, "Failed to add part! Name field was blank.");
+            return;
+        }
+
+
+        boolean resultOk;
+        if (mEdit) {
+            resultOk = mViewModel.update();
+        } else {
+            resultOk = mViewModel.add();
+        }
+
+        if (resultOk) {
+            if (getShowsDialog()) getDialog().dismiss();
+            mListener.onInventoryAddEditCompletedOrCancelled();
+        }
     }
 
     /**
