@@ -215,7 +215,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
             if (getShowsDialog()) getDialog().dismiss();
             mListener.onInventoryAddEditCompletedOrCancelled();
         } else {
-            Log.d(TAG, "Result of add or edit operation was not OK!");
+            Log.d(TAG, "The add or edit operation has failed!");
         }
     }
 
