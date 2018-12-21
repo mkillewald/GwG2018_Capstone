@@ -3,15 +3,13 @@ package com.gameaholix.coinops.game;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Build;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.Log;
@@ -23,6 +21,7 @@ import android.view.View;
 import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.DisplayImageActivity;
+import com.gameaholix.coinops.databinding.ActivityGameDetailBinding;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.toDo.ToDoDetailActivity;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
@@ -38,7 +37,6 @@ import com.gameaholix.coinops.toDo.ToDoAddEditFragment;
 import com.gameaholix.coinops.toDo.ToDoListFragment;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 public class GameDetailActivity extends BaseActivity implements
         GameDetailFragment.OnFragmentInteractionListener,
@@ -58,8 +56,7 @@ public class GameDetailActivity extends BaseActivity implements
 
     private String mGameId;
     private String mGameName;
-    private ViewPager mViewPager;
-    private AdView mAdView;
+    private ActivityGameDetailBinding mBind;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,22 +72,19 @@ public class GameDetailActivity extends BaseActivity implements
             getWindow().setExitTransition(slideOut);
         }
 
-        setContentView(R.layout.activity_game_detail);
+        mBind = DataBindingUtil.setContentView(this, R.layout.activity_game_detail);
 
-        Toolbar myToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        setSupportActionBar(mBind.toolbar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         // set CoordinatorLayout of BaseActivity for displaying Snackbar
-        CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinator_layout);
-        setCoordinatorLayout(coordinatorLayout);
+        setCoordinatorLayout(mBind.coordinatorLayout);
 
-        mAdView = findViewById(R.id.av_banner);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        mBind.avBanner.loadAd(adRequest);
 
         if (savedInstanceState == null) {
             Intent intent = getIntent();
@@ -106,10 +100,9 @@ public class GameDetailActivity extends BaseActivity implements
         }
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        mViewPager = findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new GameDetailPagerAdapter(this, getSupportFragmentManager(),
+        mBind.viewpager.setAdapter(new GameDetailPagerAdapter(this, getSupportFragmentManager(),
                 mGameId));
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mBind.viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
                 invalidateOptionsMenu();
@@ -126,15 +119,14 @@ public class GameDetailActivity extends BaseActivity implements
         });
 
         // Give the TabLayout the ViewPager
-        TabLayout tabLayout = findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        mBind.slidingTabs.setupWithViewPager(mBind.viewpager);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.game_detail_menu, menu);
-        switch (mViewPager.getCurrentItem()) {
+        switch (mBind.viewpager.getCurrentItem()) {
             case 0:
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
                 break;
@@ -157,20 +149,20 @@ public class GameDetailActivity extends BaseActivity implements
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (mViewPager.getCurrentItem() == 0) {
+        if (mBind.viewpager.getCurrentItem() == 0) {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
             if (currentFragment instanceof GameAddEditFragment) {
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
                 menu.findItem(R.id.menu_delete_game).setVisible(false);
-                mAdView.setVisibility(View.GONE);
+                mBind.avBanner.setVisibility(View.GONE);
             } else {
                 menu.findItem(R.id.menu_edit_game).setVisible(true);
                 menu.findItem(R.id.menu_delete_game).setVisible(true);
-                mAdView.setVisibility(View.VISIBLE);
+                mBind.avBanner.setVisibility(View.VISIBLE);
             }
         } else {
-            if (mAdView.getVisibility() == View.GONE) {
-                mAdView.setVisibility(View.VISIBLE);
+            if (mBind.avBanner.getVisibility() == View.GONE) {
+                mBind.avBanner.setVisibility(View.VISIBLE);
             }
         }
 
@@ -307,7 +299,7 @@ public class GameDetailActivity extends BaseActivity implements
 
     @Override
     public void onEditButtonPressed(Game game) {
-        mAdView.setVisibility(View.GONE);
+        mBind.avBanner.setVisibility(View.GONE);
         // replace GameDetailFragment with GameAddEditFragment
         Fragment addEditGameFragment = GameAddEditFragment.newInstance(game);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -326,7 +318,12 @@ public class GameDetailActivity extends BaseActivity implements
         ft.commit();
 
         invalidateOptionsMenu();
-        mAdView.setVisibility(View.VISIBLE);
+        mBind.avBanner.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onDeleteCompleted() {
+        finish();
     }
 
     @Override
@@ -342,7 +339,7 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void showSnackbar(int stringResourceId) {
+    public void onShowSnackbar(int stringResourceId) {
         PromptUser.displaySnackbar(getCoordinatorLayout(), stringResourceId);
     }
 }

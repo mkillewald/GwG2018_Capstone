@@ -9,14 +9,19 @@ import com.gameaholix.coinops.game.repository.GameRepository;
 
 public class GameViewModel extends ViewModel {
     private LiveData<Game> mGameLiveData;
+    private GameRepository mRepository;
 
     public GameViewModel(String gameId) {
-        GameRepository repository = new GameRepository(gameId);
-        mGameLiveData = repository.getItemLiveData();
+        mRepository = new GameRepository(gameId);
+        mGameLiveData = mRepository.getGameLiveData();
     }
 
     @NonNull
     public LiveData<Game> getGameLiveData() {
         return mGameLiveData;
+    }
+
+    public boolean delete() {
+        return mRepository.delete();
     }
 }

@@ -37,11 +37,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -66,19 +63,13 @@ public class GameDetailFragment extends Fragment {
 
     private Context mContext;
     private String mGameId;
-    private Game mGame;
-    private FirebaseUser mUser;
-    private String mCurrentPhotoPath;
-    private DatabaseReference mDatabaseReference;
-    private DatabaseReference mGameRef;
-    private DatabaseReference mUserRef;
-    private DatabaseReference mShopRef;
-    private DatabaseReference mToDoRef;
+    private GameViewModel mGameViewModel;
+    private LiveData<Game> mGameLiveData;
     private StorageReference mImageRootRef;
-    private ValueEventListener mDeleteTodoListener;
-    private ValueEventListener mDeleteShopListener;
+    private String mCurrentPhotoPath;
     private OnFragmentInteractionListener mListener;
-    private FragmentGameDetailBinding mBind;
+
+    private Game mGame;
 
     public GameDetailFragment() {
         // Required empty public constructor
@@ -105,97 +96,91 @@ public class GameDetailFragment extends Fragment {
         }
         setHasOptionsMenu(true);
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mUser = firebaseAuth.getCurrentUser();
+        if (TextUtils.isEmpty(mGameId)) {
+            mListener.onGameIdInvalid();
+            return;
+        }
 
+        // Initialize Firebase components
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-        mImageRootRef = storageRef
-                .child(mUser.getUid())
-                .child(mGameId);
 
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mGameRef = mDatabaseReference
-                .child(Db.GAME)
-                .child(mUser.getUid())
-                .child(mGameId);
-        mUserRef = mDatabaseReference
-                .child(Db.USER)
-                .child(mUser.getUid());
-        mToDoRef = mDatabaseReference
-                .child(Db.TODO)
-                .child(mUser.getUid());
-        mShopRef = mDatabaseReference
-                .child(Db.SHOP)
-                .child(mUser.getUid());
+        if (user != null) {
+            mImageRootRef = storageRef
+                    .child(user.getUid())
+                    .child(mGameId);
+        }
 
-
+        if (getActivity() != null) {
+            mGameViewModel = ViewModelProviders
+                    .of(getActivity(), new GameViewModelFactory(mGameId))
+                    .get(GameViewModel.class);
+            mGameLiveData = mGameViewModel.getGameLiveData();
+        }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mBind = DataBindingUtil.inflate(inflater, R.layout.fragment_game_detail, container,
+        final FragmentGameDetailBinding bind = DataBindingUtil.inflate(inflater, R.layout.fragment_game_detail, container,
                 false);
 
-        final View rootView = mBind.getRoot();
+        bind.setLifecycleOwner(getActivity());
+        bind.setGame(mGameLiveData);
 
         String noSelection = getString(R.string.not_available);
-        final String[] typeArr = getResources().getStringArray(R.array.game_type);
-        typeArr[0] = noSelection;
-        final String[] cabinetArr = getResources().getStringArray(R.array.game_cabinet);
-        cabinetArr[0] = noSelection;
-        final String[] workingArr = getResources().getStringArray(R.array.game_working);
-        workingArr[0] = noSelection;
-        final String[] ownershipArr =
-                getResources().getStringArray(R.array.game_ownership);
-        ownershipArr[0] = noSelection;
-        final String[] conditionArr =
-                getResources().getStringArray(R.array.game_condition);
-        conditionArr[0] = noSelection;
-        final String[] monitorPhospherArr =
-                getResources().getStringArray(R.array.game_monitor_phospher);
-        final String[] monitorTypeArr =
-                getResources().getStringArray(R.array.game_monitor_beam);
-        final String[] monitorTechArr =
-                getResources().getStringArray(R.array.game_monitor_tech);
-        final String[] monitorSizeArr =
-                getResources().getStringArray(R.array.game_monitor_size);
 
-        if (TextUtils.isEmpty(mGameId)) {
-            mListener.onGameIdInvalid();
-            return rootView;
-        }
+        final String[] typeArray = getResources().getStringArray(R.array.game_type);
+        typeArray[0] = noSelection;
+        bind.setTypeArray(typeArray);
+
+        final String[] cabinetArray = getResources().getStringArray(R.array.game_cabinet);
+        cabinetArray[0] = noSelection;
+        bind.setCabinetArray(cabinetArray);
+
+        final String[] statusArray = getResources().getStringArray(R.array.game_working);
+        statusArray[0] = noSelection;
+        bind.setStatusArray(statusArray);
+
+        final String[] ownershipArray =
+                getResources().getStringArray(R.array.game_ownership);
+        ownershipArray[0] = noSelection;
+        bind.setOwnershipArray(ownershipArray);
+
+        final String[] conditionArray =
+                getResources().getStringArray(R.array.game_condition);
+        conditionArray[0] = noSelection;
+        bind.setConditionArray(conditionArray);
+
+        final String[] monitorPhospherArray =
+                getResources().getStringArray(R.array.game_monitor_phospher);
+        bind.setMonitorPhospherArray(monitorPhospherArray);
+
+        final String[] monitorBeamArray =
+                getResources().getStringArray(R.array.game_monitor_beam);
+        bind.setMonitorBeamArray(monitorBeamArray);
+
+        final String[] monitorTechArray =
+                getResources().getStringArray(R.array.game_monitor_tech);
+        bind.setMonitorTechArray(monitorTechArray);
+
+        final String[] monitorSizeArray =
+                getResources().getStringArray(R.array.game_monitor_size);
+        bind.setMonitorSizeArray( monitorSizeArray);
 
         // read game details
         if (getActivity() != null) {
-            GameViewModel viewModel = ViewModelProviders
-                    .of(getActivity(), new GameViewModelFactory(mGameId))
-                    .get(GameViewModel.class);
-            LiveData<Game> gameLiveData = viewModel.getGameLiveData();
-            gameLiveData.observe(getActivity(), new Observer<Game>() {
+            mGameLiveData.observe(getActivity(), new Observer<Game>() {
                 @Override
                 public void onChanged(@Nullable Game game) {
                     if (game != null) {
-                        game.setId(mGameId);
                         mGame = game;
 
                         if (mListener != null) {
                             mListener.onGameNameChanged(game.getName());
                         }
-
-                        mBind.tvGameType.setText(typeArr[game.getType()]);
-                        mBind.tvGameCabinet.setText(cabinetArr[game.getCabinet()]);
-                        mBind.tvGameWorking.setText(workingArr[game.getWorking()]);
-                        mBind.tvGameOwnership.setText(ownershipArr[game.getOwnership()]);
-                        mBind.tvGameCondition.setText(conditionArr[game.getCondition()]);
-                        mBind.tvGameMonitorPhospher
-                                .setText(monitorPhospherArr[game.getMonitorPhospher()]);
-                        mBind.tvGameMonitorType.setText(monitorTypeArr[game.getMonitorBeam()]);
-                        mBind.tvGameMonitorTech.setText(monitorTechArr[game.getMonitorTech()]);
-                        mBind.tvGameMonitorSize.setText(monitorSizeArr[game.getMonitorSize()]);
 
                         // Get thumbnail from firebase
                         StorageReference thumbRef = null;
@@ -207,14 +192,14 @@ public class GameDetailFragment extends Fragment {
                         GlideApp.with(mContext)
                                 .load(thumbRef)
                                 .placeholder(R.drawable.ic_classic_arcade_machine)
-                                .into(mBind.ivPhoto);
+                                .into(bind.ivPhoto);
                     }
                 }
             });
         }
 
-        // Setup ImageView
-        mBind.ivPhoto.setOnClickListener(new View.OnClickListener() {
+        // Setup ImageView click listener
+        bind.ivPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(mGame.getImage())) {
@@ -225,14 +210,14 @@ public class GameDetailFragment extends Fragment {
         });
 
         // Setup Buttons
-        mBind.btnTakePhoto.setOnClickListener(new View.OnClickListener() {
+        bind.btnTakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onLaunchCamera();
             }
         });
 
-        mBind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
+        bind.btnWebSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (getActivity() != null) {
@@ -243,34 +228,21 @@ public class GameDetailFragment extends Fragment {
             }
         });
 
-        mBind.btnEdit.setOnClickListener(new View.OnClickListener() {
+        bind.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mListener.onEditButtonPressed(mGame);
             }
         });
 
-        mBind.btnDelete.setOnClickListener(new View.OnClickListener() {
+        bind.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDeleteAlert();
             }
         });
 
-        return rootView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        if (mDeleteTodoListener != null) {
-            mToDoRef.removeEventListener(mDeleteTodoListener);
-        }
-
-        if (mDeleteShopListener != null) {
-            mShopRef.removeEventListener(mDeleteShopListener);
-        }
+        return bind.getRoot();
     }
 
     @Override
@@ -427,7 +399,7 @@ public class GameDetailFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                mListener.showSnackbar(R.string.error_upload_failed);
+                mListener.onShowSnackbar(R.string.error_upload_failed);
                 Log.e(TAG, "Image upload failed -> ", e);
             }
         });
@@ -452,8 +424,17 @@ public class GameDetailFragment extends Fragment {
                 deleteImagesFromFirebase();
 
                 // Store new image filename in database, this will trigger the ImageView to be reloaded.
-                DatabaseReference filenameRef = mGameRef.child(Db.IMAGE);
-                filenameRef.setValue(filename);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                if (user != null) {
+                    String uid = user.getUid();
+                    DatabaseReference filenameRef = FirebaseDatabase.getInstance().getReference()
+                            .child(Db.GAME)
+                            .child(uid)
+                            .child(mGameId)
+                            .child(Db.IMAGE);
+                    filenameRef.setValue(filename);
+                }
 
                 // Update the mGame instance
                 mGame.setImage(filename);
@@ -461,7 +442,7 @@ public class GameDetailFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                mListener.showSnackbar(R.string.error_upload_failed);
+                mListener.onShowSnackbar(R.string.error_upload_failed);
                 Log.e(TAG, "Image upload failed -> ", e);
             }
         });
@@ -480,7 +461,9 @@ public class GameDetailFragment extends Fragment {
     }
 
     private void showDeleteAlert() {
-        if (mUser != null) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
             //user is signed in
 
             android.support.v7.app.AlertDialog.Builder builder;
@@ -501,9 +484,7 @@ public class GameDetailFragment extends Fragment {
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             deleteAllGameData();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                            }
+                            mListener.onDeleteCompleted();
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -513,73 +494,8 @@ public class GameDetailFragment extends Fragment {
         }
     }
 
-    private void deleteAllGameData() {
-        mDeleteTodoListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.getKey() != null) {
-                        String key = child.getKey();
-                        child.getRef().removeValue();
-                        mUserRef.child(Db.TODO_LIST).child(key).removeValue();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        mDeleteShopListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.getKey() != null) {
-                        String key = child.getKey();
-                        child.getRef().removeValue();
-                        mUserRef.child(Db.SHOP_LIST).child(key).removeValue();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        // delete images from Firebase Storage
-        deleteImagesFromFirebase();
-
-        // delete game details
-        mGameRef.removeValue();
-
-        // remove user game_list entry
-        mUserRef.child(Db.GAME_LIST)
-                .child(mGame.getId())
-                .removeValue();
-
-        // delete repair logs and steps
-        mDatabaseReference
-                .child(Db.REPAIR)
-                .child(mUser.getUid())
-                .child(mGame.getId())
-                .removeValue();
-
-        // delete to do items
-        mToDoRef.orderByChild(Db.PARENT_ID)
-                .equalTo(mGame.getId())
-                .addValueEventListener(mDeleteTodoListener);
-
-        // delete shopping list items
-        mShopRef.orderByChild(Db.PARENT_ID)
-                .equalTo(mGame.getId())
-                .addValueEventListener(mDeleteShopListener);
-    }
-
     private void deleteImagesFromFirebase() {
+
         if (!TextUtils.isEmpty(mGame.getImage())) {
             // Delete thumbnail image
             Log.d(TAG, "image: " + mImageRootRef + "/" + mGame.getImage());
@@ -600,6 +516,11 @@ public class GameDetailFragment extends Fragment {
         }
     }
 
+    private void deleteAllGameData() {
+//        deleteImagesFromFirebase();
+        mGameViewModel.delete();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -610,7 +531,8 @@ public class GameDetailFragment extends Fragment {
         void onGameIdInvalid();
         void onGameNameChanged(String name);
         void onEditButtonPressed(Game game);
-        void showSnackbar(int stringResourceId);
+        void onDeleteCompleted();
+        void onShowSnackbar(int stringResourceId);
         void onImageClicked(String imagePath);
     }
 
