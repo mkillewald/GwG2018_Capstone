@@ -1,8 +1,10 @@
 package com.gameaholix.coinops;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.gameaholix.coinops.firebase.FirebaseQueryLiveData;
 import com.gameaholix.coinops.model.ListRow;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseListRepository {
+//    private static final String TAG = BaseListRepository.class.getSimpleName();
     private final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     private final MediatorLiveData<List<ListRow>> mListLiveData = new MediatorLiveData<>();
 
