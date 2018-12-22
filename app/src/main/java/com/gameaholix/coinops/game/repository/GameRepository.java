@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -16,7 +17,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -25,7 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 
 public class GameRepository {
     private static final String TAG = GameRepository.class.getSimpleName();
-    private final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     private LiveData<Game> mGameLiveData;
     private String mGameId;
 
@@ -41,60 +40,13 @@ public class GameRepository {
         }
     }
 
-    private DatabaseReference getGameRef(@NonNull String uid) {
-        return mDatabaseReference
-                .child(Db.GAME)
-                .child(uid)
-                .child(mGameId);
-    }
-
-    private DatabaseReference getUserGameListRef(@NonNull String uid) {
-        return mDatabaseReference
-                .child(Db.USER)
-                .child(uid)
-                .child(Db.GAME_LIST);
-    }
-
-    private DatabaseReference getRepairRef(@NonNull String uid) {
-        return mDatabaseReference
-                .child(Db.REPAIR)
-                .child(uid)
-                .child(mGameId);
-    }
-
-    private DatabaseReference getShopRef(@NonNull String uid) {
-        return mDatabaseReference
-                .child(Db.SHOP)
-                .child(uid);
-    }
-
-    private DatabaseReference getUserShopListRef(@NonNull String uid) {
-        return mDatabaseReference
-                .child(Db.USER)
-                .child(uid)
-                .child(Db.SHOP_LIST);
-    }
-
-    private DatabaseReference getToDoRef(@NonNull String uid) {
-        return mDatabaseReference
-                .child(Db.TODO)
-                .child(uid);
-    }
-
-    private DatabaseReference getUserTodoListRef(@NonNull String uid) {
-        return mDatabaseReference
-                .child(Db.USER)
-                .child(uid)
-                .child(Db.TODO_LIST);
-    }
-
     private LiveData<Game> fetchGameDetails() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             // user is signed in
             String uid = user.getUid();
-            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(getGameRef(uid));
+            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(Db.getGameRef(uid, mGameId));
 
             // NOTE: Transformations run synchronously on the main thread, if the total time it takes
             // to perform this conversion is over 16 ms, "jank" will occur. A MediatorLiveData can be used
@@ -133,24 +85,25 @@ public class GameRepository {
             final String uid = user.getUid();
 
             // delete repair logs
-            getRepairRef(uid).removeValue();
+            Db.getRepairRef(uid, mGameId).removeValue();
 
             // delete to do items
-            Query toDoQuery = getToDoRef(uid)
+            Query toDoQuery = Db.getToDoRef(uid)
                     .orderByChild(Db.PARENT_ID)
                     .equalTo(mGameId);
-            deleteQueryResults(toDoQuery, getUserTodoListRef(uid));
+            deleteQueryResults(toDoQuery, Db.getUserToDoListRef(uid));
 
             // delete shopping items
-            Query shopQuery = getShopRef(uid)
+            Query shopQuery = Db.getShopRef(uid)
                     .orderByChild(Db.PARENT_ID)
                     .equalTo(mGameId);
-            deleteQueryResults(shopQuery, getUserShopListRef(uid));
+            deleteQueryResults(shopQuery, Db.getUserShopListRef(uid));
 
             // delete game details
-            getGameRef(uid).removeValue();
+            Db.getGameRef(uid, mGameId).removeValue();
 
             // remove user game_list entry
+            Db.getUserGameListRef(uid).child(mGameId).removeValue();
 
             return false;
         } else {
@@ -159,20 +112,24 @@ public class GameRepository {
         }
     }
 
-    private void deleteQueryResults(Query query, final DatabaseReference globalListRef) {
+    /**
+     * Deletes items matching a Firebase Query, and also removes the items from a list if provided.
+     * @param query the Firebase realtime database query to perform
+     * @param listRef the list reference to also remove items from
+     */
+    private void deleteQueryResults(Query query, @Nullable final DatabaseReference listRef) {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
                     for (DataSnapshot item : dataSnapshot.getChildren()) {
-                        if (!TextUtils.isEmpty(item.getKey())) {
-                            // remove item from User (global) list
-                            globalListRef.child(item.getKey()).removeValue();
-//                            Log.d(TAG, "Deleted: " + globalListRef.child(item.getKey()).toString());
-                            // remove item
-                            item.getRef().removeValue();
-//                            Log.d(TAG, "Deleted: " + item.getRef().toString());
+                        if (listRef != null && !TextUtils.isEmpty(item.getKey())) {
+                            // remove item from list
+                            listRef.child(item.getKey()).removeValue();
                         }
+
+                        // remove item
+                        item.getRef().removeValue();
                     }
                 }
             }

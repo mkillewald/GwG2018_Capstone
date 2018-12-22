@@ -43,24 +43,6 @@ public class InventoryItemRepository {
         }
     }
 
-    private DatabaseReference getInventoryRootRef(String uid) {
-        return mDatabaseReference
-                .child(Db.INVENTORY)
-                .child(uid);
-    }
-
-    private DatabaseReference getInventoryRef(String uid) {
-        return getInventoryRootRef(uid)
-                .child(mItemId);
-    }
-
-    private DatabaseReference getInventoryListRef(String uid) {
-        return mDatabaseReference
-                .child(Db.USER)
-                .child(uid)
-                .child(Db.INVENTORY_LIST);
-    }
-
     private LiveData<InventoryItem> fetchData() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -68,7 +50,7 @@ public class InventoryItemRepository {
             // user is signed in
             String uid = user.getUid();
 
-            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(getInventoryRef(uid));
+            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(Db.getInventoryRef(uid, mItemId));
 
             // NOTE: Transformations run synchronously on the main thread, if the total time it takes
             // to perform this conversion is over 16 ms, "jank" will occur. A MediatorLiveData can be used
@@ -104,12 +86,12 @@ public class InventoryItemRepository {
         if (user != null) {
             // user is signed in
             String uid = user.getUid();
-            mItemId = getInventoryRootRef(uid).push().getKey();
+            mItemId = Db.getInventoryRootRef(uid).push().getKey();
 
             if (TextUtils.isEmpty(mItemId)) return false;
 
-            DatabaseReference inventoryRef = getInventoryRef(uid);
-            DatabaseReference userInventoryListRef = getInventoryListRef(uid);
+            DatabaseReference inventoryRef = Db.getInventoryRef(uid, mItemId);
+            DatabaseReference userInventoryListRef = Db.getInventoryListRef(uid);
 
             Map<String, Object> valuesWithPath = new HashMap<>();
             valuesWithPath.put(inventoryRef.getPath().toString(), newItem);
@@ -142,8 +124,8 @@ public class InventoryItemRepository {
             // user signed in
             String uid = user.getUid();
 
-            DatabaseReference inventoryRef = getInventoryRef(uid);
-            DatabaseReference inventoryListRef = getInventoryListRef(uid);
+            DatabaseReference inventoryRef = Db.getInventoryRef(uid, item.getId());
+            DatabaseReference inventoryListRef = Db.getInventoryListRef(uid);
 
             // convert item to Map so it can be iterated
             Map<String, Object> currentValues = item.getMap();
@@ -153,7 +135,7 @@ public class InventoryItemRepository {
             for (String key : currentValues.keySet()) {
                 valuesWithPath.put(inventoryRef.child(key).getPath().toString(), currentValues.get(key));
                 if (key.equals(Db.NAME)) {
-                    valuesWithPath.put(inventoryListRef.child(mItemId).getPath().toString(),
+                    valuesWithPath.put(inventoryListRef.child(item.getId()).getPath().toString(),
                                     currentValues.get(key));
                 }
             }
@@ -186,10 +168,10 @@ public class InventoryItemRepository {
             String uid = user.getUid();
 
             // delete inventory item
-            getInventoryRef(uid).removeValue();
+            Db.getInventoryRef(uid, mItemId).removeValue();
 
             // delete inventory list entry
-            getInventoryListRef(uid).child(mItemId).removeValue();
+            Db.getInventoryListRef(uid).child(mItemId).removeValue();
 
             return true;
         } else {

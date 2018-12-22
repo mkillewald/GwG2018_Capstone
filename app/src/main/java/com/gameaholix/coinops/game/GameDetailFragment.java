@@ -495,7 +495,6 @@ public class GameDetailFragment extends Fragment {
     }
 
     private void deleteImagesFromFirebase() {
-
         if (!TextUtils.isEmpty(mGame.getImage())) {
             // Delete thumbnail image
             Log.d(TAG, "image: " + mImageRootRef + "/" + mGame.getImage());
@@ -517,7 +516,7 @@ public class GameDetailFragment extends Fragment {
     }
 
     private void deleteAllGameData() {
-//        deleteImagesFromFirebase();
+        deleteImagesFromFirebase();
         mGameViewModel.delete();
     }
 

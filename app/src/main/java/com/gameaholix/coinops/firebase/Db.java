@@ -1,6 +1,13 @@
 package com.gameaholix.coinops.firebase;
 
+import android.support.annotation.NonNull;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class Db {
+    private static final DatabaseReference sDatabaseReference =
+            FirebaseDatabase.getInstance().getReference();
 
     // Database nodes
     public static final String USER = "user";
@@ -31,4 +38,85 @@ public class Db {
     public static final String MONITOR_BEAM = "monitorBeam";
     public static final String DESCRIPTION = "description";
     public static final String PRIORITY = "priority";
+
+    public static DatabaseReference getGameRef(@NonNull String uid, @NonNull String gameId) {
+        return sDatabaseReference
+                .child(Db.GAME)
+                .child(uid)
+                .child(gameId);
+    }
+
+    public static DatabaseReference getUserGameListRef(@NonNull String uid) {
+        return sDatabaseReference
+                .child(Db.USER)
+                .child(uid)
+                .child(Db.GAME_LIST);
+    }
+
+    public static DatabaseReference getRepairRef(@NonNull String uid, @NonNull String gameId) {
+        return sDatabaseReference
+                .child(Db.REPAIR)
+                .child(uid)
+                .child(gameId);
+    }
+
+    public static DatabaseReference getShopRef(@NonNull String uid) {
+        return sDatabaseReference
+                .child(Db.SHOP)
+                .child(uid);
+    }
+
+    public static DatabaseReference getGameShopListRef(@NonNull String uid, @NonNull String gameId) {
+        return sDatabaseReference
+                .child(Db.GAME)
+                .child(uid)
+                .child(gameId)
+                .child(Db.SHOP_LIST);
+    }
+
+    public static DatabaseReference getUserShopListRef(@NonNull String uid) {
+        return sDatabaseReference
+                .child(Db.USER)
+                .child(uid)
+                .child(Db.SHOP_LIST);
+    }
+
+    public static DatabaseReference getToDoRef(@NonNull String uid) {
+        return sDatabaseReference
+                .child(Db.TODO)
+                .child(uid);
+    }
+
+    public static DatabaseReference getGameToDoListRef(@NonNull String uid, @NonNull String gameId) {
+        return sDatabaseReference
+                .child(Db.GAME)
+                .child(uid)
+                .child(gameId)
+                .child(Db.TODO_LIST);
+    }
+
+    public static DatabaseReference getUserToDoListRef(@NonNull String uid) {
+        return sDatabaseReference
+                .child(Db.USER)
+                .child(uid)
+                .child(Db.TODO_LIST);
+    }
+
+    public static DatabaseReference getInventoryRootRef(@NonNull String uid) {
+        return sDatabaseReference
+                .child(Db.INVENTORY)
+                .child(uid);
+    }
+
+    public static DatabaseReference getInventoryRef(@NonNull String uid, @NonNull String itemId) {
+        return getInventoryRootRef(uid)
+                .child(itemId);
+    }
+
+    public static DatabaseReference getInventoryListRef(@NonNull String uid) {
+        return sDatabaseReference
+                .child(Db.USER)
+                .child(uid)
+                .child(Db.INVENTORY_LIST);
+    }
 }
