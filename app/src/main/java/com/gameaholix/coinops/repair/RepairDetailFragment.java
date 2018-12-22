@@ -19,7 +19,7 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.StepAdapter;
 import com.gameaholix.coinops.databinding.FragmentRepairDetailBinding;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -81,11 +81,11 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
         mUser = firebaseAuth.getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mRepairRef = mDatabaseReference
-                .child(Db.REPAIR)
+                .child(Fb.REPAIR)
                 .child(mUser.getUid())
                 .child(mGameId)
                 .child(mRepairLog.getId());
-        mStepRef = mRepairRef.child(Db.STEPS);
+        mStepRef = mRepairRef.child(Fb.STEPS);
     }
 
     @Override
@@ -273,10 +273,10 @@ public class RepairDetailFragment extends Fragment implements StepAdapter.StepAd
 
         // delete repair log list entry
         mDatabaseReference
-                .child(Db.GAME)
+                .child(Fb.GAME)
                 .child(mUser.getUid())
                 .child(mGameId)
-                .child(Db.REPAIR_LIST)
+                .child(Fb.REPAIR_LIST)
                 .child(mRepairLog.getId())
                 .removeValue();
     }

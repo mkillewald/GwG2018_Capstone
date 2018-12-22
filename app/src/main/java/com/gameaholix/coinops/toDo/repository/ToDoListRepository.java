@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.gameaholix.coinops.BaseListRepository;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -20,10 +20,10 @@ public class ToDoListRepository extends BaseListRepository {
 
             if (TextUtils.isEmpty(gameId)) {
                 // use User (global) database reference
-                super.fetchList(Db.getUserToDoListRef(uid));
+                super.fetchList(Fb.getUserToDoListRef(uid));
             } else {
                 // use Game specific database reference
-                super.fetchList(Db.getGameToDoListRef(uid, gameId));
+                super.fetchList(Fb.getGameToDoListRef(uid, gameId));
             }
 //        } else {
 //            // user is not signed in

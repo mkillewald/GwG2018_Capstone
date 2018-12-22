@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.adapter.RepairAdapter;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -67,10 +67,10 @@ public class RepairListFragment extends Fragment implements RepairAdapter.Repair
         mUser = firebaseAuth.getCurrentUser();
         DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference();
         mRepairListRef = databaseReference
-                .child(Db.GAME)
+                .child(Fb.GAME)
                 .child(mUser.getUid())
                 .child(mGameId)
-                .child(Db.REPAIR_LIST);
+                .child(Fb.REPAIR_LIST);
     }
 
     @Override

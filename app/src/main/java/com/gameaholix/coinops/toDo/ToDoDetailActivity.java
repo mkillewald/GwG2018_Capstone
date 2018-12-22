@@ -18,7 +18,7 @@ import android.view.MenuItem;
 import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -189,25 +189,25 @@ public class ToDoDetailActivity extends BaseActivity implements
         // delete to do item
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference
-                .child(Db.TODO)
+                .child(Fb.TODO)
                 .child(mUser.getUid())
                 .child(toDoItem.getId())
                 .removeValue();
 
         // delete game to do list entry
         databaseReference
-                .child(Db.GAME)
+                .child(Fb.GAME)
                 .child(mUser.getUid())
                 .child(toDoItem.getParentId())
-                .child(Db.TODO_LIST)
+                .child(Fb.TODO_LIST)
                 .child(toDoItem.getId())
                 .removeValue();
 
         // delete user to do list entry (global list)
         databaseReference
-                .child(Db.USER)
+                .child(Fb.USER)
                 .child(mUser.getUid())
-                .child(Db.TODO_LIST)
+                .child(Fb.TODO_LIST)
                 .child(toDoItem.getId())
                 .removeValue();
     }

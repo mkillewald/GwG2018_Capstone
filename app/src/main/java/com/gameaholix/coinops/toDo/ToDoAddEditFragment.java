@@ -22,7 +22,7 @@ import com.gameaholix.coinops.BaseDialogFragment;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentToDoAddBinding;
 import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -306,7 +306,7 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
             // user is signed in
 
             String uid = mUser.getUid();
-            DatabaseReference toDoRootRef = mDatabaseReference.child(Db.TODO).child(uid);
+            DatabaseReference toDoRootRef = mDatabaseReference.child(Fb.TODO).child(uid);
 
             String toDoId;
             if (mEdit) {
@@ -333,15 +333,15 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
 
             DatabaseReference toDoRef = toDoRootRef.child(toDoId);
             DatabaseReference gameToDoListRef = mDatabaseReference
-                    .child(Db.GAME)
+                    .child(Fb.GAME)
                     .child(uid)
                     .child(mGameId)
-                    .child(Db.TODO_LIST)
+                    .child(Fb.TODO_LIST)
                     .child(toDoId);
             DatabaseReference userToDoListRef = mDatabaseReference
-                    .child(Db.USER)
+                    .child(Fb.USER)
                     .child(uid)
-                    .child(Db.TODO_LIST)
+                    .child(Fb.TODO_LIST)
                     .child(toDoId);
 
             Map<String, Object> valuesWithPath = new HashMap<>();
@@ -352,7 +352,7 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
                 // create new Map with full database paths as keys using values from the Map created above
                 for (String key : currentValues.keySet()) {
                     valuesWithPath.put(toDoRef.child(key).getPath().toString(), currentValues.get(key));
-                    if (key.equals(Db.NAME)) {
+                    if (key.equals(Fb.NAME)) {
                         valuesWithPath.put(userToDoListRef.getPath().toString(), currentValues.get(key));
                         valuesWithPath.put(gameToDoListRef.getPath().toString(), currentValues.get(key));
                     }

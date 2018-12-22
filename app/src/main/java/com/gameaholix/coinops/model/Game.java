@@ -3,7 +3,7 @@ package com.gameaholix.coinops.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
@@ -113,16 +113,16 @@ public class Game implements Parcelable {
     @Exclude
     public Map<String, Object> getMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put(Db.NAME, getName());
-        map.put(Db.TYPE, getType());
-        map.put(Db.CABINET, getCabinet());
-        map.put(Db.CONDITION, getCondition());
-        map.put(Db.WORKING, getWorking());
-        map.put(Db.OWNERSHIP, getOwnership());
-        map.put(Db.MONITOR_SIZE, getMonitorSize());
-        map.put(Db.MONITOR_PHOSPHER, getMonitorPhospher());
-        map.put(Db.MONITOR_BEAM, getMonitorBeam());
-        map.put(Db.MONITOR_TECH, getMonitorTech());
+        map.put(Fb.NAME, getName());
+        map.put(Fb.TYPE, getType());
+        map.put(Fb.CABINET, getCabinet());
+        map.put(Fb.CONDITION, getCondition());
+        map.put(Fb.WORKING, getWorking());
+        map.put(Fb.OWNERSHIP, getOwnership());
+        map.put(Fb.MONITOR_SIZE, getMonitorSize());
+        map.put(Fb.MONITOR_PHOSPHER, getMonitorPhospher());
+        map.put(Fb.MONITOR_BEAM, getMonitorBeam());
+        map.put(Fb.MONITOR_TECH, getMonitorTech());
 
         return map;
     }

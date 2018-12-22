@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.firebase.FirebaseQueryLiveData;
 import com.gameaholix.coinops.model.Game;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,7 +46,7 @@ public class GameRepository {
         if (user != null) {
             // user is signed in
             String uid = user.getUid();
-            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(Db.getGameRef(uid, mGameId));
+            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(Fb.getGameRef(uid, mGameId));
 
             // NOTE: Transformations run synchronously on the main thread, if the total time it takes
             // to perform this conversion is over 16 ms, "jank" will occur. A MediatorLiveData can be used
@@ -85,25 +85,25 @@ public class GameRepository {
             final String uid = user.getUid();
 
             // delete repair logs
-            Db.getRepairRef(uid, mGameId).removeValue();
+            Fb.getRepairRef(uid, mGameId).removeValue();
 
             // delete to do items
-            Query toDoQuery = Db.getToDoRef(uid)
-                    .orderByChild(Db.PARENT_ID)
+            Query toDoQuery = Fb.getToDoRef(uid)
+                    .orderByChild(Fb.PARENT_ID)
                     .equalTo(mGameId);
-            deleteQueryResults(toDoQuery, Db.getUserToDoListRef(uid));
+            deleteQueryResults(toDoQuery, Fb.getUserToDoListRef(uid));
 
             // delete shopping items
-            Query shopQuery = Db.getShopRef(uid)
-                    .orderByChild(Db.PARENT_ID)
+            Query shopQuery = Fb.getShopRef(uid)
+                    .orderByChild(Fb.PARENT_ID)
                     .equalTo(mGameId);
-            deleteQueryResults(shopQuery, Db.getUserShopListRef(uid));
+            deleteQueryResults(shopQuery, Fb.getUserShopListRef(uid));
 
             // delete game details
-            Db.getGameRef(uid, mGameId).removeValue();
+            Fb.getGameRef(uid, mGameId).removeValue();
 
             // remove user game_list entry
-            Db.getUserGameListRef(uid).child(mGameId).removeValue();
+            Fb.getUserGameListRef(uid).child(mGameId).removeValue();
 
             return false;
         } else {

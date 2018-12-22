@@ -29,7 +29,7 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentGameDetailBinding;
 import com.gameaholix.coinops.model.Game;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.utility.GlideApp;
 import com.gameaholix.coinops.game.viewModel.GameViewModel;
 import com.gameaholix.coinops.game.viewModel.GameViewModelFactory;
@@ -429,10 +429,10 @@ public class GameDetailFragment extends Fragment {
                 if (user != null) {
                     String uid = user.getUid();
                     DatabaseReference filenameRef = FirebaseDatabase.getInstance().getReference()
-                            .child(Db.GAME)
+                            .child(Fb.GAME)
                             .child(uid)
                             .child(mGameId)
-                            .child(Db.IMAGE);
+                            .child(Fb.IMAGE);
                     filenameRef.setValue(filename);
                 }
 

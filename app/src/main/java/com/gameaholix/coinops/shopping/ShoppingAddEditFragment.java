@@ -23,7 +23,7 @@ import com.gameaholix.coinops.BaseDialogFragment;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentItemAddBinding;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -131,7 +131,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
             // TODO: want to find better way to do this.
             if (!TextUtils.isEmpty(mShoppingId)) {
                 mShopRef = mDatabaseReference
-                        .child(Db.SHOP)
+                        .child(Fb.SHOP)
                         .child(mUser.getUid())
                         .child(mShoppingId);
 
@@ -293,7 +293,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
             // user is signed in
             String uid = mUser.getUid();
 
-            DatabaseReference shopRootRef = mDatabaseReference.child(Db.SHOP).child(uid);
+            DatabaseReference shopRootRef = mDatabaseReference.child(Fb.SHOP).child(uid);
 
             if (!mEdit) {
                 mShoppingId = shopRootRef.push().getKey();
@@ -316,16 +316,16 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
             }
 
             DatabaseReference gameShopListRef = mDatabaseReference
-                    .child(Db.GAME)
+                    .child(Fb.GAME)
                     .child(uid)
                     .child(mGameId)
-                    .child(Db.SHOP_LIST)
+                    .child(Fb.SHOP_LIST)
                     .child(mShoppingId);
 
             DatabaseReference userShopListRef = mDatabaseReference
-                    .child(Db.USER)
+                    .child(Fb.USER)
                     .child(uid)
-                    .child(Db.SHOP_LIST)
+                    .child(Fb.SHOP_LIST)
                     .child(mShoppingId);
 
             Map<String, Object> valuesWithPath = new HashMap<>();
@@ -336,7 +336,7 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
                 // create new Map with full database paths as keys using values from the Map created above
                 for (String key : currentValues.keySet()) {
                     valuesWithPath.put(mShopRef.child(key).getPath().toString(), currentValues.get(key));
-                    if (key.equals(Db.NAME)) {
+                    if (key.equals(Fb.NAME)) {
                         valuesWithPath.put(gameShopListRef.getPath().toString(), mShoppingItem.getName());
                         valuesWithPath.put(userShopListRef.getPath().toString(), mShoppingItem.getName());
                     }
@@ -408,18 +408,18 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
 
         // delete game shopping list entry
         mDatabaseReference
-                .child(Db.GAME)
+                .child(Fb.GAME)
                 .child(mUser.getUid())
                 .child(mShoppingItem.getParentId())
-                .child(Db.SHOP_LIST)
+                .child(Fb.SHOP_LIST)
                 .child(mShoppingId)
                 .removeValue();
 
         // delete user shopping entry (global list)
         mDatabaseReference
-                .child(Db.USER)
+                .child(Fb.USER)
                 .child(mUser.getUid())
-                .child(Db.SHOP_LIST)
+                .child(Fb.SHOP_LIST)
                 .child(mShoppingId)
                 .removeValue();
     }

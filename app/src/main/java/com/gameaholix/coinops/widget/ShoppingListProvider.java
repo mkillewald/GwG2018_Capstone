@@ -11,7 +11,7 @@ import android.widget.RemoteViewsService;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.shopping.ShoppingListActivity;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,9 +48,9 @@ class ShoppingListProvider implements RemoteViewsService.RemoteViewsFactory {
             // user is signed in
             // use global list reference
             mShopListRef = databaseReference
-                    .child(Db.USER)
+                    .child(Fb.USER)
                     .child(user.getUid())
-                    .child(Db.SHOP_LIST);
+                    .child(Fb.SHOP_LIST);
 
             // Setup event listener
             mShoppingListener = new ValueEventListener() {

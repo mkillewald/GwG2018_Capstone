@@ -20,7 +20,7 @@ import com.gameaholix.coinops.BaseDialogFragment;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentRepairAddBinding;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -234,7 +234,7 @@ public class RepairAddEditFragment extends BaseDialogFragment {
             }
 
             DatabaseReference repairRootRef = mDatabaseReference
-                    .child(Db.REPAIR)
+                    .child(Fb.REPAIR)
                     .child(uid)
                     .child(mGameId);
 
@@ -255,10 +255,10 @@ public class RepairAddEditFragment extends BaseDialogFragment {
 
             DatabaseReference repairRef = repairRootRef.child(logId);
             DatabaseReference repairListRef = mDatabaseReference
-                    .child(Db.GAME)
+                    .child(Fb.GAME)
                     .child(uid)
                     .child(mGameId)
-                    .child(Db.REPAIR_LIST)
+                    .child(Fb.REPAIR_LIST)
                     .child(logId);
 
             Map<String, Object> valuesWithPath = new HashMap<>();
@@ -269,7 +269,7 @@ public class RepairAddEditFragment extends BaseDialogFragment {
                 // create new Map with full database paths as keys using values from the Map created above
                 for (String key : currentValues.keySet()) {
                     valuesWithPath.put(repairRef.child(key).getPath().toString(), currentValues.get(key));
-                    if (key.equals(Db.NAME)) {
+                    if (key.equals(Fb.NAME)) {
                         valuesWithPath.put(repairListRef.getPath().toString(), currentValues.get(key));
                     }
                 }

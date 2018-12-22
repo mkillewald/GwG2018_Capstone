@@ -16,7 +16,7 @@ import android.widget.RadioButton;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentToDoDetailBinding;
 import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -72,7 +72,7 @@ public class ToDoDetailFragment extends Fragment {
         mUser = firebaseAuth.getCurrentUser();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         mToDoRef = databaseReference
-                .child(Db.TODO)
+                .child(Fb.TODO)
                 .child(mUser.getUid())
                 .child(mItemId);
     }

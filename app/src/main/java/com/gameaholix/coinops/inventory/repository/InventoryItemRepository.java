@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.firebase.FirebaseQueryLiveData;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,7 +50,7 @@ public class InventoryItemRepository {
             // user is signed in
             String uid = user.getUid();
 
-            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(Db.getInventoryRef(uid, mItemId));
+            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(Fb.getInventoryRef(uid, mItemId));
 
             // NOTE: Transformations run synchronously on the main thread, if the total time it takes
             // to perform this conversion is over 16 ms, "jank" will occur. A MediatorLiveData can be used
@@ -86,12 +86,12 @@ public class InventoryItemRepository {
         if (user != null) {
             // user is signed in
             String uid = user.getUid();
-            mItemId = Db.getInventoryRootRef(uid).push().getKey();
+            mItemId = Fb.getInventoryRootRef(uid).push().getKey();
 
             if (TextUtils.isEmpty(mItemId)) return false;
 
-            DatabaseReference inventoryRef = Db.getInventoryRef(uid, mItemId);
-            DatabaseReference userInventoryListRef = Db.getInventoryListRef(uid);
+            DatabaseReference inventoryRef = Fb.getInventoryRef(uid, mItemId);
+            DatabaseReference userInventoryListRef = Fb.getInventoryListRef(uid);
 
             Map<String, Object> valuesWithPath = new HashMap<>();
             valuesWithPath.put(inventoryRef.getPath().toString(), newItem);
@@ -124,8 +124,8 @@ public class InventoryItemRepository {
             // user signed in
             String uid = user.getUid();
 
-            DatabaseReference inventoryRef = Db.getInventoryRef(uid, item.getId());
-            DatabaseReference inventoryListRef = Db.getInventoryListRef(uid);
+            DatabaseReference inventoryRef = Fb.getInventoryRef(uid, item.getId());
+            DatabaseReference inventoryListRef = Fb.getInventoryListRef(uid);
 
             // convert item to Map so it can be iterated
             Map<String, Object> currentValues = item.getMap();
@@ -134,7 +134,7 @@ public class InventoryItemRepository {
             Map<String, Object> valuesWithPath = new HashMap<>();
             for (String key : currentValues.keySet()) {
                 valuesWithPath.put(inventoryRef.child(key).getPath().toString(), currentValues.get(key));
-                if (key.equals(Db.NAME)) {
+                if (key.equals(Fb.NAME)) {
                     valuesWithPath.put(inventoryListRef.child(item.getId()).getPath().toString(),
                                     currentValues.get(key));
                 }
@@ -168,10 +168,10 @@ public class InventoryItemRepository {
             String uid = user.getUid();
 
             // delete inventory item
-            Db.getInventoryRef(uid, mItemId).removeValue();
+            Fb.getInventoryRef(uid, mItemId).removeValue();
 
             // delete inventory list entry
-            Db.getInventoryListRef(uid).child(mItemId).removeValue();
+            Fb.getInventoryListRef(uid).child(mItemId).removeValue();
 
             return true;
         } else {

@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.DialogMonitorDetailsBinding;
 import com.gameaholix.coinops.databinding.FragmentGameAddBinding;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.BaseDialogFragment;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.utility.PromptUser;
@@ -402,7 +402,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
             // user is signed in
             String uid = mUser.getUid();
 
-            DatabaseReference gameRootRef = mDatabaseReference.child(Db.GAME).child(uid);
+            DatabaseReference gameRootRef = mDatabaseReference.child(Fb.GAME).child(uid);
 
             String gameId;
             if (mEdit) {
@@ -421,9 +421,9 @@ public class GameAddEditFragment extends BaseDialogFragment {
 
             DatabaseReference gameRef = gameRootRef.child(gameId);
             DatabaseReference userGameListRef = mDatabaseReference
-                    .child(Db.USER)
+                    .child(Fb.USER)
                     .child(uid)
-                    .child(Db.GAME_LIST)
+                    .child(Fb.GAME_LIST)
                     .child(gameId);
 
             // convert mGame instance to Map so it can be iterated
@@ -433,7 +433,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
             Map<String, Object> valuesWithPath = new HashMap<>();
             for (String key : currentValues.keySet()) {
                 valuesWithPath.put(gameRef.child(key).getPath().toString(), currentValues.get(key));
-                if (key.equals(Db.NAME)) {
+                if (key.equals(Fb.NAME)) {
                     valuesWithPath.put(userGameListRef.getPath().toString(), currentValues.get(key));
                 }
             }

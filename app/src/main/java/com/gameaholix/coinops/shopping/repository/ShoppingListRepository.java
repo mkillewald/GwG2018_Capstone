@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.gameaholix.coinops.BaseListRepository;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -19,10 +19,10 @@ public class ShoppingListRepository extends BaseListRepository {
 
             if (TextUtils.isEmpty(gameId)) {
                 // use User (global) database reference
-                super.fetchList(Db.getUserShopListRef(uid));
+                super.fetchList(Fb.getUserShopListRef(uid));
             } else {
                 // user Game specific database reference
-                super.fetchList(Db.getGameShopListRef(uid, gameId));
+                super.fetchList(Fb.getGameShopListRef(uid, gameId));
             }
 //        } else {
 //            // user is not signed in

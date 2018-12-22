@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class Db {
+public class Fb {
     private static final DatabaseReference sDatabaseReference =
             FirebaseDatabase.getInstance().getReference();
 
@@ -13,8 +13,8 @@ public class Db {
     public static final String USER = "user";
     public static final String GAME = "game";
     public static final String GAME_LIST = "game_list";
-    public static final String INVENTORY = "inventory";
-    public static final String INVENTORY_LIST = "inventory_list";
+    private static final String INVENTORY = "inventory";
+    private static final String INVENTORY_LIST = "inventory_list";
     public static final String REPAIR = "repair";
     public static final String REPAIR_LIST = "repair_list";
     public static final String STEPS = "steps";
@@ -41,70 +41,70 @@ public class Db {
 
     public static DatabaseReference getGameRef(@NonNull String uid, @NonNull String gameId) {
         return sDatabaseReference
-                .child(Db.GAME)
+                .child(Fb.GAME)
                 .child(uid)
                 .child(gameId);
     }
 
     public static DatabaseReference getUserGameListRef(@NonNull String uid) {
         return sDatabaseReference
-                .child(Db.USER)
+                .child(Fb.USER)
                 .child(uid)
-                .child(Db.GAME_LIST);
+                .child(Fb.GAME_LIST);
     }
 
     public static DatabaseReference getRepairRef(@NonNull String uid, @NonNull String gameId) {
         return sDatabaseReference
-                .child(Db.REPAIR)
+                .child(Fb.REPAIR)
                 .child(uid)
                 .child(gameId);
     }
 
     public static DatabaseReference getShopRef(@NonNull String uid) {
         return sDatabaseReference
-                .child(Db.SHOP)
+                .child(Fb.SHOP)
                 .child(uid);
     }
 
     public static DatabaseReference getGameShopListRef(@NonNull String uid, @NonNull String gameId) {
         return sDatabaseReference
-                .child(Db.GAME)
+                .child(Fb.GAME)
                 .child(uid)
                 .child(gameId)
-                .child(Db.SHOP_LIST);
+                .child(Fb.SHOP_LIST);
     }
 
     public static DatabaseReference getUserShopListRef(@NonNull String uid) {
         return sDatabaseReference
-                .child(Db.USER)
+                .child(Fb.USER)
                 .child(uid)
-                .child(Db.SHOP_LIST);
+                .child(Fb.SHOP_LIST);
     }
 
     public static DatabaseReference getToDoRef(@NonNull String uid) {
         return sDatabaseReference
-                .child(Db.TODO)
+                .child(Fb.TODO)
                 .child(uid);
     }
 
     public static DatabaseReference getGameToDoListRef(@NonNull String uid, @NonNull String gameId) {
         return sDatabaseReference
-                .child(Db.GAME)
+                .child(Fb.GAME)
                 .child(uid)
                 .child(gameId)
-                .child(Db.TODO_LIST);
+                .child(Fb.TODO_LIST);
     }
 
     public static DatabaseReference getUserToDoListRef(@NonNull String uid) {
         return sDatabaseReference
-                .child(Db.USER)
+                .child(Fb.USER)
                 .child(uid)
-                .child(Db.TODO_LIST);
+                .child(Fb.TODO_LIST);
     }
 
     public static DatabaseReference getInventoryRootRef(@NonNull String uid) {
         return sDatabaseReference
-                .child(Db.INVENTORY)
+                .child(Fb.INVENTORY)
                 .child(uid);
     }
 
@@ -115,8 +115,8 @@ public class Db {
 
     public static DatabaseReference getInventoryListRef(@NonNull String uid) {
         return sDatabaseReference
-                .child(Db.USER)
+                .child(Fb.USER)
                 .child(uid)
-                .child(Db.INVENTORY_LIST);
+                .child(Fb.INVENTORY_LIST);
     }
 }

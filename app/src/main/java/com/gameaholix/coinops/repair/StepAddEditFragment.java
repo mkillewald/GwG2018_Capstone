@@ -23,7 +23,7 @@ import com.gameaholix.coinops.BaseDialogFragment;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentStepAddBinding;
 import com.gameaholix.coinops.model.Item;
-import com.gameaholix.coinops.firebase.Db;
+import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -251,11 +251,11 @@ public class StepAddEditFragment extends BaseDialogFragment {
             }
 
             DatabaseReference stepRootRef = mDatabaseReference
-                .child(Db.REPAIR)
+                .child(Fb.REPAIR)
                 .child(mUser.getUid())
                 .child(mGameId)
                 .child(mRepairStep.getParentId())
-                .child(Db.STEPS);
+                .child(Fb.STEPS);
 
             String stepId;
             if (mEdit) {
@@ -335,11 +335,11 @@ public class StepAddEditFragment extends BaseDialogFragment {
 
     private void deleteItemData() {
         DatabaseReference stepRef = mDatabaseReference
-                .child(Db.REPAIR)
+                .child(Fb.REPAIR)
                 .child(mUser.getUid())
                 .child(mGameId)
                 .child(mRepairStep.getParentId())
-                .child(Db.STEPS)
+                .child(Fb.STEPS)
                 .child(mRepairStep.getId());
 
         // delete repair step item
