@@ -39,12 +39,22 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     private InventoryItemViewModel mViewModel;
     private LiveData<InventoryItem> mItemLiveData;
     private OnFragmentInteractionListener mListener;
-    private boolean mEdit = false;
+    private boolean mEdit;
 
     public InventoryAddEditFragment() {
         // Required empty public constructor
     }
 
+    // add a new Inventory Item
+    public static InventoryAddEditFragment newAddInstance() {
+        Bundle args = new Bundle();
+        InventoryAddEditFragment fragment = new InventoryAddEditFragment();
+        args.putBoolean(EXTRA_EDIT_FLAG, false);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    // update an existing Inventory Item
     public static InventoryAddEditFragment newEditInstance(String itemId) {
         Bundle args = new Bundle();
         InventoryAddEditFragment fragment = new InventoryAddEditFragment();
