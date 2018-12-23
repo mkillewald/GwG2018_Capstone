@@ -13,7 +13,7 @@ public class GameListRepository extends BaseListRepository {
         if (user != null) {
             // user is signed in
             String uid = user.getUid();
-            super.fetchList(Fb.getUserGameListRef(uid).orderByValue());
+            super.fetchList(Fb.getGameListRef(uid).orderByValue());
 //        } else {
 //            // user is not signed in
         }

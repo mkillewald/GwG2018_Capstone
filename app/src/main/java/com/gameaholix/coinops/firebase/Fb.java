@@ -39,14 +39,22 @@ public class Fb {
     public static final String DESCRIPTION = "description";
     public static final String PRIORITY = "priority";
 
-    public static DatabaseReference getGameRef(@NonNull String uid, @NonNull String gameId) {
+    public static DatabaseReference getDatabaseReference() {
+        return sDatabaseReference;
+    }
+
+    public static DatabaseReference getGameRootRef(@NonNull String uid) {
         return sDatabaseReference
                 .child(Fb.GAME)
-                .child(uid)
+                .child(uid);
+    }
+
+    public static DatabaseReference getGameRef(@NonNull String uid, @NonNull String gameId) {
+        return getGameRootRef(uid)
                 .child(gameId);
     }
 
-    public static DatabaseReference getUserGameListRef(@NonNull String uid) {
+    public static DatabaseReference getGameListRef(@NonNull String uid) {
         return sDatabaseReference
                 .child(Fb.USER)
                 .child(uid)
@@ -67,9 +75,7 @@ public class Fb {
     }
 
     public static DatabaseReference getGameShopListRef(@NonNull String uid, @NonNull String gameId) {
-        return sDatabaseReference
-                .child(Fb.GAME)
-                .child(uid)
+        return getGameRootRef(uid)
                 .child(gameId)
                 .child(Fb.SHOP_LIST);
     }
@@ -88,9 +94,7 @@ public class Fb {
     }
 
     public static DatabaseReference getGameToDoListRef(@NonNull String uid, @NonNull String gameId) {
-        return sDatabaseReference
-                .child(Fb.GAME)
-                .child(uid)
+        return getGameRootRef(uid)
                 .child(gameId)
                 .child(Fb.TODO_LIST);
     }

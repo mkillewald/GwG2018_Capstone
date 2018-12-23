@@ -25,7 +25,6 @@ import com.gameaholix.coinops.databinding.ActivityGameDetailBinding;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.toDo.ToDoDetailActivity;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
-import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.model.ListRow;
 import com.gameaholix.coinops.model.ToDoItem;
@@ -298,10 +297,10 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onEditButtonPressed(Game game) {
+    public void onEditButtonPressed() {
         mBind.avBanner.setVisibility(View.GONE);
         // replace GameDetailFragment with GameAddEditFragment
-        Fragment addEditGameFragment = GameAddEditFragment.newInstance(game);
+        Fragment addEditGameFragment = GameAddEditFragment.newEditInstance(mGameId);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, addEditGameFragment);
         ft.commit();

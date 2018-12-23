@@ -10,6 +10,11 @@ public class InventoryItemViewModel extends ViewModel {
     private LiveData<InventoryItem> mItemLiveData;
     private InventoryItemRepository mRepository;
 
+    public InventoryItemViewModel() {
+        mRepository = new InventoryItemRepository();
+        mItemLiveData = mRepository.getItemLiveData();
+    }
+
     InventoryItemViewModel(String itemId) {
         mRepository = new InventoryItemRepository(itemId);
         mItemLiveData = mRepository.getItemLiveData();

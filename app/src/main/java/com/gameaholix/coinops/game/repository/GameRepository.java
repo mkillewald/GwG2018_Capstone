@@ -20,6 +20,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 // Concepts and code used from 3 part series:
 // https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
 
@@ -28,16 +31,16 @@ public class GameRepository {
     private LiveData<Game> mGameLiveData;
     private String mGameId;
 
-    public GameRepository(String gameId) {
-        if (TextUtils.isEmpty(gameId)) {
+    public GameRepository() {
             // we are adding a new Game
             mGameLiveData = new MutableLiveData<>();
             ((MutableLiveData<Game>) mGameLiveData).setValue(new Game());
-        } else {
+    }
+
+    public GameRepository(String gameId) {
             // we are retrieving an existing InventoryItem
             mGameId = gameId;
             mGameLiveData = fetchGameDetails();
-        }
     }
 
     private LiveData<Game> fetchGameDetails() {
@@ -77,6 +80,86 @@ public class GameRepository {
         return mGameLiveData;
     }
 
+    public boolean add(Game newGame) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            // user is signed in
+            String uid = user.getUid();
+            mGameId = Fb.getGameRootRef(uid).push().getKey();
+
+            if (TextUtils.isEmpty(mGameId)) return false;
+
+            DatabaseReference gameRef = Fb.getGameRef(uid, mGameId);
+            DatabaseReference gameListRef = Fb.getGameListRef(uid);
+
+            Map<String, Object> valuesWithPath = new HashMap<>();
+            valuesWithPath.put(gameRef.getPath().toString(), newGame);
+            valuesWithPath.put(gameListRef.child(mGameId).getPath().toString(),
+                    newGame.getName());
+
+            // perform atomic update to firebase using Map with database paths as keys
+            Fb.getDatabaseReference().updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError != null) {
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+
+            return true;
+        } else {
+            // user is not signed in
+            return false;
+        }
+    }
+
+    public boolean update(Game game) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            // user is signed in
+            String uid = user.getUid();
+
+            DatabaseReference gameRef = Fb.getGameRef(uid, mGameId);
+            DatabaseReference gameListRef = Fb.getGameListRef(uid);
+
+            // convert item to Map so it can be iterated
+            Map<String, Object> currentValues = game.getMap();
+
+            // create new Map with full database paths as keys using values from item Map created above
+            Map<String, Object> valuesWithPath = new HashMap<>();
+            for (String key : currentValues.keySet()) {
+                valuesWithPath.put(gameRef.child(key).getPath().toString(), currentValues.get(key));
+                if (key.equals(Fb.NAME)) {
+                    valuesWithPath.put(gameListRef.child(game.getId()).getPath().toString(),
+                            currentValues.get(key));
+                }
+            }
+
+            // perform atomic update to firebase using Map with database paths as keys
+            Fb.getDatabaseReference().updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError != null) {
+                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
+                                " Code: " + databaseError.getCode() +
+                                " Details: " + databaseError.getDetails());
+                    }
+                }
+            });
+
+            return true;
+
+        } else {
+            // user is not signed in
+            return false;
+        }
+    }
+
     public boolean delete() {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -103,7 +186,7 @@ public class GameRepository {
             Fb.getGameRef(uid, mGameId).removeValue();
 
             // remove user game_list entry
-            Fb.getUserGameListRef(uid).child(mGameId).removeValue();
+            Fb.getGameListRef(uid).child(mGameId).removeValue();
 
             return false;
         } else {

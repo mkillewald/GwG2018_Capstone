@@ -17,7 +17,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,20 +26,19 @@ import java.util.Map;
 
 public class InventoryItemRepository {
     private static final String TAG = InventoryItemRepository.class.getSimpleName();
-    private final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     private LiveData<InventoryItem> mItemLiveData;
     private String mItemId;
 
+    public InventoryItemRepository() {
+        // we are adding a new InventoryItem
+        mItemLiveData = new MutableLiveData<>();
+        ((MutableLiveData<InventoryItem>) mItemLiveData).setValue(new InventoryItem());
+    }
+
     public InventoryItemRepository(String itemId) {
-        if (TextUtils.isEmpty(itemId)) {
-            // we are adding a new InventoryItem
-            mItemLiveData = new MutableLiveData<>();
-            ((MutableLiveData<InventoryItem>) mItemLiveData).setValue(new InventoryItem());
-        } else {
             // we are retrieving an existing InventoryItem
             mItemId = itemId;
             mItemLiveData = fetchData();
-        }
     }
 
     private LiveData<InventoryItem> fetchData() {
@@ -99,7 +97,7 @@ public class InventoryItemRepository {
                     newItem.getName());
 
             // perform atomic update to firebase using Map with database paths as keys
-            mDatabaseReference.updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
+            Fb.getDatabaseReference().updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                     if (databaseError != null) {
@@ -141,7 +139,7 @@ public class InventoryItemRepository {
             }
 
             // perform atomic update to firebase using Map with database paths as keys
-            mDatabaseReference.updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
+            Fb.getDatabaseReference().updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                     if (databaseError != null) {

@@ -3,6 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="game"
+            type="android.arch.lifecycle.LiveData&lt;com.gameaholix.coinops.model.Game&gt;"/>
+        <variable name="typeArray" type="String[]" />
+        <variable name="cabinetArray" type="String[]" />
+        <variable name="statusArray" type="String[]" />
+        <variable name="ownershipArray" type="String[]" />
+        <variable name="conditionArray" type="String[]" />
+        <variable name="monitorPhospherArray" type="String[]" />
+        <variable name="monitorBeamArray" type="String[]" />
+        <variable name="monitorTechArray" type="String[]" />
+        <variable name="monitorSizeArray" type="String[]" />
+    </data>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

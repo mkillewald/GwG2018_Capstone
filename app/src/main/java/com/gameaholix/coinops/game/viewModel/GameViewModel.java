@@ -11,7 +11,12 @@ public class GameViewModel extends ViewModel {
     private LiveData<Game> mGameLiveData;
     private GameRepository mRepository;
 
-    public GameViewModel(String gameId) {
+    public GameViewModel() {
+        mRepository = new GameRepository();
+        mGameLiveData = mRepository.getGameLiveData();
+    }
+
+    GameViewModel(String gameId) {
         mRepository = new GameRepository(gameId);
         mGameLiveData = mRepository.getGameLiveData();
     }
@@ -20,6 +25,10 @@ public class GameViewModel extends ViewModel {
     public LiveData<Game> getGameLiveData() {
         return mGameLiveData;
     }
+
+    public boolean add() { return mRepository.add(mGameLiveData.getValue()); }
+
+    public boolean update() { return mRepository.update(mGameLiveData.getValue()); }
 
     public boolean delete() {
         return mRepository.delete();

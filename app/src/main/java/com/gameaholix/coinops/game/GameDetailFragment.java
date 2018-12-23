@@ -231,7 +231,7 @@ public class GameDetailFragment extends Fragment {
         bind.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onEditButtonPressed(mGame);
+                mListener.onEditButtonPressed();
             }
         });
 
@@ -275,7 +275,7 @@ public class GameDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
-                mListener.onEditButtonPressed(mGame);
+                mListener.onEditButtonPressed();
                 return true;
             case R.id.menu_delete_game:
                 showDeleteAlert();
@@ -529,7 +529,7 @@ public class GameDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onGameIdInvalid();
         void onGameNameChanged(String name);
-        void onEditButtonPressed(Game game);
+        void onEditButtonPressed();
         void onDeleteCompleted();
         void onShowSnackbar(int stringResourceId);
         void onImageClicked(String imagePath);

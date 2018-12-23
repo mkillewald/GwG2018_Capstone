@@ -79,24 +79,34 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
 
-        // If we are editing, this will get the existing view model
-        // If we are adding, this will create a new view model (mItemId will be null)
-        mViewModel = ViewModelProviders
-                .of(this, new InventoryItemViewModelFactory(mItemId))
-                .get(InventoryItemViewModel.class);
-        mItemLiveData = mViewModel.getItemLiveData();
-        mItemLiveData.observe(this, new Observer<InventoryItem>() {
-            @Override
-            public void onChanged(@Nullable InventoryItem inventoryItem) {
-                mItem = inventoryItem;
+        if (getActivity() != null) {
+            // If we are editing, get the existing view model (or create new view model if one
+            // doesn't already exist) with the parent activity as the lifecycle owner.
+            // If we are adding, always create a new view model (mItemId will be null) with this
+            // fragment instance as the lifecycle owner
+            if (mEdit) {
+                mViewModel = ViewModelProviders
+                        .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
+                        .get(InventoryItemViewModel.class);
+            } else {
+                mViewModel = ViewModelProviders
+                        .of(this)
+                        .get(InventoryItemViewModel.class);
             }
-        });
+            mItemLiveData = mViewModel.getItemLiveData();
+            mItemLiveData.observe(this, new Observer<InventoryItem>() {
+                @Override
+                public void onChanged(@Nullable InventoryItem inventoryItem) {
+                    mItem = inventoryItem;
+                }
+            });
+        }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (getShowsDialog()) {
+        if (getShowsDialog() && !mEdit) {
             getDialog().setTitle(R.string.add_inventory_title);
         }
 
@@ -104,7 +114,11 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         final FragmentInventoryAddBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_inventory_add, container, false);
 
-        bind.setLifecycleOwner(getActivity());
+        if (mEdit) {
+            bind.setLifecycleOwner(getActivity());
+        } else {
+            bind.setLifecycleOwner(this);
+        }
         bind.setItem(mItemLiveData);
 
         // Name field cannot be blank, add listeners to validate Name input
@@ -172,7 +186,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 mItem.setType(bind.spinnerInventoryType.getSelectedItemPosition());
                 mItem.setCondition(bind.spinnerInventoryCondition.getSelectedItemPosition());
 
-                addUpdate();
+                addUpdateItem();
             }
         });
 
@@ -205,7 +219,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         mListener = null;
     }
 
-    private void addUpdate() {
+    private void addUpdateItem() {
         if (TextUtils.isEmpty(mItem.getName())) {
             PromptUser.displayAlert(mContext,
                     R.string.error_add_inventory_failed,
