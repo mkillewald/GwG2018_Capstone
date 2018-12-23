@@ -102,7 +102,6 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 @Override
                 public void onChanged(@Nullable Game game) {
                     mGame = game;
-                    Log.d(TAG, "mGame set: " + mGame);
                 }
             });
         }

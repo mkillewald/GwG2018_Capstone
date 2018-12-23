@@ -7,8 +7,6 @@
         <variable
             name="item"
             type="android.arch.lifecycle.LiveData&lt;com.gameaholix.coinops.model.InventoryItem&gt;"/>
-        <variable name="typeArray" type="String[]" />
-        <variable name="conditionArray" type="String[]" />
     </data>
 
     <android.support.constraint.ConstraintLayout

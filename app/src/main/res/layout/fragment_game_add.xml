@@ -8,15 +8,6 @@
         <variable
             name="game"
             type="android.arch.lifecycle.LiveData&lt;com.gameaholix.coinops.model.Game&gt;"/>
-        <variable name="typeArray" type="String[]" />
-        <variable name="cabinetArray" type="String[]" />
-        <variable name="statusArray" type="String[]" />
-        <variable name="ownershipArray" type="String[]" />
-        <variable name="conditionArray" type="String[]" />
-        <variable name="monitorPhospherArray" type="String[]" />
-        <variable name="monitorBeamArray" type="String[]" />
-        <variable name="monitorTechArray" type="String[]" />
-        <variable name="monitorSizeArray" type="String[]" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -52,7 +43,8 @@
             android:layout_marginEnd="@dimen/edit_text_margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@{game.getName()}"/>
 
         <TextView
             android:id="@+id/tv_type_label"
@@ -86,7 +78,8 @@
             app:layout_constraintLeft_toLeftOf="@id/tv_type_label"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_center"
             app:layout_constraintRight_toLeftOf="@id/gl_vertical_center"
-            app:layout_constraintTop_toBottomOf="@id/tv_type_label" />
+            app:layout_constraintTop_toBottomOf="@id/tv_type_label"
+            android:selectedItemPosition="@{game.getType()}"/>
 
         <TextView
             android:id="@+id/tv_cabinet_label"
@@ -118,7 +111,8 @@
             app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_cabinet_label" />
+            app:layout_constraintTop_toBottomOf="@id/tv_cabinet_label"
+            android:selectedItemPosition="@{game.getCabinet()}"/>
 
         <TextView
             android:id="@+id/tv_status_label"
@@ -151,7 +145,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_center"
             app:layout_constraintRight_toLeftOf="@id/gl_vertical_center"
-            app:layout_constraintTop_toBottomOf="@id/tv_status_label"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_status_label"
+            android:selectedItemPosition="@{game.getWorking()}"/>
 
         <TextView
             android:id="@+id/tv_ownership_label"
@@ -183,7 +178,8 @@
             app:layout_constraintStart_toEndOf="@id/gl_vertical_center"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_ownership_label"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_ownership_label"
+            android:selectedItemPosition="@{game.getOwnership()}"/>
 
         <TextView
             android:id="@+id/tv_monitor_label"
@@ -272,7 +268,8 @@
             app:layout_constraintLeft_toRightOf="@id/gl_vertical_center"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_condition_label"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_condition_label"
+            android:selectedItemPosition="@{game.getCondition()}"/>
 
         <Button
             android:id="@+id/btn_cancel"
