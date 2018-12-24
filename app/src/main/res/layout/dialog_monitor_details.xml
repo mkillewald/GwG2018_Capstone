@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="game"
+            type="android.arch.lifecycle.LiveData&lt;com.gameaholix.coinops.model.Game&gt;"/>
+    </data>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -13,7 +20,8 @@
             app:layout_constraintEnd_toStartOf="@id/np_game_monitor_phospher"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:descendantFocusability="blocksDescendants"/>
+            android:descendantFocusability="blocksDescendants"
+            android:value="@{game.getMonitorSize()}"/>
 
         <NumberPicker
             android:id="@+id/np_game_monitor_phospher"
@@ -23,7 +31,8 @@
             app:layout_constraintEnd_toStartOf="@id/np_game_monitor_beam"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:descendantFocusability="blocksDescendants"/>
+            android:descendantFocusability="blocksDescendants"
+            android:value="@{game.getMonitorPhospher()}"/>
 
         <NumberPicker
             android:id="@+id/np_game_monitor_beam"
@@ -33,7 +42,8 @@
             app:layout_constraintEnd_toStartOf="@id/np_game_monitor_tech"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:descendantFocusability="blocksDescendants"/>
+            android:descendantFocusability="blocksDescendants"
+            android:value="@{game.getMonitorBeam()}"/>
 
         <NumberPicker
             android:id="@+id/np_game_monitor_tech"
@@ -43,7 +53,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:descendantFocusability="blocksDescendants"/>
+            android:descendantFocusability="blocksDescendants"
+            android:value="@{game.getMonitorTech()}"/>
 
     </android.support.constraint.ConstraintLayout>
 </layout>
