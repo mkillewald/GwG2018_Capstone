@@ -1,14 +1,11 @@
 package com.gameaholix.coinops.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.gameaholix.coinops.firebase.Fb;
 import com.google.firebase.database.Exclude;
 
 import java.util.Map;
 
-public class ToDoItem extends Item implements Parcelable {
+public class ToDoItem extends Item {
 
     private String description;
     private int priority;
@@ -28,39 +25,6 @@ public class ToDoItem extends Item implements Parcelable {
     public ToDoItem(String id, String parentId, String name) {
         super(id, parentId, name);
     }
-
-    private ToDoItem(Parcel in) {
-        super(in);
-        this.description = in.readString();
-        this.priority = in.readInt();
-//        this.reminder = (boolean) in.readValue(getClass().getClassLoader());
-//        this.repeat = (boolean) in.readValue(getClass().getClassLoader());
-//        this.remindAt = in.readLong();
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int i) {
-        super.writeToParcel(dest, i);
-        dest.writeString(description);
-        dest.writeInt(priority);
-//        dest.writeValue(reminder);
-//        dest.writeValue(repeat);
-//        dest.writeLong(remindAt);
-    }
-
-    public final static Parcelable.Creator<ToDoItem> CREATOR = new Parcelable.Creator<ToDoItem>() {
-
-        @Override
-        public ToDoItem createFromParcel(Parcel in) { return new ToDoItem(in); }
-
-        @Override
-        public ToDoItem[] newArray(int size) { return (new ToDoItem[size]); }
-    };
 
     @Exclude
     public Map<String, Object> getMap() {

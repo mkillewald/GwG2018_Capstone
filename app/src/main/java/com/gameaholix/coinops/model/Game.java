@@ -1,15 +1,12 @@
 package com.gameaholix.coinops.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.gameaholix.coinops.firebase.Fb;
 import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Game implements Parcelable {
+public class Game {
 
     private String id;
     private String name;
@@ -46,69 +43,6 @@ public class Game implements Parcelable {
         this.id = id;
         this.name = name;
     }
-
-    private Game(Parcel in) {
-        this.id = in.readString();
-        this.name = in.readString();
-        this.type = in.readInt();
-        this.cabinet = in.readInt();
-        this.condition = in.readInt();
-        this.working = in.readInt();
-        this.ownership = in.readInt();
-        this.monitorSize = in.readInt();
-        this.monitorPhospher = in.readInt();
-        this.monitorTech = in.readInt();
-        this.monitorBeam = in.readInt();
-//        this.monitorChassis = in.readString();
-//        this.tubeModel = in.readString();
-//        this.serialNumber = in.readString();
-//        this.highScore = in.readString();
-//        this.comment = in.readString();
-//        this.manufacturer = in.readString();
-//        this.forSale = (Boolean) in.readValue(null);
-//        this.boughtPrice = in.readDouble();
-//        this.forSalePrice = in.readDouble();
-//        this.soldPrice = in.readDouble();
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int i) {
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeInt(type);
-        dest.writeInt(cabinet);
-        dest.writeInt(condition);
-        dest.writeInt(working);
-        dest.writeInt(ownership);
-        dest.writeInt(monitorSize);
-        dest.writeInt(monitorPhospher);
-        dest.writeInt(monitorTech);
-        dest.writeInt(monitorBeam);
-//        dest.writeString(monitorChassis);
-//        dest.writeString(tubeModel);
-//        dest.writeString(serialNumber);
-//        dest.writeString(highScore);
-//        dest.writeString(comment);
-//        dest.writeString(manufacturer);
-//        dest.writeValue(forSale);
-//        dest.writeDouble(boughtPrice);
-//        dest.writeDouble(forSalePrice);
-//        dest.writeDouble(soldPrice);
-    }
-
-    public final static Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {
-
-        @Override
-        public Game createFromParcel(Parcel in) { return new Game(in); }
-
-        @Override
-        public Game[] newArray(int size) { return (new Game[size]); }
-    };
 
     @Exclude
     public Map<String, Object> getMap() {
