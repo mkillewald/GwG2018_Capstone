@@ -43,8 +43,7 @@ public class InventoryItemViewModel extends ViewModel {
     }
 
     /**
-     * Clears the duplicate LiveData object by setting it to null. This is used when an edit
-     * operation is cancelled by the user.
+     * Clears the duplicate LiveData object by setting it to null.
      */
     public void clearItemCopyLiveData() {
         mItemCopyLiveData = null;
