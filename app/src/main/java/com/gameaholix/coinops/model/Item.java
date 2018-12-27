@@ -36,6 +36,18 @@ public class Item implements Parcelable {
         this.name = name;
     }
 
+    /**
+     * Create new instance that is a duplicate copy of another Item
+     * @param anotherItem the Item to duplicate
+     */
+    public Item(Item anotherItem) {
+        this.id = anotherItem.getId();
+        this.parentId = anotherItem.getParentId();
+        this.name = anotherItem.getName();
+        this.createdAt = anotherItem.getCreatedAtLong();
+        this.modifiedAt = anotherItem.getModifiedAt();
+    }
+
     protected Item(Parcel in) {
         this.id = in.readString();
         this.parentId = in.readString();

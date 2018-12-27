@@ -29,18 +29,27 @@ public class InventoryItemRepository {
     private LiveData<InventoryItem> mItemLiveData;
     private String mItemId;
 
-    public InventoryItemRepository() {
-        // we are adding a new InventoryItem
-        mItemLiveData = new MutableLiveData<>();
-        ((MutableLiveData<InventoryItem>) mItemLiveData).setValue(new InventoryItem());
-    }
-
-    public InventoryItemRepository(String itemId) {
+    /**
+     * Constructor used for adding a new or retrieving an existing InventoryItem
+     * @param itemId the itemId of the existing InventoryItem to retrieve. This will be null if
+     *               we are adding a new InventoryItem.
+     */
+    public InventoryItemRepository(@Nullable String itemId) {
+        if (itemId == null) {
+            // we are adding an new InventoryItem
+            mItemLiveData = new MutableLiveData<>();
+            ((MutableLiveData<InventoryItem>) mItemLiveData).setValue(new InventoryItem());
+        } else {
             // we are retrieving an existing InventoryItem
             mItemId = itemId;
             mItemLiveData = fetchData();
+        }
     }
 
+    /**
+     * Fetch this InventoryItem instance's data from Firebase
+     * @return a LiveData<InventoryItem> object containing the data retrieved from firebase
+     */
     private LiveData<InventoryItem> fetchData() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -78,6 +87,11 @@ public class InventoryItemRepository {
         return mItemLiveData;
     }
 
+    /**
+     * Add a new InventoryItem to Firebase
+     * @param newItem the new InventoryItem to add
+     * @return a boolean indicating success (true) or failure (false)
+     */
     public boolean add(InventoryItem newItem) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -115,6 +129,11 @@ public class InventoryItemRepository {
         }
     }
 
+    /**
+     * Update an existing InventoryItem details to Firebase
+     * @param item the existing InventoryItem instance to update
+     * @return a boolean indicating success (true) or failure (false)
+     */
     public boolean update(InventoryItem item) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -122,7 +141,7 @@ public class InventoryItemRepository {
             // user signed in
             String uid = user.getUid();
 
-            DatabaseReference inventoryRef = Fb.getInventoryRef(uid, item.getId());
+            DatabaseReference inventoryRef = Fb.getInventoryRef(uid, mItemId);
             DatabaseReference inventoryListRef = Fb.getInventoryListRef(uid);
 
             // convert item to Map so it can be iterated
@@ -133,7 +152,7 @@ public class InventoryItemRepository {
             for (String key : currentValues.keySet()) {
                 valuesWithPath.put(inventoryRef.child(key).getPath().toString(), currentValues.get(key));
                 if (key.equals(Fb.NAME)) {
-                    valuesWithPath.put(inventoryListRef.child(item.getId()).getPath().toString(),
+                    valuesWithPath.put(inventoryListRef.child(mItemId).getPath().toString(),
                                     currentValues.get(key));
                 }
             }
@@ -158,6 +177,10 @@ public class InventoryItemRepository {
         }
     }
 
+    /**
+     * Delete an InventoryItem from Firebase
+     * @return a boolean indicating success (true) or failure (false)
+     */
     public boolean delete() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,18 +35,24 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     private static final String EXTRA_EDIT_FLAG = "CoinOpsInventoryEditFlag";
 
     private Context mContext;
-    private String mItemId;
+    private FragmentInventoryAddBinding mBind;
     private InventoryItem mItem;
+    private String mItemId;
     private InventoryItemViewModel mViewModel;
     private LiveData<InventoryItem> mItemLiveData;
     private OnFragmentInteractionListener mListener;
     private boolean mEdit;
 
+    /**
+     * Required empty public constructor
+     */
     public InventoryAddEditFragment() {
-        // Required empty public constructor
     }
 
-    // add a new Inventory Item
+    /**
+     * Static factory method used to instantiate a fragment to add a new InventoryItem
+     * @return the fragment instance
+     */
     public static InventoryAddEditFragment newAddInstance() {
         Bundle args = new Bundle();
         InventoryAddEditFragment fragment = new InventoryAddEditFragment();
@@ -54,7 +61,11 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         return fragment;
     }
 
-    // update an existing Inventory Item
+    /**
+     * Static factory method used to instantiate a fragment to edit an existing InventoryItem
+     * @param itemId the itemId of the existing InventoryItem
+     * @return the fragment instance
+     */
     public static InventoryAddEditFragment newEditInstance(String itemId) {
         Bundle args = new Bundle();
         InventoryAddEditFragment fragment = new InventoryAddEditFragment();
@@ -69,6 +80,8 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
+        if (getActivity() == null) return;
+
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mItemId = getArguments().getString(EXTRA_INVENTORY_ID);
@@ -79,28 +92,18 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
 
-        if (getActivity() != null) {
-            // If we are editing, get the existing view model (or create new view model if one
-            // doesn't already exist) with the parent activity as the lifecycle owner.
-            // If we are adding, always create a new view model (mItemId will be null) with this
-            // fragment instance as the lifecycle owner
-            if (mEdit) {
-                mViewModel = ViewModelProviders
-                        .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
-                        .get(InventoryItemViewModel.class);
-            } else {
-                mViewModel = ViewModelProviders
-                        .of(this)
-                        .get(InventoryItemViewModel.class);
+        // If we are editing, this should get the existing view model, and iff we are adding, this
+        // should create a new view model (mItemId will be null).
+        mViewModel = ViewModelProviders
+                .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
+                .get(InventoryItemViewModel.class);
+        mItemLiveData = mViewModel.getItemCopyLiveData();
+        mItemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
+            @Override
+            public void onChanged(@Nullable InventoryItem inventoryItem) {
+                mItem = inventoryItem;
             }
-            mItemLiveData = mViewModel.getItemLiveData();
-            mItemLiveData.observe(this, new Observer<InventoryItem>() {
-                @Override
-                public void onChanged(@Nullable InventoryItem inventoryItem) {
-                    mItem = inventoryItem;
-                }
-            });
-        }
+        });
     }
 
     @Override
@@ -111,18 +114,14 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         }
 
         // Inflate the layout for this fragment
-        final FragmentInventoryAddBinding bind = DataBindingUtil.inflate(
+        mBind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_inventory_add, container, false);
 
-        if (mEdit) {
-            bind.setLifecycleOwner(getActivity());
-        } else {
-            bind.setLifecycleOwner(this);
-        }
-        bind.setItem(mItemLiveData);
+        mBind.setLifecycleOwner(getActivity());
+        mBind.setItem(mItemLiveData);
 
         // Name field cannot be blank, add listeners to validate Name input
-        bind.etAddInventoryName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mBind.etAddInventoryName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
@@ -136,7 +135,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 return false;
             }
         });
-        bind.etAddInventoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mBind.etAddInventoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
@@ -154,15 +153,37 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.inventory_type, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerInventoryType.setAdapter(typeAdapter);
+        mBind.spinnerInventoryType.setAdapter(typeAdapter);
+        mBind.spinnerInventoryType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mItem.setType(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         ArrayAdapter<CharSequence> conditionAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.inventory_condition, android.R.layout.simple_spinner_item);
         conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerInventoryCondition.setAdapter(conditionAdapter);
+        mBind.spinnerInventoryCondition.setAdapter(conditionAdapter);
+        mBind.spinnerInventoryCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mItem.setCondition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Setup Buttons
-        bind.btnCancel.setOnClickListener(new View.OnClickListener() {
+        mBind.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (getShowsDialog()) {
@@ -170,32 +191,35 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 } else {
                     mListener.onInventoryAddEditCompletedOrCancelled();
                 }
+                mViewModel.clearItemCopyLiveData();
             }
         });
 
-        if (mEdit) bind.btnSave.setText(R.string.save_changes);
-        bind.btnSave.setOnClickListener(new View.OnClickListener() {
+        if (mEdit) mBind.btnSave.setText(R.string.save_changes);
+        mBind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String input = bind.etAddInventoryName.getText().toString().trim();
+                String input = mBind.etAddInventoryName.getText().toString().trim();
                 if (textInputIsValid(input)) {
                     mItem.setName(input);
                 }
 
-                mItem.setDescription(bind.etAddInventoryDescription.getText().toString().trim());
-                mItem.setType(bind.spinnerInventoryType.getSelectedItemPosition());
-                mItem.setCondition(bind.spinnerInventoryCondition.getSelectedItemPosition());
-
+                mItem.setDescription(mBind.etAddInventoryDescription.getText().toString().trim());
                 addUpdateItem();
+                mViewModel.clearItemCopyLiveData();
             }
         });
 
-        return bind.getRoot();
+        return mBind.getRoot();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        // save text input to ViewModel during configuration changes.
+        mItem.setName(mBind.etAddInventoryName.getText().toString());
+        mItem.setDescription(mBind.etAddInventoryDescription.getText().toString());
 
         outState.putString(EXTRA_INVENTORY_ID, mItemId);
         outState.putBoolean(EXTRA_EDIT_FLAG, mEdit);
@@ -219,6 +243,9 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         mListener = null;
     }
 
+    /**
+     * Add a new or update an existing InventoryItem instance to data storage through ViewModel
+     */
     private void addUpdateItem() {
         if (TextUtils.isEmpty(mItem.getName())) {
             PromptUser.displayAlert(mContext,
