@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
@@ -38,6 +37,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
     private static final String EXTRA_GAME_EDIT_FLAG = "CoinOpsGameEditFlag";
 
     private Context mContext;
+    private FragmentGameAddBinding mBind;
     private String mGameId;
     private Game mGame;
     private GameViewModel mViewModel;
@@ -73,6 +73,8 @@ public class GameAddEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
+        if (getActivity() == null) return;
+
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
@@ -83,22 +85,18 @@ public class GameAddEditFragment extends BaseDialogFragment {
             mEdit = savedInstanceState.getBoolean(EXTRA_GAME_EDIT_FLAG);
         }
 
-        if (getActivity() != null) {
-            // If we are editing, get the existing view model (or create new view model if one
-            // doesn't already exist) with the parent activity as the lifecycle owner.
-            // If we are adding, always create a new view model (mItemId will be null) with this
-            // fragment instance as the lifecycle owner
-            if (mEdit) {
-                mViewModel = ViewModelProviders
-                        .of(getActivity(), new GameViewModelFactory(mGameId))
-                        .get(GameViewModel.class);
-            } else {
-                mViewModel = ViewModelProviders
-                        .of(this)
-                        .get(GameViewModel.class);
+        // If we are editing, this should get the existing view model, and if we are adding, this
+        // should create a new view model (mItemId will be null).
+        mViewModel = ViewModelProviders
+                .of(getActivity(), new GameViewModelFactory(mGameId))
+                .get(GameViewModel.class);
+        mGameLiveData = mViewModel.getGameCopyLiveData();
+        mGameLiveData.observe(getActivity(), new Observer<Game>() {
+            @Override
+            public void onChanged(@Nullable Game game) {
+                mGame = game;
             }
-            mGameLiveData = mViewModel.getGameLiveData();
-        }
+        });
     }
 
     @Override
@@ -109,16 +107,12 @@ public class GameAddEditFragment extends BaseDialogFragment {
         }
 
         // Inflate the layout for this fragment
-        final FragmentGameAddBinding bind = DataBindingUtil.inflate(
+        mBind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_game_add, container, false);
-        final View rootView = bind.getRoot();
+        final View rootView = mBind.getRoot();
 
-        if (mEdit) {
-            bind.setLifecycleOwner(getActivity());
-        } else {
-            bind.setLifecycleOwner(this);
-        }
-        bind.setGame(mGameLiveData);
+        mBind.setLifecycleOwner(getActivity());
+        mBind.setGame(mGameLiveData);
 
         mGameLiveData.observe(this, new Observer<Game>() {
             @Override
@@ -127,13 +121,13 @@ public class GameAddEditFragment extends BaseDialogFragment {
                     mGame = game;
 
                     // Setup Monitor Details TextView
-                    updateMonitorDetails(mGame, bind.tvMonitorDetails);
+                    updateMonitorDetails(mGame, mBind.tvMonitorDetails);
                 }
             }
         });
 
         // Name field cannot be blank, add listeners to validate Name input
-        bind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mBind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
@@ -147,7 +141,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 return false;
             }
         });
-        bind.etGameName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mBind.etGameName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (view.getId() == R.id.et_game_name && !hasFocus) {
@@ -165,27 +159,27 @@ public class GameAddEditFragment extends BaseDialogFragment {
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.game_type, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerGameType.setAdapter(typeAdapter);
+        mBind.spinnerGameType.setAdapter(typeAdapter);
 
         ArrayAdapter<CharSequence> cabinetAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.game_cabinet, android.R.layout.simple_spinner_item);
         cabinetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerGameCabinet.setAdapter(cabinetAdapter);
+        mBind.spinnerGameCabinet.setAdapter(cabinetAdapter);
 
         ArrayAdapter<CharSequence> workingAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.game_working, android.R.layout.simple_spinner_item);
         workingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerGameWorking.setAdapter(workingAdapter);
+        mBind.spinnerGameWorking.setAdapter(workingAdapter);
 
         ArrayAdapter<CharSequence> ownershipAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.game_ownership, android.R.layout.simple_spinner_item);
         ownershipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerGameOwnership.setAdapter(ownershipAdapter);
+        mBind.spinnerGameOwnership.setAdapter(ownershipAdapter);
 
         ArrayAdapter<CharSequence> conditionAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.game_condition, android.R.layout.simple_spinner_item);
         conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bind.spinnerGameCondition.setAdapter(conditionAdapter);
+        mBind.spinnerGameCondition.setAdapter(conditionAdapter);
 
         // Setup Monitor Details Dialog
         // TODO: there has to be a better way of doing this, at least move this to its own fragment
@@ -206,7 +200,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 mGame.setMonitorBeam(dialogBind.npGameMonitorBeam.getValue());
                 mGame.setMonitorTech(dialogBind.npGameMonitorTech.getValue());
 
-                updateMonitorDetails(mGame, bind.tvMonitorDetails);
+                updateMonitorDetails(mGame, mBind.tvMonitorDetails);
                 dialogInterface.dismiss();
             }
         });
@@ -221,7 +215,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 dialogBind.npGameMonitorBeam.setValue(mGame.getMonitorBeam());
                 dialogBind.npGameMonitorTech.setValue(mGame.getMonitorTech());
 
-                updateMonitorDetails(mGame, bind.tvMonitorDetails);
+                updateMonitorDetails(mGame, mBind.tvMonitorDetails);
                 dialogInterface.dismiss();
             }
         });
@@ -265,11 +259,11 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 monitorDialog.show();
             }
         };
-        bind.tvMonitorDetails.setOnClickListener(monitorDetailsListener);
-        bind.ibMonitorDetailsArrow.setOnClickListener(monitorDetailsListener);
+        mBind.tvMonitorDetails.setOnClickListener(monitorDetailsListener);
+        mBind.ibMonitorDetailsArrow.setOnClickListener(monitorDetailsListener);
 
         // Setup Buttons
-        bind.btnCancel.setOnClickListener(new View.OnClickListener() {
+        mBind.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (getShowsDialog()) {
@@ -280,20 +274,20 @@ public class GameAddEditFragment extends BaseDialogFragment {
             }
         });
 
-        if (mEdit) bind.btnSave.setText(R.string.save_changes);
-        bind.btnSave.setOnClickListener(new View.OnClickListener() {
+        if (mEdit) mBind.btnSave.setText(R.string.save_changes);
+        mBind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String input = bind.etGameName.getText().toString().trim();
+                String input = mBind.etGameName.getText().toString().trim();
                 if (textInputIsValid(input)) {
                     mGame.setName(input);
                 }
 
-                mGame.setType(bind.spinnerGameType.getSelectedItemPosition());
-                mGame.setCabinet(bind.spinnerGameCabinet.getSelectedItemPosition());
-                mGame.setWorking(bind.spinnerGameWorking.getSelectedItemPosition());
-                mGame.setOwnership(bind.spinnerGameOwnership.getSelectedItemPosition());
-                mGame.setCondition(bind.spinnerGameCondition.getSelectedItemPosition());
+                mGame.setType(mBind.spinnerGameType.getSelectedItemPosition());
+                mGame.setCabinet(mBind.spinnerGameCabinet.getSelectedItemPosition());
+                mGame.setWorking(mBind.spinnerGameWorking.getSelectedItemPosition());
+                mGame.setOwnership(mBind.spinnerGameOwnership.getSelectedItemPosition());
+                mGame.setCondition(mBind.spinnerGameCondition.getSelectedItemPosition());
 
                 addUpdateGame();
             }

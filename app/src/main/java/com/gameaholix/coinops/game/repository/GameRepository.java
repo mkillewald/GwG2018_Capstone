@@ -31,19 +31,28 @@ public class GameRepository {
     private LiveData<Game> mGameLiveData;
     private String mGameId;
 
-    public GameRepository() {
+    /**
+     * Constructor used for adding a new or retrieving an existing Game
+     * @param gameId the ID of the existing Game to retrieve. This will be null if
+     *               we are adding a new Game.
+     */
+    public GameRepository(@Nullable String gameId) {
+        if (gameId == null) {
             // we are adding a new Game
             mGameLiveData = new MutableLiveData<>();
             ((MutableLiveData<Game>) mGameLiveData).setValue(new Game());
-    }
-
-    public GameRepository(String gameId) {
+        } else {
             // we are retrieving an existing InventoryItem
             mGameId = gameId;
-            mGameLiveData = fetchGameDetails();
+            mGameLiveData = fetchData();
+        }
     }
 
-    private LiveData<Game> fetchGameDetails() {
+    /**
+     * Fetch this Game instance's data from Firebase
+     * @return a LiveData<> object containing the Game retrieved from firebase
+     */
+    private LiveData<Game> fetchData() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
@@ -57,7 +66,8 @@ public class GameRepository {
             return Transformations.map(liveData, new Deserializer());
         } else {
             // user is not signed in
-            return null;
+            ((MutableLiveData<Game>) mGameLiveData).setValue(new Game());
+            return mGameLiveData;
         }
     }
 

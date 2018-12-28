@@ -31,7 +31,7 @@ public class InventoryItemRepository {
 
     /**
      * Constructor used for adding a new or retrieving an existing InventoryItem
-     * @param itemId the itemId of the existing InventoryItem to retrieve. This will be null if
+     * @param itemId the ID of the existing InventoryItem to retrieve. This will be null if
      *               we are adding a new InventoryItem.
      */
     public InventoryItemRepository(@Nullable String itemId) {
@@ -48,7 +48,7 @@ public class InventoryItemRepository {
 
     /**
      * Fetch this InventoryItem instance's data from Firebase
-     * @return a LiveData<InventoryItem> object containing the data retrieved from firebase
+     * @return a LiveData<> object containing the InventoryItem retrieved from firebase
      */
     private LiveData<InventoryItem> fetchData() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -65,7 +65,8 @@ public class InventoryItemRepository {
             return Transformations.map(liveData, new Deserializer());
         } else {
             // user is not signed in
-            return null;
+            ((MutableLiveData<InventoryItem>) mItemLiveData).setValue(new InventoryItem());
+            return mItemLiveData;
         }
     }
 

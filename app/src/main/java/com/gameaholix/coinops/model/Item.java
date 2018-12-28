@@ -55,7 +55,7 @@ public class Item implements Parcelable {
 
     /**
      * Constructor used to create new instance that is a duplicate copy of another instance. This is
-     * used by the ViewModel when editing an existing InventoryItem.
+     * used by the ViewModel when editing an existing Item.
      * @param anotherItem the Item instance to duplicate
      */
     public Item(Item anotherItem) {

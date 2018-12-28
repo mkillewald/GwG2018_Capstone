@@ -52,6 +52,26 @@ public class Game {
     }
 
     /**
+     * Constructor used to create new instance that is a duplicate copy of another instance. This is
+     * used by the ViewModel when editing an existing Game.
+     * @param anotherGame the Game instance to duplicate
+     */
+    public Game(Game anotherGame) {
+        this.id = anotherGame.getId();
+        this.name = anotherGame.getName();
+        this.image = anotherGame.getImage();
+        this.type = anotherGame.getType();
+        this.cabinet = anotherGame.getCabinet();
+        this.condition = anotherGame.getCondition();
+        this.working = anotherGame.getWorking();
+        this.ownership = anotherGame.getOwnership();
+        this.monitorSize = anotherGame.getMonitorSize();
+        this.monitorPhospher = anotherGame.getMonitorPhospher();
+        this.monitorTech = anotherGame.getMonitorTech();
+        this.monitorBeam = anotherGame.getMonitorBeam();
+    }
+
+    /**
      * Converts this instance to a Map containing the instance fields. This is useful for updating
      * Firebase without overwriting the entire node.
      * @return the Map containing the instance fields

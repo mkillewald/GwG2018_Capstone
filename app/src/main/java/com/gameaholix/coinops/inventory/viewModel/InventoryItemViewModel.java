@@ -14,9 +14,9 @@ public class InventoryItemViewModel extends ViewModel {
 
     /**
      * Constructor used to create an InventoryItemViewModel instance
-     * @param itemId the itemId of the InventoryItem that will be injected by the
+     * @param itemId the ID of the InventoryItem that will be injected by the
      *               InventoryItemViewModelFactory. It will be null if we are adding a new
-     *               InventoryItem and non-null if we are editing an existing InventoryItem
+     *               InventoryItem and non-null if we are displaying an existing InventoryItem
      */
     InventoryItemViewModel(String itemId) {
         mRepository = new InventoryItemRepository(itemId);
