@@ -31,7 +31,8 @@ public class InventoryItemViewModel extends ViewModel {
      * Returns a LiveData<> object which contains a duplicate copy of the InventoryItem
      * data contained in this instance. This is useful for editing details and maintaining state
      * before those changes have been saved, and so any changes can easily be reverted if cancelled.
-     * @return the LiveData object containing a duplicate copy of the data held by this instance
+     * @return the LiveData object containing a duplicate copy of the data held by this ViewModel
+     * instance
      */
     public LiveData<InventoryItem> getItemCopyLiveData() {
         if (mItemCopyLiveData == null) {
@@ -50,7 +51,7 @@ public class InventoryItemViewModel extends ViewModel {
     }
 
     /**
-     * Add the InventoryItem held by this instance to the repository
+     * Add the InventoryItem held by this ViewModel instance to the repository
      * @return a boolean indicating success (true) or failure (false)
      */
     public boolean add() {
@@ -58,7 +59,7 @@ public class InventoryItemViewModel extends ViewModel {
     }
 
     /**
-     * Update the existing InventoryItem held by this instance to the repository
+     * Update the existing InventoryItem held by this ViewModel instance to the repository
      * @return a boolean indicating success (true) or failure (false)
      */
     public boolean update() {
@@ -66,7 +67,7 @@ public class InventoryItemViewModel extends ViewModel {
     }
 
     /**
-     * Delete the InventoryItem held by this instance from the repository
+     * Delete the InventoryItem held by this ViewModel instance from the repository
      * @return a boolean indicating success (true) or failure (false)
      */
     public boolean delete() {

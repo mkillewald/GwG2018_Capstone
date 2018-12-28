@@ -31,7 +31,8 @@ public class GameViewModel extends ViewModel {
      * Returns a LiveData<> object which contains a duplicate copy of the Game data contained in
      * this instance. This is useful for editing details and maintaining state before those changes
      * have been saved, and so any changes can easily be reverted if cancelled.
-     * @return the LiveData object containing a duplicate copy of the data held by this instance
+     * @return the LiveData object containing a duplicate copy of the data held by this ViewModel
+     * instance
      */
     public LiveData<Game> getGameCopyLiveData() {
         if (mGameCopyLiveData == null) {
@@ -51,19 +52,19 @@ public class GameViewModel extends ViewModel {
     }
 
     /**
-     * Add the Game held by this instance to the repository
+     * Add the Game held by this ViewModel instance to the repository
      * @return a boolean indicating success (true) or failure (false)
      */
     public boolean add() { return mRepository.add(mGameCopyLiveData.getValue()); }
 
     /**
-     * Update the existing Game held by this instance to the repository
+     * Update the existing Game held by this ViewModel instance to the repository
      * @return a boolean indicating success (true) or failure (false)
      */
     public boolean update() { return mRepository.update(mGameCopyLiveData.getValue()); }
 
     /**
-     * Delete the Game held by this instance from the repository
+     * Delete the Game held by this ViewModel instance from the repository
      * @return a boolean indicating success (true) or failure (false)
      */
     public boolean delete() {
