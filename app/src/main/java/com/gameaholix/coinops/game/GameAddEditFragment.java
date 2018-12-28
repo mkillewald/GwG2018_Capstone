@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -99,6 +100,12 @@ public class GameAddEditFragment extends BaseDialogFragment {
         mViewModel = ViewModelProviders
                 .of(getActivity(), new GameViewModelFactory(mGameId))
                 .get(GameViewModel.class);
+
+        // if this is a brand new instance, clear ViewModel LiveData copy
+        if (savedInstanceState == null) mViewModel.clearGameCopyLiveData();
+
+        // get a duplicate LiveData to make changes to, this way we can maintain state of those
+        // changes, and also easily revert any unsaved changes.
         mGameLiveData = mViewModel.getGameCopyLiveData();
         mGameLiveData.observe(getActivity(), new Observer<Game>() {
             @Override
@@ -169,26 +176,81 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 mContext, R.array.game_type, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBind.spinnerGameType.setAdapter(typeAdapter);
+        mBind.spinnerGameType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mGame.setType(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         ArrayAdapter<CharSequence> cabinetAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.game_cabinet, android.R.layout.simple_spinner_item);
         cabinetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBind.spinnerGameCabinet.setAdapter(cabinetAdapter);
+        mBind.spinnerGameCabinet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mGame.setCabinet(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         ArrayAdapter<CharSequence> workingAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.game_working, android.R.layout.simple_spinner_item);
         workingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBind.spinnerGameWorking.setAdapter(workingAdapter);
+        mBind.spinnerGameWorking.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mGame.setWorking(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         ArrayAdapter<CharSequence> ownershipAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.game_ownership, android.R.layout.simple_spinner_item);
         ownershipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBind.spinnerGameOwnership.setAdapter(ownershipAdapter);
+        mBind.spinnerGameOwnership.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mGame.setOwnership(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         ArrayAdapter<CharSequence> conditionAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.game_condition, android.R.layout.simple_spinner_item);
         conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBind.spinnerGameCondition.setAdapter(conditionAdapter);
+        mBind.spinnerGameCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mGame.setCondition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Setup Monitor Details Dialog
         // TODO: there has to be a better way of doing this, at least move this to its own fragment
@@ -311,6 +373,9 @@ public class GameAddEditFragment extends BaseDialogFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        // save text input to ViewModel when configuration change occurs.
+        mGame.setName(mBind.etGameName.getText().toString());
+
         outState.putString(EXTRA_GAME_ID, mGameId);
         outState.putBoolean(EXTRA_GAME_EDIT_FLAG, mEdit);
     }
@@ -331,7 +396,6 @@ public class GameAddEditFragment extends BaseDialogFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        mViewModel.clearGameCopyLiveData();
     }
 
     // TODO: copy this to GameDetailFragment, replace NA in array with blank string.
