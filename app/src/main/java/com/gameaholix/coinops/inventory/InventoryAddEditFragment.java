@@ -97,6 +97,12 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         mViewModel = ViewModelProviders
                 .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
                 .get(InventoryItemViewModel.class);
+
+        // if this is a brand new instance, clear ViewModel LiveData copy
+        if (savedInstanceState == null) mViewModel.clearItemCopyLiveData();
+
+        // get a duplicate LiveData to make changes to, this way we can maintain state of those
+        // changes, and also easily revert any unsaved changes.
         mItemLiveData = mViewModel.getItemCopyLiveData();
         mItemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
             @Override
@@ -241,7 +247,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        mViewModel.clearItemCopyLiveData();
     }
 
     /**
