@@ -18,8 +18,10 @@ public class PlaceholderFragment extends Fragment {
 
     private String mGameId;
 
+    /**
+     * Required empty public constructor
+     */
     public PlaceholderFragment() {
-        // Required empty public constructor
     }
 
     public static PlaceholderFragment newInstance(String gameId) {

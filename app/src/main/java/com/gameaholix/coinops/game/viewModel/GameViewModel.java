@@ -13,7 +13,7 @@ public class GameViewModel extends ViewModel {
     private GameRepository mRepository;
 
     /**
-     * Constructor used to create an GameViewModel instance
+     * Constructor used to create a GameViewModel instance
      * @param gameId the ID of the Game instance that will be injected by the
      *               GameViewModelFactory. It will be null if we are adding a new
      *               Game and non-null if we are displaying an existing Game

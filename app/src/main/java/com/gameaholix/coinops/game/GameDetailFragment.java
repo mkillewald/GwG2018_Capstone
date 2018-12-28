@@ -71,8 +71,10 @@ public class GameDetailFragment extends Fragment {
 
     private Game mGame;
 
+    /**
+     * Required empty public constructor
+     */
     public GameDetailFragment() {
-        // Required empty public constructor
     }
 
     public static GameDetailFragment newInstance(String gameId) {

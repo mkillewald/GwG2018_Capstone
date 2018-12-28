@@ -32,8 +32,10 @@ public class InventoryDetailFragment extends Fragment {
     private LiveData<InventoryItem> mItemLiveData;
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor
+     */
     public InventoryDetailFragment() {
-        // Required empty public constructor
     }
 
     public static InventoryDetailFragment newInstance(String itemId) {

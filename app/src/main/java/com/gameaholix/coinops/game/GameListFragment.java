@@ -29,8 +29,10 @@ public class GameListFragment extends Fragment implements ListRowAdapter.ListAda
     private ListRowAdapter mGameAdapter;
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor
+     */
     public GameListFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -108,10 +110,6 @@ public class GameListFragment extends Fragment implements ListRowAdapter.ListAda
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
         void onGameSelected(ListRow row);
