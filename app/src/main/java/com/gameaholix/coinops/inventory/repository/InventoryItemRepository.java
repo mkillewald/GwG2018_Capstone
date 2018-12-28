@@ -131,7 +131,7 @@ public class InventoryItemRepository {
     }
 
     /**
-     * Update an existing InventoryItem details to Firebase
+     * Update an existing InventoryItem to Firebase
      * @param item the existing InventoryItem instance to update
      * @return a boolean indicating success (true) or failure (false)
      */

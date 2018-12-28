@@ -90,6 +90,11 @@ public class GameRepository {
         return mGameLiveData;
     }
 
+    /**
+     * Add a new Game to Firebase
+     * @param newGame the new Game to add
+     * @return a boolean indicating success (true) or failure (false)
+     */
     public boolean add(Game newGame) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -127,6 +132,11 @@ public class GameRepository {
         }
     }
 
+    /**
+     * Update an existing Game to Firebase
+     * @param game the existing Game instance to update
+     * @return a boolean indicating success (true) or failure (false)
+     */
     public boolean update(Game game) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -170,6 +180,10 @@ public class GameRepository {
         }
     }
 
+    /**
+     * Delete a Game from Firebase
+     * @return a boolean indicating success (true) or failure (false)
+     */
     public boolean delete() {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
