@@ -63,7 +63,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
 
     /**
      * Static factory method used to instantiate a fragment to edit an existing InventoryItem
-     * @param itemId the itemId of the existing InventoryItem
+     * @param itemId the ID of the existing InventoryItem
      * @return the fragment instance
      */
     public static InventoryAddEditFragment newEditInstance(String itemId) {
@@ -241,6 +241,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mViewModel.clearItemCopyLiveData();
     }
 
     /**

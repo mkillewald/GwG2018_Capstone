@@ -45,11 +45,16 @@ public class GameAddEditFragment extends BaseDialogFragment {
     private OnFragmentInteractionListener mListener;
     private boolean mEdit;
 
+    /**
+     * Required empty public constructor
+     */
     public GameAddEditFragment() {
-        // Required empty public constructor
     }
 
-    // add a new Game
+    /**
+     * Static factory method used to instantiate a fragment to add a new Game
+     * @return the fragment instance
+     */
     public static GameAddEditFragment newAddInstance() {
         Bundle args = new Bundle();
         GameAddEditFragment fragment = new GameAddEditFragment();
@@ -58,7 +63,11 @@ public class GameAddEditFragment extends BaseDialogFragment {
         return fragment;
     }
 
-    // update an existing Game
+    /**
+     * Static factory method used to instantiate a fragment to edit an existing Game
+     * @param gameId the ID of the existing Game
+     * @return the fragment instance
+     */
     public static GameAddEditFragment newEditInstance(String gameId) {
         Bundle args = new Bundle();
         GameAddEditFragment fragment = new GameAddEditFragment();
@@ -271,6 +280,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 } else {
                     mListener.onGameAddEditCompletedOrCancelled();
                 }
+                mViewModel.clearGameCopyLiveData();
             }
         });
 
@@ -290,6 +300,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 mGame.setCondition(mBind.spinnerGameCondition.getSelectedItemPosition());
 
                 addUpdateGame();
+                mViewModel.clearGameCopyLiveData();
             }
         });
 
@@ -320,6 +331,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mViewModel.clearGameCopyLiveData();
     }
 
     // TODO: copy this to GameDetailFragment, replace NA in array with blank string.
@@ -341,6 +353,9 @@ public class GameAddEditFragment extends BaseDialogFragment {
         }
     }
 
+    /**
+     * Add a new or update an existing Game instance to data storage through ViewModel
+     */
     private void addUpdateGame() {
         if (TextUtils.isEmpty(mGame.getName())) {
             PromptUser.displayAlert(mContext,
