@@ -98,7 +98,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
                 .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
                 .get(InventoryItemViewModel.class);
 
-        // if this is a brand new instance, clear ViewModel's LiveData copy
+        // if this is a brand new fragment instance, clear ViewModel's LiveData copy
         if (savedInstanceState == null) mViewModel.clearItemCopyLiveData();
 
         // get a duplicate LiveData to make changes to, this way we can maintain state of those
