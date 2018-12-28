@@ -49,7 +49,7 @@ public class GameRepository {
     }
 
     /**
-     * Fetch this Game instance's data from Firebase
+     * Fetch the Game data from Firebase
      * @return a LiveData<> object containing the Game retrieved from firebase
      */
     private LiveData<Game> fetchData() {

@@ -80,7 +80,11 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
-        if (getActivity() == null) return;
+        if (getActivity() != null) {
+            getActivity().invalidateOptionsMenu();
+        } else {
+            return;
+        }
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {

@@ -35,8 +35,8 @@ public class InventoryItemRepository {
      *               we are adding a new InventoryItem.
      */
     public InventoryItemRepository(@Nullable String itemId) {
-        if (itemId == null) {
-            // we are adding an new InventoryItem
+        if (TextUtils.isEmpty(itemId)) {
+            // we are adding a new InventoryItem
             mItemLiveData = new MutableLiveData<>();
             ((MutableLiveData<InventoryItem>) mItemLiveData).setValue(new InventoryItem());
         } else {
@@ -47,8 +47,8 @@ public class InventoryItemRepository {
     }
 
     /**
-     * Fetch this InventoryItem instance's data from Firebase
-     * @return a LiveData<> object containing the InventoryItem retrieved from firebase
+     * Fetch the InventoryItem data from Firebase
+     * @return a LiveData<> object containing the InventoryItem retrieved from Firebase
      */
     private LiveData<InventoryItem> fetchData() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

@@ -1,5 +1,6 @@
 package com.gameaholix.coinops.inventory;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -7,6 +8,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -18,6 +20,8 @@ import android.view.View;
 
 import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
+import com.gameaholix.coinops.inventory.viewModel.InventoryItemViewModel;
+import com.gameaholix.coinops.inventory.viewModel.InventoryItemViewModelFactory;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -91,11 +95,12 @@ public class InventoryDetailActivity extends BaseActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof InventoryAddEditFragment) {
-            menu.findItem(R.id.menu_edit_inventory).setVisible(false);
-        } else {
+        if (currentFragment instanceof InventoryDetailFragment) {
             menu.findItem(R.id.menu_edit_inventory).setVisible(true);
+        } else {
+            menu.findItem(R.id.menu_edit_inventory).setVisible(false);
         }
+        Log.d(TAG, currentFragment.toString());
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -103,11 +108,11 @@ public class InventoryDetailActivity extends BaseActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_inventory:
-                // handled by InventoryDetailFragment
-                return false;
+                displayEditFragment();
+                return true;
             case R.id.menu_delete_inventory:
-                // handled by InventoryDetailFragment
-                return false;
+                showDeleteAlert();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -137,12 +142,11 @@ public class InventoryDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onDeleteCompleted() {
-        finish();
+    public void onEditButtonPressed() {
+        displayEditFragment();
     }
 
-    @Override
-    public void onEditButtonPressed() {
+    private void displayEditFragment() {
         mAdView.setVisibility(View.GONE);
         // replace InventoryDetailFragment with InventoryAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -150,6 +154,43 @@ public class InventoryDetailActivity extends BaseActivity implements
         ft.commit();
 
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onDeleteButtonPressed() {
+        showDeleteAlert();
+    }
+
+    private void showDeleteAlert() {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle(R.string.really_delete_inventory_item)
+                .setMessage(R.string.inventory_item_will_be_deleted)
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteItemData();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void deleteItemData() {
+        ViewModelProviders
+                .of(this, new InventoryItemViewModelFactory(mItemId))
+                .get(InventoryItemViewModel.class)
+                .delete();
+        finish();
     }
 
     @Override

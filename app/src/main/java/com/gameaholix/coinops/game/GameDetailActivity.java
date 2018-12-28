@@ -27,7 +27,6 @@ import com.gameaholix.coinops.toDo.ToDoDetailActivity;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
 import com.gameaholix.coinops.model.Item;
 import com.gameaholix.coinops.model.ListRow;
-import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.repair.RepairAddEditFragment;
 import com.gameaholix.coinops.repair.RepairListFragment;
 import com.gameaholix.coinops.shopping.ShoppingAddEditFragment;
@@ -246,14 +245,14 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onToDoEditCompletedOrCancelled() {
+    public void onToDoAddEditCompletedOrCancelled() {
         // TODO: finish this
     }
 
-    @Override
-    public void onToDoDeleteButtonPressed(ToDoItem toDoItem) {
-        // TODO: finish this
-    }
+//    @Override
+//    public void onToDoDeleteButtonPressed() {
+//        // TODO: finish this
+//    }
 
     @Override
     public void onShoppingFabPressed() {
