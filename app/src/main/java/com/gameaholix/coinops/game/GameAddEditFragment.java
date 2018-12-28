@@ -101,7 +101,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
                 .of(getActivity(), new GameViewModelFactory(mGameId))
                 .get(GameViewModel.class);
 
-        // if this is a brand new instance, clear ViewModel LiveData copy
+        // if this is a brand new instance, clear ViewModel's LiveData copy
         if (savedInstanceState == null) mViewModel.clearGameCopyLiveData();
 
         // get a duplicate LiveData to make changes to, this way we can maintain state of those
