@@ -28,9 +28,9 @@ public class GameViewModel extends ViewModel {
     }
 
     /**
-     * Returns a LiveData<InventoryItem> object which contains a duplicate copy of the InventoryItem
-     * data contained in this instance. This is useful for editing details and maintaining state
-     * before those changes have been saved, and so any changes can easily be reverted if cancelled.
+     * Returns a LiveData<> object which contains a duplicate copy of the Game data contained in
+     * this instance. This is useful for editing details and maintaining state before those changes
+     * have been saved, and so any changes can easily be reverted if cancelled.
      * @return the LiveData object containing a duplicate copy of the data held by this instance
      */
     public LiveData<Game> getGameCopyLiveData() {
