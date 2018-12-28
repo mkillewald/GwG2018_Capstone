@@ -1,44 +1,35 @@
 package com.gameaholix.coinops.toDo;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentToDoDetailBinding;
 import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.firebase.Fb;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModel;
+import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModelFactory;
 
 public class ToDoDetailFragment extends Fragment {
     private static final String TAG = ToDoDetailFragment.class.getSimpleName();
-    private static final String EXTRA_TODO = "com.gameaholix.coinops.model.ToDoItem";
     private static final String EXTRA_TODO_ID = "CoinOpsToDoId";
 
     private String mItemId;
-    private ToDoItem mItem;
-    private FirebaseUser mUser;
-    private DatabaseReference mToDoRef;
-    private ValueEventListener mToDoListener;
+    private LiveData<ToDoItem> mItemLiveData;
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor
+     */
     public ToDoDetailFragment() {
-        // Required empty public constructor
     }
 
     public static ToDoDetailFragment newInstance(String itemId) {
@@ -52,7 +43,7 @@ public class ToDoDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -60,21 +51,24 @@ public class ToDoDetailFragment extends Fragment {
             }
         } else {
             mItemId = savedInstanceState.getString(EXTRA_TODO_ID);
-            mItem = savedInstanceState.getParcelable(EXTRA_TODO);
         }
 
         if (TextUtils.isEmpty(mItemId)) {
-            // TODO: finish this
+            mListener.onItemIdInvalid();
+            return;
         }
 
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mUser = firebaseAuth.getCurrentUser();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        mToDoRef = databaseReference
-                .child(Fb.TODO)
-                .child(mUser.getUid())
-                .child(mItemId);
+        if (getActivity() != null) {
+            ToDoItemViewModel viewModel = ViewModelProviders
+                    .of(getActivity(), new ToDoItemViewModelFactory(mItemId))
+                    .get(ToDoItemViewModel.class);
+            mItemLiveData = viewModel.getItemLiveData();
+        }
+
+//        mToDoRef = databaseReference
+//                .child(Fb.TODO)
+//                .child(mUser.getUid())
+//                .child(mItemId);
     }
 
     @Override
@@ -84,90 +78,70 @@ public class ToDoDetailFragment extends Fragment {
         final FragmentToDoDetailBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_to_do_detail, container, false);
 
-        final View rootView = bind.getRoot();
+        bind.setLifecycleOwner(getActivity());
+        bind.setItem(mItemLiveData);
 
-        if (mUser != null) {
-            // user is signed in
+//            // Setup event listener
+//            mToDoListener = new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    String id = dataSnapshot.getKey();
+//
+//                    mItem = dataSnapshot.getValue(ToDoItem.class);
+//                    if (mItem == null) {
+//                        Log.d(TAG, "Error: To do item details not found");
+//                    } else {
+//
+//                        RadioButton priorityButton =
+//                                (RadioButton) bind.rgPriority.getChildAt(mItem.getPriority());
+//                        priorityButton.setChecked(true);
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            };
+//            mToDoRef.addValueEventListener(mToDoListener);
 
-            // Setup event listener
-            mToDoListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String id = dataSnapshot.getKey();
+        // Setup Buttons
+        bind.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onToDoDeleteButtonPressed();
+            }
+        });
 
-                    mItem = dataSnapshot.getValue(ToDoItem.class);
-                    if (mItem == null) {
-                        Log.d(TAG, "Error: To do item details not found");
-                    } else {
-                        mItem.setId(id);
+        bind.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onToDoEditButtonPressed();
+            }
+        });
 
-                        bind.tvTodoName.setText(mItem.getName());
-                        RadioButton priorityButton =
-                                (RadioButton) bind.rgPriority.getChildAt(mItem.getPriority());
-                        priorityButton.setChecked(true);
-                        bind.tvTodoDescription.setText(mItem.getDescription());
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            };
-            mToDoRef.addValueEventListener(mToDoListener);
-
-            // Setup Buttons
-            bind.btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mListener.onToDoDeleteButtonPressed(mItem);
-                }
-            });
-
-            bind.btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mListener.onToDoEditButtonPressed(mItem);
-                }
-            });
-
-//        } else {
-//            // user is not signed in
-        }
-
-        return rootView;
+        return bind.getRoot();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (mToDoListener != null) {
-            mToDoRef.removeEventListener(mToDoListener);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_edit_todo:
-                if (mListener != null) {
-                    mListener.onToDoEditButtonPressed(mItem);
-                }
-                return true;
-            case R.id.menu_delete_todo:
-                if (mListener != null) {
-                    mListener.onToDoDeleteButtonPressed(mItem);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem menuItem) {
+//        switch (menuItem.getItemId()) {
+//            case R.id.menu_edit_todo:
+//                if (mListener != null) {
+//                    mListener.onToDoEditButtonPressed();
+//                }
+//                return true;
+//            case R.id.menu_delete_todo:
+//                showDeleteAlert();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(menuItem);
+//        }
+//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_TODO, mItem);
         outState.putString(EXTRA_TODO_ID, mItemId);
     }
 
@@ -193,13 +167,10 @@ public class ToDoDetailFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onToDoEditButtonPressed(ToDoItem toDoItem);
-        void onToDoDeleteButtonPressed(ToDoItem toDoItem);
+        void onItemIdInvalid();
+        void onToDoEditButtonPressed();
+        void onToDoDeleteButtonPressed();
     }
 }

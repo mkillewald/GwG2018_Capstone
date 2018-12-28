@@ -39,6 +39,17 @@ public class ToDoItem extends Item {
     }
 
     /**
+     * Constructor used to create new instance that is a duplicate copy of another instance. This is
+     * used by the ViewModel when editing an existing ToDoItem.
+     * @param anotherItem the ToDoItem instance to duplicate
+     */
+    public ToDoItem(ToDoItem anotherItem) {
+        super(anotherItem);
+        this.description = anotherItem.getDescription();
+        this.priority = anotherItem.getPriority();
+    }
+
+    /**
      * Converts this instance to a Map containing the instance fields. This is useful for updating
      * Firebase without overwriting the entire node.
      * @return the Map containing the instance fields

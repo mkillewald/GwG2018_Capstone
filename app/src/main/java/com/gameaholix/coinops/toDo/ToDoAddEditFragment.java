@@ -76,7 +76,7 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
-        if (!getShowsDialog()) setHasOptionsMenu(true);
+//        if (!getShowsDialog()) setHasOptionsMenu(true);
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -201,7 +201,7 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
             @Override
             public void onClick(View view) {
                 if (getShowsDialog()) getDialog().dismiss();
-                mListener.onToDoEditCompletedOrCancelled();
+                mListener.onToDoAddEditCompletedOrCancelled();
             }
         });
 
@@ -229,25 +229,25 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
                 }
 
                 addEditItem();
-                mListener.onToDoEditCompletedOrCancelled();
+                mListener.onToDoAddEditCompletedOrCancelled();
             }
         });
 
         return rootView;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_delete_todo:
-                if (mListener != null) {
-                    mListener.onToDoDeleteButtonPressed(mToDoItem);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.menu_delete_todo:
+//                if (mListener != null) {
+//                    mListener.onToDoDeleteButtonPressed();
+//                }
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -386,13 +386,8 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onToDoEditCompletedOrCancelled();
-        void onToDoDeleteButtonPressed(ToDoItem toDoItem);
+        void onToDoAddEditCompletedOrCancelled();
     }
 }

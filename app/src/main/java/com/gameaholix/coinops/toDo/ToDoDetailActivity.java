@@ -1,6 +1,8 @@
 package com.gameaholix.coinops.toDo;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -11,31 +13,28 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
-import com.gameaholix.coinops.model.ToDoItem;
-import com.gameaholix.coinops.firebase.Fb;
+import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModel;
+import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModelFactory;
+import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class ToDoDetailActivity extends BaseActivity implements
         ToDoDetailFragment.OnFragmentInteractionListener,
         ToDoAddEditFragment.OnFragmentInteractionListener {
-//    private static final String TAG = ToDoDetailActivity.class.getSimpleName();
+    private static final String TAG = ToDoDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
     private static final String EXTRA_TODO_ID = "CoinOpsToDoId";
 
     private String mGameName;
     private String mItemId;
-    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +64,9 @@ public class ToDoDetailActivity extends BaseActivity implements
         adView.loadAd(adRequest);
 
         if (savedInstanceState == null) {
-            mGameName = getIntent().getStringExtra(EXTRA_GAME_NAME);
-            mItemId = getIntent().getStringExtra(EXTRA_TODO_ID);
+            Intent intent = getIntent();
+            mGameName = intent.getStringExtra(EXTRA_GAME_NAME);
+            mItemId = intent.getStringExtra(EXTRA_TODO_ID);
 
             ToDoDetailFragment fragment = ToDoDetailFragment.newInstance(mItemId);
             getSupportFragmentManager().beginTransaction()
@@ -83,10 +83,6 @@ public class ToDoDetailActivity extends BaseActivity implements
         } else {
             setTitle(R.string.to_do_details_title);
         }
-
-        // Initialize Firebase components
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        mUser = firebaseAuth.getCurrentUser();
     }
 
     @Override
@@ -111,11 +107,11 @@ public class ToDoDetailActivity extends BaseActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_todo:
-                // handled by ToDoDetailFragment
-                return false;
+                onToDoEditButtonPressed();
+                return true;
             case R.id.menu_delete_todo:
-                // handled by ToDoDetailFragment or ToDoEditFragment listener callback
-                return false;
+                onToDoDeleteButtonPressed();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -130,18 +126,69 @@ public class ToDoDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onToDoEditButtonPressed(ToDoItem toDoItem) {
+    public void onItemIdInvalid() {
+        Log.e(TAG, "Failed to instantiate fragment! Item ID cannot be an empty string.");
+        PromptUser.displayAlert(this,
+                R.string.error_unable_to_load,
+                R.string.error_item_id_empty,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+    }
+
+
+    @Override
+    public void onToDoEditButtonPressed() {
         // replace ToDoDetailFragment with ToDoAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newInstance(toDoItem));
+        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newInstance(mItemId));
         ft.commit();
 
         invalidateOptionsMenu();
     }
 
     @Override
-    public void onToDoEditCompletedOrCancelled() {
-        // replace ToDoEditFragment with ToDoDetailFragment
+    public void onToDoDeleteButtonPressed() { showDeleteAlert(); }
+
+    private void showDeleteAlert() {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle(R.string.really_delete_item)
+                .setMessage(R.string.item_will_be_deleted)
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteItemData();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void deleteItemData() {
+        ViewModelProviders
+                .of(this, new ToDoItemViewModelFactory(mItemId))
+                .get(ToDoItemViewModel.class)
+                .delete();
+        finish();
+    }
+
+    @Override
+    public void onToDoAddEditCompletedOrCancelled() {
+        // replace ToDoAddEditFragment with ToDoDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mItemId));
         ft.commit();
@@ -149,66 +196,31 @@ public class ToDoDetailActivity extends BaseActivity implements
         invalidateOptionsMenu();
     }
 
-    @Override
-    public void onToDoDeleteButtonPressed(ToDoItem toDoItem) {
-        showDeleteAlert(toDoItem);
-    }
-
-    private void showDeleteAlert(final ToDoItem toDoItem) {
-        if (mUser != null) {
-            // user is signed in
-
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new AlertDialog.Builder(this);
-            }
-            builder.setTitle(R.string.really_delete_item)
-                    .setMessage(R.string.item_will_be_deleted)
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteItemData(toDoItem);
-                            finish();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-//        } else {
-//            // user is not signed in
-        }
-    }
-
-    private void deleteItemData(ToDoItem toDoItem) {
-        // delete to do item
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference
-                .child(Fb.TODO)
-                .child(mUser.getUid())
-                .child(toDoItem.getId())
-                .removeValue();
-
-        // delete game to do list entry
-        databaseReference
-                .child(Fb.GAME)
-                .child(mUser.getUid())
-                .child(toDoItem.getParentId())
-                .child(Fb.TODO_LIST)
-                .child(toDoItem.getId())
-                .removeValue();
-
-        // delete user to do list entry (global list)
-        databaseReference
-                .child(Fb.USER)
-                .child(mUser.getUid())
-                .child(Fb.TODO_LIST)
-                .child(toDoItem.getId())
-                .removeValue();
-    }
+//
+//    private void deleteItemData(ToDoItem toDoItem) {
+//        // delete to do item
+//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+//        databaseReference
+//                .child(Fb.TODO)
+//                .child(mUser.getUid())
+//                .child(toDoItem.getId())
+//                .removeValue();
+//
+//        // delete game to do list entry
+//        databaseReference
+//                .child(Fb.GAME)
+//                .child(mUser.getUid())
+//                .child(toDoItem.getParentId())
+//                .child(Fb.TODO_LIST)
+//                .child(toDoItem.getId())
+//                .removeValue();
+//
+//        // delete user to do list entry (global list)
+//        databaseReference
+//                .child(Fb.USER)
+//                .child(mUser.getUid())
+//                .child(Fb.TODO_LIST)
+//                .child(toDoItem.getId())
+//                .removeValue();
+//    }
 }
