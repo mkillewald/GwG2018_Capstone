@@ -92,7 +92,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
 
-        // If we are editing, this should get the existing view model, and iff we are adding, this
+        // If we are editing, this should get the existing view model, and if we are adding, this
         // should create a new view model (mItemId will be null).
         mViewModel = ViewModelProviders
                 .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
@@ -217,7 +217,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // save text input to ViewModel during configuration changes.
+        // save text input to ViewModel when configuration change occurs.
         mItem.setName(mBind.etAddInventoryName.getText().toString());
         mItem.setDescription(mBind.etAddInventoryDescription.getText().toString());
 

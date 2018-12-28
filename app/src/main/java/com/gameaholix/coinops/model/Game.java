@@ -35,15 +35,27 @@ public class Game {
 //    private Double forSalePrice;
 //    private Double soldPrice;
 
+    /**
+     * Default no argument constructor required for calls to DataSnapshot.getValue()
+     */
     public Game() {
-        // Default constructor required for calls to DataSnapshot.getValue()
     }
 
+    /**
+     * Constructor used to create a new Game instance
+     * @param id the id of the new Game instance
+     * @param name the name of the new Game instance
+     */
     public Game(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
+    /**
+     * Converts this instance to a Map containing the instance fields. This is useful for updating
+     * Firebase without overwriting the entire node.
+     * @return the Map containing the instance fields
+     */
     @Exclude
     public Map<String, Object> getMap() {
         Map<String, Object> map = new HashMap<>();

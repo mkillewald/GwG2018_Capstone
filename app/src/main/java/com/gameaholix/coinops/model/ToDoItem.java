@@ -13,19 +13,36 @@ public class ToDoItem extends Item {
 //    private boolean repeat;
 //    private long remindAt;
 
+    /**
+     * Default no argument constructor required for calls to DataSnapshot.getValue()
+     */
     public ToDoItem() {
         super();
-        // Default constructor required for calls to DataSnapshot.getValue()
     }
 
+    /**
+     * Constructor used to create a new ToDoItem instance
+     * @param parentId the ID of the object which owns this instance
+     */
     public ToDoItem(String parentId) {
         super(parentId);
     }
 
+    /**
+     * Constructor used to create a new ToDoItem instance
+     * @param id the ID of the new ToDoItem instance
+     * @param parentId the ID of the object which owns this instance
+     * @param name the name of the new ToDoItem instance
+     */
     public ToDoItem(String id, String parentId, String name) {
         super(id, parentId, name);
     }
 
+    /**
+     * Converts this instance to a Map containing the instance fields. This is useful for updating
+     * Firebase without overwriting the entire node.
+     * @return the Map containing the instance fields
+     */
     @Exclude
     public Map<String, Object> getMap() {
         Map<String, Object> map = super.getMap();

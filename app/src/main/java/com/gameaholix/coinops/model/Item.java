@@ -17,19 +17,36 @@ public class Item implements Parcelable {
     private long createdAt;
     private long modifiedAt;
 
+    /**
+     * Default no argument constructor required for calls to DataSnapshot.getValue()
+     */
     public Item() {
-        // Default constructor required for calls to DataSnapshot.getValue()
     }
 
+    /**
+     * Constructor used to create a new Item instance
+     * @param parentId the ID of the object which owns the new Item instance
+     */
     public Item(String parentId) {
         this.parentId = parentId;
     }
 
+    /**
+     * Constructor used to create a new Item instance
+     * @param id the ID of the new Item instance
+     * @param name the name of the new Item instance
+     */
     public Item(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
+    /**
+     * Constructor used to create a new Item instance
+     * @param id the ID if the new Item instance
+     * @param parentId the ID of the object which owns the new Item instance
+     * @param name the name of the new Item instance
+     */
     public Item(String id, String parentId, String name) {
         this.id = id;
         this.parentId = parentId;
@@ -37,8 +54,9 @@ public class Item implements Parcelable {
     }
 
     /**
-     * Create new instance that is a duplicate copy of another Item
-     * @param anotherItem the Item to duplicate
+     * Constructor used to create new instance that is a duplicate copy of another instance. This is
+     * used by the ViewModel when editing an existing InventoryItem.
+     * @param anotherItem the Item instance to duplicate
      */
     public Item(Item anotherItem) {
         this.id = anotherItem.getId();
@@ -79,6 +97,11 @@ public class Item implements Parcelable {
         public Item[] newArray(int size) { return (new Item[size]); }
     };
 
+    /**
+     * Converts this instance to a Map containing the instance fields. This is useful for updating
+     * Firebase without overwriting the entire node.
+     * @return the Map containing the instance fields
+     */
     @Exclude
     public Map<String, Object> getMap() {
         Map<String, Object> map = new HashMap<>();
@@ -114,10 +137,18 @@ public class Item implements Parcelable {
         this.name = name;
     }
 
+    /**
+     * Returns a Map containing the current timestamp from Firebase
+     * @return a Map object containing the Firebase timestamp
+     */
     public Map<String, String> getCreatedAt() {
         return ServerValue.TIMESTAMP;
     }
 
+    /**
+     * Returns the createdAt timestamp as a Long
+     * @return the createdAt timestamp as a Long
+     */
     @Exclude
     public Long getCreatedAtLong() {
         return createdAt;
