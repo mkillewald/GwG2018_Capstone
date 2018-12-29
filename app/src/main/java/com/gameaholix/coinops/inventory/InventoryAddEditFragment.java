@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
@@ -34,14 +33,16 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
     private static final String EXTRA_EDIT_FLAG = "CoinOpsInventoryEditFlag";
 
-    private Context mContext;
-    private FragmentInventoryAddBinding mBind;
-    private InventoryItem mItem;
     private String mItemId;
+    private boolean mEdit;
+
     private InventoryItemViewModel mViewModel;
     private LiveData<InventoryItem> mItemLiveData;
+    private InventoryItem mItem;
+
+    private Context mContext;
+    private FragmentInventoryAddBinding mBind;
     private OnFragmentInteractionListener mListener;
-    private boolean mEdit;
 
     /**
      * Required empty public constructor
@@ -80,11 +81,10 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
-        if (getActivity() != null) {
-            getActivity().invalidateOptionsMenu();
-        } else {
-            return;
-        }
+        if (getActivity() == null) { return; }
+
+        // this will cause the Activity's onPrepareOptionsMenu() method to be called
+        getActivity().invalidateOptionsMenu();
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -130,37 +130,30 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         mBind.setLifecycleOwner(getActivity());
         mBind.setItem(mItemLiveData);
 
-        // Name field cannot be blank, add listeners to validate Name input
+        // Setup EditText
         mBind.etAddInventoryName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    String input = textView.getText().toString().trim();
-                    if (!textInputIsValid(input)) {
-                        textView.setText(mItem.getName());
-                    }
                     hideKeyboard(textView);
                     return true;
                 }
                 return false;
             }
         });
-        mBind.etAddInventoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mBind.etAddInventoryDescription.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getId() == R.id.et_add_inventory_name && !hasFocus) {
-                    if (view instanceof EditText) {
-                        String input = ((EditText) view).getText().toString().trim();
-                        if (!textInputIsValid(input)) {
-                            ((EditText) view).setText(mItem.getName());
-                        }
-                    }
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    hideKeyboard(textView);
+                    return true;
                 }
+                return false;
             }
         });
 
         // Setup Spinners
-        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
+        final ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
                 mContext, R.array.inventory_type, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBind.spinnerInventoryType.setAdapter(typeAdapter);
@@ -196,12 +189,12 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         mBind.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mViewModel.clearItemCopyLiveData();
                 if (getShowsDialog()) {
                     getDialog().dismiss();
                 } else {
                     mListener.onInventoryAddEditCompletedOrCancelled();
                 }
-                mViewModel.clearItemCopyLiveData();
             }
         });
 
@@ -209,14 +202,9 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         mBind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String input = mBind.etAddInventoryName.getText().toString().trim();
-                if (textInputIsValid(input)) {
-                    mItem.setName(input);
-                }
-
+                mItem.setName(mBind.etAddInventoryName.getText().toString().trim());
                 mItem.setDescription(mBind.etAddInventoryDescription.getText().toString().trim());
                 addUpdateItem();
-                mViewModel.clearItemCopyLiveData();
             }
         });
 
@@ -273,8 +261,12 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         }
 
         if (resultOk) {
-            if (getShowsDialog()) getDialog().dismiss();
-            mListener.onInventoryAddEditCompletedOrCancelled();
+            mViewModel.clearItemCopyLiveData();
+            if (getShowsDialog()) {
+                getDialog().dismiss();
+            } else {
+                mListener.onInventoryAddEditCompletedOrCancelled();
+            }
         } else {
             Log.d(TAG, "The add or edit operation has failed!");
         }

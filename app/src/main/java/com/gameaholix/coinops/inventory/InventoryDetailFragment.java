@@ -32,6 +32,11 @@ public class InventoryDetailFragment extends Fragment {
     public InventoryDetailFragment() {
     }
 
+    /**
+     * Static factory method used to instantiate a fragment instance
+     * @param itemId the ID of the InventoryItem this fragment will display
+     * @return the fragment instance
+     */
     public static InventoryDetailFragment newInstance(String itemId) {
         Bundle args = new Bundle();
         InventoryDetailFragment fragment = new InventoryDetailFragment();
@@ -43,7 +48,6 @@ public class InventoryDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setHasOptionsMenu(true);
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -59,6 +63,9 @@ public class InventoryDetailFragment extends Fragment {
         }
 
         if (getActivity() != null) {
+            // this will cause the Activity's onPrepareOptionsMenu() method to be called
+            getActivity().invalidateOptionsMenu();
+
             InventoryItemViewModel viewModel = ViewModelProviders
                     .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
                     .get(InventoryItemViewModel.class);
@@ -105,20 +112,6 @@ public class InventoryDetailFragment extends Fragment {
         return bind.getRoot();
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem menuItem) {
-//        switch (menuItem.getItemId()) {
-//            case R.id.menu_edit_inventory:
-//                if (mListener != null) mListener.onEditButtonPressed();
-//                return true;
-//            case R.id.menu_delete_inventory:
-//                showDeleteAlert();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(menuItem);
-//        }
-//    }
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -141,35 +134,6 @@ public class InventoryDetailFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
-//    private void showDeleteAlert() {
-//        AlertDialog.Builder builder;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
-//        } else {
-//            builder = new AlertDialog.Builder(mContext);
-//        }
-//        builder.setTitle(R.string.really_delete_inventory_item)
-//                .setMessage(R.string.inventory_item_will_be_deleted)
-//                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        dialogInterface.dismiss();
-//                    }
-//                })
-//                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        deleteItemData();
-//                        mListener.onDeleteCompleted();
-//                    }
-//                })
-//                .setIcon(android.R.drawable.ic_dialog_alert)
-//                .show();
-//    }
-//
-//    private void deleteItemData() {
-//        mViewModel.delete();
-//    }
 
     /**
      * This interface must be implemented by activities that contain this

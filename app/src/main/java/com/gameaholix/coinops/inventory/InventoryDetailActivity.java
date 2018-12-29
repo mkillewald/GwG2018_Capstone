@@ -148,12 +148,11 @@ public class InventoryDetailActivity extends BaseActivity implements
 
     private void displayEditFragment() {
         mAdView.setVisibility(View.GONE);
+
         // replace InventoryDetailFragment with InventoryAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, InventoryAddEditFragment.newEditInstance(mItemId));
         ft.commit();
-
-        invalidateOptionsMenu();
     }
 
     @Override
@@ -200,7 +199,6 @@ public class InventoryDetailActivity extends BaseActivity implements
         ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance(mItemId));
         ft.commit();
 
-        invalidateOptionsMenu();
         mAdView.setVisibility(View.VISIBLE);
     }
 }

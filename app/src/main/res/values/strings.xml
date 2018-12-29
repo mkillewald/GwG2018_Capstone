@@ -178,11 +178,11 @@
     <string name="error_unable_to_load">Unable to load details!</string>
     <string name="error_read_database_failed">Failed to fetch item from database!</string>
     <string name="error_update_database_failed">Failed to update database!</string>
-    <string name="error_add_game_failed">Failed to add game!</string>
-    <string name="error_add_inventory_failed">Failed to add part!</string>
-    <string name="error_add_repair_log_failed">Failed to add repair log!</string>
-    <string name="error_add_repair_step_failed">Failed to add repair step!</string>
-    <string name="error_add_item_failed">Failed to add item!</string>
+    <string name="error_add_game_failed">Failed to add or update game!</string>
+    <string name="error_add_inventory_failed">Failed to add or update part!</string>
+    <string name="error_add_repair_log_failed">Failed to add or update repair log!</string>
+    <string name="error_add_repair_step_failed">Failed to add or update repair step!</string>
+    <string name="error_add_item_failed">Failed to add or update item!</string>
     <string name="error_edit_failed">Failed to save changes!</string>
     <string name="error_delete_item_failed">Failed to delete item!</string>
     <string name="error_upload_failed">Image upload failed.</string>
