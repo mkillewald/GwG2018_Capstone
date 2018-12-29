@@ -180,7 +180,9 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                 RadioButton checkedButton = radioGroup.findViewById(checkedId);
-                mToDoItem.setPriority(radioGroup.indexOfChild(checkedButton));
+                if (mToDoItem != null) {
+                    mToDoItem.setPriority(radioGroup.indexOfChild(checkedButton));
+                }
             }
         });
 
@@ -218,7 +220,7 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
 
         // save text input to ViewModel when configuration change occurs.
         mToDoItem.setName(mBind.etTodoName.getText().toString());
-        mToDoItem.setDescription(mBind.etTodoName.getText().toString());
+        mToDoItem.setDescription(mBind.etTodoDescription.getText().toString());
 
         outState.putString(EXTRA_GAME_ID, mGameId);
         outState.putString(EXTRA_TODO_ID, mItemId);
