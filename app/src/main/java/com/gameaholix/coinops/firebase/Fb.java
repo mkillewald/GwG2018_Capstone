@@ -87,10 +87,15 @@ public class Fb {
                 .child(Fb.SHOP_LIST);
     }
 
-    public static DatabaseReference getToDoRef(@NonNull String uid) {
+    public static DatabaseReference getToDoRootRef(@NonNull String uid) {
         return sDatabaseReference
                 .child(Fb.TODO)
                 .child(uid);
+    }
+
+    public static DatabaseReference getToDoRef(@NonNull String uid, @NonNull String itemId) {
+        return getToDoRootRef(uid)
+                .child(itemId);
     }
 
     public static DatabaseReference getGameToDoListRef(@NonNull String uid, @NonNull String gameId) {

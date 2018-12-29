@@ -195,7 +195,7 @@ public class GameRepository {
             Fb.getRepairRef(uid, mGameId).removeValue();
 
             // delete to do items
-            Query toDoQuery = Fb.getToDoRef(uid)
+            Query toDoQuery = Fb.getToDoRootRef(uid)
                     .orderByChild(Fb.PARENT_ID)
                     .equalTo(mGameId);
             deleteQueryResults(toDoQuery, Fb.getUserToDoListRef(uid));

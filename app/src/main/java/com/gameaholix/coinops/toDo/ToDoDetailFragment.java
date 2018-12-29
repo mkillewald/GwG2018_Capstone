@@ -1,16 +1,19 @@
 package com.gameaholix.coinops.toDo;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentToDoDetailBinding;
@@ -32,6 +35,11 @@ public class ToDoDetailFragment extends Fragment {
     public ToDoDetailFragment() {
     }
 
+    /**
+     * Static factory method used to instantiate a fragment instance
+     * @param itemId the ID of the ToDoItem this fragment will display
+     * @return the fragment instance
+     */
     public static ToDoDetailFragment newInstance(String itemId) {
         Bundle args = new Bundle();
         ToDoDetailFragment fragment = new ToDoDetailFragment();
@@ -43,7 +51,6 @@ public class ToDoDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setHasOptionsMenu(true);
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -59,16 +66,14 @@ public class ToDoDetailFragment extends Fragment {
         }
 
         if (getActivity() != null) {
+            // this will cause the Activity's onPrepareOptionsMenu() method to be called
+            getActivity().invalidateOptionsMenu();
+
             ToDoItemViewModel viewModel = ViewModelProviders
                     .of(getActivity(), new ToDoItemViewModelFactory(mItemId))
                     .get(ToDoItemViewModel.class);
             mItemLiveData = viewModel.getItemLiveData();
         }
-
-//        mToDoRef = databaseReference
-//                .child(Fb.TODO)
-//                .child(mUser.getUid())
-//                .child(mItemId);
     }
 
     @Override
@@ -81,29 +86,19 @@ public class ToDoDetailFragment extends Fragment {
         bind.setLifecycleOwner(getActivity());
         bind.setItem(mItemLiveData);
 
-//            // Setup event listener
-//            mToDoListener = new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    String id = dataSnapshot.getKey();
-//
-//                    mItem = dataSnapshot.getValue(ToDoItem.class);
-//                    if (mItem == null) {
-//                        Log.d(TAG, "Error: To do item details not found");
-//                    } else {
-//
-//                        RadioButton priorityButton =
-//                                (RadioButton) bind.rgPriority.getChildAt(mItem.getPriority());
-//                        priorityButton.setChecked(true);
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                }
-//            };
-//            mToDoRef.addValueEventListener(mToDoListener);
+        if (getActivity() != null) {
+            mItemLiveData.observe(getActivity(), new Observer<ToDoItem>() {
+                @Override
+                public void onChanged(@Nullable ToDoItem toDoItem) {
+                    if (toDoItem != null) {
+                        // TODO: figure out how to do this with xml
+                        RadioButton priorityButton =
+                                (RadioButton) bind.rgPriority.getChildAt(toDoItem.getPriority());
+                        priorityButton.setChecked(true);
+                    }
+                }
+            });
+        }
 
         // Setup Buttons
         bind.btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -122,22 +117,6 @@ public class ToDoDetailFragment extends Fragment {
 
         return bind.getRoot();
     }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem menuItem) {
-//        switch (menuItem.getItemId()) {
-//            case R.id.menu_edit_todo:
-//                if (mListener != null) {
-//                    mListener.onToDoEditButtonPressed();
-//                }
-//                return true;
-//            case R.id.menu_delete_todo:
-//                showDeleteAlert();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(menuItem);
-//        }
-//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {

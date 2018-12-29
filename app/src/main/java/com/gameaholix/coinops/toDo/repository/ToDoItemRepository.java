@@ -48,7 +48,7 @@ public class ToDoItemRepository {
             // user is signed in
             String uid = user.getUid();
 
-            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(Fb.getInventoryRef(uid, mItemId));
+            FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(Fb.getToDoRef(uid, mItemId));
 
             // NOTE: Transformations run synchronously on the main thread, if the total time it takes
             // to perform this conversion is over 16 ms, "jank" will occur. A MediatorLiveData can be used

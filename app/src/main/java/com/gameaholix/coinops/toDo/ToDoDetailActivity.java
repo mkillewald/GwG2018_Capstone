@@ -95,10 +95,10 @@ public class ToDoDetailActivity extends BaseActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof ToDoAddEditFragment) {
-            menu.findItem(R.id.menu_edit_todo).setVisible(false);
-        } else {
+        if (currentFragment instanceof ToDoDetailFragment) {
             menu.findItem(R.id.menu_edit_todo).setVisible(true);
+        } else {
+            menu.findItem(R.id.menu_edit_todo).setVisible(false);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -145,10 +145,8 @@ public class ToDoDetailActivity extends BaseActivity implements
     public void onToDoEditButtonPressed() {
         // replace ToDoDetailFragment with ToDoAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newInstance(mItemId));
+        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newEditInstance(mItemId));
         ft.commit();
-
-        invalidateOptionsMenu();
     }
 
     @Override
@@ -192,8 +190,6 @@ public class ToDoDetailActivity extends BaseActivity implements
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mItemId));
         ft.commit();
-
-        invalidateOptionsMenu();
     }
 
 //
