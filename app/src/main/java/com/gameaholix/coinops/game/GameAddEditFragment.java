@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gameaholix.coinops.R;
@@ -125,7 +124,6 @@ public class GameAddEditFragment extends BaseDialogFragment {
         // Inflate the layout for this fragment
         mBind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_game_add, container, false);
-        final View rootView = mBind.getRoot();
 
         mBind.setLifecycleOwner(getActivity());
         mBind.setGame(mGameLiveData);
@@ -142,32 +140,15 @@ public class GameAddEditFragment extends BaseDialogFragment {
             }
         });
 
-        // Name field cannot be blank, add listeners to validate Name input
+        // Setup EditTexts
         mBind.etGameName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    String input = textView.getText().toString().trim();
-                    if (!textInputIsValid(input)) {
-                        textView.setText(mGame.getName());
-                    }
                     hideKeyboard(textView);
                     return true;
                 }
                 return false;
-            }
-        });
-        mBind.etGameName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getId() == R.id.et_game_name && !hasFocus) {
-                    if (view instanceof EditText) {
-                        String input = ((EditText) view).getText().toString().trim();
-                        if (!textInputIsValid(input)) {
-                            ((EditText) view).setText(mGame.getName());
-                        }
-                    }
-                }
             }
         });
 
@@ -337,12 +318,12 @@ public class GameAddEditFragment extends BaseDialogFragment {
         mBind.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mViewModel.clearGameCopyLiveData();
                 if (getShowsDialog()) {
                     getDialog().dismiss();
                 } else {
                     mListener.onGameAddEditCompletedOrCancelled();
                 }
-                mViewModel.clearGameCopyLiveData();
             }
         });
 
@@ -350,11 +331,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
         mBind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String input = mBind.etGameName.getText().toString().trim();
-                if (textInputIsValid(input)) {
-                    mGame.setName(input);
-                }
-
+                mGame.setName(mBind.etGameName.getText().toString().trim());
                 mGame.setType(mBind.spinnerGameType.getSelectedItemPosition());
                 mGame.setCabinet(mBind.spinnerGameCabinet.getSelectedItemPosition());
                 mGame.setWorking(mBind.spinnerGameWorking.getSelectedItemPosition());
@@ -363,10 +340,11 @@ public class GameAddEditFragment extends BaseDialogFragment {
 
                 addUpdateGame();
                 mViewModel.clearGameCopyLiveData();
+                mListener.onGameAddEditCompletedOrCancelled();
             }
         });
 
-        return rootView;
+        return mBind.getRoot();
     }
 
     @Override
