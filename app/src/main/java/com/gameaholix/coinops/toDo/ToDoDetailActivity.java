@@ -191,32 +191,4 @@ public class ToDoDetailActivity extends BaseActivity implements
         ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mItemId));
         ft.commit();
     }
-
-//
-//    private void deleteItemData(ToDoItem toDoItem) {
-//        // delete to do item
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-//        databaseReference
-//                .child(Fb.TODO)
-//                .child(mUser.getUid())
-//                .child(toDoItem.getId())
-//                .removeValue();
-//
-//        // delete game to do list entry
-//        databaseReference
-//                .child(Fb.GAME)
-//                .child(mUser.getUid())
-//                .child(toDoItem.getParentId())
-//                .child(Fb.TODO_LIST)
-//                .child(toDoItem.getId())
-//                .removeValue();
-//
-//        // delete user to do list entry (global list)
-//        databaseReference
-//                .child(Fb.USER)
-//                .child(mUser.getUid())
-//                .child(Fb.TODO_LIST)
-//                .child(toDoItem.getId())
-//                .removeValue();
-//    }
 }

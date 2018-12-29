@@ -86,12 +86,10 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
-        if (getActivity() != null) {
-            // this will cause the Activity's onPrepareOptionsMenu() method to be called
-            getActivity().invalidateOptionsMenu();
-        } else {
-            return;
-        }
+        if (getActivity() == null) { return; }
+
+        // this will cause the Activity's onPrepareOptionsMenu() method to be called
+        getActivity().invalidateOptionsMenu();
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
@@ -122,15 +120,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         // get a duplicate LiveData to make changes to, this way we can maintain state of those
         // changes, and also easily revert any unsaved changes.
         mItemLiveData = mViewModel.getItemCopyLiveData();
-        mItemLiveData.observe(getActivity(), new Observer<ToDoItem>() {
-            @Override
-            public void onChanged(@Nullable ToDoItem toDoItem) {
-                if (toDoItem != null) {
-                    mToDoItem = toDoItem;
-                    mGameId = mToDoItem.getParentId();
-                }
-            }
-        });
     }
 
     @Override
@@ -145,7 +134,24 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
                 inflater, R.layout.fragment_to_do_add, container, false);
 
         mBind.setLifecycleOwner(getActivity());
-//        mBind.setItem(mItemLiveData);
+        mBind.setItem(mItemLiveData);
+
+        if (getActivity() != null) {
+            mItemLiveData.observe(getActivity(), new Observer<ToDoItem>() {
+                @Override
+                public void onChanged(@Nullable ToDoItem toDoItem) {
+                    if (toDoItem != null) {
+                        mToDoItem = toDoItem;
+                        mGameId = mToDoItem.getParentId();
+
+                        // TODO: figure out how to do this with xml
+                        RadioButton priorityButton =
+                                (RadioButton) mBind.rgPriority.getChildAt(toDoItem.getPriority());
+                        priorityButton.setChecked(true);
+                    }
+                }
+            });
+        }
 
         // Setup EditTexts
         mBind.etTodoName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -170,11 +176,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         });
 
         // Setup RadioGroup
-        if (mEdit) {
-            RadioButton priorityButton =
-                    (RadioButton) mBind.rgPriority.getChildAt(mToDoItem.getPriority());
-            priorityButton.setChecked(true);
-        }
         mBind.rgPriority.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
@@ -198,8 +199,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
 
         if (mEdit) {
             mBind.btnSave.setText(R.string.save_changes);
-        } else {
-            mBind.btnSave.setText(R.string.add_item);
         }
         mBind.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,8 +206,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
                 mToDoItem.setName(mBind.etTodoName.getText().toString().trim());
                 mToDoItem.setDescription(mBind.etTodoDescription.getText().toString().trim());
                 addUpdateItem();
-                mViewModel.clearItemCopyLiveData();
-                mListener.onToDoAddEditCompletedOrCancelled();
             }
         });
 
@@ -276,88 +273,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
             Log.d(TAG, "The add or edit operation has failed!");
         }
     }
-
-//
-//        if (getShowsDialog()) getDialog().dismiss();
-//
-//        // Add new item or update existing item to firebase
-//        if (mUser != null) {
-//            // user is signed in
-//
-//            String uid = mUser.getUid();
-//            DatabaseReference toDoRootRef = mDatabaseReference.child(Fb.TODO).child(uid);
-//
-//            String toDoId;
-//            if (mEdit) {
-//                toDoId = mToDoItem.getId();
-//            } else {
-//                toDoId = toDoRootRef.push().getKey();
-//            }
-//
-//            if (TextUtils.isEmpty(toDoId)) {
-//                PromptUser.displayAlert(mContext,
-//                        R.string.error_update_database_failed,
-//                        R.string.error_item_id_empty);
-//                Log.e(TAG, "Failed to add or update database! ToDo ID cannot be an empty string.");
-//                return;
-//            }
-//
-//            if (TextUtils.isEmpty(mGameId)) {
-//                PromptUser.displayAlert(mContext,
-//                        R.string.error_update_database_failed,
-//                        R.string.error_game_id_empty);
-//                Log.e(TAG, "Failed to add or update database! Game ID cannot be an empty string.");
-//                return;
-//            }
-//
-//            DatabaseReference toDoRef = toDoRootRef.child(toDoId);
-//            DatabaseReference gameToDoListRef = mDatabaseReference
-//                    .child(Fb.GAME)
-//                    .child(uid)
-//                    .child(mGameId)
-//                    .child(Fb.TODO_LIST)
-//                    .child(toDoId);
-//            DatabaseReference userToDoListRef = mDatabaseReference
-//                    .child(Fb.USER)
-//                    .child(uid)
-//                    .child(Fb.TODO_LIST)
-//                    .child(toDoId);
-//
-//            Map<String, Object> valuesWithPath = new HashMap<>();
-//            if (mEdit) {
-//                // convert mToDoItem instance to Map so it can be iterated
-//                Map<String, Object> currentValues = mToDoItem.getMap();
-//
-//                // create new Map with full database paths as keys using values from the Map created above
-//                for (String key : currentValues.keySet()) {
-//                    valuesWithPath.put(toDoRef.child(key).getPath().toString(), currentValues.get(key));
-//                    if (key.equals(Fb.NAME)) {
-//                        valuesWithPath.put(userToDoListRef.getPath().toString(), currentValues.get(key));
-//                        valuesWithPath.put(gameToDoListRef.getPath().toString(), currentValues.get(key));
-//                    }
-//                }
-//            } else {
-//                // we are adding a new item to the database
-//                valuesWithPath.put(toDoRef.getPath().toString(), mToDoItem);
-//                valuesWithPath.put(gameToDoListRef.getPath().toString(), mToDoItem.getName());
-//                valuesWithPath.put(userToDoListRef.getPath().toString(), mToDoItem.getName());
-//            }
-//
-//            mDatabaseReference.updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
-//                @Override
-//                public void onComplete(@Nullable DatabaseError databaseError,
-//                                       @NonNull DatabaseReference databaseReference) {
-//                    if (databaseError != null) {
-//                        Log.e(TAG, "DatabaseError: " + databaseError.getMessage() +
-//                                " Code: " + databaseError.getCode() +
-//                                " Details: " + databaseError.getDetails());
-//                    }
-//                }
-//            });
-//
-////        } else {
-////            // user is not signed in
-//        }
 
     /**
      * This interface must be implemented by activities that contain this
