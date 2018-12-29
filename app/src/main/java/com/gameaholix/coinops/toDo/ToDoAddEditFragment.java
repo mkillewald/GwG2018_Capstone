@@ -72,9 +72,10 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
      * @param itemId the ID of the existing ToDoItem
      * @return the fragment instance
      */
-    public static ToDoAddEditFragment newEditInstance(String itemId) {
+    public static ToDoAddEditFragment newEditInstance(String itemId, String gameId) {
         Bundle args = new Bundle();
         ToDoAddEditFragment fragment = new ToDoAddEditFragment();
+        args.putString(EXTRA_GAME_ID, gameId);
         args.putString(EXTRA_TODO_ID, itemId);
         args.putBoolean(EXTRA_EDIT_FLAG, true);
         fragment.setArguments(args);
@@ -93,12 +94,13 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                if (getArguments().containsKey(EXTRA_GAME_ID)) {
-                    // we are adding a new ToDoItem
-                    mGameId = getArguments().getString(EXTRA_GAME_ID);
-                } else if (getArguments().containsKey(EXTRA_TODO_ID)) {
+                if (mEdit) {
                     // we are editing an existing ToDoItem
                     mItemId = getArguments().getString(EXTRA_TODO_ID);
+                    mGameId = getArguments().getString(EXTRA_GAME_ID);
+                } else {
+                    // we are adding a new ToDoItem
+                    mGameId = getArguments().getString(EXTRA_GAME_ID);
                 }
                 mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
             }
@@ -111,7 +113,7 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         // If we are editing, this should get the existing view model, and if we are adding, this
         // should create a new view model (mItemId will be null).
         mViewModel = ViewModelProviders
-                .of(getActivity(), new ToDoItemViewModelFactory(mItemId))
+                .of(getActivity(), new ToDoItemViewModelFactory(mItemId, mGameId))
                 .get(ToDoItemViewModel.class);
 
         // if this is a brand new fragment instance, clear ViewModel's LiveData copy
@@ -142,7 +144,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
                 public void onChanged(@Nullable ToDoItem toDoItem) {
                     if (toDoItem != null) {
                         mToDoItem = toDoItem;
-                        mGameId = mToDoItem.getParentId();
 
                         // TODO: figure out how to do this with xml
                         RadioButton priorityButton =

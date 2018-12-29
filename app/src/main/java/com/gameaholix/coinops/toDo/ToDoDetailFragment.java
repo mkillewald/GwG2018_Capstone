@@ -23,8 +23,10 @@ import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModelFactory;
 
 public class ToDoDetailFragment extends Fragment {
     private static final String TAG = ToDoDetailFragment.class.getSimpleName();
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_TODO_ID = "CoinOpsToDoId";
 
+    private String mGameId;
     private String mItemId;
     private LiveData<ToDoItem> mItemLiveData;
     private OnFragmentInteractionListener mListener;
@@ -40,9 +42,10 @@ public class ToDoDetailFragment extends Fragment {
      * @param itemId the ID of the ToDoItem this fragment will display
      * @return the fragment instance
      */
-    public static ToDoDetailFragment newInstance(String itemId) {
+    public static ToDoDetailFragment newInstance(String itemId, String gameId) {
         Bundle args = new Bundle();
         ToDoDetailFragment fragment = new ToDoDetailFragment();
+        args.putString(EXTRA_GAME_ID, gameId);
         args.putString(EXTRA_TODO_ID, itemId);
         fragment.setArguments(args);
         return fragment;
@@ -54,9 +57,11 @@ public class ToDoDetailFragment extends Fragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
+                mGameId = getArguments().getString(EXTRA_GAME_ID);
                 mItemId = getArguments().getString(EXTRA_TODO_ID);
             }
         } else {
+            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
             mItemId = savedInstanceState.getString(EXTRA_TODO_ID);
         }
 
@@ -70,7 +75,7 @@ public class ToDoDetailFragment extends Fragment {
             getActivity().invalidateOptionsMenu();
 
             ToDoItemViewModel viewModel = ViewModelProviders
-                    .of(getActivity(), new ToDoItemViewModelFactory(mItemId))
+                    .of(getActivity(), new ToDoItemViewModelFactory(mItemId, mGameId))
                     .get(ToDoItemViewModel.class);
             mItemLiveData = viewModel.getItemLiveData();
         }
@@ -121,6 +126,7 @@ public class ToDoDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putString(EXTRA_GAME_ID, mGameId);
         outState.putString(EXTRA_TODO_ID, mItemId);
     }
 

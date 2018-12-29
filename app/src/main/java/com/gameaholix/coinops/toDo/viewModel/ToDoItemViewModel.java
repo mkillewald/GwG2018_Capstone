@@ -18,8 +18,8 @@ public class ToDoItemViewModel extends ViewModel {
      *               InventoryItemViewModelFactory. It will be null if we are adding a new
      *               InventoryItem and non-null if we are displaying an existing InventoryItem
      */
-    ToDoItemViewModel(String itemId) {
-        mRepository = new ToDoItemRepository(itemId);
+    ToDoItemViewModel(String itemId, String gameId) {
+        mRepository = new ToDoItemRepository(itemId, gameId);
         mItemLiveData = mRepository.getItemLiveData();
     }
 

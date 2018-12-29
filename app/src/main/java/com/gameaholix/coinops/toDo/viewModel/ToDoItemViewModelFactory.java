@@ -7,15 +7,17 @@ import android.support.annotation.Nullable;
 
 public class ToDoItemViewModelFactory implements ViewModelProvider.Factory {
     private String mItemId;
+    private String mGameId;
 
-    public ToDoItemViewModelFactory(@Nullable String itemId) {
+    public ToDoItemViewModelFactory(@Nullable String itemId, @Nullable String gameId) {
         mItemId = itemId;
+        mGameId = gameId;
     }
 
     @Override
     @NonNull
     @SuppressWarnings("unchecked")
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new ToDoItemViewModel(mItemId);
+        return (T) new ToDoItemViewModel(mItemId, mGameId);
     }
 }

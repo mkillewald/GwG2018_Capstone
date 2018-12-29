@@ -32,13 +32,16 @@ public class ToDoItemRepository {
      * @param itemId the ID of the existing ToDoItem to retrieve. This will be null if
      *               we are adding a new ToDoItem.
      */
-    public ToDoItemRepository(@Nullable String itemId) {
+    public ToDoItemRepository(@Nullable String itemId, @Nullable String gameId) {
         if (TextUtils.isEmpty(itemId)) {
             // we are adding a new ToDoItem
+            mGameId = gameId;
             mItemLiveData = new MutableLiveData<>();
-            ((MutableLiveData<ToDoItem>) mItemLiveData).setValue(new ToDoItem());
+            ((MutableLiveData<ToDoItem>) mItemLiveData).setValue(new ToDoItem(mGameId));
+
         } else {
             // we are editing an existing ToDoItem
+            mGameId = gameId;
             mItemId = itemId;
             mItemLiveData = fetchData();
         }
@@ -74,7 +77,7 @@ public class ToDoItemRepository {
             ToDoItem toDoItem = dataSnapshot.getValue(ToDoItem.class);
             if (toDoItem != null) {
                 toDoItem.setId(mItemId);
-                mGameId = toDoItem.getParentId();
+                if (TextUtils.isEmpty(mGameId)) mGameId = toDoItem.getParentId();
             } else {
                 Log.e(TAG, "Failed to read item details from database, the returned item is null!");
             }
@@ -101,7 +104,11 @@ public class ToDoItemRepository {
             mItemId = Fb.getToDoRootRef(uid).push().getKey();
             mGameId = newItem.getParentId();
 
-            if (TextUtils.isEmpty(mItemId) || TextUtils.isEmpty(mGameId)) return false;
+            if (TextUtils.isEmpty(mItemId) || TextUtils.isEmpty(mGameId)) {
+                Log.d(TAG, "mItemId: " + mItemId);
+                Log.d(TAG, "mGameId: " + mGameId);
+                return false;
+            }
 
             DatabaseReference toDoRef = Fb.getToDoRef(uid, mItemId);
             DatabaseReference gameToDoListRef = Fb.getGameToDoListRef(uid, mGameId);

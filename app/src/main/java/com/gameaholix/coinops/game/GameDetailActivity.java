@@ -234,8 +234,9 @@ public class GameDetailActivity extends BaseActivity implements
     @Override
     public void onToDoItemSelected(ListRow item) {
         Intent intent = new Intent(this, ToDoDetailActivity.class);
-        intent.putExtra(EXTRA_TODO_ID, item.getId());
         intent.putExtra(EXTRA_GAME_NAME, mGameName);
+        intent.putExtra(EXTRA_TODO_ID, item.getId());
+        intent.putExtra(EXTRA_GAME_ID, mGameId);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);

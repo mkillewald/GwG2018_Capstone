@@ -31,9 +31,11 @@ public class ToDoDetailActivity extends BaseActivity implements
         ToDoAddEditFragment.OnFragmentInteractionListener {
     private static final String TAG = ToDoDetailActivity.class.getSimpleName();
     private static final String EXTRA_GAME_NAME = "CoinOpsGameName";
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String EXTRA_TODO_ID = "CoinOpsToDoId";
 
     private String mGameName;
+    private String mGameId;
     private String mItemId;
 
     @Override
@@ -66,15 +68,17 @@ public class ToDoDetailActivity extends BaseActivity implements
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             mGameName = intent.getStringExtra(EXTRA_GAME_NAME);
+            mGameId = intent.getStringExtra(EXTRA_GAME_ID);
             mItemId = intent.getStringExtra(EXTRA_TODO_ID);
 
-            ToDoDetailFragment fragment = ToDoDetailFragment.newInstance(mItemId);
+            ToDoDetailFragment fragment = ToDoDetailFragment.newInstance(mItemId, mGameId);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
 
         } else {
             mGameName = savedInstanceState.getString(EXTRA_GAME_NAME);
+            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
             mItemId = savedInstanceState.getString(EXTRA_TODO_ID);
         }
 
@@ -121,8 +125,9 @@ public class ToDoDetailActivity extends BaseActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString(EXTRA_TODO_ID, mItemId);
         outState.putString(EXTRA_GAME_NAME, mGameName);
+        outState.putString(EXTRA_GAME_ID, mGameId);
+        outState.putString(EXTRA_TODO_ID, mItemId);
     }
 
     @Override
@@ -145,7 +150,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     public void onToDoEditButtonPressed() {
         // replace ToDoDetailFragment with ToDoAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newEditInstance(mItemId));
+        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newEditInstance(mItemId, mGameId));
         ft.commit();
     }
 
@@ -178,7 +183,7 @@ public class ToDoDetailActivity extends BaseActivity implements
 
     private void deleteItemData() {
         ViewModelProviders
-                .of(this, new ToDoItemViewModelFactory(mItemId))
+                .of(this, new ToDoItemViewModelFactory(mItemId, mGameId))
                 .get(ToDoItemViewModel.class)
                 .delete();
         finish();
@@ -188,7 +193,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     public void onToDoAddEditCompletedOrCancelled() {
         // replace ToDoAddEditFragment with ToDoDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mItemId));
+        ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mItemId, mGameId));
         ft.commit();
     }
 }
