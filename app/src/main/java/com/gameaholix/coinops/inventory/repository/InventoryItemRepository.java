@@ -111,7 +111,7 @@ public class InventoryItemRepository {
             valuesWithPath.put(userInventoryListRef.child(mItemId).getPath().toString(),
                     newItem.getName());
 
-            // perform atomic update to firebase using Map with database paths as keys
+            // perform atomic update to Firebase using Map with database paths as keys
             Fb.getDatabaseReference().updateChildren(valuesWithPath, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
@@ -141,6 +141,8 @@ public class InventoryItemRepository {
         if (user != null) {
             // user signed in
             String uid = user.getUid();
+
+            if (TextUtils.isEmpty(mItemId)) return false;
 
             DatabaseReference inventoryRef = Fb.getInventoryRef(uid, mItemId);
             DatabaseReference inventoryListRef = Fb.getInventoryListRef(uid);
@@ -188,6 +190,8 @@ public class InventoryItemRepository {
         if (user != null) {
             // user signed in
             String uid = user.getUid();
+
+            if (TextUtils.isEmpty(mItemId)) return false;
 
             // delete inventory item
             Fb.getInventoryRef(uid, mItemId).removeValue();
