@@ -8,9 +8,15 @@ import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.inventory.repository.InventoryItemRepository;
 
 public class InventoryItemViewModel extends ViewModel {
+    private String mItemId;
     private LiveData<InventoryItem> mItemLiveData;
     private MutableLiveData<InventoryItem> mItemCopyLiveData;
     private InventoryItemRepository mRepository;
+
+    public InventoryItemViewModel() {
+        mRepository = new InventoryItemRepository(null);
+        mItemLiveData = mRepository.getItemLiveData();
+    }
 
     /**
      * Constructor used to create an InventoryItemViewModel instance
@@ -19,8 +25,13 @@ public class InventoryItemViewModel extends ViewModel {
      *               InventoryItem and non-null if we are displaying an existing InventoryItem
      */
     InventoryItemViewModel(String itemId) {
+        mItemId = itemId;
         mRepository = new InventoryItemRepository(itemId);
         mItemLiveData = mRepository.getItemLiveData();
+    }
+
+    public String getItemId() {
+        return mItemId;
     }
 
     public LiveData<InventoryItem> getItemLiveData() {
@@ -52,7 +63,7 @@ public class InventoryItemViewModel extends ViewModel {
 
     /**
      * Add the InventoryItem held by this ViewModel instance to the repository
-     * @return a boolean indicating success (true) or failure (false)
+     * @return a boolean indicating success (true) or failure (false
      */
     public boolean add() {
         return mRepository.add(mItemCopyLiveData.getValue());

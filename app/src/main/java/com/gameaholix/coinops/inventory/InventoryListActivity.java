@@ -85,7 +85,7 @@ public class InventoryListActivity extends BaseActivity implements
 
     private void showAddInventoryDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        InventoryAddEditFragment fragment = InventoryAddEditFragment.newAddInstance();
+        InventoryAddEditFragment fragment = InventoryAddEditFragment.newInstance(false);
         fragment.show(fm, "fragment_inventory_add");
     }
 

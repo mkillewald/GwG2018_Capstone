@@ -24,16 +24,13 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryAddBinding;
 import com.gameaholix.coinops.BaseDialogFragment;
 import com.gameaholix.coinops.inventory.viewModel.InventoryItemViewModel;
-import com.gameaholix.coinops.inventory.viewModel.InventoryItemViewModelFactory;
 import com.gameaholix.coinops.model.InventoryItem;
 import com.gameaholix.coinops.utility.PromptUser;
 
 public class InventoryAddEditFragment extends BaseDialogFragment {
     private static final String TAG = InventoryAddEditFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
     private static final String EXTRA_EDIT_FLAG = "CoinOpsInventoryEditFlag";
 
-    private String mItemId;
     private boolean mEdit;
 
     private InventoryItemViewModel mViewModel;
@@ -52,26 +49,13 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
 
     /**
      * Static factory method used to instantiate a fragment to add a new InventoryItem
+     * @param editFlag set true for editing an existing and false if adding a new InventoryItem
      * @return the fragment instance
      */
-    public static InventoryAddEditFragment newAddInstance() {
+    public static InventoryAddEditFragment newInstance(boolean editFlag) {
         Bundle args = new Bundle();
         InventoryAddEditFragment fragment = new InventoryAddEditFragment();
-        args.putBoolean(EXTRA_EDIT_FLAG, false);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    /**
-     * Static factory method used to instantiate a fragment to edit an existing InventoryItem
-     * @param itemId the ID of the existing InventoryItem
-     * @return the fragment instance
-     */
-    public static InventoryAddEditFragment newEditInstance(String itemId) {
-        Bundle args = new Bundle();
-        InventoryAddEditFragment fragment = new InventoryAddEditFragment();
-        args.putString(EXTRA_INVENTORY_ID, itemId);
-        args.putBoolean(EXTRA_EDIT_FLAG, true);
+        args.putBoolean(EXTRA_EDIT_FLAG, editFlag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -86,24 +70,22 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         // this will cause the Activity's onPrepareOptionsMenu() method to be called
         getActivity().invalidateOptionsMenu();
 
+        // If we are editing, this should get the existing view model, and if we are adding, this
+        // should create a new view model (mItemId will be null at creation).
+        mViewModel = ViewModelProviders
+                .of(getActivity())
+                .get(InventoryItemViewModel.class);
+
         if (savedInstanceState == null) {
+            // if this is a brand new fragment instance, clear ViewModel's LiveData copy
+            mViewModel.clearItemCopyLiveData();
+
             if (getArguments() != null) {
-                mItemId = getArguments().getString(EXTRA_INVENTORY_ID);
                 mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
             }
         } else {
-            mItemId = savedInstanceState.getString(EXTRA_INVENTORY_ID);
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
-
-        // If we are editing, this should get the existing view model, and if we are adding, this
-        // should create a new view model (mItemId will be null).
-        mViewModel = ViewModelProviders
-                .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
-                .get(InventoryItemViewModel.class);
-
-        // if this is a brand new fragment instance, clear ViewModel's LiveData copy
-        if (savedInstanceState == null) mViewModel.clearItemCopyLiveData();
 
         // get a duplicate LiveData to make changes to, this way we can maintain state of those
         // changes, and also easily revert any unsaved changes.
@@ -219,7 +201,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         mItem.setName(mBind.etAddInventoryName.getText().toString());
         mItem.setDescription(mBind.etAddInventoryDescription.getText().toString());
 
-        outState.putString(EXTRA_INVENTORY_ID, mItemId);
         outState.putBoolean(EXTRA_EDIT_FLAG, mEdit);
     }
 

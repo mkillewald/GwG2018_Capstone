@@ -31,10 +31,9 @@ public class InventoryDetailActivity extends BaseActivity implements
         InventoryAddEditFragment.OnFragmentInteractionListener {
     private static final String TAG = InventoryDetailActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
-    private static final String EXTRA_INVENTORY_NAME = "CoinOpsInventoryName";
 
     private String mItemId;
-    private String mItemName;
+    private InventoryItemViewModel mViewModel;
     private AdView mAdView;
 
     @Override
@@ -71,18 +70,21 @@ public class InventoryDetailActivity extends BaseActivity implements
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             mItemId = intent.getStringExtra(EXTRA_INVENTORY_ID);
-            mItemName = intent.getStringExtra(EXTRA_INVENTORY_NAME);
 
-            InventoryDetailFragment fragment = InventoryDetailFragment.newInstance(mItemId);
+            InventoryDetailFragment fragment = new InventoryDetailFragment();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
         } else {
             mItemId = savedInstanceState.getString(EXTRA_INVENTORY_ID);
-            mItemName = savedInstanceState.getString(EXTRA_INVENTORY_NAME);
         }
 
         setTitle(R.string.inventory_details_title);
+
+        // Create viewModel with this Activity as the lifecycle owner
+        mViewModel = ViewModelProviders
+                .of(this, new InventoryItemViewModelFactory(mItemId))
+                .get(InventoryItemViewModel.class);
     }
 
     @Override
@@ -100,7 +102,6 @@ public class InventoryDetailActivity extends BaseActivity implements
         } else {
             menu.findItem(R.id.menu_edit_inventory).setVisible(false);
         }
-        Log.d(TAG, currentFragment.toString());
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -123,7 +124,6 @@ public class InventoryDetailActivity extends BaseActivity implements
         super.onSaveInstanceState(outState);
 
         outState.putString(EXTRA_INVENTORY_ID, mItemId);
-        outState.putString(EXTRA_INVENTORY_NAME, mItemName);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class InventoryDetailActivity extends BaseActivity implements
 
         // replace InventoryDetailFragment with InventoryAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, InventoryAddEditFragment.newEditInstance(mItemId));
+        ft.replace(R.id.fragment_container, InventoryAddEditFragment.newInstance(true));
         ft.commit();
     }
 
@@ -185,10 +185,7 @@ public class InventoryDetailActivity extends BaseActivity implements
     }
 
     private void deleteItemData() {
-        ViewModelProviders
-                .of(this, new InventoryItemViewModelFactory(mItemId))
-                .get(InventoryItemViewModel.class)
-                .delete();
+        mViewModel.delete();
         finish();
     }
 
@@ -196,7 +193,7 @@ public class InventoryDetailActivity extends BaseActivity implements
     public void onInventoryAddEditCompletedOrCancelled() {
         // replace InventoryAddEditFragment with InventoryDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance(mItemId));
+        ft.replace(R.id.fragment_container, new InventoryDetailFragment());
         ft.commit();
 
         mAdView.setVisibility(View.VISIBLE);

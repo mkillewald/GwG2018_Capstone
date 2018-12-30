@@ -15,14 +15,11 @@ import android.view.ViewGroup;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentInventoryDetailBinding;
 import com.gameaholix.coinops.inventory.viewModel.InventoryItemViewModel;
-import com.gameaholix.coinops.inventory.viewModel.InventoryItemViewModelFactory;
 import com.gameaholix.coinops.model.InventoryItem;
 
 public class InventoryDetailFragment extends Fragment {
 //    private static final String TAG = InventoryDetailFragment.class.getSimpleName();
-    private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
 
-    private String mItemId;
     private LiveData<InventoryItem> mItemLiveData;
     private OnFragmentInteractionListener mListener;
 
@@ -32,44 +29,23 @@ public class InventoryDetailFragment extends Fragment {
     public InventoryDetailFragment() {
     }
 
-    /**
-     * Static factory method used to instantiate a fragment instance
-     * @param itemId the ID of the InventoryItem this fragment will display
-     * @return the fragment instance
-     */
-    public static InventoryDetailFragment newInstance(String itemId) {
-        Bundle args = new Bundle();
-        InventoryDetailFragment fragment = new InventoryDetailFragment();
-        args.putString(EXTRA_INVENTORY_ID, itemId);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            if (getArguments() != null) {
-                mItemId = getArguments().getString(EXTRA_INVENTORY_ID);
-            }
-        } else {
-            mItemId = savedInstanceState.getString(EXTRA_INVENTORY_ID);
-        }
+        if (getActivity() == null) return;
 
-        if (TextUtils.isEmpty(mItemId)) {
+        // this will cause the Activity's onPrepareOptionsMenu() method to be called
+        getActivity().invalidateOptionsMenu();
+
+        InventoryItemViewModel viewModel = ViewModelProviders
+                .of(getActivity())
+                .get(InventoryItemViewModel.class);
+        String itemId = viewModel.getItemId();
+        mItemLiveData = viewModel.getItemLiveData();
+
+        if (TextUtils.isEmpty(itemId)) {
             mListener.onItemIdInvalid();
-            return;
-        }
-
-        if (getActivity() != null) {
-            // this will cause the Activity's onPrepareOptionsMenu() method to be called
-            getActivity().invalidateOptionsMenu();
-
-            InventoryItemViewModel viewModel = ViewModelProviders
-                    .of(getActivity(), new InventoryItemViewModelFactory(mItemId))
-                    .get(InventoryItemViewModel.class);
-            mItemLiveData = viewModel.getItemLiveData();
         }
     }
 
@@ -110,12 +86,6 @@ public class InventoryDetailFragment extends Fragment {
         });
 
         return bind.getRoot();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(EXTRA_INVENTORY_ID, mItemId);
     }
 
     @Override
