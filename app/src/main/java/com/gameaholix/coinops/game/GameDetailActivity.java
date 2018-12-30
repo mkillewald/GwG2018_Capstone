@@ -1,6 +1,7 @@
 package com.gameaholix.coinops.game;
 
 import android.app.ActivityOptions;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -22,6 +23,7 @@ import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.DisplayImageActivity;
 import com.gameaholix.coinops.databinding.ActivityGameDetailBinding;
+import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.toDo.ToDoDetailActivity;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
@@ -33,6 +35,8 @@ import com.gameaholix.coinops.shopping.ShoppingAddEditFragment;
 import com.gameaholix.coinops.shopping.ShoppingListFragment;
 import com.gameaholix.coinops.toDo.ToDoAddEditFragment;
 import com.gameaholix.coinops.toDo.ToDoListFragment;
+import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModel;
+import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModelFactory;
 import com.gameaholix.coinops.utility.PromptUser;
 import com.google.android.gms.ads.AdRequest;
 
@@ -118,6 +122,11 @@ public class GameDetailActivity extends BaseActivity implements
 
         // Give the TabLayout the ViewPager
         mBind.slidingTabs.setupWithViewPager(mBind.viewpager);
+
+        // Create ViewModels with our custom factory using this Activity as the lifecycle owner
+        ViewModelProviders
+                .of(this, new ToDoItemViewModelFactory(mGameId, null))
+                .get(ToDoItemViewModel.class);
     }
 
     @Override
@@ -281,7 +290,7 @@ public class GameDetailActivity extends BaseActivity implements
 
     private void showAddToDoDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ToDoAddEditFragment fragment = ToDoAddEditFragment.newInstance(mGameId, false);
+        ToDoAddEditFragment fragment = ToDoAddEditFragment.newInstance(false);
         fragment.show(fm, "fragment_add_todo");
     }
 

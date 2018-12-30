@@ -157,7 +157,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     public void onToDoEditButtonPressed() {
         // replace ToDoDetailFragment with ToDoAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newInstance(null, true));
+        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newInstance(true));
         ft.commit();
     }
 

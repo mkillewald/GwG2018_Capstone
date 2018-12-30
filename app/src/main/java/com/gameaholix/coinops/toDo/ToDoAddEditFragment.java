@@ -25,7 +25,6 @@ import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.databinding.FragmentToDoAddBinding;
 import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModel;
-import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModelFactory;
 import com.gameaholix.coinops.utility.PromptUser;
 
 public class ToDoAddEditFragment extends BaseDialogFragment {
@@ -33,7 +32,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
     private static final String EXTRA_EDIT_FLAG = "CoinOpsTodoEditFlag";
     private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
-    private String mGameId;
     private boolean mEdit;
 
     private ToDoItemViewModel mViewModel;
@@ -56,10 +54,9 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
      * @param editFlag set true for editing an existing and false if adding a new ToDoItem
      * @return the fragment instance
      */
-    public static ToDoAddEditFragment newInstance(@Nullable String gameId, boolean editFlag) {
+    public static ToDoAddEditFragment newInstance(boolean editFlag) {
         Bundle args = new Bundle();
         ToDoAddEditFragment fragment = new ToDoAddEditFragment();
-        args.putString(EXTRA_GAME_ID, gameId);
         args.putBoolean(EXTRA_EDIT_FLAG, editFlag);
         fragment.setArguments(args);
         return fragment;
@@ -77,18 +74,16 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                mGameId = getArguments().getString(EXTRA_GAME_ID);
                 mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
             }
         } else {
-            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
 
-        // If we are editing, this should get the existing view model, and if we are adding, this
-        // should create a new view model.
+        // This should get the existing view model that was created in the parent activity using any
+        // needed custom factory method
         mViewModel = ViewModelProviders
-                .of(getActivity(), new ToDoItemViewModelFactory(mGameId, null))
+                .of(getActivity())
                 .get(ToDoItemViewModel.class);
 
         // if this is a brand new fragment instance, clear ViewModel's LiveData copy
@@ -199,7 +194,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         mToDoItem.setName(mBind.etTodoName.getText().toString());
         mToDoItem.setDescription(mBind.etTodoDescription.getText().toString());
 
-        outState.putString(EXTRA_GAME_ID, mGameId);
         outState.putBoolean(EXTRA_EDIT_FLAG, mEdit);
     }
 
