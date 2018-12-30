@@ -13,16 +13,17 @@ public class InventoryItemViewModel extends ViewModel {
     private MutableLiveData<InventoryItem> mItemCopyLiveData;
     private InventoryItemRepository mRepository;
 
+    /**
+     * Default constructor used by default ViewModel factory
+     */
     public InventoryItemViewModel() {
         mRepository = new InventoryItemRepository(null);
         mItemLiveData = mRepository.getItemLiveData();
     }
 
     /**
-     * Constructor used to create an InventoryItemViewModel instance
-     * @param itemId the ID of the InventoryItem that will be injected by the
-     *               InventoryItemViewModelFactory. It will be null if we are adding a new
-     *               InventoryItem and non-null if we are displaying an existing InventoryItem
+     * Constructor used by InventoryItemViewModelFactory to inject the itemId
+     * @param itemId the ID of the InventoryItem that will be injected
      */
     InventoryItemViewModel(String itemId) {
         mItemId = itemId;
