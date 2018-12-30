@@ -81,7 +81,7 @@ public class InventoryDetailActivity extends BaseActivity implements
 
         setTitle(R.string.inventory_details_title);
 
-        // Create viewModel with this Activity as the lifecycle owner
+        // Create viewModel with our custom factory using this Activity as the lifecycle owner
         mViewModel = ViewModelProviders
                 .of(this, new InventoryItemViewModelFactory(mItemId))
                 .get(InventoryItemViewModel.class);
