@@ -38,6 +38,8 @@ public class ToDoDetailActivity extends BaseActivity implements
     private String mGameId;
     private String mItemId;
 
+    private ToDoItemViewModel mViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +73,7 @@ public class ToDoDetailActivity extends BaseActivity implements
             mGameId = intent.getStringExtra(EXTRA_GAME_ID);
             mItemId = intent.getStringExtra(EXTRA_TODO_ID);
 
-            ToDoDetailFragment fragment = ToDoDetailFragment.newInstance(mItemId, mGameId);
+            ToDoDetailFragment fragment = ToDoDetailFragment.newInstance();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
@@ -87,6 +89,11 @@ public class ToDoDetailActivity extends BaseActivity implements
         } else {
             setTitle(R.string.to_do_details_title);
         }
+
+        // Create ViewModel with our custom factory using this Activity as the lifecycle owner
+        mViewModel = ViewModelProviders
+                .of(this, new ToDoItemViewModelFactory(mGameId, mItemId))
+                .get(ToDoItemViewModel.class);
     }
 
     @Override
@@ -150,7 +157,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     public void onToDoEditButtonPressed() {
         // replace ToDoDetailFragment with ToDoAddEditFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newEditInstance(mItemId, mGameId));
+        ft.replace(R.id.fragment_container, ToDoAddEditFragment.newInstance(null, true));
         ft.commit();
     }
 
@@ -182,10 +189,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     }
 
     private void deleteItemData() {
-        ViewModelProviders
-                .of(this, new ToDoItemViewModelFactory(mItemId, mGameId))
-                .get(ToDoItemViewModel.class)
-                .delete();
+        mViewModel.delete();
         finish();
     }
 
@@ -193,7 +197,7 @@ public class ToDoDetailActivity extends BaseActivity implements
     public void onToDoAddEditCompletedOrCancelled() {
         // replace ToDoAddEditFragment with ToDoDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance(mItemId, mGameId));
+        ft.replace(R.id.fragment_container, ToDoDetailFragment.newInstance());
         ft.commit();
     }
 }

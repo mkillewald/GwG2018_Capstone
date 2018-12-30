@@ -8,19 +8,30 @@ import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.toDo.repository.ToDoItemRepository;
 
 public class ToDoItemViewModel extends ViewModel {
+    private String mGameId;
+    private String mItemId;
     private LiveData<ToDoItem> mItemLiveData;
     private MutableLiveData<ToDoItem> mItemCopyLiveData;
     private ToDoItemRepository mRepository;
 
     /**
-     * Constructor used to create an InventoryItemViewModel instance
-     * @param itemId the ID of the InventoryItem that will be injected by the
-     *               InventoryItemViewModelFactory. It will be null if we are adding a new
-     *               InventoryItem and non-null if we are displaying an existing InventoryItem
+     * Constructor used by ToDoItemViewModelFactory to inject itemId and gameId
+     * @param itemId the ID of the ToDoItem to inject
+     * @param gameId the ID of the Game to inject
      */
-    ToDoItemViewModel(String itemId, String gameId) {
-        mRepository = new ToDoItemRepository(itemId, gameId);
+    ToDoItemViewModel(String gameId, String itemId) {
+        mGameId = gameId;
+        mItemId = itemId;
+        mRepository = new ToDoItemRepository(gameId, itemId);
         mItemLiveData = mRepository.getItemLiveData();
+    }
+
+    public String getGameId() {
+        return mGameId;
+    }
+
+    public String getItemId() {
+        return mItemId;
     }
 
     public LiveData<ToDoItem> getItemLiveData() {

@@ -19,7 +19,6 @@ import com.google.android.gms.ads.AdView;
 public class InventoryListActivity extends BaseActivity implements
         InventoryListFragment.OnFragmentInteractionListener,
         InventoryAddEditFragment.OnFragmentInteractionListener {
-
 //    private static final String TAG = InventoryListActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
 

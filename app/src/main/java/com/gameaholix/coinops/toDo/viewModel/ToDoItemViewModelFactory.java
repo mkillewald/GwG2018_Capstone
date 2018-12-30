@@ -9,7 +9,7 @@ public class ToDoItemViewModelFactory implements ViewModelProvider.Factory {
     private String mItemId;
     private String mGameId;
 
-    public ToDoItemViewModelFactory(@Nullable String itemId, @Nullable String gameId) {
+    public ToDoItemViewModelFactory(@Nullable String gameId, @Nullable String itemId) {
         mItemId = itemId;
         mGameId = gameId;
     }
@@ -18,6 +18,6 @@ public class ToDoItemViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @SuppressWarnings("unchecked")
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new ToDoItemViewModel(mItemId, mGameId);
+        return (T) new ToDoItemViewModel(mGameId, mItemId);
     }
 }

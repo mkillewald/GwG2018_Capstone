@@ -41,10 +41,19 @@ public class ToDoListFragment extends Fragment implements ListRowAdapter.ListAda
     public ToDoListFragment() {
     }
 
+    /**
+     * Static factory method used by ToDoListActivity
+     * @return the fragment instance
+     */
     public static ToDoListFragment newInstance() {
         return new ToDoListFragment();
     }
 
+    /**
+     * Static factory method used by GameDetailActivity
+     * @param gameId the ID of the parent Game entity
+     * @return the fragment instance
+     */
     public static ToDoListFragment newInstance(String gameId) {
         Bundle args = new Bundle();
         ToDoListFragment fragment = new ToDoListFragment();
@@ -59,8 +68,10 @@ public class ToDoListFragment extends Fragment implements ListRowAdapter.ListAda
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
+                // we are displaying a game specific list
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
             } else {
+                // we are displaying a global list
                 mGameId = null;
             }
         } else {

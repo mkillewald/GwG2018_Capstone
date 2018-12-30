@@ -29,16 +29,16 @@ public class ToDoItemRepository {
 
     /**
      * Constructor used for adding a new or retrieving an existing ToDoItem
+     * @param gameId the ID of the parent Game entity
      * @param itemId the ID of the existing ToDoItem to retrieve. This will be null if
      *               we are adding a new ToDoItem.
      */
-    public ToDoItemRepository(@Nullable String itemId, @Nullable String gameId) {
+    public ToDoItemRepository(@Nullable String gameId, @Nullable String itemId) {
         if (TextUtils.isEmpty(itemId)) {
             // we are adding a new ToDoItem
             mGameId = gameId;
             mItemLiveData = new MutableLiveData<>();
-            ((MutableLiveData<ToDoItem>) mItemLiveData).setValue(new ToDoItem(mGameId));
-
+            ((MutableLiveData<ToDoItem>) mItemLiveData).setValue(new ToDoItem(gameId));
         } else {
             // we are editing an existing ToDoItem
             mGameId = gameId;

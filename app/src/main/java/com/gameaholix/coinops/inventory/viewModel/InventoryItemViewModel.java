@@ -14,7 +14,7 @@ public class InventoryItemViewModel extends ViewModel {
     private InventoryItemRepository mRepository;
 
     /**
-     * Default constructor used by default ViewModel factory
+     * Default constructor used by default ViewModel factory when adding a new InventoryItem
      */
     public InventoryItemViewModel() {
         mRepository = new InventoryItemRepository(null);
@@ -23,7 +23,7 @@ public class InventoryItemViewModel extends ViewModel {
 
     /**
      * Constructor used by InventoryItemViewModelFactory to inject the itemId
-     * @param itemId the ID of the InventoryItem that will be injected
+     * @param itemId the ID of the InventoryItem to inject
      */
     InventoryItemViewModel(String itemId) {
         mItemId = itemId;

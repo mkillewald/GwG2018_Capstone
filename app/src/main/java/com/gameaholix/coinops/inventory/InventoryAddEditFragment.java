@@ -48,7 +48,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     }
 
     /**
-     * Static factory method used to instantiate a fragment to add a new InventoryItem
+     * Static factory method used to instantiate a fragment to add or update an InventoryItem
      * @param editFlag set true for editing an existing and false if adding a new InventoryItem
      * @return the fragment instance
      */
@@ -71,7 +71,7 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         getActivity().invalidateOptionsMenu();
 
         // If we are editing, this should get the existing view model, and if we are adding, this
-        // should create a new view model (mItemId will be null at creation).
+        // should create a new view model.
         mViewModel = ViewModelProviders
                 .of(getActivity())
                 .get(InventoryItemViewModel.class);

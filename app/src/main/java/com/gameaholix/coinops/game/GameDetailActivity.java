@@ -281,7 +281,7 @@ public class GameDetailActivity extends BaseActivity implements
 
     private void showAddToDoDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ToDoAddEditFragment fragment = ToDoAddEditFragment.newAddInstance(mGameId);
+        ToDoAddEditFragment fragment = ToDoAddEditFragment.newInstance(mGameId, false);
         fragment.show(fm, "fragment_add_todo");
     }
 

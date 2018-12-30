@@ -30,12 +30,10 @@ import com.gameaholix.coinops.utility.PromptUser;
 
 public class ToDoAddEditFragment extends BaseDialogFragment {
     private static final String TAG = ToDoAddEditFragment.class.getSimpleName();
-    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-    private static final String EXTRA_TODO_ID = "CoinOpsToDoId";
     private static final String EXTRA_EDIT_FLAG = "CoinOpsTodoEditFlag";
+    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
     private String mGameId;
-    private String mItemId;
     private boolean mEdit;
 
     private ToDoItemViewModel mViewModel;
@@ -54,30 +52,15 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
     }
 
     /**
-     * Static factory method used to instantiate a fragment to add a new ToDoItem
-     * @param gameId the ID of the parent Game that owns this ToDoItem
+     * Static factory method used to instantiate a fragment to add or update a ToDoItem
+     * @param editFlag set true for editing an existing and false if adding a new ToDoItem
      * @return the fragment instance
      */
-    public static ToDoAddEditFragment newAddInstance(String gameId) {
+    public static ToDoAddEditFragment newInstance(@Nullable String gameId, boolean editFlag) {
         Bundle args = new Bundle();
         ToDoAddEditFragment fragment = new ToDoAddEditFragment();
         args.putString(EXTRA_GAME_ID, gameId);
-        args.putBoolean(EXTRA_EDIT_FLAG, false);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    /**
-     * Static factory method used to instantiate a fragement to edit an existing ToDoItem
-     * @param itemId the ID of the existing ToDoItem
-     * @return the fragment instance
-     */
-    public static ToDoAddEditFragment newEditInstance(String itemId, String gameId) {
-        Bundle args = new Bundle();
-        ToDoAddEditFragment fragment = new ToDoAddEditFragment();
-        args.putString(EXTRA_GAME_ID, gameId);
-        args.putString(EXTRA_TODO_ID, itemId);
-        args.putBoolean(EXTRA_EDIT_FLAG, true);
+        args.putBoolean(EXTRA_EDIT_FLAG, editFlag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -94,26 +77,18 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
-                if (mEdit) {
-                    // we are editing an existing ToDoItem
-                    mItemId = getArguments().getString(EXTRA_TODO_ID);
-                    mGameId = getArguments().getString(EXTRA_GAME_ID);
-                } else {
-                    // we are adding a new ToDoItem
-                    mGameId = getArguments().getString(EXTRA_GAME_ID);
-                }
+                mGameId = getArguments().getString(EXTRA_GAME_ID);
                 mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
             }
         } else {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-            mItemId = savedInstanceState.getString(EXTRA_TODO_ID);
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
 
         // If we are editing, this should get the existing view model, and if we are adding, this
-        // should create a new view model (mItemId will be null).
+        // should create a new view model.
         mViewModel = ViewModelProviders
-                .of(getActivity(), new ToDoItemViewModelFactory(mItemId, mGameId))
+                .of(getActivity(), new ToDoItemViewModelFactory(mGameId, null))
                 .get(ToDoItemViewModel.class);
 
         // if this is a brand new fragment instance, clear ViewModel's LiveData copy
@@ -122,6 +97,7 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         // get a duplicate LiveData to make changes to, this way we can maintain state of those
         // changes, and also easily revert any unsaved changes.
         mItemLiveData = mViewModel.getItemCopyLiveData();
+
     }
 
     @Override
@@ -224,7 +200,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         mToDoItem.setDescription(mBind.etTodoDescription.getText().toString());
 
         outState.putString(EXTRA_GAME_ID, mGameId);
-        outState.putString(EXTRA_TODO_ID, mItemId);
         outState.putBoolean(EXTRA_EDIT_FLAG, mEdit);
     }
 
