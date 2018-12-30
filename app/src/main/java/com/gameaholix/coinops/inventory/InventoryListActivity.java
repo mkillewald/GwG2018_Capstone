@@ -22,7 +22,6 @@ public class InventoryListActivity extends BaseActivity implements
 
 //    private static final String TAG = InventoryListActivity.class.getSimpleName();
     private static final String EXTRA_INVENTORY_ID = "CoinOpsInventoryId";
-    private static final String EXTRA_INVENTORY_NAME = "CoinOpsInventoryName";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +73,6 @@ public class InventoryListActivity extends BaseActivity implements
     public void onInventoryItemSelected(ListRow row) {
         Intent intent = new Intent(this, InventoryDetailActivity.class);
         intent.putExtra(EXTRA_INVENTORY_ID, row.getId());
-        intent.putExtra(EXTRA_INVENTORY_NAME, row.getName());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
