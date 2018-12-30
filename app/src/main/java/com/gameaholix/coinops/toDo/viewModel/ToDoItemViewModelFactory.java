@@ -6,12 +6,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public class ToDoItemViewModelFactory implements ViewModelProvider.Factory {
-    private String mItemId;
     private String mGameId;
+    private String mItemId;
 
     public ToDoItemViewModelFactory(@Nullable String gameId, @Nullable String itemId) {
-        mItemId = itemId;
         mGameId = gameId;
+        mItemId = itemId;
     }
 
     @Override
