@@ -30,7 +30,6 @@ import com.gameaholix.coinops.utility.PromptUser;
 public class ToDoAddEditFragment extends BaseDialogFragment {
     private static final String TAG = ToDoAddEditFragment.class.getSimpleName();
     private static final String EXTRA_EDIT_FLAG = "CoinOpsTodoEditFlag";
-    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
 
     private boolean mEdit;
 

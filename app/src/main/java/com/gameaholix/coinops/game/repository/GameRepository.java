@@ -201,7 +201,7 @@ public class GameRepository {
             deleteQueryResults(toDoQuery, Fb.getUserToDoListRef(uid));
 
             // delete shopping items
-            Query shopQuery = Fb.getShopRef(uid)
+            Query shopQuery = Fb.getShopRootRef(uid)
                     .orderByChild(Fb.PARENT_ID)
                     .equalTo(mGameId);
             deleteQueryResults(shopQuery, Fb.getUserShopListRef(uid));

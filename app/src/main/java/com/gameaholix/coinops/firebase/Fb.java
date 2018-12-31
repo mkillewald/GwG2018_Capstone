@@ -68,10 +68,15 @@ public class Fb {
                 .child(gameId);
     }
 
-    public static DatabaseReference getShopRef(@NonNull String uid) {
+    public static DatabaseReference getShopRootRef(@NonNull String uid) {
         return sDatabaseReference
                 .child(Fb.SHOP)
                 .child(uid);
+    }
+
+    public static DatabaseReference getShopRef(@NonNull String uid, @NonNull String itemId) {
+        return getShopRootRef(uid)
+                .child(itemId);
     }
 
     public static DatabaseReference getGameShopListRef(@NonNull String uid, @NonNull String gameId) {

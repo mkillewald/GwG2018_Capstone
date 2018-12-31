@@ -42,7 +42,7 @@ public class ToDoListFragment extends Fragment implements ListRowAdapter.ListAda
     }
 
     /**
-     * Static factory method used by ToDoListActivity
+     * Static factory method used by ToDoListActivity (global list)
      * @return the fragment instance
      */
     public static ToDoListFragment newInstance() {
@@ -50,7 +50,7 @@ public class ToDoListFragment extends Fragment implements ListRowAdapter.ListAda
     }
 
     /**
-     * Static factory method used by GameDetailActivity
+     * Static factory method used by GameDetailActivity (game specific list)
      * @param gameId the ID of the parent Game entity
      * @return the fragment instance
      */
@@ -86,7 +86,6 @@ public class ToDoListFragment extends Fragment implements ListRowAdapter.ListAda
         // inflate view for this fragment
         final FragmentListBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_list, container, false);
-        final View rootView = bind.getRoot();
 
 
         mToDoAdapter = new ListRowAdapter(this);
@@ -101,7 +100,7 @@ public class ToDoListFragment extends Fragment implements ListRowAdapter.ListAda
             bind.fab.setClickable(false);
             bind.fab.setAlpha(0.0f);
         } else {
-            // Game specific list
+            // Game specific list, show FAB
             bind.fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -126,7 +125,7 @@ public class ToDoListFragment extends Fragment implements ListRowAdapter.ListAda
             });
         }
 
-        return rootView;
+        return bind.getRoot();
     }
 
     @Override

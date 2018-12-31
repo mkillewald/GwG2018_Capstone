@@ -33,14 +33,25 @@ public class ShoppingListFragment extends Fragment implements
     private ListRowAdapter mShoppingAdapter;
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor
+     */
     public ShoppingListFragment() {
-        // Required empty public constructor
     }
 
+    /**
+     * Static factory method used by ShoppingListActivity (global list)
+     * @return the fragment instance
+     */
     public static ShoppingListFragment newInstance() {
         return new ShoppingListFragment();
     }
 
+    /**
+     * Static factory method used by GameDetailActivity (game specific list)
+     * @param gameId the ID of the parent Game entity
+     * @return the fragment instance
+     */
     public static ShoppingListFragment newInstance(String gameId) {
         Bundle args = new Bundle();
         ShoppingListFragment fragment = new ShoppingListFragment();
@@ -55,8 +66,10 @@ public class ShoppingListFragment extends Fragment implements
 
         if (savedInstanceState == null) {
             if (getArguments() != null) {
+                // we are displaying a game specific list
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
             } else {
+                // we are displaying a global list
                 mGameId = null;
             }
         } else {
@@ -70,7 +83,6 @@ public class ShoppingListFragment extends Fragment implements
         // inflate view for this fragment
         final FragmentListBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_list, container, false);
-        final View rootView = bind.getRoot();
 
         mShoppingAdapter = new ListRowAdapter(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -84,7 +96,7 @@ public class ShoppingListFragment extends Fragment implements
             bind.fab.setClickable(false);
             bind.fab.setAlpha(0.0f);
         } else {
-            // Game specific list, sho Fab
+            // Game specific list, show Fab
             bind.fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -109,7 +121,7 @@ public class ShoppingListFragment extends Fragment implements
             });
         }
 
-        return rootView;
+        return bind.getRoot();
     }
 
     @Override
@@ -148,10 +160,6 @@ public class ShoppingListFragment extends Fragment implements
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
         void onShoppingItemSelected(ListRow row);

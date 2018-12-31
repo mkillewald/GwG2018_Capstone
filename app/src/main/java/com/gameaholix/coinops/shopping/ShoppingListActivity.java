@@ -58,6 +58,7 @@ public class ShoppingListActivity extends BaseActivity implements
                     .add(R.id.fragment_container, fragment)
                     .commit();
         }
+
     }
 
     @Override
@@ -68,7 +69,8 @@ public class ShoppingListActivity extends BaseActivity implements
     @Override
     public void onShoppingItemSelected(ListRow item) {
         FragmentManager fm = getSupportFragmentManager();
-        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(null, item.getId());
+        ShoppingAddEditFragment fragment =
+                ShoppingAddEditFragment.newInstance(null, item.getId(), true);
         fragment.show(fm, "fragment_add_edit_shopping");
     }
 

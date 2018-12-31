@@ -23,7 +23,6 @@ import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.DisplayImageActivity;
 import com.gameaholix.coinops.databinding.ActivityGameDetailBinding;
-import com.gameaholix.coinops.model.ToDoItem;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.toDo.ToDoDetailActivity;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
@@ -273,7 +272,8 @@ public class GameDetailActivity extends BaseActivity implements
     public void onShoppingItemSelected(ListRow item) {
         // show update shopping dialog
         FragmentManager fm = getSupportFragmentManager();
-        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(mGameId, item.getId());
+        ShoppingAddEditFragment fragment =
+                ShoppingAddEditFragment.newInstance(mGameId, item.getId(), true);
         fragment.show(fm, "fragment_add_edit_shopping");
     }
 
@@ -296,7 +296,8 @@ public class GameDetailActivity extends BaseActivity implements
 
     private void showAddShoppingDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ShoppingAddEditFragment fragment = ShoppingAddEditFragment.newInstance(mGameId);
+        ShoppingAddEditFragment fragment =
+                ShoppingAddEditFragment.newInstance(mGameId,null, false);
         fragment.show(fm, "fragment_add_edit_shopping");
     }
 
