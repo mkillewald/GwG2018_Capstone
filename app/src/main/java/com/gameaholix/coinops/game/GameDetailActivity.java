@@ -23,6 +23,8 @@ import com.gameaholix.coinops.BaseActivity;
 import com.gameaholix.coinops.R;
 import com.gameaholix.coinops.DisplayImageActivity;
 import com.gameaholix.coinops.databinding.ActivityGameDetailBinding;
+import com.gameaholix.coinops.game.viewModel.GameViewModel;
+import com.gameaholix.coinops.game.viewModel.GameViewModelFactory;
 import com.gameaholix.coinops.repair.RepairDetailActivity;
 import com.gameaholix.coinops.toDo.ToDoDetailActivity;
 import com.gameaholix.coinops.adapter.GameDetailPagerAdapter;
@@ -100,6 +102,17 @@ public class GameDetailActivity extends BaseActivity implements
             setTitle(mGameName);
         }
 
+        // Instantiate ViewModels with our custom factory methods using this Activity as the
+        // lifecycle owner, so the same ViewModel instances can be retrieved by the necessary
+        // Fragments.
+        ViewModelProviders
+                .of(this, new GameViewModelFactory(mGameId))
+                .get(GameViewModel.class);
+
+        ViewModelProviders
+                .of(this, new ToDoItemViewModelFactory(mGameId, null))
+                .get(ToDoItemViewModel.class);
+
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mBind.viewpager.setAdapter(new GameDetailPagerAdapter(this, getSupportFragmentManager(),
                 mGameId));
@@ -121,11 +134,6 @@ public class GameDetailActivity extends BaseActivity implements
 
         // Give the TabLayout the ViewPager
         mBind.slidingTabs.setupWithViewPager(mBind.viewpager);
-
-        // Create ViewModels with our custom factory using this Activity as the lifecycle owner
-        ViewModelProviders
-                .of(this, new ToDoItemViewModelFactory(mGameId, null))
-                .get(ToDoItemViewModel.class);
     }
 
     @Override
@@ -157,14 +165,15 @@ public class GameDetailActivity extends BaseActivity implements
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (mBind.viewpager.getCurrentItem() == 0) {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
-            if (currentFragment instanceof GameAddEditFragment) {
+            if (currentFragment instanceof GameDetailFragment) {
+                menu.findItem(R.id.menu_edit_game).setVisible(true);
+                // TODO: allow delete game from any tab
+                menu.findItem(R.id.menu_delete_game).setVisible(true);
+                mBind.avBanner.setVisibility(View.VISIBLE);
+            } else {
                 menu.findItem(R.id.menu_edit_game).setVisible(false);
                 menu.findItem(R.id.menu_delete_game).setVisible(false);
                 mBind.avBanner.setVisibility(View.GONE);
-            } else {
-                menu.findItem(R.id.menu_edit_game).setVisible(true);
-                menu.findItem(R.id.menu_delete_game).setVisible(true);
-                mBind.avBanner.setVisibility(View.VISIBLE);
             }
         } else {
             if (mBind.avBanner.getVisibility() == View.GONE) {
@@ -321,7 +330,7 @@ public class GameDetailActivity extends BaseActivity implements
     @Override
     public void onGameAddEditCompletedOrCancelled() {
         // replace GameAddEditFragment with GameDetailFragment
-        Fragment gameDetailFragment = GameDetailFragment.newInstance(mGameId);
+        Fragment gameDetailFragment = GameDetailFragment.newInstance();
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, gameDetailFragment);
         ft.commit();

@@ -8,6 +8,7 @@ import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.game.repository.GameRepository;
 
 public class GameViewModel extends ViewModel {
+    private String mGameId;
     private LiveData<Game> mGameLiveData;
     private MutableLiveData<Game> mGameCopyLiveData;
     private GameRepository mRepository;
@@ -19,8 +20,14 @@ public class GameViewModel extends ViewModel {
      *               Game and non-null if we are displaying an existing Game
      */
     GameViewModel(String gameId) {
+        mGameId = gameId;
         mRepository = new GameRepository(gameId);
         mGameLiveData = mRepository.getGameLiveData();
+        mGameCopyLiveData = new MutableLiveData<>();
+    }
+
+    public String getGameId() {
+        return mGameId;
     }
 
     public LiveData<Game> getGameLiveData() {
@@ -35,9 +42,10 @@ public class GameViewModel extends ViewModel {
      * instance
      */
     public LiveData<Game> getGameCopyLiveData() {
-        if (mGameCopyLiveData == null) {
-            mGameCopyLiveData = new MutableLiveData<>();
-            // TODO: why does this warning occur? InventoryItemViewModel does not have same warning??
+        if (mGameCopyLiveData.getValue() == null) {
+            // TODO: why does this warning occur?
+            // InventoryItemViewModel does not have same warning
+            // ToDoItemViewModel does not have the same warning either.
             Game gameCopy = new Game(getGameLiveData().getValue());
             mGameCopyLiveData.setValue(gameCopy);
         }
@@ -48,7 +56,7 @@ public class GameViewModel extends ViewModel {
      * Clears the duplicate LiveData object by setting it to null.
      */
     public void clearGameCopyLiveData() {
-        mGameCopyLiveData = null;
+        mGameCopyLiveData.setValue(null);
     }
 
     /**

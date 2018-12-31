@@ -41,7 +41,6 @@ public class GameAddEditFragment extends BaseDialogFragment {
     private String mGameId;
     private Game mGame;
     private GameViewModel mViewModel;
-    private LiveData<Game> mGameLiveData;
     private OnFragmentInteractionListener mListener;
     private boolean mEdit;
 
@@ -82,8 +81,6 @@ public class GameAddEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
-        if (getActivity() == null) return;
-
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
@@ -93,25 +90,6 @@ public class GameAddEditFragment extends BaseDialogFragment {
             mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
             mEdit = savedInstanceState.getBoolean(EXTRA_GAME_EDIT_FLAG);
         }
-
-        // If we are editing, this should get the existing view model, and if we are adding, this
-        // should create a new view model (mItemId will be null).
-        mViewModel = ViewModelProviders
-                .of(getActivity(), new GameViewModelFactory(mGameId))
-                .get(GameViewModel.class);
-
-        // if this is a brand new fragment instance, clear ViewModel's LiveData copy
-        if (savedInstanceState == null) mViewModel.clearGameCopyLiveData();
-
-        // get a duplicate LiveData to make changes to, this way we can maintain state of those
-        // changes, and also easily revert any unsaved changes.
-        mGameLiveData = mViewModel.getGameCopyLiveData();
-        mGameLiveData.observe(getActivity(), new Observer<Game>() {
-            @Override
-            public void onChanged(@Nullable Game game) {
-                mGame = game;
-            }
-        });
     }
 
     @Override
@@ -125,10 +103,31 @@ public class GameAddEditFragment extends BaseDialogFragment {
         mBind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_game_add, container, false);
 
-        mBind.setLifecycleOwner(getActivity());
-        mBind.setGame(mGameLiveData);
+        if (getActivity() == null) { return mBind.getRoot(); }
 
-        mGameLiveData.observe(this, new Observer<Game>() {
+        // If we are editing, this should get the existing view model, and if we are adding, this
+        // should create a new view model (mItemId will be null).
+        mViewModel = ViewModelProviders
+                .of(getActivity(), new GameViewModelFactory(mGameId))
+                .get(GameViewModel.class);
+
+        // if this is a brand new fragment instance, clear ViewModel's LiveData copy
+        if (savedInstanceState == null) mViewModel.clearGameCopyLiveData();
+
+        // get a duplicate LiveData to make changes to, this way we can maintain state of those
+        // changes, and also easily revert any unsaved changes.
+        LiveData<Game> gameLiveData = mViewModel.getGameCopyLiveData();
+        gameLiveData.observe(getActivity(), new Observer<Game>() {
+            @Override
+            public void onChanged(@Nullable Game game) {
+                mGame = game;
+            }
+        });
+
+        mBind.setLifecycleOwner(getActivity());
+        mBind.setGame(gameLiveData);
+
+        gameLiveData.observe(this, new Observer<Game>() {
             @Override
             public void onChanged(@Nullable Game game) {
                 if (game != null) {
@@ -277,7 +276,7 @@ public class GameAddEditFragment extends BaseDialogFragment {
         } else {
             dialogBind.setLifecycleOwner(this);
         }
-        dialogBind.setGame(mGameLiveData);
+        dialogBind.setGame(gameLiveData);
 
         // Setup NumberPickers in dialog
         dialogBind.npGameMonitorSize.setMinValue(0);

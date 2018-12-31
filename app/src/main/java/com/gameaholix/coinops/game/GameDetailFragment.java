@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +33,6 @@ import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.utility.GlideApp;
 import com.gameaholix.coinops.game.viewModel.GameViewModel;
-import com.gameaholix.coinops.game.viewModel.GameViewModelFactory;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -56,20 +57,20 @@ import static android.app.Activity.RESULT_OK;
 
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
-    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
     private static final String CAPTURE_IMAGE_FILE_PROVIDER = "com.gameaholix.coinops.fileprovider";
     private static final String THUMB = "thumb_";
     private static final int REQUEST_IMAGE_CAPTURE = 343;
 
     private Context mContext;
-    private String mGameId;
-    private GameViewModel mGameViewModel;
-    private LiveData<Game> mGameLiveData;
+    private GameViewModel mViewModel;
     private StorageReference mImageRootRef;
     private String mCurrentPhotoPath;
     private OnFragmentInteractionListener mListener;
 
+    // used for image operations (uploading, etc.)
+    // TODO: move this to ViewModel
     private Game mGame;
+    private String mGameId;
 
     /**
      * Required empty public constructor
@@ -77,49 +78,18 @@ public class GameDetailFragment extends Fragment {
     public GameDetailFragment() {
     }
 
-    public static GameDetailFragment newInstance(String gameId) {
-        Bundle args = new Bundle();
-        GameDetailFragment fragment = new GameDetailFragment();
-        args.putString(EXTRA_GAME_ID, gameId);
-        fragment.setArguments(args);
-        return fragment;
+    /**
+     * Static factory method used to instantiate a fragment instance
+     * @return the fragment instance
+     */
+    public static GameDetailFragment newInstance() {
+        return new GameDetailFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            if (getArguments() != null) {
-                mGameId = getArguments().getString(EXTRA_GAME_ID);
-            }
-        } else {
-            mGameId = savedInstanceState.getString(EXTRA_GAME_ID);
-        }
         setHasOptionsMenu(true);
-
-        if (TextUtils.isEmpty(mGameId)) {
-            mListener.onGameIdInvalid();
-            return;
-        }
-
-        // Initialize Firebase components
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-
-        if (user != null) {
-            mImageRootRef = storageRef
-                    .child(user.getUid())
-                    .child(mGameId);
-        }
-
-        if (getActivity() != null) {
-            mGameViewModel = ViewModelProviders
-                    .of(getActivity(), new GameViewModelFactory(mGameId))
-                    .get(GameViewModel.class);
-            mGameLiveData = mGameViewModel.getGameLiveData();
-        }
     }
 
     @Override
@@ -129,8 +99,35 @@ public class GameDetailFragment extends Fragment {
         final FragmentGameDetailBinding bind = DataBindingUtil.inflate(inflater, R.layout.fragment_game_detail, container,
                 false);
 
+        if (getActivity() == null) { return bind.getRoot(); }
+
+        // this will cause the Activity's onPrepareOptionsMenu() method to be called
+        getActivity().invalidateOptionsMenu();
+
+        mViewModel = ViewModelProviders
+                .of(getActivity())
+                .get(GameViewModel.class);
+        mGameId = mViewModel.getGameId();
+        LiveData<Game> gameLiveData = mViewModel.getGameLiveData();
+
+        // Initialize Firebase components for image storage
+        // TODO: move this to the ViewModel
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        if (TextUtils.isEmpty(mGameId)) {
+            mListener.onGameIdInvalid();
+        }
+
+        if (user != null) {
+            mImageRootRef = storageRef
+                    .child(user.getUid())
+                    .child(mGameId);
+        }
+
         bind.setLifecycleOwner(getActivity());
-        bind.setGame(mGameLiveData);
+        bind.setGame(gameLiveData);
 
         String noSelection = getString(R.string.not_available);
 
@@ -174,10 +171,11 @@ public class GameDetailFragment extends Fragment {
 
         // read game details
         if (getActivity() != null) {
-            mGameLiveData.observe(getActivity(), new Observer<Game>() {
+            gameLiveData.observe(getActivity(), new Observer<Game>() {
                 @Override
                 public void onChanged(@Nullable Game game) {
                     if (game != null) {
+                        // TODO: figure out how to do this with xml
                         mGame = game;
 
                         if (mListener != null) {
@@ -250,8 +248,6 @@ public class GameDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        outState.putString(EXTRA_GAME_ID, mGameId);
     }
 
 
@@ -463,37 +459,28 @@ public class GameDetailFragment extends Fragment {
     }
 
     private void showDeleteAlert() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            //user is signed in
-
-            android.support.v7.app.AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new android.support.v7.app.AlertDialog.Builder(mContext,
-                        android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new android.support.v7.app.AlertDialog.Builder(mContext);
-            }
-            builder.setTitle(R.string.really_delete_game)
-                    .setMessage(R.string.game_will_be_deleted)
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteAllGameData();
-                            mListener.onDeleteCompleted();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-//        } else {
-//            // user is not signed in
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(mContext,
+                    android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(mContext);
         }
+        builder.setTitle(R.string.really_delete_game)
+                .setMessage(R.string.game_will_be_deleted)
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteAllGameData();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void deleteImagesFromFirebase() {
@@ -519,7 +506,8 @@ public class GameDetailFragment extends Fragment {
 
     private void deleteAllGameData() {
         deleteImagesFromFirebase();
-        mGameViewModel.delete();
+        mViewModel.delete();
+        mListener.onDeleteCompleted();
     }
 
     /**

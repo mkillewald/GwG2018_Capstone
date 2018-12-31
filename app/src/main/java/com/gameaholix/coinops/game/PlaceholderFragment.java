@@ -14,9 +14,6 @@ import com.gameaholix.coinops.R;
 
 public class PlaceholderFragment extends Fragment {
 //    private static final String TAG = PlaceholderFragment.class.getSimpleName();
-    private static final String EXTRA_GAME_ID = "CoinOpsGameId";
-
-    private String mGameId;
 
     /**
      * Required empty public constructor
@@ -24,12 +21,12 @@ public class PlaceholderFragment extends Fragment {
     public PlaceholderFragment() {
     }
 
-    public static PlaceholderFragment newInstance(String gameId) {
-        Bundle args = new Bundle();
-        PlaceholderFragment fragment = new PlaceholderFragment();
-        args.putString(EXTRA_GAME_ID, gameId);
-        fragment.setArguments(args);
-        return fragment;
+    /**
+     * Static factory method used to instantiate a fragment instance
+     * @return the fragment instance
+     */
+    public static PlaceholderFragment newInstance() {
+        return new PlaceholderFragment();
     }
 
 
@@ -40,27 +37,14 @@ public class PlaceholderFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
 
         if (savedInstanceState == null) {
-            if (getArguments() != null) {
-                mGameId = getArguments().getString(EXTRA_GAME_ID);
-            }
-
             // Show GameDetailFragmment when this fragment is first created
             if (getActivity() != null) {
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.add(R.id.fragment_placeholder, GameDetailFragment.newInstance(mGameId));
+                ft.add(R.id.fragment_placeholder, GameDetailFragment.newInstance());
                 ft.commit();
             }
-        } else {
-            mGameId = savedInstanceState.getParcelable(EXTRA_GAME_ID);
         }
 
         return rootView;
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putString(EXTRA_GAME_ID, mGameId);
     }
 }
