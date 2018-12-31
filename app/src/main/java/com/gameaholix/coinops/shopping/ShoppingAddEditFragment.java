@@ -40,7 +40,6 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
     private boolean mEdit;
 
     private ShoppingItemViewModel mViewModel;
-    private LiveData<Item> mItemLiveData;
     private Item mItem;
 
     private Context mContext;
@@ -74,8 +73,6 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
-        if (getActivity() == null) { return; }
-
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mGameId = getArguments().getString(EXTRA_GAME_ID);
@@ -87,20 +84,6 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
             mItemId = savedInstanceState.getString(EXTRA_ITEM_ID);
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
-
-        mViewModel = ViewModelProviders
-                .of(this, new ShoppingItemViewModelFactory(mGameId, mItemId))
-                .get(ShoppingItemViewModel.class);
-
-        mItemLiveData = mViewModel.getItemLiveData();
-        mItemLiveData.observe(getActivity(), new Observer<Item>() {
-            @Override
-            public void onChanged(@Nullable Item item) {
-                if (item != null) {
-                    mItem = item;
-                }
-            }
-        });
     }
 
     @Override
@@ -118,8 +101,22 @@ public class ShoppingAddEditFragment extends BaseDialogFragment {
         mBind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_item_add, container, false);
 
+        mViewModel = ViewModelProviders
+                .of(this, new ShoppingItemViewModelFactory(mGameId, mItemId))
+                .get(ShoppingItemViewModel.class);
+
+        LiveData<Item> itemLiveData = mViewModel.getItemLiveData();
+        itemLiveData.observe(this, new Observer<Item>() {
+            @Override
+            public void onChanged(@Nullable Item item) {
+                if (item != null) {
+                    mItem = item;
+                }
+            }
+        });
+
         mBind.setLifecycleOwner(this);
-        mBind.setItem(mItemLiveData);
+        mBind.setItem(itemLiveData);
 
         // Setup EditText
         mBind.etEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {

@@ -34,7 +34,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
     private boolean mEdit;
 
     private InventoryItemViewModel mViewModel;
-    private LiveData<InventoryItem> mItemLiveData;
     private InventoryItem mItem;
 
     private Context mContext;
@@ -65,17 +64,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
-        if (getActivity() == null) { return; }
-
-        // this will cause the Activity's onPrepareOptionsMenu() method to be called
-        getActivity().invalidateOptionsMenu();
-
-        // If we are editing, this should get the existing view model, and if we are adding, this
-        // should create a new view model.
-        mViewModel = ViewModelProviders
-                .of(getActivity())
-                .get(InventoryItemViewModel.class);
-
         if (savedInstanceState == null) {
             // if this is a brand new fragment instance, clear ViewModel's LiveData copy
             mViewModel.clearItemCopyLiveData();
@@ -86,16 +74,6 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         } else {
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
-
-        // get a duplicate LiveData to make changes to, this way we can maintain state of those
-        // changes, and also easily revert any unsaved changes.
-        mItemLiveData = mViewModel.getItemCopyLiveData();
-        mItemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
-            @Override
-            public void onChanged(@Nullable InventoryItem inventoryItem) {
-                mItem = inventoryItem;
-            }
-        });
     }
 
     @Override
@@ -109,8 +87,29 @@ public class InventoryAddEditFragment extends BaseDialogFragment {
         mBind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_inventory_add, container, false);
 
+        if (getActivity() == null) { return mBind.getRoot(); }
+
+        // this will cause the Activity's onPrepareOptionsMenu() method to be called
+        getActivity().invalidateOptionsMenu();
+
+        // If we are editing, this should get the existing view model, and if we are adding, this
+        // should create a new view model.
+        mViewModel = ViewModelProviders
+                .of(getActivity())
+                .get(InventoryItemViewModel.class);
+
+        // get a duplicate LiveData to make changes to, this way we can maintain state of those
+        // changes, and also easily revert any unsaved changes.
+        LiveData<InventoryItem> itemLiveData = mViewModel.getItemCopyLiveData();
+        itemLiveData.observe(getActivity(), new Observer<InventoryItem>() {
+            @Override
+            public void onChanged(@Nullable InventoryItem inventoryItem) {
+                mItem = inventoryItem;
+            }
+        });
+
         mBind.setLifecycleOwner(getActivity());
-        mBind.setItem(mItemLiveData);
+        mBind.setItem(itemLiveData);
 
         // Setup EditText
         mBind.etAddInventoryName.setOnEditorActionListener(new TextView.OnEditorActionListener() {

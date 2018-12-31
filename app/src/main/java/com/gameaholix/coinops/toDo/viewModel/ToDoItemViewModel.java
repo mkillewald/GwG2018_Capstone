@@ -24,6 +24,7 @@ public class ToDoItemViewModel extends ViewModel {
         mItemId = itemId;
         mRepository = new ToDoItemRepository(gameId, itemId);
         mItemLiveData = mRepository.getItemLiveData();
+        mItemCopyLiveData = new MutableLiveData<>();
     }
 
     public String getGameId() {
@@ -46,8 +47,7 @@ public class ToDoItemViewModel extends ViewModel {
      * instance
      */
     public LiveData<ToDoItem> getItemCopyLiveData() {
-        if (mItemCopyLiveData == null) {
-            mItemCopyLiveData = new MutableLiveData<>();
+        if (mItemCopyLiveData.getValue() == null) {
             ToDoItem itemCopy = new ToDoItem(getItemLiveData().getValue());
             mItemCopyLiveData.setValue(itemCopy);
         }
@@ -55,10 +55,10 @@ public class ToDoItemViewModel extends ViewModel {
     }
 
     /**
-     * Clears the duplicate LiveData object by setting it to null.
+     * Clears the duplicate LiveData object by setting the Item it holds to null.
      */
     public void clearItemCopyLiveData() {
-        mItemCopyLiveData = null;
+        mItemCopyLiveData.setValue(null);
     }
 
     /**

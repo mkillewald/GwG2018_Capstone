@@ -71,7 +71,7 @@ public class InventoryDetailActivity extends BaseActivity implements
             Intent intent = getIntent();
             mItemId = intent.getStringExtra(EXTRA_INVENTORY_ID);
 
-            InventoryDetailFragment fragment = new InventoryDetailFragment();
+            InventoryDetailFragment fragment = InventoryDetailFragment.newInstance();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
@@ -193,7 +193,7 @@ public class InventoryDetailActivity extends BaseActivity implements
     public void onInventoryAddEditCompletedOrCancelled() {
         // replace InventoryAddEditFragment with InventoryDetailFragment
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, new InventoryDetailFragment());
+        ft.replace(R.id.fragment_container, InventoryDetailFragment.newInstance());
         ft.commit();
 
         mAdView.setVisibility(View.VISIBLE);

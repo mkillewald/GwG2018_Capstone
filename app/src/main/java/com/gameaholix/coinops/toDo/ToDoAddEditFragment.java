@@ -34,13 +34,11 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
     private boolean mEdit;
 
     private ToDoItemViewModel mViewModel;
-    private LiveData<ToDoItem> mItemLiveData;
     private ToDoItem mToDoItem;
 
     private Context mContext;
     private FragmentToDoAddBinding mBind;
     private OnFragmentInteractionListener mListener;
-
 
     /**
      * Required empty public constructor
@@ -66,11 +64,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
 
-        if (getActivity() == null) { return; }
-
-        // this will cause the Activity's onPrepareOptionsMenu() method to be called
-        getActivity().invalidateOptionsMenu();
-
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mEdit = getArguments().getBoolean(EXTRA_EDIT_FLAG);
@@ -78,19 +71,6 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         } else {
             mEdit = savedInstanceState.getBoolean(EXTRA_EDIT_FLAG);
         }
-
-        // This should get the existing view model that was created in the parent activity using any
-        // needed custom factory method
-        mViewModel = ViewModelProviders
-                .of(getActivity())
-                .get(ToDoItemViewModel.class);
-
-        // if this is a brand new fragment instance, clear ViewModel's LiveData copy
-        if (savedInstanceState == null) mViewModel.clearItemCopyLiveData();
-
-        // get a duplicate LiveData to make changes to, this way we can maintain state of those
-        // changes, and also easily revert any unsaved changes.
-        mItemLiveData = mViewModel.getItemCopyLiveData();
 
     }
 
@@ -105,11 +85,29 @@ public class ToDoAddEditFragment extends BaseDialogFragment {
         mBind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_to_do_add, container, false);
 
+        if (getActivity() == null) { return mBind.getRoot(); }
+
+        // this will cause the Activity's onPrepareOptionsMenu() method to be called
+        getActivity().invalidateOptionsMenu();
+
+        // This should get the existing view model that was created in the parent activity using any
+        // needed custom factory method
+        mViewModel = ViewModelProviders
+                .of(getActivity())
+                .get(ToDoItemViewModel.class);
+
+        // if this is a brand new fragment instance, clear ViewModel's LiveData copy
+        if (savedInstanceState == null) mViewModel.clearItemCopyLiveData();
+
+        // get a duplicate LiveData to make changes to, this way we can maintain state of those
+        // changes, and also easily revert any unsaved changes.
+        LiveData<ToDoItem> itemLiveData = mViewModel.getItemCopyLiveData();
+
         mBind.setLifecycleOwner(getActivity());
-        mBind.setItem(mItemLiveData);
+        mBind.setItem(itemLiveData);
 
         if (getActivity() != null) {
-            mItemLiveData.observe(getActivity(), new Observer<ToDoItem>() {
+            itemLiveData.observe(getActivity(), new Observer<ToDoItem>() {
                 @Override
                 public void onChanged(@Nullable ToDoItem toDoItem) {
                     if (toDoItem != null) {

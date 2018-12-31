@@ -22,7 +22,7 @@ public class GameDetailPagerAdapter extends FragmentPagerAdapter {
         super(fragmentManager);
         mTabTitles = context.getResources().getStringArray(R.array.game_details_tab_titles);
         mFragments = new Fragment[mTabTitles.length];
-        mFragments[0] = PlaceholderFragment.newInstance(gameId);
+        mFragments[0] = PlaceholderFragment.newInstance();
         mFragments[1] = RepairListFragment.newInstance(gameId);
         mFragments[2] = ToDoListFragment.newInstance(gameId);
         mFragments[3] = ShoppingListFragment.newInstance(gameId);

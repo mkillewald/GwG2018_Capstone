@@ -23,7 +23,6 @@ import com.gameaholix.coinops.toDo.viewModel.ToDoItemViewModel;
 public class ToDoDetailFragment extends Fragment {
     private static final String TAG = ToDoDetailFragment.class.getSimpleName();
 
-    private LiveData<ToDoItem> mItemLiveData;
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -43,21 +42,6 @@ public class ToDoDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getActivity() == null) return;
-
-        // this will cause the Activity's onPrepareOptionsMenu() method to be called
-        getActivity().invalidateOptionsMenu();
-
-        ToDoItemViewModel viewModel = ViewModelProviders
-                .of(getActivity())
-                .get(ToDoItemViewModel.class);
-        String itemId = viewModel.getItemId();
-        mItemLiveData = viewModel.getItemLiveData();
-
-        if (TextUtils.isEmpty(itemId)) {
-            mListener.onItemIdInvalid();
-        }
     }
 
     @Override
@@ -67,11 +51,26 @@ public class ToDoDetailFragment extends Fragment {
         final FragmentToDoDetailBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_to_do_detail, container, false);
 
+        if (getActivity() == null) { return bind.getRoot(); }
+
+        // this will cause the Activity's onPrepareOptionsMenu() method to be called
+        getActivity().invalidateOptionsMenu();
+
+        ToDoItemViewModel viewModel = ViewModelProviders
+                .of(getActivity())
+                .get(ToDoItemViewModel.class);
+        String itemId = viewModel.getItemId();
+        LiveData<ToDoItem> itemLiveData = viewModel.getItemLiveData();
+
+        if (TextUtils.isEmpty(itemId)) {
+            mListener.onItemIdInvalid();
+        }
+
         bind.setLifecycleOwner(getActivity());
-        bind.setItem(mItemLiveData);
+        bind.setItem(itemLiveData);
 
         if (getActivity() != null) {
-            mItemLiveData.observe(getActivity(), new Observer<ToDoItem>() {
+            itemLiveData.observe(getActivity(), new Observer<ToDoItem>() {
                 @Override
                 public void onChanged(@Nullable ToDoItem toDoItem) {
                     if (toDoItem != null) {

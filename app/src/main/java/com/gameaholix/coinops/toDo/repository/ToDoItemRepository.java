@@ -57,7 +57,6 @@ public class ToDoItemRepository {
         if (user != null) {
             // user is signed in
             String uid = user.getUid();
-
             FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(Fb.getToDoRef(uid, mItemId));
 
             // NOTE: Transformations run synchronously on the main thread, if the total time it takes
@@ -85,6 +84,7 @@ public class ToDoItemRepository {
         }
     }
 
+    @NonNull
     public LiveData<ToDoItem> getItemLiveData() {
         return mItemLiveData;
     }

@@ -19,6 +19,7 @@ public class InventoryItemViewModel extends ViewModel {
     public InventoryItemViewModel() {
         mRepository = new InventoryItemRepository(null);
         mItemLiveData = mRepository.getItemLiveData();
+        mItemCopyLiveData = new MutableLiveData<>();
     }
 
     /**
@@ -29,6 +30,7 @@ public class InventoryItemViewModel extends ViewModel {
         mItemId = itemId;
         mRepository = new InventoryItemRepository(itemId);
         mItemLiveData = mRepository.getItemLiveData();
+        mItemCopyLiveData = new MutableLiveData<>();
     }
 
     public String getItemId() {
@@ -47,8 +49,7 @@ public class InventoryItemViewModel extends ViewModel {
      * instance
      */
     public LiveData<InventoryItem> getItemCopyLiveData() {
-        if (mItemCopyLiveData == null) {
-            mItemCopyLiveData = new MutableLiveData<>();
+        if (mItemCopyLiveData.getValue() == null) {
             InventoryItem itemCopy = new InventoryItem(getItemLiveData().getValue());
             mItemCopyLiveData.setValue(itemCopy);
         }
@@ -56,10 +57,10 @@ public class InventoryItemViewModel extends ViewModel {
     }
 
     /**
-     * Clears the duplicate LiveData object by setting it to null.
+     * Clears the duplicate LiveData object by setting the InventoryItem it holds to null.
      */
     public void clearItemCopyLiveData() {
-        mItemCopyLiveData = null;
+        mItemCopyLiveData.setValue(null);
     }
 
     /**

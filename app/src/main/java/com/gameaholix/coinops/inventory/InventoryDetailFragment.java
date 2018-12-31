@@ -20,7 +20,6 @@ import com.gameaholix.coinops.model.InventoryItem;
 public class InventoryDetailFragment extends Fragment {
 //    private static final String TAG = InventoryDetailFragment.class.getSimpleName();
 
-    private LiveData<InventoryItem> mItemLiveData;
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -29,24 +28,17 @@ public class InventoryDetailFragment extends Fragment {
     public InventoryDetailFragment() {
     }
 
+    /**
+     * Static factory method used to instantiate a fragment instance
+     * @return the fragment instance
+     */
+    public static InventoryDetailFragment newInstance() {
+        return new InventoryDetailFragment();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getActivity() == null) return;
-
-        // this will cause the Activity's onPrepareOptionsMenu() method to be called
-        getActivity().invalidateOptionsMenu();
-
-        InventoryItemViewModel viewModel = ViewModelProviders
-                .of(getActivity())
-                .get(InventoryItemViewModel.class);
-        String itemId = viewModel.getItemId();
-        mItemLiveData = viewModel.getItemLiveData();
-
-        if (TextUtils.isEmpty(itemId)) {
-            mListener.onItemIdInvalid();
-        }
     }
 
     @Override
@@ -56,8 +48,23 @@ public class InventoryDetailFragment extends Fragment {
         final FragmentInventoryDetailBinding bind = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_inventory_detail, container, false);
 
+        if (getActivity() == null) { return bind.getRoot(); }
+
+        // this will cause the Activity's onPrepareOptionsMenu() method to be called
+        getActivity().invalidateOptionsMenu();
+
+        InventoryItemViewModel viewModel = ViewModelProviders
+                .of(getActivity())
+                .get(InventoryItemViewModel.class);
+        String itemId = viewModel.getItemId();
+        LiveData<InventoryItem> itemLiveData = viewModel.getItemLiveData();
+
+        if (TextUtils.isEmpty(itemId)) {
+            mListener.onItemIdInvalid();
+        }
+
         bind.setLifecycleOwner(getActivity());
-        bind.setItem(mItemLiveData);
+        bind.setItem(itemLiveData);
 
         String noSelection = getString(R.string.not_available);
 
