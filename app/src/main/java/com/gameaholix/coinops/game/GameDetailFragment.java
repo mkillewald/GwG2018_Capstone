@@ -126,6 +126,33 @@ public class GameDetailFragment extends Fragment {
                     .child(mGameId);
         }
 
+        // read game details
+        gameLiveData.observe(getActivity(), new Observer<Game>() {
+            @Override
+            public void onChanged(@Nullable Game game) {
+                if (game != null) {
+                    // TODO: figure out how to do this with xml
+                    mGame = game;
+
+                    if (mListener != null) {
+                        mListener.onGameNameChanged(game.getName());
+                    }
+
+                    // Get thumbnail from firebase
+                    StorageReference thumbRef = null;
+
+                    if (!TextUtils.isEmpty(game.getImage())) {
+                        thumbRef = mImageRootRef.child(THUMB + game.getImage());
+                    }
+
+                    GlideApp.with(mContext)
+                            .load(thumbRef)
+                            .placeholder(R.drawable.ic_classic_arcade_machine)
+                            .into(bind.ivPhoto);
+                }
+            }
+        });
+
         bind.setLifecycleOwner(getActivity());
         bind.setGame(gameLiveData);
 
@@ -169,42 +196,13 @@ public class GameDetailFragment extends Fragment {
                 getResources().getStringArray(R.array.game_monitor_size);
         bind.setMonitorSizeArray( monitorSizeArray);
 
-        // read game details
-        if (getActivity() != null) {
-            gameLiveData.observe(getActivity(), new Observer<Game>() {
-                @Override
-                public void onChanged(@Nullable Game game) {
-                    if (game != null) {
-                        // TODO: figure out how to do this with xml
-                        mGame = game;
-
-                        if (mListener != null) {
-                            mListener.onGameNameChanged(game.getName());
-                        }
-
-                        // Get thumbnail from firebase
-                        StorageReference thumbRef = null;
-
-                        if (!TextUtils.isEmpty(game.getImage())) {
-                            thumbRef = mImageRootRef.child(THUMB + game.getImage());
-                        }
-
-                        GlideApp.with(mContext)
-                                .load(thumbRef)
-                                .placeholder(R.drawable.ic_classic_arcade_machine)
-                                .into(bind.ivPhoto);
-                    }
-                }
-            });
-        }
-
         // Setup ImageView click listener
         bind.ivPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(mGame.getImage())) {
                     String imagePath = mImageRootRef.child(mGame.getImage()).getPath();
-                    mListener.onImageClicked(imagePath);
+                    mListener.onGameImageClicked(imagePath);
                 }
             }
         });
@@ -231,7 +229,7 @@ public class GameDetailFragment extends Fragment {
         bind.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onEditButtonPressed();
+                mListener.onGameEditButtonPressed();
             }
         });
 
@@ -273,7 +271,7 @@ public class GameDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_game:
-                mListener.onEditButtonPressed();
+                mListener.onGameEditButtonPressed();
                 return true;
             case R.id.menu_delete_game:
                 showDeleteAlert();
@@ -507,7 +505,7 @@ public class GameDetailFragment extends Fragment {
     private void deleteAllGameData() {
         deleteImagesFromFirebase();
         mViewModel.delete();
-        mListener.onDeleteCompleted();
+        mListener.onGameDeleteCompleted();
     }
 
     /**
@@ -519,10 +517,10 @@ public class GameDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onGameIdInvalid();
         void onGameNameChanged(String name);
-        void onEditButtonPressed();
-        void onDeleteCompleted();
+        void onGameEditButtonPressed();
+        void onGameDeleteCompleted();
+        void onGameImageClicked(String imagePath);
         void onShowSnackbar(int stringResourceId);
-        void onImageClicked(String imagePath);
     }
 
 

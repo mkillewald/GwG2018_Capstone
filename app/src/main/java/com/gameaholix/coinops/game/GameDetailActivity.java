@@ -204,6 +204,8 @@ public class GameDetailActivity extends BaseActivity implements
         outState.putString(EXTRA_GAME_ID, mGameId);
     }
 
+    // Game callbacks
+
     @Override
     public void onGameIdInvalid() {
         Log.e(TAG, "Failed to instantiate fragment! Game ID cannot be an empty string.");
@@ -226,97 +228,7 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onRepairLogSelected(Item repairLog) {
-        Intent intent = new Intent(this, RepairDetailActivity.class);
-        intent.putExtra(EXTRA_REPAIR, repairLog);
-        intent.putExtra(EXTRA_GAME_NAME, mGameName);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
-            startActivity(intent, bundle);
-        } else {
-            startActivity(intent);
-        }
-    }
-
-    @Override
-    public void onRepairAddEditCompletedOrCancelled() {
-        // no operation
-    }
-
-    @Override
-    public void onToDoFabPressed() {
-        showAddToDoDialog();
-    }
-
-    @Override
-    public void onToDoItemSelected(ListRow item) {
-        Intent intent = new Intent(this, ToDoDetailActivity.class);
-        intent.putExtra(EXTRA_GAME_NAME, mGameName);
-        intent.putExtra(EXTRA_TODO_ID, item.getId());
-        intent.putExtra(EXTRA_GAME_ID, mGameId);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
-            startActivity(intent, bundle);
-        } else {
-            startActivity(intent);
-        }
-    }
-
-    @Override
-    public void onToDoAddEditCompletedOrCancelled() {
-        // TODO: finish this
-    }
-
-//    @Override
-//    public void onToDoDeleteButtonPressed() {
-//        // TODO: finish this
-//    }
-
-    @Override
-    public void onShoppingFabPressed() {
-        showAddShoppingDialog();
-    }
-
-    @Override
-    public void onShoppingItemSelected(ListRow item) {
-        // show update shopping dialog
-        FragmentManager fm = getSupportFragmentManager();
-        ShoppingAddEditFragment fragment =
-                ShoppingAddEditFragment.newInstance(mGameId, item.getId(), true);
-        fragment.show(fm, "fragment_add_edit_shopping");
-    }
-
-    @Override
-    public void onRepairFabPressed() {
-        showAddRepairDialog();
-    }
-
-    private void showAddRepairDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        RepairAddEditFragment fragment = RepairAddEditFragment.newInstance(mGameId);
-        fragment.show(fm, "fragment_repair_add");
-    }
-
-    private void showAddToDoDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        ToDoAddEditFragment fragment = ToDoAddEditFragment.newInstance(false);
-        fragment.show(fm, "fragment_add_todo");
-    }
-
-    private void showAddShoppingDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        ShoppingAddEditFragment fragment =
-                ShoppingAddEditFragment.newInstance(mGameId,null, false);
-        fragment.show(fm, "fragment_add_edit_shopping");
-    }
-
-    @Override
-    public void onShoppingAddEditCompletedOrCancelled() {
-        // TODO: finish this
-    }
-
-    @Override
-    public void onEditButtonPressed() {
+    public void onGameEditButtonPressed() {
         mBind.avBanner.setVisibility(View.GONE);
         // replace GameDetailFragment with GameAddEditFragment
         Fragment addEditGameFragment = GameAddEditFragment.newEditInstance(mGameId);
@@ -340,12 +252,12 @@ public class GameDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onDeleteCompleted() {
+    public void onGameDeleteCompleted() {
         finish();
     }
 
     @Override
-    public void onImageClicked(String imagePath) {
+    public void onGameImageClicked(String imagePath) {
         Intent intent = new Intent(this, DisplayImageActivity.class);
         intent.putExtra(EXTRA_IMAGE_PATH, imagePath);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -354,6 +266,97 @@ public class GameDetailActivity extends BaseActivity implements
         } else {
             startActivity(intent);
         }
+    }
+
+    // Repair callbacks
+
+    @Override
+    public void onRepairLogSelected(Item repairLog) {
+        Intent intent = new Intent(this, RepairDetailActivity.class);
+        intent.putExtra(EXTRA_REPAIR, repairLog);
+        intent.putExtra(EXTRA_GAME_NAME, mGameName);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            startActivity(intent, bundle);
+        } else {
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onRepairAddEditCompletedOrCancelled() {
+        // no operation
+    }
+
+    @Override
+    public void onRepairFabPressed() {
+        showAddRepairDialog();
+    }
+
+    private void showAddRepairDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        RepairAddEditFragment fragment = RepairAddEditFragment.newInstance(mGameId);
+        fragment.show(fm, "fragment_repair_add");
+    }
+
+    // To Do callbacks
+
+    @Override
+    public void onToDoItemSelected(ListRow item) {
+        Intent intent = new Intent(this, ToDoDetailActivity.class);
+        intent.putExtra(EXTRA_GAME_NAME, mGameName);
+        intent.putExtra(EXTRA_TODO_ID, item.getId());
+        intent.putExtra(EXTRA_GAME_ID, mGameId);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            startActivity(intent, bundle);
+        } else {
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onToDoAddEditCompletedOrCancelled() {
+        // TODO: finish this
+    }
+
+    @Override
+    public void onToDoFabPressed() {
+        showAddToDoDialog();
+    }
+
+    private void showAddToDoDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        ToDoAddEditFragment fragment = ToDoAddEditFragment.newInstance(false);
+        fragment.show(fm, "fragment_add_todo");
+    }
+
+    // Shopping callbacks
+
+    @Override
+    public void onShoppingItemSelected(ListRow item) {
+        // show update shopping dialog
+        FragmentManager fm = getSupportFragmentManager();
+        ShoppingAddEditFragment fragment =
+                ShoppingAddEditFragment.newInstance(mGameId, item.getId(), true);
+        fragment.show(fm, "fragment_add_edit_shopping");
+    }
+
+    @Override
+    public void onShoppingAddEditCompletedOrCancelled() {
+        // TODO: finish this
+    }
+
+    @Override
+    public void onShoppingFabPressed() {
+        showAddShoppingDialog();
+    }
+
+    private void showAddShoppingDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        ShoppingAddEditFragment fragment =
+                ShoppingAddEditFragment.newInstance(mGameId,null, false);
+        fragment.show(fm, "fragment_add_edit_shopping");
     }
 
     @Override
