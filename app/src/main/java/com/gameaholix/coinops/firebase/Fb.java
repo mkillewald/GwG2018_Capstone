@@ -62,8 +62,7 @@ public class Fb {
     }
 
     public static DatabaseReference getGameImageRef(@NonNull String uid,
-                                                    @NonNull String gameId,
-                                                    @NonNull String filename) {
+                                                    @NonNull String gameId) {
         return getGameRef(uid, gameId)
                 .child(Fb.IMAGE);
     }

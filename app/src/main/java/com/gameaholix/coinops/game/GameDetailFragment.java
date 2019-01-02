@@ -45,12 +45,17 @@ import static android.app.Activity.RESULT_OK;
 public class GameDetailFragment extends Fragment {
     private static final String TAG = GameDetailFragment.class.getSimpleName();
     private static final String CAPTURE_IMAGE_FILE_PROVIDER = "com.gameaholix.coinops.fileprovider";
+    private static final String EXTRA_TEMP_PHOTO_PATH = "CoinOpsTempPhotoPath";
+    private static final String EXTRA_PHOTO_READY = "CoinOpsPhotoReadyFlag";
     private static final int REQUEST_IMAGE_CAPTURE = 343;
 
     private Context mContext;
     private GameViewModel mViewModel;
     private Game mGame;
     private OnFragmentInteractionListener mListener;
+
+    private String mTempPhotoPath;
+    private boolean mPhotoReady = false;
 
     /**
      * Required empty public constructor
@@ -70,6 +75,14 @@ public class GameDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (savedInstanceState == null ) {
+            mTempPhotoPath = "";
+            mPhotoReady = false;
+        } else {
+            mTempPhotoPath = savedInstanceState.getString(EXTRA_TEMP_PHOTO_PATH);
+            mPhotoReady = savedInstanceState.getBoolean(EXTRA_PHOTO_READY);
+        }
     }
 
     @Override
@@ -108,6 +121,7 @@ public class GameDetailFragment extends Fragment {
                     if (game != null) {
                         // TODO: figure out how to do this with xml
                         mGame = game;
+                        Log.d(TAG, "onChanged: Game instance set");
 
                         if (mListener != null) {
                             mListener.onGameNameChanged(game.getName());
@@ -117,6 +131,13 @@ public class GameDetailFragment extends Fragment {
                         StorageReference thumbRef = null;
 
                         if (!TextUtils.isEmpty(game.getImage())) {
+
+                            if (mPhotoReady) {
+                                // photo in temp file storage is ready to upload to Firebase
+                                mViewModel.uploadImage(mTempPhotoPath, mGame.getImage());
+                                mPhotoReady = false;
+                            }
+
                             thumbRef = Fb.getImageThumbRef(uid, mViewModel.getGameId(), game.getImage());
                         }
 
@@ -231,6 +252,9 @@ public class GameDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        outState.putString(EXTRA_TEMP_PHOTO_PATH, mTempPhotoPath);
+        outState.putBoolean(EXTRA_PHOTO_READY, mPhotoReady);
     }
 
 
@@ -283,7 +307,7 @@ public class GameDetailFragment extends Fragment {
 
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                mViewModel.setCurrentPhotoPath(photoFile.getAbsolutePath());
+                mTempPhotoPath = photoFile.getAbsolutePath();
                 Uri photoURI = FileProvider.getUriForFile(mContext,
                         CAPTURE_IMAGE_FILE_PROVIDER,
                         photoFile);
@@ -304,9 +328,7 @@ public class GameDetailFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
-            // compress image and upload to firebase
-            mViewModel.uploadImage();
-
+            mPhotoReady = true;
         }
     }
 

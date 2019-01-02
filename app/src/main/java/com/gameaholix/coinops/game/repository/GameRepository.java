@@ -292,29 +292,24 @@ public class GameRepository {
 
     /**
      * Uploads full image and thumbnail image
-     * @param filePath the full path of the locally stored Bitmap image
+     * @param tempFilePath the full path of the locally stored Bitmap image
+     * @param existingFilename the filename of any existing photo
      * @return a boolean indicating success (true) or failure (false)
      */
-    public boolean uploadImage(final String filePath) {
+    public boolean uploadImage(final String tempFilePath, @Nullable final String existingFilename) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // user is signed in
             final String uid = user.getUid();
-            final Game game = mGameLiveData.getValue();
-
-            if (game == null) {
-                Log.e(TAG, "Error: game object was null.");
-                return false;
-            }
 
             // get full image and create thumbnail
-            Bitmap fullBitmap = BitmapFactory.decodeFile(filePath);
+            Bitmap fullBitmap = BitmapFactory.decodeFile(tempFilePath);
             if (fullBitmap == null) {
                 Log.e(TAG, "Error: full bitmap file not found");
                 return false;
             }
 
-            Bitmap thumbBitmap = ImageUtils.scaleBitmap(filePath, 140, 105);
+            Bitmap thumbBitmap = ImageUtils.scaleBitmap(tempFilePath, 140, 105);
             if (thumbBitmap == null) {
                 Log.e(TAG, "Error: failed to generate thumbnail bitmap");
                 return false;
@@ -325,24 +320,26 @@ public class GameRepository {
             byte[] thumbData = ImageUtils.bitmapToJpeg(thumbBitmap);
 
             // Upload the full image
-            final String filename = filePath.substring(filePath.lastIndexOf('/') + 1);
-            final StorageReference imageRef = Fb.getImageRef(uid, mGameId, filename);
+            final String newFilename = tempFilePath.substring(tempFilePath.lastIndexOf('/') + 1);
+            final StorageReference imageRef = Fb.getImageRef(uid, mGameId, newFilename);
             uploadImageToFirebase(imageRef, fullData, null, null);
 
             // Upload the thumbnail image
-            final StorageReference thumbRef = Fb.getImageThumbRef(uid, mGameId, filename);
+            final StorageReference thumbRef = Fb.getImageThumbRef(uid, mGameId, newFilename);
             OnSuccessListener<UploadTask.TaskSnapshot> thumbSuccessListener = new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Log.d(TAG, "Image successfully uploaded to Firebase (" + thumbRef.getPath() + ")");
                     // delete temp image file from external storage
-                    ImageUtils.deleteTemporaryImageFromDisk(filePath);
+                    ImageUtils.deleteTemporaryImageFromDisk(tempFilePath);
 
                     // delete previous images from firebase
-                    deleteImagesFromFirebase(uid, mGameId, game.getImage());
+                    if (!TextUtils.isEmpty(existingFilename)) {
+                        deleteImagesFromFirebase(uid, mGameId, existingFilename);
+                    }
 
                     // Store new image filename in database, this will trigger the ImageView to be reloaded.
-                    Fb.getGameImageRef(uid, mGameId, game.getImage()).setValue(filename);
+                    Fb.getGameImageRef(uid, mGameId).setValue(newFilename);
                 }
             };
             uploadImageToFirebase(thumbRef, thumbData, thumbSuccessListener, null);

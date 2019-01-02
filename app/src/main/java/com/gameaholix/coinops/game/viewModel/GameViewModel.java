@@ -3,6 +3,7 @@ package com.gameaholix.coinops.game.viewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.game.repository.GameRepository;
@@ -11,7 +12,7 @@ import com.gameaholix.coinops.game.repository.GameRepository;
 public class GameViewModel extends ViewModel {
     public static final String TAG = GameViewModel.class.getSimpleName();
     private String mGameId;
-    private String mCurrentPhotoPath;
+//    private String mCurrentPhotoPath;
     private LiveData<Game> mGameLiveData;
     private MutableLiveData<Game> mGameCopyLiveData;
     private GameRepository mRepository;
@@ -33,13 +34,13 @@ public class GameViewModel extends ViewModel {
         return mGameId;
     }
 
-    public String getCurrentPhotoPath() {
-        return mCurrentPhotoPath;
-    }
-
-    public void setCurrentPhotoPath(String currentPhotoPath) {
-        mCurrentPhotoPath = currentPhotoPath;
-    }
+//    public String getCurrentPhotoPath() {
+//        return mCurrentPhotoPath;
+//    }
+//
+//    public void setCurrentPhotoPath(String currentPhotoPath) {
+//        mCurrentPhotoPath = currentPhotoPath;
+//    }
 
     public LiveData<Game> getGameLiveData() {
         return mGameLiveData;
@@ -90,7 +91,7 @@ public class GameViewModel extends ViewModel {
         return mRepository.delete();
     }
 
-    public boolean uploadImage() {
-        return mRepository.uploadImage(mCurrentPhotoPath);
+    public boolean uploadImage(String tempFilePath, String currentFilename) {
+        return mRepository.uploadImage(tempFilePath, currentFilename);
     }
 }
