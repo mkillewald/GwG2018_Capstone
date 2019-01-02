@@ -4,6 +4,8 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -12,6 +14,9 @@ import android.util.Log;
 import com.gameaholix.coinops.firebase.Fb;
 import com.gameaholix.coinops.firebase.FirebaseQueryLiveData;
 import com.gameaholix.coinops.model.Game;
+import com.gameaholix.coinops.utility.ImageUtils;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -190,6 +197,13 @@ public class GameRepository {
         if (user != null) {
             // user signed in
             final String uid = user.getUid();
+            Game game = mGameLiveData.getValue();
+
+            if (game == null) return false;
+
+            if (!TextUtils.isEmpty(game.getImage())) {
+                deleteImagesFromFirebase(uid, mGameId, game.getImage());
+            }
 
             // delete repair logs
             Fb.getRepairRef(uid, mGameId).removeValue();
@@ -248,4 +262,131 @@ public class GameRepository {
         });
     }
 
+    /**
+     * Deletes full and thumbnail images from Firebase
+     * @param uid the ID of the current user
+     * @param gameId the ID of the parent Game entity
+     * @param filename the base name of the file to remove.
+     */
+    private void deleteImagesFromFirebase(@NonNull String uid,
+                                          @NonNull String gameId,
+                                          @NonNull String filename) {
+        // Delete thumbnail image
+        Fb.getImageThumbRef(uid, gameId, filename).delete()
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Failed to delete previous thumbnail image -> ", e);
+                    }
+                });
+
+        // Delete full size  image
+        Fb.getImageRef(uid, gameId, filename).delete()
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Failed to delete previous full image -> ", e);
+                    }
+                });
+    }
+
+    /**
+     * Uploads full image and thumbnail image
+     * @param filePath the full path of the locally stored Bitmap image
+     * @return a boolean indicating success (true) or failure (false)
+     */
+    public boolean uploadImage(final String filePath) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // user is signed in
+            final String uid = user.getUid();
+            final Game game = mGameLiveData.getValue();
+
+            if (game == null) {
+                Log.e(TAG, "Error: game object was null.");
+                return false;
+            }
+
+            // get full image and create thumbnail
+            Bitmap fullBitmap = BitmapFactory.decodeFile(filePath);
+            if (fullBitmap == null) {
+                Log.e(TAG, "Error: full bitmap file not found");
+                return false;
+            }
+
+            Bitmap thumbBitmap = ImageUtils.scaleBitmap(filePath, 140, 105);
+            if (thumbBitmap == null) {
+                Log.e(TAG, "Error: failed to generate thumbnail bitmap");
+                return false;
+            }
+
+            // convert Bitmaps to JPEG
+            byte[] fullData = ImageUtils.bitmapToJpeg(fullBitmap);
+            byte[] thumbData = ImageUtils.bitmapToJpeg(thumbBitmap);
+
+            // Upload the full image
+            final String filename = filePath.substring(filePath.lastIndexOf('/') + 1);
+            final StorageReference imageRef = Fb.getImageRef(uid, mGameId, filename);
+            uploadImageToFirebase(imageRef, fullData, null, null);
+
+            // Upload the thumbnail image
+            final StorageReference thumbRef = Fb.getImageThumbRef(uid, mGameId, filename);
+            OnSuccessListener<UploadTask.TaskSnapshot> thumbSuccessListener = new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.d(TAG, "Image successfully uploaded to Firebase (" + thumbRef.getPath() + ")");
+                    // delete temp image file from external storage
+                    ImageUtils.deleteTemporaryImageFromDisk(filePath);
+
+                    // delete previous images from firebase
+                    deleteImagesFromFirebase(uid, mGameId, game.getImage());
+
+                    // Store new image filename in database, this will trigger the ImageView to be reloaded.
+                    Fb.getGameImageRef(uid, mGameId, game.getImage()).setValue(filename);
+                }
+            };
+            uploadImageToFirebase(thumbRef, thumbData, thumbSuccessListener, null);
+
+            return true;
+        } else {
+            // user is not signed in
+            return false;
+        }
+    }
+
+    /**
+     * Helper method to upload an image to firebase
+     * @param imageRef the Firebase StorageReference where the file will be uploaded
+     * @param data a byte array containing image data
+     * @param success an optional OnSuccessListener
+     * @param failure an optional OnFailureListener
+     */
+    private void uploadImageToFirebase(final StorageReference imageRef,
+                                       byte[] data,
+                                       @Nullable OnSuccessListener<UploadTask.TaskSnapshot> success,
+                                       @Nullable OnFailureListener failure) {
+        UploadTask uploadImageTask = imageRef.putBytes(data);
+
+        if (success == null) {
+            uploadImageTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.d(TAG, "Image successfully uploaded to Firebase (" + imageRef.getPath() + ")");
+                }
+            });
+        } else {
+            uploadImageTask.addOnSuccessListener(success);
+        }
+
+        if (failure == null) {
+            uploadImageTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Image upload failed (" + imageRef.getPath() + ") -> ", e);
+                }
+            });
+        } else {
+            uploadImageTask.addOnFailureListener(failure);
+        }
+    }
 }

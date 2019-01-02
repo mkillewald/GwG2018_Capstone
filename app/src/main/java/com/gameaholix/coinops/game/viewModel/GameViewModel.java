@@ -7,8 +7,11 @@ import android.arch.lifecycle.ViewModel;
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.game.repository.GameRepository;
 
+
 public class GameViewModel extends ViewModel {
+    public static final String TAG = GameViewModel.class.getSimpleName();
     private String mGameId;
+    private String mCurrentPhotoPath;
     private LiveData<Game> mGameLiveData;
     private MutableLiveData<Game> mGameCopyLiveData;
     private GameRepository mRepository;
@@ -28,6 +31,14 @@ public class GameViewModel extends ViewModel {
 
     public String getGameId() {
         return mGameId;
+    }
+
+    public String getCurrentPhotoPath() {
+        return mCurrentPhotoPath;
+    }
+
+    public void setCurrentPhotoPath(String currentPhotoPath) {
+        mCurrentPhotoPath = currentPhotoPath;
     }
 
     public LiveData<Game> getGameLiveData() {
@@ -77,5 +88,9 @@ public class GameViewModel extends ViewModel {
      */
     public boolean delete() {
         return mRepository.delete();
+    }
+
+    public boolean uploadImage() {
+        return mRepository.uploadImage(mCurrentPhotoPath);
     }
 }

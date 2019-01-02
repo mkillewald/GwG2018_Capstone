@@ -4,10 +4,14 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class Fb {
     private static final DatabaseReference sDatabaseReference =
             FirebaseDatabase.getInstance().getReference();
+    private static final StorageReference sStorageReference =
+            FirebaseStorage.getInstance().getReference();
 
     // Database nodes
     public static final String USER = "user";
@@ -39,6 +43,9 @@ public class Fb {
     public static final String DESCRIPTION = "description";
     public static final String PRIORITY = "priority";
 
+    // Storage keys
+    private static final String THUMB = "thumb_";
+
     public static DatabaseReference getDatabaseReference() {
         return sDatabaseReference;
     }
@@ -52,6 +59,13 @@ public class Fb {
     public static DatabaseReference getGameRef(@NonNull String uid, @NonNull String gameId) {
         return getGameRootRef(uid)
                 .child(gameId);
+    }
+
+    public static DatabaseReference getGameImageRef(@NonNull String uid,
+                                                    @NonNull String gameId,
+                                                    @NonNull String filename) {
+        return getGameRef(uid, gameId)
+                .child(Fb.IMAGE);
     }
 
     public static DatabaseReference getGameListRef(@NonNull String uid) {
@@ -132,5 +146,25 @@ public class Fb {
                 .child(Fb.USER)
                 .child(uid)
                 .child(Fb.INVENTORY_LIST);
+    }
+
+    public static StorageReference getImageRootRef(@NonNull String uid, @NonNull String gameId) {
+        return sStorageReference
+                .child(uid)
+                .child(gameId);
+    }
+
+    public static StorageReference getImageRef(@NonNull String uid,
+                                               @NonNull String gameId,
+                                               @NonNull String filename) {
+        return getImageRootRef(uid, gameId)
+                .child(filename);
+    }
+
+    public static StorageReference  getImageThumbRef(@NonNull String uid,
+                                                     @NonNull String gameId,
+                                                     @NonNull String filename) {
+        return getImageRootRef(uid, gameId)
+                .child(Fb.THUMB + filename);
     }
 }
