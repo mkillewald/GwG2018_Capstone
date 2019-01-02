@@ -134,8 +134,12 @@ public class GameDetailFragment extends Fragment {
 
                             if (mPhotoReady) {
                                 // photo in temp file storage is ready to upload to Firebase
-                                mViewModel.uploadImage(mTempPhotoPath, mGame.getImage());
+                                boolean resultOk = mViewModel.uploadImage(mTempPhotoPath, mGame.getImage());
                                 mPhotoReady = false;
+
+                                if (!resultOk) {
+                                    mListener.onShowSnackbar(R.string.error_upload_failed);
+                                }
                             }
 
                             thumbRef = Fb.getImageThumbRef(uid, mViewModel.getGameId(), game.getImage());
