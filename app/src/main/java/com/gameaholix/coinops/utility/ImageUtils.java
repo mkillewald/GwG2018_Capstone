@@ -16,6 +16,12 @@ import java.util.Locale;
 public class ImageUtils {
     public static final String TAG = ImageUtils.class.getSimpleName();
 
+    /**
+     * Creates a temporary file to store an image taken by the camera
+     * @param context the application context
+     * @return the temp file created
+     * @throws IOException exception thrown if file was not created
+     */
     public static File createImageFile(Context context) throws IOException {
         // Code used from https://developer.android.com/training/camera/photobasics
 
@@ -23,18 +29,17 @@ public class ImageUtils {
         String filename = new SimpleDateFormat("yyyyMMdd_hhmmss_", Locale.US).format(new Date());
 
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
+        return File.createTempFile(
                 filename,
                 ".jpg",
                 storageDir
         );
-
-//        // Save a file: path for use with ACTION_VIEW intents
-//        mCurrentPhotoPath = image.getAbsolutePath();
-
-        return image;
     }
 
+    /**
+     * Delete temporary file from local storage
+     * @param filePath the full path of the temporary file to delete
+     */
     public static void deleteTemporaryImageFromDisk(String filePath) {
         // delete file from external storage
         File fdelete = new File(filePath);
@@ -47,6 +52,13 @@ public class ImageUtils {
         }
     }
 
+    /**
+     * Scales a bitmap at a given path
+     * @param filePath the full path of the source Bitmap
+     * @param targetW the target width
+     * @param targetH the target height
+     * @return the scaled Bitmap
+     */
     public static Bitmap scaleBitmap(String filePath, int targetW, int targetH) {
         // Get the dimensions of the full bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -66,10 +78,16 @@ public class ImageUtils {
         return BitmapFactory.decodeFile(filePath, bmOptions);
     }
 
-    public static byte[] bitmapToJpeg(Bitmap bitmap) {
+    /**
+     * Converts a Bitmap to JPEG
+     * @param bitmap the source Bitmap to convert
+     * @param quality the quality of the JPEG compression
+     * @return a byte array with the output JPEG data
+     */
+    public static byte[] bitmapToJpeg(Bitmap bitmap, int quality) {
         // Compress Bitmap to JPEG compression
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
         return baos.toByteArray();
     }
 }

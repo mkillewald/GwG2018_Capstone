@@ -316,8 +316,8 @@ public class GameRepository {
             }
 
             // convert Bitmaps to JPEG
-            byte[] fullData = ImageUtils.bitmapToJpeg(fullBitmap);
-            byte[] thumbData = ImageUtils.bitmapToJpeg(thumbBitmap);
+            byte[] fullData = ImageUtils.bitmapToJpeg(fullBitmap, 80);
+            byte[] thumbData = ImageUtils.bitmapToJpeg(thumbBitmap, 80);
 
             // Upload the full image
             final String newFilename = tempFilePath.substring(tempFilePath.lastIndexOf('/') + 1);
