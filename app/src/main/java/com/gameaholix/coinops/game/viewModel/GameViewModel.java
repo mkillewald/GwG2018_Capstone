@@ -3,9 +3,11 @@ package com.gameaholix.coinops.game.viewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.text.TextUtils;
 
 import com.gameaholix.coinops.model.Game;
 import com.gameaholix.coinops.game.repository.GameRepository;
+import com.google.firebase.storage.StorageReference;
 
 
 public class GameViewModel extends ViewModel {
@@ -81,11 +83,25 @@ public class GameViewModel extends ViewModel {
         return mRepository.delete();
     }
 
+
+    /**
+     * Returns a Firebase StorageReference of the Thumbnail Image
+     * @param filename the base image filename
+     * @return the thumbnail image reference
+     */
+    public StorageReference getThumbRef(String filename) {
+        if (!TextUtils.isEmpty(filename)) {
+            return mRepository.getThumbRef(mGameId, filename);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Upload image to repository
      * @param tempFilePath the full filepath of the temporary image file to upload
      * @param currentFilename the existing photo filename (if one exists).
-     * @return
+     * @return a boolean indicating success (true) or failure (false)
      */
     public boolean uploadImage(String tempFilePath, String currentFilename) {
         return mRepository.uploadImage(tempFilePath, currentFilename);

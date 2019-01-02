@@ -33,7 +33,6 @@ import com.gameaholix.coinops.utility.GlideApp;
 import com.gameaholix.coinops.game.viewModel.GameViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,59 +101,40 @@ public class GameDetailFragment extends Fragment {
                 .get(GameViewModel.class);
         LiveData<Game> gameLiveData = mViewModel.getGameLiveData();
 
-        // Initialize Firebase components for image storage
-        // TODO: move this to the ViewModel/Repository
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         if (TextUtils.isEmpty(mViewModel.getGameId())) {
             mListener.onGameIdInvalid();
         }
 
-        if (user != null) {
-            // user is signed in
-            final String uid = user.getUid();
+        // read game details
+        gameLiveData.observe(getActivity(), new Observer<Game>() {
+            @Override
+            public void onChanged(@Nullable Game game) {
+                if (game != null) {
+                    // TODO: figure out how to do this with xml
+                    mGame = game;
+                    Log.d(TAG, "onChanged: Game instance set");
 
-            // read game details
-            gameLiveData.observe(getActivity(), new Observer<Game>() {
-                @Override
-                public void onChanged(@Nullable Game game) {
-                    if (game != null) {
-                        // TODO: figure out how to do this with xml
-                        mGame = game;
-                        Log.d(TAG, "onChanged: Game instance set");
-
-                        if (mListener != null) {
-                            mListener.onGameNameChanged(game.getName());
-                        }
-
-                        // Get thumbnail from firebase
-                        StorageReference thumbRef = null;
-
-                        if (!TextUtils.isEmpty(game.getImage())) {
-
-                            if (mPhotoReady) {
-                                // photo in temp file storage is ready to upload to Firebase
-                                boolean resultOk = mViewModel.uploadImage(mTempPhotoPath, mGame.getImage());
-                                mPhotoReady = false;
-
-                                if (!resultOk) {
-                                    mListener.onShowSnackbar(R.string.error_upload_failed);
-                                }
-                            }
-
-                            thumbRef = Fb.getImageThumbRef(uid, mViewModel.getGameId(), game.getImage());
-                        }
-
-                        GlideApp.with(mContext)
-                                .load(thumbRef)
-                                .placeholder(R.drawable.ic_classic_arcade_machine)
-                                .into(bind.ivPhoto);
+                    if (mListener != null) {
+                        mListener.onGameNameChanged(game.getName());
                     }
+
+                    if (mPhotoReady) {
+                        // photo in temp file storage is ready to upload to Firebase
+                        boolean resultOk = mViewModel.uploadImage(mTempPhotoPath, game.getImage());
+                        mPhotoReady = false;
+
+                        if (!resultOk) {
+                            mListener.onShowSnackbar(R.string.error_upload_failed);
+                        }
+                    }
+
+                    GlideApp.with(mContext)
+                            .load(mViewModel.getThumbRef(game.getImage()))
+                            .placeholder(R.drawable.ic_classic_arcade_machine)
+                            .into(bind.ivPhoto);
                 }
-            });
-//        } else {
-//            // user is not signed in
-        }
+            }
+        });
 
         bind.setLifecycleOwner(getActivity());
         bind.setGame(gameLiveData);

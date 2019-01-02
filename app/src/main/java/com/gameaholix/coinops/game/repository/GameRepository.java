@@ -291,6 +291,24 @@ public class GameRepository {
     }
 
     /**
+     * Returns a Firebase StorageReference of the thumbnail image
+     * @param gameId the parent Game entity
+     * @param filename the base filename of the image
+     * @return the thumbnail image reference
+     */
+    public StorageReference getThumbRef(String gameId, String filename) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // user is signed in
+            String uid = user.getUid();
+            return Fb.getImageThumbRef(uid, gameId, filename);
+        } else {
+            // user is not signed in
+            return null;
+        }
+    }
+
+    /**
      * Uploads full image and thumbnail image
      * @param tempFilePath the full path of the locally stored Bitmap image
      * @param existingFilename the filename of any existing photo
